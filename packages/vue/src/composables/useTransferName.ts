@@ -55,6 +55,7 @@ export function useTransferName<context = unknown>(
   const {
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
+    onSettled: mutationOnSettled,
     ...mutationRest
   } = parameters.mutation ?? {}
 
@@ -66,6 +67,7 @@ export function useTransferName<context = unknown>(
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,
+      onSettled: mutationOnSettled,
     }),
   })
 

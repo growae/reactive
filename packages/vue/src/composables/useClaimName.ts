@@ -55,6 +55,7 @@ export function useClaimName<context = unknown>(
   const {
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
+    onSettled: mutationOnSettled,
     ...mutationRest
   } = parameters.mutation ?? {}
 
@@ -66,6 +67,7 @@ export function useClaimName<context = unknown>(
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,
+      onSettled: mutationOnSettled,
     }),
   })
 

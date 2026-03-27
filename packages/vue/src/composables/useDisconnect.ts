@@ -56,6 +56,7 @@ export function useDisconnect<context = unknown>(
   const {
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
+    onSettled: mutationOnSettled,
     ...mutationRest
   } = parameters.mutation ?? {}
 
@@ -67,6 +68,7 @@ export function useDisconnect<context = unknown>(
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,
+      onSettled: mutationOnSettled,
     }),
   })
 
