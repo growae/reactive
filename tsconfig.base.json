@@ -35,6 +35,11 @@
 
     // Skip type checking for node modules
     "skipLibCheck": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+
+    "paths": {
+      "@growae/reactive": ["./packages/core/src/exports/index.ts"],
+      "@growae/reactive/*": ["./packages/core/src/exports/*.ts"]
+    }
   }
 }

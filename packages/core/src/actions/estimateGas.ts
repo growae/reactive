@@ -37,7 +37,7 @@ export async function estimateGas(
   const dryRunResult = await node.protectedDryRunTxs({
     top,
     txs: [{ tx }],
-    accounts: [{ pubKey: accountAddress, amount: DRY_RUN_ACCOUNT_AMOUNT }],
+    accounts: [{ pubKey: accountAddress, amount: BigInt(DRY_RUN_ACCOUNT_AMOUNT) }],
   })
 
   const result = dryRunResult.results[0]

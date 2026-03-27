@@ -14,7 +14,7 @@ export function watchNodeClient(
 
   let currentClient: any = null
   try {
-    currentClient = config.getNode({})
+    currentClient = config.getNodeClient({})
   } catch {
     // no node yet
   }
@@ -23,7 +23,7 @@ export function watchNodeClient(
     (state) => state.networkId,
     (networkId) => {
       try {
-        const newClient = config.getNode({ networkId })
+        const newClient = config.getNodeClient({ networkId })
         const prev = currentClient
         currentClient = newClient
         onChange(newClient, prev)

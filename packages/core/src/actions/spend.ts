@@ -40,14 +40,14 @@ export async function spend(
 
   const node = config.getNodeClient({ networkId })
 
-  const { TxBuilder, Tag } = await import('@aeternity/aepp-sdk')
+  const { buildTx, Tag } = await import('@aeternity/aepp-sdk')
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)
   const nonce = txOptions.nonce ?? accountInfo.nonce + 1
 
-  const spendTx = TxBuilder.buildTx({
+  const spendTx = buildTx({
     tag: Tag.SpendTx,
     senderId,
     recipientId,

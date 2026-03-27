@@ -41,7 +41,7 @@ export async function getMicroBlock(
     prevHash: header.prevHash,
     prevKeyHash: header.prevKeyHash,
     stateHash: header.stateHash,
-    time: header.time,
+    time: typeof header.time === 'number' ? header.time : new Date(header.time).getTime(),
     txsHash: header.txsHash,
     version: header.version,
     transactions: txs.transactions,

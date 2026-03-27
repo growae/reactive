@@ -33,14 +33,14 @@ export async function registerOracle(
   const { queryFormat, responseFormat, queryFee, oracleTtl, ttl, networkId } =
     parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new RegisterOracleNoAccountError()
   }
 
   const { Oracle } = await import('@aeternity/aepp-sdk')
-  const oracle = new Oracle(connection.account, {
+  const oracle = new Oracle(connection.accounts[0] as any, {
     onNode: node,
     ...(queryFee != null ? { queryFee: Number(queryFee) } : {}),
     ...(oracleTtl ? { oracleTtl } : {}),
@@ -48,7 +48,7 @@ export async function registerOracle(
 
   const result = await oracle.register(queryFormat, responseFormat, {
     ttl: ttl ?? DEFAULT_TTL,
-  })
+  } as any)
 
   return {
     oracleId: oracle.address,

@@ -29,7 +29,7 @@ describe('watchConnection', () => {
 
     watchConnection(mockConfig as any, { onChange: vi.fn() })
 
-    const selector = mockConfig.subscribe.mock.calls[0][0]
+    const selector = mockConfig.subscribe.mock.calls[0]![0]
     expect(selector({ current: 'conn_1' })).toBe('conn_1')
     expect(selector({ current: null })).toBeNull()
   })

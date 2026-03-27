@@ -15,7 +15,7 @@ export async function switchNetwork(
   parameters: SwitchNetworkParameters,
 ): Promise<SwitchNetworkReturnType> {
   const { networkId } = parameters
-  const network = config.networks.find((n) => n.networkId === networkId)
+  const network = config.networks.find((n) => n.id === networkId)
   if (!network) {
     throw new NetworkNotConfiguredError()
   }

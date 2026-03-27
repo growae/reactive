@@ -29,8 +29,8 @@ export async function transferName(
 ): Promise<TransferNameReturnType> {
   const { name, recipient, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new TransferNameNoAccountError()
   }
@@ -38,12 +38,12 @@ export async function transferName(
   const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
   })
 
   const result = await nameInstance.transfer(recipient as any, {
     ttl: ttl ?? DEFAULT_TTL,
-  })
+  } as any)
 
   return {
     txHash: result.hash,

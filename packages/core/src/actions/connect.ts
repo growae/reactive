@@ -53,7 +53,8 @@ export async function connect(
     config.setState((x) => ({
       ...x,
       connections: new Map(x.connections).set(connector.uid, {
-        accounts: data.accounts,
+        accounts: data.accounts as readonly [string, ...string[]],
+        networkId: data.networkId,
         connector,
       }),
       current: connector.uid,

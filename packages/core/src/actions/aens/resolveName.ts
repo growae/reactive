@@ -24,7 +24,7 @@ export async function resolveName(
 ): Promise<ResolveNameReturnType> {
   const { name, key = 'account_pubkey', networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
 
   try {
     const entry = await node.getNameEntryByName(name)

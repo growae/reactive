@@ -1,5 +1,4 @@
 import { expectTypeOf, test } from 'vitest'
-import type { Config } from '../createConfig.js'
 import { type SpendParameters, type SpendReturnType, spend } from './spend.js'
 
 test('spend returns Promise<SpendReturnType>', () => {

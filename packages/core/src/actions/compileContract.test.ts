@@ -14,12 +14,13 @@ describe('compileContract', () => {
   })
 
   it('should throw CompileContractNoCompilerError when no compiler configured', async () => {
-    const mockConfig = {
-      getCompiler: vi.fn(() => undefined),
-    }
+    const mockConfig = {}
 
     await expect(
-      compileContract(mockConfig as any, { sourceCode: 'contract Test = ...' }),
+      compileContract(mockConfig as any, {
+        sourceCode: 'contract Test = ...',
+        onCompiler: undefined as any,
+      }),
     ).rejects.toThrow(CompileContractNoCompilerError)
   })
 
@@ -30,12 +31,11 @@ describe('compileContract', () => {
         aci: { functions: [] },
       }),
     }
-    const mockConfig = {
-      getCompiler: vi.fn(() => mockCompiler),
-    }
+    const mockConfig = {}
 
     const result = await compileContract(mockConfig as any, {
       sourceCode: 'contract Test = let greet() = "hello"',
+      onCompiler: mockCompiler as any,
     })
     expect(result.bytecode).toBe('cb_bytecode')
     expect(result.aci).toEqual({ functions: [] })
@@ -52,14 +52,13 @@ describe('compileContract', () => {
         aci: {},
       }),
     }
-    const mockConfig = {
-      getCompiler: vi.fn(() => mockCompiler),
-    }
+    const mockConfig = {}
     const files = { 'lib.aes': 'namespace Lib = ...' }
 
     await compileContract(mockConfig as any, {
       sourceCode: 'include "lib.aes"',
       fileSystem: files,
+      onCompiler: mockCompiler as any,
     })
     expect(mockCompiler.compileBySourceCode).toHaveBeenCalledWith(
       'include "lib.aes"',

@@ -23,7 +23,7 @@ export async function getOracleQueries(
 ): Promise<GetOracleQueriesReturnType> {
   const { oracleId, networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
   const result = await node.getOracleQueriesByPubkey(oracleId)
 
   return result.oracleQueries.map((q: any) => ({

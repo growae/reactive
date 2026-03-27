@@ -27,13 +27,13 @@ export async function claimName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { TxBuilder, Tag, produceNameId } = await import('@aeternity/aepp-sdk')
+  const { buildTx, Tag, produceNameId } = await import('@aeternity/aepp-sdk')
 
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)
-  const tx = TxBuilder.buildTx({
+  const tx = buildTx({
     tag: Tag.NameClaimTx,
     accountId: senderId,
     name,
@@ -55,7 +55,7 @@ export async function claimName(
   const result = await node.postTransaction({ tx: signed })
 
   return {
-    nameId: produceNameId(name),
+    nameId: produceNameId(name as `${string}.chain`),
     txHash: result.txHash,
   }
 }

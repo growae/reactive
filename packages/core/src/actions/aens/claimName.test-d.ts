@@ -1,5 +1,4 @@
 import { expectTypeOf, test } from 'vitest'
-import type { Config } from '../../createConfig.js'
 import {
   type ClaimNameParameters,
   type ClaimNameReturnType,

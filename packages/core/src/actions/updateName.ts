@@ -32,13 +32,13 @@ export async function updateName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { TxBuilder, Tag } = await import('@aeternity/aepp-sdk')
+  const { buildTx, Tag } = await import('@aeternity/aepp-sdk')
 
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)
-  const tx = TxBuilder.buildTx({
+  const tx = buildTx({
     tag: Tag.NameUpdateTx,
     accountId: senderId,
     nameId,

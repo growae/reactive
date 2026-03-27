@@ -27,7 +27,7 @@ export async function getNameEntry(
 
   return {
     id: entry.id,
-    owner: entry.owner,
+    owner: entry.owner ?? '',
     pointers: (entry.pointers ?? []).map((p: any) => ({
       key: p.key,
       id: p.id,

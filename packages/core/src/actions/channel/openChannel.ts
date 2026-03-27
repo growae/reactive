@@ -67,9 +67,9 @@ export async function openChannel(
     ...(host ? { host } : {}),
     ...(port != null ? { port } : {}),
     ...(lockPeriod != null ? { lockPeriod } : {}),
-    sign,
+    sign: sign as any,
     ...(debug != null ? { debug } : {}),
-  })
+  } as any)
 
   return {
     channel,

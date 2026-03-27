@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createMemoryBaseStorage } from '../test/utils.js'
+import { createMemoryBaseStorage } from './__test__/utils.js'
 import { createStorage, noopStorage } from './createStorage.js'
 
 describe('noopStorage', () => {

@@ -79,7 +79,7 @@ export async function transferFunds(
     onNode: node,
   })
   const unpacked = unpackTx(estimateTx, Tag.SpendTx)
-  const fee = BigInt(unpacked.fee)
+  const fee = BigInt((unpacked as any).fee ?? 0)
 
   const amount = desiredAmount + fee > balance ? balance - fee : desiredAmount
 

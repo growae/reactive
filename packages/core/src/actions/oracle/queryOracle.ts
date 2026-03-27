@@ -34,8 +34,8 @@ export async function queryOracle(
   const { oracleId, query, queryFee, queryTtl, responseTtl, ttl, networkId } =
     parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new QueryOracleNoAccountError()
   }
@@ -43,7 +43,7 @@ export async function queryOracle(
   const { OracleClient } = await import('@aeternity/aepp-sdk')
   const oracleClient = new OracleClient(oracleId as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
     ...(queryFee != null ? { queryFee: Number(queryFee) } : {}),
     ...(queryTtl ? { queryTtl } : {}),
     ...(responseTtl ? { responseTtl } : {}),
@@ -51,7 +51,7 @@ export async function queryOracle(
 
   const result = await oracleClient.postQuery(query, {
     ttl: ttl ?? DEFAULT_TTL,
-  })
+  } as any)
 
   return {
     queryId: result.queryId,

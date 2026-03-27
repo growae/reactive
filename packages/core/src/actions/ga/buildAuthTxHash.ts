@@ -18,7 +18,7 @@ export async function buildAuthTxHash(
 ): Promise<BuildAuthTxHashReturnType> {
   const { tx, fee, gasPrice, networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
 
   const sdk = await import('@aeternity/aepp-sdk')
   const hash = await sdk.buildAuthTxHash(tx as any, {

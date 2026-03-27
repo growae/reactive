@@ -31,7 +31,7 @@ describe('watchConnectors', () => {
 
     watchConnectors(mockConfig as any, { onChange })
 
-    const selector = mockConfig.subscribe.mock.calls[0][0]
+    const selector = mockConfig.subscribe.mock.calls[0]![0]
     expect(selector({ connectors: ['a', 'b'] })).toEqual(['a', 'b'])
     expect(selector({})).toEqual([])
   })

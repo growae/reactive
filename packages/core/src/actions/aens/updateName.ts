@@ -35,8 +35,8 @@ export async function updateName(
 ): Promise<UpdateNameReturnType> {
   const { name, pointers, extendPointers, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new UpdateNameNoAccountError()
   }
@@ -44,7 +44,7 @@ export async function updateName(
   const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
   })
 
   const pointersMap = Object.fromEntries(
@@ -54,7 +54,7 @@ export async function updateName(
   const result = await nameInstance.update(pointersMap as any, {
     extendPointers,
     ttl: ttl ?? DEFAULT_TTL,
-  })
+  } as any)
 
   return {
     txHash: result.hash,

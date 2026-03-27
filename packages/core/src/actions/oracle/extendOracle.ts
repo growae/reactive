@@ -29,19 +29,22 @@ export async function extendOracle(
 ): Promise<ExtendOracleReturnType> {
   const { oracleTtl, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new ExtendOracleNoAccountError()
   }
 
   const { Oracle } = await import('@aeternity/aepp-sdk')
-  const oracle = new Oracle(connection.account, {
+  const oracle = new Oracle(connection.accounts[0] as any, {
     onNode: node,
     oracleTtl,
-  })
+  } as any)
 
-  const result = await oracle.extendTtl({ oracleTtl, ttl: ttl ?? DEFAULT_TTL })
+  const result = await oracle.extendTtl({
+    oracleTtl,
+    ttl: ttl ?? DEFAULT_TTL,
+  } as any)
 
   return {
     txHash: result.hash,

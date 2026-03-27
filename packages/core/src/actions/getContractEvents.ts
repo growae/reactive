@@ -24,7 +24,7 @@ export async function getContractEvents(
 ): Promise<GetContractEventsReturnType> {
   const { address, aci, fromHeight, toHeight, networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
 
   const txs = (await node.getTransactionInfoByHash)
     ? await fetchContractEventsFromNode(node, address, fromHeight, toHeight)
@@ -35,7 +35,7 @@ export async function getContractEvents(
     const contractInstance = await Contract.initialize({
       onNode: node,
       aci,
-      address,
+      address: address as `ct_${string}`,
     })
 
     return txs.map((event) => {

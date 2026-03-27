@@ -30,16 +30,16 @@ export async function simulateContract(
     networkId,
   } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
 
   const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
-    ...(connection ? { onAccount: connection.account } : {}),
+    ...(connection ? { onAccount: connection.accounts[0] as `ak_${string}` } : {}),
     aci,
-    address,
-  })
+    address: address as `ct_${string}`,
+  } as any)
 
   const result = await contractInstance.$call(method, args, {
     callStatic: true,
@@ -48,7 +48,7 @@ export async function simulateContract(
     gasPrice:
       txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
-  })
+  } as any)
 
   return {
     decodedResult: result.decodedResult,

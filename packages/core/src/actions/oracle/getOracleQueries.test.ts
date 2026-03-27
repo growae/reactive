@@ -32,9 +32,9 @@ describe('getOracleQueries', () => {
 
     expect(mockNode.getOracleQueriesByPubkey).toHaveBeenCalledWith('ok_oracle1')
     expect(result).toHaveLength(1)
-    expect(result[0].id).toBe('oq_1')
-    expect(result[0].senderId).toBe('ak_sender')
-    expect(result[0].fee).toBe('200')
+    expect(result[0]!.id).toBe('oq_1')
+    expect(result[0]!.senderId).toBe('ak_sender')
+    expect(result[0]!.fee).toBe('200')
   })
 
   it('should return empty array when no queries', async () => {

@@ -3,10 +3,10 @@ export function hashFn(queryKey: readonly unknown[]): string {
     if (isPlainObject(value))
       return Object.keys(value)
         .sort()
-        .reduce((result, key) => {
-          result[key] = value[key]
+        .reduce((result: Record<string, unknown>, key) => {
+          result[key] = (value as Record<string, unknown>)[key]
           return result
-        }, {} as any)
+        }, {})
     if (typeof value === 'bigint') return value.toString()
     return value
   })

@@ -81,11 +81,11 @@ export function createStorage<
   }
 }
 
-export const noopStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {},
-} satisfies BaseStorage
+export const noopStorage: BaseStorage = {
+  getItem: (_key: string) => null,
+  setItem: (_key: string, _value: string) => {},
+  removeItem: (_key: string) => {},
+}
 
 export function getDefaultStorage() {
   const storage = (() => {

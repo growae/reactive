@@ -23,12 +23,12 @@ export async function getNameEntry(
 ): Promise<GetNameEntryReturnType> {
   const { name, networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
   const entry = await node.getNameEntryByName(name)
 
   return {
     id: entry.id,
-    owner: entry.owner,
+    owner: entry.owner ?? '',
     ttl: entry.ttl,
     pointers: entry.pointers.map((p: any) => ({
       key: p.key,

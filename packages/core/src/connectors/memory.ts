@@ -25,7 +25,7 @@ export function memory(parameters: MemoryParameters) {
     type: memory.type,
 
     async setup() {
-      account = new MemoryAccount(parameters.secretKey)
+      account = new MemoryAccount(parameters.secretKey as `sk_${string}`)
     },
 
     async connect({ networkId } = {}) {
@@ -71,7 +71,7 @@ export function memory(parameters: MemoryParameters) {
 
     async signTransaction({ tx }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return account.signTransaction(tx)
+      return account.signTransaction(tx as `tx_${string}`)
     },
 
     async signMessage({ message }) {

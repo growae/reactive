@@ -48,10 +48,10 @@ describe('getOracleQueries', () => {
       oracleId: 'ok_test',
     })
     expect(result).toHaveLength(1)
-    expect(result[0].id).toBe('oq_1')
-    expect(result[0].senderId).toBe('ak_sender')
-    expect(result[0].fee).toBe('100')
-    expect(result[0].responseTtl).toEqual({ type: 'delta', value: 10 })
+    expect(result[0]!.id).toBe('oq_1')
+    expect(result[0]!.senderId).toBe('ak_sender')
+    expect(result[0]!.fee).toBe('100')
+    expect(result[0]!.responseTtl).toEqual({ type: 'delta', value: 10 })
   })
 
   it('should pass filter options to node', async () => {

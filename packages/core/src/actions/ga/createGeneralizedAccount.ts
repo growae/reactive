@@ -1,13 +1,13 @@
-import { DEFAULT_TTL } from '../../constants.js'
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
 
 export type CreateGeneralizedAccountParameters = {
   authFnName: string
-  args: any[]
+  args: unknown[]
   sourceCode?: string
   bytecode?: string
-  aci?: any
+  aci?: unknown
+  onCompiler?: unknown
   /** Transaction TTL in blocks relative to current height. Defaults to 300. */
   ttl?: number
   networkId?: string
@@ -38,11 +38,17 @@ export async function createGeneralizedAccount(
   config: Config,
   parameters: CreateGeneralizedAccountParameters,
 ): Promise<CreateGeneralizedAccountReturnType> {
-  const { authFnName, args, sourceCode, bytecode, aci, ttl, networkId } =
-    parameters
+  const {
+    authFnName,
+    args,
+    sourceCode,
+    bytecode,
+    aci,
+    onCompiler,
+    networkId,
+  } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new CreateGANoAccountError()
   }
@@ -51,16 +57,21 @@ export async function createGeneralizedAccount(
     throw new CreateGANoCodeError()
   }
 
+  const node = config.getNodeClient({ networkId })
+
   const sdk = await import('@aeternity/aepp-sdk')
-  const result = await sdk.createGeneralizedAccount(authFnName, args, {
-    onNode: node,
-    onAccount: connection.account,
-    onCompiler: config.getCompiler(),
-    ...(sourceCode ? { sourceCode } : {}),
-    ...(bytecode ? { bytecode } : {}),
-    ...(aci ? { aci } : {}),
-    ttl: ttl ?? DEFAULT_TTL,
-  })
+  const result = await sdk.createGeneralizedAccount(
+    authFnName,
+    args as any[],
+    {
+      onNode: node,
+      onAccount: connection.accounts[0] as `ak_${string}`,
+      onCompiler: onCompiler as import('@aeternity/aepp-sdk').CompilerBase,
+      ...(sourceCode ? { sourceCode } : {}),
+      ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),
+      ...(aci ? { aci } : {}),
+    } as any,
+  )
 
   return {
     owner: result.owner,

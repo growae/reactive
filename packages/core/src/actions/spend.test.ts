@@ -9,7 +9,7 @@ const { mockNode } = vi.hoisted(() => ({
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => mockNode),
-  TxBuilder: { buildTx: vi.fn().mockReturnValue('tx_encoded_spend') },
+  buildTx: vi.fn().mockReturnValue('tx_encoded_spend'),
   Tag: { SpendTx: 12 },
 }))
 
@@ -103,8 +103,8 @@ describe('spend', () => {
       options: { nonce: 42 },
     })
 
-    const { TxBuilder } = await import('@aeternity/aepp-sdk')
-    expect(TxBuilder.buildTx).toHaveBeenCalledWith(
+    const { buildTx } = await import('@aeternity/aepp-sdk')
+    expect(buildTx).toHaveBeenCalledWith(
       expect.objectContaining({ nonce: 42 }),
     )
   })
@@ -124,8 +124,8 @@ describe('spend', () => {
       amount: 100n,
     })
 
-    const { TxBuilder } = await import('@aeternity/aepp-sdk')
-    expect(TxBuilder.buildTx).toHaveBeenCalledWith(
+    const { buildTx } = await import('@aeternity/aepp-sdk')
+    expect(buildTx).toHaveBeenCalledWith(
       expect.objectContaining({ nonce: 11 }),
     )
   })

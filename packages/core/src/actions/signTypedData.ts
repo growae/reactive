@@ -28,7 +28,7 @@ export async function signTypedData(
   const connector = connection.connector
   const { hashTypedData } = await import('@aeternity/aepp-sdk')
 
-  const hash = hashTypedData(data, aci, domain)
+  const hash = hashTypedData(data as `cb_${string}`, aci, domain)
   const hashHex = Buffer.from(hash).toString('hex')
 
   if (!connector.signMessage) {

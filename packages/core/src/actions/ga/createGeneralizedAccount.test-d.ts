@@ -1,5 +1,4 @@
 import { expectTypeOf, test } from 'vitest'
-import type { Config } from '../../createConfig.js'
 import {
   type CreateGeneralizedAccountParameters,
   type CreateGeneralizedAccountReturnType,
@@ -38,6 +37,6 @@ test('CreateGeneralizedAccountParameters has authFnName', () => {
 test('CreateGeneralizedAccountParameters has args', () => {
   expectTypeOf<CreateGeneralizedAccountParameters>().toHaveProperty('args')
   expectTypeOf<CreateGeneralizedAccountParameters['args']>().toEqualTypeOf<
-    any[]
+    unknown[]
   >()
 })

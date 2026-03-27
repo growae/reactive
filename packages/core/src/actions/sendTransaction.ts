@@ -4,6 +4,8 @@ import type { BaseErrorType, ErrorType } from '../errors/base.js'
 export type SendTransactionParameters = {
   tx: string
   networkId?: string | undefined
+  connector?: import('../createConfig.js').Connector | undefined
+  waitMined?: boolean | undefined
   options?: {
     verify?: boolean | undefined
     waitMined?: boolean | undefined

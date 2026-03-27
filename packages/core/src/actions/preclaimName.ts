@@ -26,18 +26,18 @@ export async function preclaimName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { genSalt, commitmentHash, TxBuilder, Tag } = await import(
+  const { genSalt, commitmentHash, buildTx, Tag } = await import(
     '@aeternity/aepp-sdk'
   )
 
   const salt = genSalt()
-  const commitmentId = commitmentHash(name, salt)
+  const commitmentId = commitmentHash(name as `${string}.chain`, salt)
 
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)
-  const tx = TxBuilder.buildTx({
+  const tx = buildTx({
     tag: Tag.NamePreclaimTx,
     accountId: senderId,
     commitmentId,

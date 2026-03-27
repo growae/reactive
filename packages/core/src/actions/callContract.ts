@@ -49,8 +49,8 @@ export async function callContract(
     networkId,
   } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection && !txOptions.callStatic) {
     throw new CallContractNoAccountError()
   }
@@ -58,10 +58,10 @@ export async function callContract(
   const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
-    ...(connection ? { onAccount: connection.account } : {}),
+    ...(connection ? { onAccount: connection.accounts[0] as `ak_${string}` } : {}),
     aci,
-    address,
-  })
+    address: address as `ct_${string}`,
+  } as any)
 
   const callResult = await contractInstance.$call(method, args, {
     callStatic: txOptions.callStatic ?? false,
@@ -71,7 +71,7 @@ export async function callContract(
       txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
     ttl: txOptions.ttl ?? DEFAULT_TTL,
-  })
+  } as any)
 
   return {
     decodedResult: callResult.decodedResult,
