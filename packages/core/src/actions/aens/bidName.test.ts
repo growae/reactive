@@ -1,0 +1,28 @@
+import { describe, it, expect, vi } from 'vitest'
+import { bidName, BidNameNoAccountError } from './bidName.js'
+
+describe('bidName', () => {
+  it('should be a function', () => {
+    expect(typeof bidName).toBe('function')
+  })
+
+  it('should throw BidNameNoAccountError without connected account', async () => {
+    const mockConfig = {
+      state: { current: null },
+      getNode: vi.fn().mockReturnValue({}),
+    }
+    await expect(
+      bidName(mockConfig as any, { name: 'test.chain', nameFee: '100' }),
+    ).rejects.toThrow(BidNameNoAccountError)
+  })
+
+  it('should have correct error name', () => {
+    const error = new BidNameNoAccountError()
+    expect(error.name).toBe('BidNameNoAccountError')
+  })
+
+  it('should have correct error message', () => {
+    const error = new BidNameNoAccountError()
+    expect(error.message).toContain('without a connected account')
+  })
+})
