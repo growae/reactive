@@ -19,3 +19,5 @@ export function useCloseChannel(
       closeChannel(config(), variables),
   }))
 }
+
+export type UseCloseChannelReturnType = ReturnType<typeof useCloseChannel>

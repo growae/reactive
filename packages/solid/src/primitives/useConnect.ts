@@ -33,3 +33,5 @@ export function useConnect(
 
   return mutation
 }
+
+export type UseConnectReturnType = ReturnType<typeof useConnect>

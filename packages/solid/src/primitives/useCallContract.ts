@@ -20,3 +20,5 @@ export function useCallContract(
       callContract(config(), variables),
   }))
 }
+
+export type UseCallContractReturnType = ReturnType<typeof useCallContract>

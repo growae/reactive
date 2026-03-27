@@ -20,3 +20,5 @@ export function useSwitchNetwork(
       switchNetwork(config(), variables),
   }))
 }
+
+export type UseSwitchNetworkReturnType = ReturnType<typeof useSwitchNetwork>

@@ -16,6 +16,8 @@ export function useSpend(
   const config = useConfig(parameters)
   return createMutation(() => ({
     mutationKey: ['spend'],
-    mutationFn: (variables: SpendParameters) => spend(config(), variables),
+    mutationFn: (variables: SpendParameters) =>       spend(config(), variables),
   }))
 }
+
+export type UseSpendReturnType = ReturnType<typeof useSpend>

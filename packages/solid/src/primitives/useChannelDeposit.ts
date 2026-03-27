@@ -19,3 +19,5 @@ export function useChannelDeposit(
       channelDeposit(config(), variables),
   }))
 }
+
+export type UseChannelDepositReturnType = ReturnType<typeof useChannelDeposit>

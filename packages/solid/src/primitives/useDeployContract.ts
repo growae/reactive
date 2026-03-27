@@ -20,3 +20,5 @@ export function useDeployContract(
       deployContract(config(), variables),
   }))
 }
+
+export type UseDeployContractReturnType = ReturnType<typeof useDeployContract>

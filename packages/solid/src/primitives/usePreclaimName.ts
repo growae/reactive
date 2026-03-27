@@ -19,3 +19,5 @@ export function usePreclaimName(
       preclaimName(config(), variables),
   }))
 }
+
+export type UsePreclaimNameReturnType = ReturnType<typeof usePreclaimName>

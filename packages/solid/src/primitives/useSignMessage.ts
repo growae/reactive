@@ -20,3 +20,5 @@ export function useSignMessage(
       signMessage(config(), variables),
   }))
 }
+
+export type UseSignMessageReturnType = ReturnType<typeof useSignMessage>

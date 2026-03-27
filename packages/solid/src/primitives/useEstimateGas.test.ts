@@ -1,0 +1,12 @@
+import { describe, it, expect } from 'vitest'
+import { useEstimateGas } from './useEstimateGas.js'
+
+describe('useEstimateGas', () => {
+  it('should be a function', () => {
+    expect(typeof useEstimateGas).toBe('function')
+  })
+
+  it('should be exported', () => {
+    expect(useEstimateGas).toBeDefined()
+  })
+})

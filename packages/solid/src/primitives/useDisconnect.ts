@@ -20,3 +20,5 @@ export function useDisconnect(
       disconnect(config(), variables),
   }))
 }
+
+export type UseDisconnectReturnType = ReturnType<typeof useDisconnect>

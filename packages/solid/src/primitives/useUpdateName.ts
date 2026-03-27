@@ -19,3 +19,5 @@ export function useUpdateName(
       updateName(config(), variables),
   }))
 }
+
+export type UseUpdateNameReturnType = ReturnType<typeof useUpdateName>

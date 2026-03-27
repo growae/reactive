@@ -19,3 +19,5 @@ export function useClaimName(
       claimName(config(), variables),
   }))
 }
+
+export type UseClaimNameReturnType = ReturnType<typeof useClaimName>

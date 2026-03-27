@@ -20,3 +20,5 @@ export function useReconnect(
       reconnect(config(), variables),
   }))
 }
+
+export type UseReconnectReturnType = ReturnType<typeof useReconnect>

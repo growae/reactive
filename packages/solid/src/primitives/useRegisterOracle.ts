@@ -19,3 +19,5 @@ export function useRegisterOracle(
       registerOracle(config(), variables),
   }))
 }
+
+export type UseRegisterOracleReturnType = ReturnType<typeof useRegisterOracle>

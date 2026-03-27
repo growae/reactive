@@ -20,3 +20,5 @@ export function usePayForTransaction(
       payForTransaction(config(), variables),
   }))
 }
+
+export type UsePayForTransactionReturnType = ReturnType<typeof usePayForTransaction>

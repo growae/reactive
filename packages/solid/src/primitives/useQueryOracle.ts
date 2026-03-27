@@ -19,3 +19,5 @@ export function useQueryOracle(
       queryOracle(config(), variables),
   }))
 }
+
+export type UseQueryOracleReturnType = ReturnType<typeof useQueryOracle>

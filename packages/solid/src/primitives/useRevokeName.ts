@@ -19,3 +19,5 @@ export function useRevokeName(
       revokeName(config(), variables),
   }))
 }
+
+export type UseRevokeNameReturnType = ReturnType<typeof useRevokeName>

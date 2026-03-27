@@ -20,3 +20,5 @@ export function useSignTransaction(
       signTransaction(config(), variables),
   }))
 }
+
+export type UseSignTransactionReturnType = ReturnType<typeof useSignTransaction>

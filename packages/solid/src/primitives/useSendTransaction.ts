@@ -20,3 +20,5 @@ export function useSendTransaction(
       sendTransaction(config(), variables),
   }))
 }
+
+export type UseSendTransactionReturnType = ReturnType<typeof useSendTransaction>

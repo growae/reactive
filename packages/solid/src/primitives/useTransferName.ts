@@ -19,3 +19,5 @@ export function useTransferName(
       transferName(config(), variables),
   }))
 }
+
+export type UseTransferNameReturnType = ReturnType<typeof useTransferName>

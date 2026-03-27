@@ -19,3 +19,5 @@ export function useRespondToQuery(
       respondToQuery(config(), variables),
   }))
 }
+
+export type UseRespondToQueryReturnType = ReturnType<typeof useRespondToQuery>

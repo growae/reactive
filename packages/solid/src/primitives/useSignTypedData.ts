@@ -20,3 +20,5 @@ export function useSignTypedData(
       signTypedData(config(), variables),
   }))
 }
+
+export type UseSignTypedDataReturnType = ReturnType<typeof useSignTypedData>
