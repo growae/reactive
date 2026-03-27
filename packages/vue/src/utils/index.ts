@@ -1,7 +1,4 @@
-// Re-export core query utilities
-export { hashFn } from '@reactive/core/query'
-
-// Re-export Vue query wrappers
+export { deepUnref } from './cloneDeep.js'
 export {
   useQuery,
   useMutation,
@@ -9,4 +6,4 @@ export {
   type UseQueryReturnType,
   type UseMutationParameters,
   type UseMutationReturnType,
-} from '../utils/query.js'
+} from './query.js'
