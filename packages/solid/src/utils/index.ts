@@ -1,7 +1,3 @@
-// Re-export core query utilities
-export { hashFn } from '@reactive/core/query'
-
-// Re-export Solid query wrappers
 export {
   useQuery,
   useMutation,
@@ -9,4 +5,4 @@ export {
   type SolidMutationParameters,
   type UseQueryReturnType,
   type UseMutationReturnType,
-} from '../utils/query.js'
+} from './query.js'

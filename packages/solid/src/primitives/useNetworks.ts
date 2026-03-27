@@ -1,0 +1,18 @@
+import {
+  type GetNetworksReturnType,
+  getNetworks,
+} from '@reactive/core'
+import { createMemo } from 'solid-js'
+import type { Accessor } from 'solid-js'
+import { useConfig } from './useConfig.js'
+
+export type UseNetworksParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+
+export type UseNetworksReturnType = Accessor<GetNetworksReturnType>
+
+export function useNetworks(
+  parameters: UseNetworksParameters = () => ({}),
+): UseNetworksReturnType {
+  const config = useConfig(parameters)
+  return createMemo(() => getNetworks(config()))
+}

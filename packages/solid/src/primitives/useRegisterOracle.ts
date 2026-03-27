@@ -1,0 +1,21 @@
+import { createMutation } from '@tanstack/solid-query'
+import {
+  type RegisterOracleParameters,
+  type RegisterOracleReturnType,
+  registerOracle,
+} from '@reactive/core'
+import type { Accessor } from 'solid-js'
+import { useConfig } from './useConfig.js'
+
+export type UseRegisterOracleParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+
+export function useRegisterOracle(
+  parameters: UseRegisterOracleParameters = () => ({}),
+) {
+  const config = useConfig(parameters)
+  return createMutation(() => ({
+    mutationKey: ['registerOracle'],
+    mutationFn: (variables: RegisterOracleParameters) =>
+      registerOracle(config(), variables),
+  }))
+}

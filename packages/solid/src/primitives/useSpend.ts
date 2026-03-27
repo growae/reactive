@@ -1,0 +1,21 @@
+import { createMutation } from '@tanstack/solid-query'
+import {
+  type SpendParameters,
+  type SpendReturnType,
+  type SpendErrorType,
+  spend,
+} from '@reactive/core'
+import type { Accessor } from 'solid-js'
+import { useConfig } from './useConfig.js'
+
+export type UseSpendParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+
+export function useSpend(
+  parameters: UseSpendParameters = () => ({}),
+) {
+  const config = useConfig(parameters)
+  return createMutation(() => ({
+    mutationKey: ['spend'],
+    mutationFn: (variables: SpendParameters) => spend(config(), variables),
+  }))
+}

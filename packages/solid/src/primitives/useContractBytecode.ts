@@ -1,0 +1,44 @@
+import {
+  type GetContractBytecodeParameters,
+  type GetContractBytecodeReturnType,
+  type GetContractBytecodeErrorType,
+  getContractBytecode,
+} from '@reactive/core'
+import type { Accessor } from 'solid-js'
+import { createMemo } from 'solid-js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
+import { useConfig } from './useConfig.js'
+import { useNetworkId } from './useNetworkId.js'
+
+export type UseContractBytecodeParameters = Accessor<
+  GetContractBytecodeParameters & {
+    config?: import('@reactive/core').Config | undefined
+    enabled?: boolean
+  }
+>
+
+export type UseContractBytecodeReturnType = UseQueryReturnType<
+  GetContractBytecodeReturnType,
+  GetContractBytecodeErrorType
+>
+
+export function useContractBytecode(
+  parameters: UseContractBytecodeParameters = () => ({} as GetContractBytecodeParameters),
+): UseContractBytecodeReturnType {
+  const config = useConfig(parameters)
+  const networkId = useNetworkId(() => ({ config: config() }))
+
+  const options = createMemo(() => ({
+    queryKey: ['contractBytecode', {
+      contractId: parameters().contractId,
+      networkId: parameters().networkId ?? networkId(),
+    }] as const,
+    queryFn: () => getContractBytecode(config(), {
+      ...parameters(),
+      networkId: parameters().networkId ?? networkId(),
+    }),
+    enabled: Boolean(parameters().contractId) && (parameters().enabled ?? true),
+  }))
+
+  return useQuery(options) as UseContractBytecodeReturnType
+}
