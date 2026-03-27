@@ -4,11 +4,11 @@ import {
   type ReconnectReturnType,
   type ReconnectErrorType,
   reconnect,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseReconnectParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseReconnectParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useReconnect(
   parameters: UseReconnectParameters = () => ({}),

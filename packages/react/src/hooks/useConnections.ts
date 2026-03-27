@@ -4,7 +4,7 @@ import {
   type GetConnectionsReturnType,
   getConnections,
   watchConnections,
-} from '@reactive/core'
+} from '@growae/reactive'
 import { useSyncExternalStore } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'

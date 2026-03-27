@@ -4,11 +4,11 @@ import {
   type DisconnectReturnType,
   type DisconnectErrorType,
   disconnect,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseDisconnectParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseDisconnectParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useDisconnect(
   parameters: UseDisconnectParameters = () => ({}),

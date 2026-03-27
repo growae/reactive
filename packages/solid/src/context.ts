@@ -1,4 +1,4 @@
-import type { Config, State } from '@reactive/core'
+import type { Config, State } from '@growae/reactive'
 import {
   createComponent,
   createContext,

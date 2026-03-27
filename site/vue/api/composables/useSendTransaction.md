@@ -5,14 +5,14 @@ Composable for sending a signed transaction to the network.
 ## Import
 
 ```typescript
-import { useSendTransaction } from '@reactive/vue'
+import { useSendTransaction } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useSendTransaction } from '@reactive/vue'
+import { useSendTransaction } from '@growae/reactive-vue'
 
 const { mutate: send, isPending } = useSendTransaction()
 </script>

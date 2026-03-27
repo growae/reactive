@@ -4,11 +4,11 @@ import {
   type SwitchNetworkReturnType,
   type SwitchNetworkErrorType,
   switchNetwork,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseSwitchNetworkParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseSwitchNetworkParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useSwitchNetwork(
   parameters: UseSwitchNetworkParameters = () => ({}),

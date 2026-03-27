@@ -5,13 +5,13 @@ Hook for calling a Sophia contract function as an on-chain transaction.
 ## Import
 
 ```typescript
-import { useCallContract } from '@reactive/react'
+import { useCallContract } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useCallContract } from '@reactive/react'
+import { useCallContract } from '@growae/reactive-react'
 
 function TransferTokens() {
   const { mutate: call, isPending, isSuccess } = useCallContract()

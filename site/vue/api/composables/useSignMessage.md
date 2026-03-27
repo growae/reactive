@@ -5,14 +5,14 @@ Composable for signing an arbitrary message with the connected account.
 ## Import
 
 ```typescript
-import { useSignMessage } from '@reactive/vue'
+import { useSignMessage } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useSignMessage } from '@reactive/vue'
+import { useSignMessage } from '@growae/reactive-vue'
 
 const { mutate: sign, data } = useSignMessage()
 </script>

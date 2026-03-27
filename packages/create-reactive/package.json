@@ -1,5 +1,5 @@
 {
-  "name": "create-reactive",
+  "name": "@growae/create-reactive",
   "version": "0.0.1",
   "type": "module",
   "bin": {

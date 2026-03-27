@@ -4,8 +4,8 @@ import {
   type GetConnectorClientParameters,
   type GetConnectorClientReturnType,
   getConnectorClient,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
 import { useQuery } from '../utils/query.js'
 import type { UseQueryReturnType } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'

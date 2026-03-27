@@ -5,14 +5,14 @@ Composable for sending AE tokens to a recipient.
 ## Import
 
 ```typescript
-import { useSpend } from '@reactive/vue'
+import { useSpend } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useSpend } from '@reactive/vue'
+import { useSpend } from '@growae/reactive-vue'
 
 const { mutate: spend, isPending, isSuccess, data } = useSpend()
 </script>

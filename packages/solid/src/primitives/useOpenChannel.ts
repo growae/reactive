@@ -3,11 +3,11 @@ import {
   type OpenChannelParameters,
   type OpenChannelReturnType,
   openChannel,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseOpenChannelParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseOpenChannelParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useOpenChannel(
   parameters: UseOpenChannelParameters = () => ({}),

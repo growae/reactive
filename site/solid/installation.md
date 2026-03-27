@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [pnpm]
-pnpm add @reactive/solid @tanstack/solid-query
+pnpm add @growae/reactive-solid @tanstack/solid-query
 ```
 
 ```bash [npm]
-npm install @reactive/solid @tanstack/solid-query
+npm install @growae/reactive-solid @tanstack/solid-query
 ```
 
 ```bash [yarn]
-yarn add @reactive/solid @tanstack/solid-query
+yarn add @growae/reactive-solid @tanstack/solid-query
 ```
 
 :::
@@ -37,10 +37,10 @@ For SolidStart with SSR:
 
 ```tsx
 // src/root.tsx
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
-import { ReactiveProvider } from '@reactive/solid'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
+import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 
 const config = createConfig({

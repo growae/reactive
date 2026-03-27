@@ -27,7 +27,7 @@ export async function init(options: InitOptions = {}): Promise<string> {
     return outPath
   }
 
-  const content = `import { defineConfig } from '@reactive/cli'
+  const content = `import { defineConfig } from '@growae/reactive-cli'
 
 export default defineConfig({
   out: 'src/generated.ts',

@@ -1,5 +1,5 @@
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
 
 const config = createConfig({
   networks: [testnet],

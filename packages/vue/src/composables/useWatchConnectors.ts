@@ -1,5 +1,5 @@
-import { watchConnectors } from '@reactive/core'
-import type { Connector, Compute } from '@reactive/core'
+import { watchConnectors } from '@growae/reactive'
+import type { Connector, Compute } from '@growae/reactive'
 import { onScopeDispose, watch, ref, toValue, type MaybeRef } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'

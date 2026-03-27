@@ -4,8 +4,8 @@ import type {
   SpendReturnType,
   SpendErrorType,
   Compute,
-} from '@reactive/core'
-import { spend } from '@reactive/core'
+} from '@growae/reactive'
+import { spend } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

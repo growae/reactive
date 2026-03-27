@@ -7,23 +7,23 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   resolve: {
     alias: {
-      '@reactive/core/query': resolve(
+      '@growae/reactive/query': resolve(
         __dirname,
         'packages/core/src/exports/query.ts',
       ),
-      '@reactive/core/actions': resolve(
+      '@growae/reactive/actions': resolve(
         __dirname,
         'packages/core/src/exports/actions.ts',
       ),
-      '@reactive/core/networks': resolve(
+      '@growae/reactive/networks': resolve(
         __dirname,
         'packages/core/src/exports/networks.ts',
       ),
-      '@reactive/core/internal': resolve(
+      '@growae/reactive/internal': resolve(
         __dirname,
         'packages/core/src/exports/internal.ts',
       ),
-      '@reactive/core': resolve(
+      '@growae/reactive': resolve(
         __dirname,
         'packages/core/src/exports/index.ts',
       ),

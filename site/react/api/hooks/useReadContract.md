@@ -5,13 +5,13 @@ Hook for reading Sophia contract state via dry-run (no transaction, no fees).
 ## Import
 
 ```typescript
-import { useReadContract } from '@reactive/react'
+import { useReadContract } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useReadContract } from '@reactive/react'
+import { useReadContract } from '@growae/reactive-react'
 
 function TokenBalance() {
   const { data: balance } = useReadContract({

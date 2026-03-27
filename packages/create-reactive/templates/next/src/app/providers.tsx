@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode, useState } from 'react'
-import { ReactiveProvider } from '@reactive/react'
+import { ReactiveProvider } from '@growae/reactive-react'
 
 import { config } from '../reactive'
 

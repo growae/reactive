@@ -8,7 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@reactive/react": "latest",
+    "@growae/reactive-react": "latest",
     "@tanstack/react-query": "latest",
     "next": "latest",
     "react": "latest",

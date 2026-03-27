@@ -1,4 +1,4 @@
-import { useNetworkId, useHeight, useBalance, useConnect, useDisconnect } from '@reactive/react'
+import { useNetworkId, useHeight, useBalance, useConnect, useDisconnect } from '@growae/reactive-react'
 
 export function App() {
   const networkId = useNetworkId()

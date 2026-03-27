@@ -5,13 +5,13 @@ Primitive for sending a signed transaction to the network.
 ## Import
 
 ```typescript
-import { useSendTransaction } from '@reactive/solid'
+import { useSendTransaction } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useSendTransaction } from '@reactive/solid'
+import { useSendTransaction } from '@growae/reactive-solid'
 
 function SendTx() {
   const sendTx = useSendTransaction()

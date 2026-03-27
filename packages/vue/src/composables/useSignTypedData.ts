@@ -4,8 +4,8 @@ import type {
   SignTypedDataReturnType,
   SignTypedDataErrorType,
   Compute,
-} from '@reactive/core'
-import { signTypedData } from '@reactive/core'
+} from '@growae/reactive'
+import { signTypedData } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

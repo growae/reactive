@@ -1,6 +1,6 @@
 'use client'
 
-import { useConnect, useDisconnect, useBalance } from '@reactive/react'
+import { useConnect, useDisconnect, useBalance } from '@growae/reactive-react'
 
 export default function Home() {
   const { connect, connectors, status, error } = useConnect()

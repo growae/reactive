@@ -5,13 +5,13 @@ Hook for fetching the AE balance of an address.
 ## Import
 
 ```typescript
-import { useBalance } from '@reactive/react'
+import { useBalance } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useBalance } from '@reactive/react'
+import { useBalance } from '@growae/reactive-react'
 
 function Balance() {
   const { data, isLoading, error } = useBalance({

@@ -25,5 +25,5 @@ features:
     details: Built for AENS, Oracles, State Channels, and Sophia contracts. Not an EVM adapter — purpose-built for the Aeternity protocol.
   - icon: 📦
     title: Modular Architecture
-    details: Use only what you need. @reactive/core works standalone, or pair it with @reactive/react, @reactive/vue, or @reactive/solid.
+    details: Use only what you need. @growae/reactive works standalone, or pair it with @growae/reactive-react, @growae/reactive-vue, or @growae/reactive-solid.
 ---

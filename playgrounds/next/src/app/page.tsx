@@ -1,6 +1,6 @@
 'use client'
 
-import { useNetworkId, useHeight } from '@reactive/react'
+import { useNetworkId, useHeight } from '@growae/reactive-react'
 
 export default function Home() {
   const networkId = useNetworkId()

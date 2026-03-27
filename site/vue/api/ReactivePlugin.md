@@ -5,7 +5,7 @@ Vue plugin that provides the Reactive `Config` to all composables via `provide`/
 ## Import
 
 ```typescript
-import { ReactivePlugin } from '@reactive/vue'
+import { ReactivePlugin } from '@growae/reactive-vue'
 ```
 
 ## Usage
@@ -13,10 +13,10 @@ import { ReactivePlugin } from '@reactive/vue'
 ```typescript
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import { ReactivePlugin } from '@reactive/vue'
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
+import { ReactivePlugin } from '@growae/reactive-vue'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
 import App from './App.vue'
 
 const config = createConfig({
@@ -51,7 +51,7 @@ Automatically reconnect to previously connected wallets on mount.
 Access the config from any component:
 
 ```typescript
-import { useConfig } from '@reactive/vue'
+import { useConfig } from '@growae/reactive-vue'
 
 const config = useConfig()
 ```

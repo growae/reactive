@@ -42,7 +42,7 @@ describe('template copying', () => {
       readFileSync(join(tempDir, 'package.json'), 'utf-8'),
     ) as Record<string, unknown>
     const deps = pkg['dependencies'] as Record<string, string>
-    expect(deps['@reactive/react']).toBeDefined()
+    expect(deps['@growae/reactive-react']).toBeDefined()
     expect(deps['react']).toBeDefined()
   })
 

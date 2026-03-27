@@ -5,13 +5,13 @@ Hook for sending AE tokens to a recipient.
 ## Import
 
 ```typescript
-import { useSpend } from '@reactive/react'
+import { useSpend } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useSpend } from '@reactive/react'
+import { useSpend } from '@growae/reactive-react'
 
 function SendAE() {
   const { mutate: spend, isPending, isSuccess, data } = useSpend()

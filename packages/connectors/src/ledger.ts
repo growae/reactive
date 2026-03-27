@@ -3,7 +3,7 @@ import {
   ConnectorNotConnectedError,
   ProviderNotFoundError,
   NetworkNotConfiguredError,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { AccountLedgerFactory } from '@aeternity/aepp-sdk'
 
 export type LedgerParameters = {

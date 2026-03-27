@@ -3,8 +3,8 @@ import type {
   CloseChannelParameters,
   CloseChannelReturnType,
   Compute,
-} from '@reactive/core'
-import { closeChannel } from '@reactive/core'
+} from '@growae/reactive'
+import { closeChannel } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

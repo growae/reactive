@@ -70,8 +70,8 @@ export const tokenActions = {
 ## Example Config
 
 ```typescript
-import { defineConfig } from '@reactive/cli'
-import { react } from '@reactive/cli/plugins'
+import { defineConfig } from '@growae/reactive-cli'
+import { react } from '@growae/reactive-cli/plugins'
 
 export default defineConfig({
   out: 'src/generated.ts',

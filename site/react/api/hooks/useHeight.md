@@ -5,13 +5,13 @@ Hook for fetching the current block height of the Aeternity network.
 ## Import
 
 ```typescript
-import { useHeight } from '@reactive/react'
+import { useHeight } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useHeight } from '@reactive/react'
+import { useHeight } from '@growae/reactive-react'
 
 function BlockHeight() {
   const { data: height, isLoading } = useHeight()

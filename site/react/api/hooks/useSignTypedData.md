@@ -5,13 +5,13 @@ Hook for signing typed/structured data with the connected account.
 ## Import
 
 ```typescript
-import { useSignTypedData } from '@reactive/react'
+import { useSignTypedData } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useSignTypedData } from '@reactive/react'
+import { useSignTypedData } from '@growae/reactive-react'
 
 function SignTyped() {
   const { mutate: sign, data } = useSignTypedData()

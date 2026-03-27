@@ -5,13 +5,13 @@ Hook for resolving an AENS name to an address.
 ## Import
 
 ```typescript
-import { useResolveName } from '@reactive/react'
+import { useResolveName } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useResolveName } from '@reactive/react'
+import { useResolveName } from '@growae/reactive-react'
 
 function ResolveName() {
   const { data: address, isLoading } = useResolveName({

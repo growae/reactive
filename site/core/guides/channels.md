@@ -14,7 +14,7 @@ State channels work by:
 ## Opening a Channel
 
 ```typescript
-import { openChannel } from '@reactive/core/actions'
+import { openChannel } from '@growae/reactive/actions'
 
 const channel = await openChannel(config, {
   initiatorId: 'ak_initiator...',

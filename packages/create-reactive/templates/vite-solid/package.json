@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reactive/solid": "latest",
+    "@growae/reactive-solid": "latest",
     "@tanstack/solid-query": "latest",
     "solid-js": "latest"
   },

@@ -1,8 +1,8 @@
 import { render } from 'solid-js/web'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
-import { ReactiveProvider } from '@reactive/solid'
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
+import { ReactiveProvider } from '@growae/reactive-solid'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
 
 import App from './App.tsx'
 

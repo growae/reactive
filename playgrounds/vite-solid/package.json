@@ -8,9 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reactive/solid": "workspace:*",
-    "@reactive/core": "workspace:*",
-    "@reactive/connectors": "workspace:*",
+    "@growae/reactive-solid": "workspace:*",
+    "@growae/reactive": "workspace:*",
+    "@growae/reactive-connectors": "workspace:*",
     "@tanstack/solid-query": "^5.50.0",
     "solid-js": "^1.9.0"
   },

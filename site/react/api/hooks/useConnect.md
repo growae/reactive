@@ -5,13 +5,13 @@ Hook for connecting to a wallet.
 ## Import
 
 ```typescript
-import { useConnect } from '@reactive/react'
+import { useConnect } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useConnect } from '@reactive/react'
+import { useConnect } from '@growae/reactive-react'
 
 function ConnectButton() {
   const { connect, connectors, isPending } = useConnect()

@@ -4,8 +4,8 @@ import type {
   DisconnectReturnType,
   DisconnectErrorType,
   Compute,
-} from '@reactive/core'
-import { disconnect } from '@reactive/core'
+} from '@growae/reactive'
+import { disconnect } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

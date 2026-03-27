@@ -5,13 +5,13 @@ Creates a custom wallet connector for Reactive. Connectors handle the communicat
 ## Import
 
 ```typescript
-import { createConnector } from '@reactive/core'
+import { createConnector } from '@growae/reactive'
 ```
 
 ## Usage
 
 ```typescript
-import { createConnector } from '@reactive/core'
+import { createConnector } from '@growae/reactive'
 
 const myWallet = createConnector((config) => ({
   id: 'myWallet',

@@ -1,12 +1,12 @@
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
 
 export const config = createConfig({
   networks: [testnet],
   connectors: [],
 })
 
-declare module '@reactive/core' {
+declare module '@growae/reactive' {
   interface Register {
     config: typeof config
   }

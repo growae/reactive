@@ -3,11 +3,11 @@ import {
   type RevokeNameParameters,
   type RevokeNameReturnType,
   revokeName,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseRevokeNameParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseRevokeNameParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useRevokeName(
   parameters: UseRevokeNameParameters = () => ({}),

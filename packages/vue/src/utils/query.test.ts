@@ -21,7 +21,7 @@ vi.mock('@tanstack/vue-query', () => ({
   })),
 }))
 
-vi.mock('@reactive/core/query', () => ({
+vi.mock('@growae/reactive/query', () => ({
   hashFn: (queryKey: readonly unknown[]) => JSON.stringify(queryKey, (_, v) => typeof v === 'bigint' ? v.toString() : v),
 }))
 

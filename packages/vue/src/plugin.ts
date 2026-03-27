@@ -1,5 +1,5 @@
-import type { Config, State } from '@reactive/core'
-import { hydrate } from '@reactive/core'
+import type { Config, State } from '@growae/reactive'
+import { hydrate } from '@growae/reactive'
 import type { InjectionKey, Plugin } from 'vue'
 
 export const configKey = Symbol('reactive-config') as InjectionKey<Config>

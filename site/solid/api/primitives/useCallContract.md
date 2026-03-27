@@ -5,13 +5,13 @@ Primitive for calling a Sophia contract function as an on-chain transaction.
 ## Import
 
 ```typescript
-import { useCallContract } from '@reactive/solid'
+import { useCallContract } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useCallContract } from '@reactive/solid'
+import { useCallContract } from '@growae/reactive-solid'
 
 function TransferTokens() {
   const callContract = useCallContract()

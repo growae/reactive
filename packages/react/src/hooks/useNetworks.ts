@@ -3,7 +3,7 @@
 import {
   type GetNetworksReturnType,
   getNetworks,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'
 

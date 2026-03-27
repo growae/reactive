@@ -2,7 +2,7 @@ import {
   type GetConnectorClientParameters,
   type GetConnectorClientReturnType,
   getConnectorClient,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'
@@ -11,7 +11,7 @@ import { useConnection } from './useConnection.js'
 import { useNetworkId } from './useNetworkId.js'
 
 export type UseConnectorClientParameters = Accessor<
-  GetConnectorClientParameters & { config?: import('@reactive/core').Config | undefined }
+  GetConnectorClientParameters & { config?: import('@growae/reactive').Config | undefined }
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<

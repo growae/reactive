@@ -13,7 +13,7 @@ Thank you for your interest in contributing to Reactive! This guide will help yo
 1. **Fork and clone**
 
    ```bash
-   git clone https://github.com/<your-username>/reactive.git
+   git clone https://github.com/growae/reactive.git
    cd reactive
    ```
 
@@ -47,12 +47,12 @@ Thank you for your interest in contributing to Reactive! This guide will help yo
 ```
 reactive/
 ├── packages/
-│   ├── core/              @reactive/core — vanilla TypeScript, no framework deps
-│   ├── react/             @reactive/react — React hooks wrapping core
-│   ├── vue/               @reactive/vue — Vue composables wrapping core
-│   ├── solid/             @reactive/solid — Solid primitives wrapping core
-│   ├── connectors/        @reactive/connectors — wallet connectors
-│   ├── cli/               @reactive/cli — code generation CLI
+│   ├── core/              @growae/reactive — vanilla TypeScript, no framework deps
+│   ├── react/             @growae/reactive-react — React hooks wrapping core
+│   ├── vue/               @growae/reactive-vue — Vue composables wrapping core
+│   ├── solid/             @growae/reactive-solid — Solid primitives wrapping core
+│   ├── connectors/        @growae/reactive-connectors — wallet connectors
+│   ├── cli/               @growae/reactive-cli — code generation CLI
 │   └── create-reactive/   create-reactive — project scaffolder
 ├── site/                  VitePress documentation site
 ├── playgrounds/           Example applications

@@ -20,7 +20,7 @@ describe('BaseError', () => {
   it('should include version in message', () => {
     const error = new BaseError('test')
     expect(error.message).toContain('Version:')
-    expect(error.message).toContain('@reactive/core@')
+    expect(error.message).toContain('@growae/reactive@')
   })
 
   it('should include details in message', () => {

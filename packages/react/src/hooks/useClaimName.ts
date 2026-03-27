@@ -5,8 +5,8 @@ import {
   type ClaimNameParameters,
   type ClaimNameReturnType,
   claimName,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

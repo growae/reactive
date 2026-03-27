@@ -6,7 +6,7 @@ export interface ReactiveNuxtOptions {
 
 export default defineNuxtModule<ReactiveNuxtOptions>({
   meta: {
-    name: '@reactive/vue/nuxt',
+    name: '@growae/reactive-vue/nuxt',
     configKey: 'reactive',
     compatibility: {
       nuxt: '>=3.0.0',
@@ -18,7 +18,7 @@ export default defineNuxtModule<ReactiveNuxtOptions>({
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
-    nuxt.options.build.transpile.push('@reactive/vue')
+    nuxt.options.build.transpile.push('@growae/reactive-vue')
 
     addPlugin(resolve('./runtime/plugin'))
 
@@ -81,7 +81,7 @@ export default defineNuxtModule<ReactiveNuxtOptions>({
       addImports(
         composables.map((name) => ({
           name,
-          from: '@reactive/vue',
+          from: '@growae/reactive-vue',
         })),
       )
     }

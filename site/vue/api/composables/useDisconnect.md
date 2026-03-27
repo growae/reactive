@@ -5,14 +5,14 @@ Composable for disconnecting the current wallet.
 ## Import
 
 ```typescript
-import { useDisconnect } from '@reactive/vue'
+import { useDisconnect } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useDisconnect } from '@reactive/vue'
+import { useDisconnect } from '@growae/reactive-vue'
 
 const { disconnect } = useDisconnect()
 </script>

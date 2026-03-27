@@ -2,7 +2,7 @@ import {
   type GetOracleStateParameters,
   type GetOracleStateReturnType,
   getOracleState,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'
@@ -11,7 +11,7 @@ import { useNetworkId } from './useNetworkId.js'
 
 export type UseOracleStateParameters = Accessor<
   GetOracleStateParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >

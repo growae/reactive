@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [pnpm]
-pnpm add -D @reactive/cli
+pnpm add -D @growae/reactive-cli
 ```
 
 ```bash [npm]
-npm install -D @reactive/cli
+npm install -D @growae/reactive-cli
 ```
 
 ```bash [yarn]
-yarn add -D @reactive/cli
+yarn add -D @growae/reactive-cli
 ```
 
 :::
@@ -28,7 +28,7 @@ yarn add -D @reactive/cli
 You can also install globally:
 
 ```bash
-pnpm add -g @reactive/cli
+pnpm add -g @growae/reactive-cli
 ```
 
 Then use without `npx`:

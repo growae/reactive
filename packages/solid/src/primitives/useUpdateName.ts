@@ -3,11 +3,11 @@ import {
   type UpdateNameParameters,
   type UpdateNameReturnType,
   updateName,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseUpdateNameParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseUpdateNameParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useUpdateName(
   parameters: UseUpdateNameParameters = () => ({}),

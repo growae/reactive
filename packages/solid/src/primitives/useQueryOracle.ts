@@ -3,11 +3,11 @@ import {
   type QueryOracleParameters,
   type QueryOracleReturnType,
   queryOracle,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseQueryOracleParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseQueryOracleParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useQueryOracle(
   parameters: UseQueryOracleParameters = () => ({}),

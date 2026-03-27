@@ -3,8 +3,8 @@ import type {
   GetBalanceReturnType,
   GetBalanceErrorType,
   Compute,
-} from '@reactive/core'
-import { getBalance } from '@reactive/core'
+} from '@growae/reactive'
+import { getBalance } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

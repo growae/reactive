@@ -9,7 +9,7 @@ import {
   type UseQueryOptions,
   useMutation,
 } from '@tanstack/vue-query'
-import { hashFn } from '@reactive/core/query'
+import { hashFn } from '@growae/reactive/query'
 import { computed, type MaybeRef, unref } from 'vue'
 
 import type { DeepMaybeRef, DeepUnwrapRef } from '../types/ref.js'

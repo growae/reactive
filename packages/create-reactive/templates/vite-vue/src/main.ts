@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import { ReactivePlugin } from '@reactive/vue'
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
+import { ReactivePlugin } from '@growae/reactive-vue'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
 
 import App from './App.vue'
 

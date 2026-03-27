@@ -3,8 +3,8 @@ import type {
   WaitForTransactionReturnType,
   WaitForTransactionErrorType,
   Compute,
-} from '@reactive/core'
-import { waitForTransaction } from '@reactive/core'
+} from '@growae/reactive'
+import { waitForTransaction } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

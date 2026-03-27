@@ -5,9 +5,9 @@ The `createConfig` function is the entry point for all Reactive applications. It
 ## Basic Usage
 
 ```typescript
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [testnet],
@@ -20,7 +20,7 @@ const config = createConfig({
 Define which Aeternity networks your app supports. Reactive ships with `mainnet` and `testnet` presets:
 
 ```typescript
-import { mainnet, testnet } from '@reactive/core/networks'
+import { mainnet, testnet } from '@growae/reactive/networks'
 
 const config = createConfig({
   networks: [mainnet, testnet],
@@ -35,7 +35,7 @@ See [Networks](/core/networks) for custom network configuration.
 Connectors handle wallet communication. Reactive provides connectors for the Superhero Wallet and other Aeternity wallets:
 
 ```typescript
-import { superhero, iframe } from '@reactive/core/connectors'
+import { superhero, iframe } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [testnet],
@@ -53,7 +53,7 @@ See [createConnector](/core/api/createConnector) for building custom connectors.
 By default, Reactive persists connection state to `localStorage`. You can customize this:
 
 ```typescript
-import { createConfig, createStorage } from '@reactive/core'
+import { createConfig, createStorage } from '@growae/reactive'
 
 const config = createConfig({
   networks: [testnet],

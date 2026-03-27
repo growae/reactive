@@ -1,8 +1,8 @@
 'use client'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createConfig, testnet } from '@reactive/core'
-import { ReactiveProvider } from '@reactive/react'
+import { createConfig, testnet } from '@growae/reactive'
+import { ReactiveProvider } from '@growae/reactive-react'
 import { useState, type ReactNode } from 'react'
 
 const config = createConfig({

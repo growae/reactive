@@ -3,12 +3,12 @@ import {
   type GetNodeClientReturnType,
   getNodeClient,
   watchNodeClient,
-} from '@reactive/core'
+} from '@growae/reactive'
 import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
 export type UseNodeClientParameters = Accessor<
-  GetNodeClientParameters & { config?: import('@reactive/core').Config | undefined }
+  GetNodeClientParameters & { config?: import('@growae/reactive').Config | undefined }
 >
 
 export type UseNodeClientReturnType = Accessor<GetNodeClientReturnType>

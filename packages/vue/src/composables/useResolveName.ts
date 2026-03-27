@@ -2,8 +2,8 @@ import type {
   ResolveNameParameters,
   ResolveNameReturnType,
   Compute,
-} from '@reactive/core'
-import { resolveName } from '@reactive/core'
+} from '@growae/reactive'
+import { resolveName } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

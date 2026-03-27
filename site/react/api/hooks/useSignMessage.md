@@ -5,13 +5,13 @@ Hook for signing an arbitrary message with the connected account.
 ## Import
 
 ```typescript
-import { useSignMessage } from '@reactive/react'
+import { useSignMessage } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useSignMessage } from '@reactive/react'
+import { useSignMessage } from '@growae/reactive-react'
 
 function SignMessage() {
   const { mutate: sign, data, isPending } = useSignMessage()

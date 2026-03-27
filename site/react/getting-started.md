@@ -2,23 +2,23 @@
 
 ## Overview
 
-`@reactive/react` provides React hooks for interacting with the Aeternity blockchain. Built on top of `@reactive/core` and [TanStack Query](https://tanstack.com/query), it offers automatic caching, refetching, and loading states.
+`@growae/reactive-react` provides React hooks for interacting with the Aeternity blockchain. Built on top of `@growae/reactive` and [TanStack Query](https://tanstack.com/query), it offers automatic caching, refetching, and loading states.
 
 ## Quick Start
 
 ### 1. Install
 
 ```bash
-pnpm add @reactive/react @tanstack/react-query
+pnpm add @growae/reactive-react @tanstack/react-query
 ```
 
 ### 2. Set Up Providers
 
 ```tsx
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
-import { ReactiveProvider } from '@reactive/react'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
+import { ReactiveProvider } from '@growae/reactive-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const config = createConfig({
@@ -42,7 +42,7 @@ function App() {
 ### 3. Use Hooks
 
 ```tsx
-import { useConnect, useBalance } from '@reactive/react'
+import { useConnect, useBalance } from '@growae/reactive-react'
 
 function Wallet() {
   const { connect, connectors } = useConnect()

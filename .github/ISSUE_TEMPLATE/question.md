@@ -26,10 +26,10 @@ assignees: ''
 
 <!-- Which package(s) does this relate to? -->
 
-- [ ] `@reactive/core`
-- [ ] `@reactive/react`
-- [ ] `@reactive/vue`
-- [ ] `@reactive/solid`
-- [ ] `@reactive/connectors`
-- [ ] `@reactive/cli`
+- [ ] `@growae/reactive`
+- [ ] `@growae/reactive-react`
+- [ ] `@growae/reactive-vue`
+- [ ] `@growae/reactive-solid`
+- [ ] `@growae/reactive-connectors`
+- [ ] `@growae/reactive-cli`
 - [ ] `create-reactive`

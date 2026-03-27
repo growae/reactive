@@ -9,9 +9,9 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@reactive/vue": "latest",
-    "@reactive/core": "latest",
-    "@reactive/connectors": "latest"
+    "@growae/reactive-vue": "latest",
+    "@growae/reactive": "latest",
+    "@growae/reactive-connectors": "latest"
   },
   "devDependencies": {
     "nuxt": "^3.14.0",

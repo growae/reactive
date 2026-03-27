@@ -3,8 +3,8 @@ import type {
   GetBlockReturnType,
   GetBlockErrorType,
   Compute,
-} from '@reactive/core'
-import { getBlock } from '@reactive/core'
+} from '@growae/reactive'
+import { getBlock } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

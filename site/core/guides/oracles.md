@@ -14,7 +14,7 @@ The oracle lifecycle:
 ## Registering an Oracle
 
 ```typescript
-import { registerOracle } from '@reactive/core/actions'
+import { registerOracle } from '@growae/reactive/actions'
 
 const oracle = await registerOracle(config, {
   queryFormat: 'string',
@@ -42,7 +42,7 @@ All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale
 ## Querying an Oracle
 
 ```typescript
-import { queryOracle } from '@reactive/core/actions'
+import { queryOracle } from '@growae/reactive/actions'
 
 const query = await queryOracle(config, {
   oracleId: 'ok_2dA...',
@@ -68,7 +68,7 @@ console.log('Query ID:', query.id) // oq_...
 ## Responding to a Query
 
 ```typescript
-import { respondToQuery } from '@reactive/core/actions'
+import { respondToQuery } from '@growae/reactive/actions'
 
 await respondToQuery(config, {
   oracleId: 'ok_2dA...',
@@ -91,7 +91,7 @@ await respondToQuery(config, {
 ## Extending an Oracle
 
 ```typescript
-import { extendOracle } from '@reactive/core/actions'
+import { extendOracle } from '@growae/reactive/actions'
 
 await extendOracle(config, {
   oracleId: 'ok_2dA...',

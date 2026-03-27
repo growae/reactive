@@ -4,8 +4,8 @@ import type {
   PayForTransactionReturnType,
   PayForTransactionErrorType,
   Compute,
-} from '@reactive/core'
-import { payForTransaction } from '@reactive/core'
+} from '@growae/reactive'
+import { payForTransaction } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

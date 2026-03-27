@@ -8,7 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reactive/core": "latest"
+    "@growae/reactive": "latest"
   },
   "devDependencies": {
     "typescript": "latest",

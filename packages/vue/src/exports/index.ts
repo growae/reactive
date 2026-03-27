@@ -207,7 +207,7 @@ export {
 export type { ReactiveNuxtOptions } from '../nuxt/module.js'
 
 ////////////////////////////////////////////////////////////////////////////////
-// @reactive/core re-exports
+// @growae/reactive re-exports
 ////////////////////////////////////////////////////////////////////////////////
 
 export {
@@ -218,7 +218,7 @@ export {
   toAe,
   toAettos,
   formatAmount,
-} from '@reactive/core'
+} from '@growae/reactive'
 
 export type {
   Config,
@@ -226,4 +226,4 @@ export type {
   State,
   Connection,
   Connector,
-} from '@reactive/core'
+} from '@growae/reactive'

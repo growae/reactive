@@ -2,8 +2,8 @@ import type {
   GetOracleQueriesParameters,
   GetOracleQueriesReturnType,
   Compute,
-} from '@reactive/core'
-import { getOracleQueries } from '@reactive/core'
+} from '@growae/reactive'
+import { getOracleQueries } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

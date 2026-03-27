@@ -3,7 +3,7 @@ import { useNetworkId } from './useNetworkId.js'
 
 let watchNetworkIdCallback: ((value: string) => void) | undefined
 
-vi.mock('@reactive/core', () => ({
+vi.mock('@growae/reactive', () => ({
   getNetworkId: vi.fn(() => 'ae_uat'),
   watchNetworkId: vi.fn((_config, options) => {
     watchNetworkIdCallback = options.onChange

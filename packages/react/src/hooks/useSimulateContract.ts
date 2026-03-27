@@ -4,8 +4,8 @@ import {
   type SimulateContractParameters,
   type SimulateContractReturnType,
   simulateContract,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'

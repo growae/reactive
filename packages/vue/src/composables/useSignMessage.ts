@@ -4,8 +4,8 @@ import type {
   SignMessageReturnType,
   SignMessageErrorType,
   Compute,
-} from '@reactive/core'
-import { signMessage } from '@reactive/core'
+} from '@growae/reactive'
+import { signMessage } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

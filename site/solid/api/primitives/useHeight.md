@@ -5,13 +5,13 @@ Primitive for fetching the current block height.
 ## Import
 
 ```typescript
-import { useHeight } from '@reactive/solid'
+import { useHeight } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useHeight } from '@reactive/solid'
+import { useHeight } from '@growae/reactive-solid'
 import { Show } from 'solid-js'
 
 function BlockHeight() {

@@ -4,11 +4,11 @@ import {
   type ConnectReturnType,
   type ConnectErrorType,
   connect,
-} from '@reactive/core'
+} from '@growae/reactive'
 import { type Accessor, createEffect, onCleanup } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseConnectParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseConnectParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useConnect(
   parameters: UseConnectParameters = () => ({}),

@@ -7,8 +7,8 @@ import {
   type ConnectReturnType,
   type ConnectErrorType,
   connect,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
 import { useEffect } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'

@@ -2,22 +2,22 @@
 
 ## Overview
 
-`@reactive/core` is the framework-agnostic foundation for interacting with the Aeternity blockchain. It provides type-safe actions for sending transactions, reading balances, working with Sophia contracts, AENS names, oracles, and state channels.
+`@growae/reactive` is the framework-agnostic foundation for interacting with the Aeternity blockchain. It provides type-safe actions for sending transactions, reading balances, working with Sophia contracts, AENS names, oracles, and state channels.
 
 ## Quick Start
 
 ### 1. Install
 
 ```bash
-pnpm add @reactive/core
+pnpm add @growae/reactive
 ```
 
 ### 2. Create a Config
 
 ```typescript
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [testnet],
@@ -28,7 +28,7 @@ const config = createConfig({
 ### 3. Use Actions
 
 ```typescript
-import { getBalance, spend } from '@reactive/core/actions'
+import { getBalance, spend } from '@growae/reactive/actions'
 
 // Read balance
 const balance = await getBalance(config, {

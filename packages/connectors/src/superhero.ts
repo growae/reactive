@@ -2,7 +2,7 @@ import {
   createConnector,
   ConnectorNotConnectedError,
   ProviderNotFoundError,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 
 export type SuperheroParameters = {

@@ -3,7 +3,7 @@ import {
   type EstimateGasReturnType,
   type EstimateGasErrorType,
   estimateGas,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'
@@ -12,7 +12,7 @@ import { useNetworkId } from './useNetworkId.js'
 
 export type UseEstimateGasParameters = Accessor<
   EstimateGasParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >

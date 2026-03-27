@@ -1,4 +1,4 @@
-import type { Config } from '@reactive/core'
+import type { Config } from '@growae/reactive'
 import type { MaybeRef } from 'vue'
 
 export type ConfigParameter<config extends Config = Config> = {

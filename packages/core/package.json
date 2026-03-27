@@ -1,5 +1,5 @@
 {
-  "name": "@reactive/core",
+  "name": "@growae/reactive",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/esm/exports/index.js",

@@ -3,11 +3,11 @@ import {
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
   registerOracle,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseRegisterOracleParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseRegisterOracleParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useRegisterOracle(
   parameters: UseRegisterOracleParameters = () => ({}),

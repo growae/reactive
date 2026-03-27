@@ -5,13 +5,13 @@ Calls a Sophia contract function as an on-chain transaction (stateful call). Use
 ## Import
 
 ```typescript
-import { callContract } from '@reactive/core/actions'
+import { callContract } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { callContract } from '@reactive/core/actions'
+import { callContract } from '@growae/reactive/actions'
 
 const result = await callContract(config, {
   address: 'ct_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
@@ -79,7 +79,7 @@ const result = await callContract(config, {
 ## Error Types
 
 ```typescript
-import type { CallContractErrorType } from '@reactive/core'
+import type { CallContractErrorType } from '@growae/reactive'
 ```
 
 - `ConnectorNotConnectedError` — no wallet connected

@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import { ReactivePlugin } from '@reactive/vue'
-import { createConfig, testnet } from '@reactive/core'
+import { ReactivePlugin } from '@growae/reactive-vue'
+import { createConfig, testnet } from '@growae/reactive'
 import App from './App.vue'
 
 const config = createConfig({

@@ -14,7 +14,7 @@ assignees: ''
 
 <!-- Steps to reproduce the behavior. A minimal reproduction repo or code snippet is highly appreciated. -->
 
-1. Install `@reactive/...` version `...`
+1. Install `@growae/reactive-...` version `...`
 2. Create config with `...`
 3. Call `...`
 4. See error
@@ -36,8 +36,8 @@ assignees: ''
 ## Environment
 
 - **Package(s) and version(s):**
-  - `@reactive/core`: 
-  - `@reactive/react` / `@reactive/vue` / `@reactive/solid`: 
+  - `@growae/reactive`: 
+  - `@growae/reactive-react` / `@growae/reactive-vue` / `@growae/reactive-solid`: 
 - **Framework version:** (e.g. React 19, Vue 3.5, Solid 1.9)
 - **Node.js version:**
 - **pnpm version:**

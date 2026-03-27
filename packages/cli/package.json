@@ -1,5 +1,5 @@
 {
-  "name": "@reactive/cli",
+  "name": "@growae/reactive-cli",
   "version": "0.0.1",
   "type": "module",
   "bin": {
@@ -21,7 +21,7 @@
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
   },
   "dependencies": {
-    "@reactive/core": "workspace:*",
+    "@growae/reactive": "workspace:*",
     "cac": "^7.0.0",
     "chokidar": "^5.0.0"
   },

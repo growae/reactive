@@ -1,7 +1,7 @@
 'use client'
 
-import { watchHeight } from '@reactive/core'
-import type { Compute } from '@reactive/core'
+import { watchHeight } from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
 import { useEffect, useRef } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'

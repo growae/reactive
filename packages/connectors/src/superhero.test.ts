@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { superhero } from './superhero.js'
-import { createEmitter } from '@reactive/core'
-import type { ConnectorEventMap } from '@reactive/core'
-import type { Network } from '@reactive/core'
+import { createEmitter } from '@growae/reactive'
+import type { ConnectorEventMap } from '@growae/reactive'
+import type { Network } from '@growae/reactive'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 

@@ -5,8 +5,8 @@ import type {
   ConnectReturnType,
   ConnectErrorType,
   Compute,
-} from '@reactive/core'
-import { connect } from '@reactive/core'
+} from '@growae/reactive'
+import { connect } from '@growae/reactive'
 import { onScopeDispose } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'

@@ -4,11 +4,11 @@ import {
   type SpendReturnType,
   type SpendErrorType,
   spend,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseSpendParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseSpendParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useSpend(
   parameters: UseSpendParameters = () => ({}),

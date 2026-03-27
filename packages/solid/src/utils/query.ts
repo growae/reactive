@@ -8,8 +8,8 @@ import {
   createMutation as useMutation,
   createQuery as tanstack_useQuery,
 } from '@tanstack/solid-query'
-import { hashFn } from '@reactive/core/query'
-import type { Compute, ExactPartial, LooseOmit, UnionStrictOmit } from '@reactive/core'
+import { hashFn } from '@growae/reactive/query'
+import type { Compute, ExactPartial, LooseOmit, UnionStrictOmit } from '@growae/reactive'
 import { type Accessor, mergeProps } from 'solid-js'
 
 export type SolidMutationParameters<

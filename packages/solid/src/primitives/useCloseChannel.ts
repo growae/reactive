@@ -3,11 +3,11 @@ import {
   type CloseChannelParameters,
   type CloseChannelReturnType,
   closeChannel,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseCloseChannelParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseCloseChannelParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function useCloseChannel(
   parameters: UseCloseChannelParameters = () => ({}),

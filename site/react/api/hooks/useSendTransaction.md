@@ -5,13 +5,13 @@ Hook for sending a signed transaction to the network.
 ## Import
 
 ```typescript
-import { useSendTransaction } from '@reactive/react'
+import { useSendTransaction } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useSendTransaction } from '@reactive/react'
+import { useSendTransaction } from '@growae/reactive-react'
 
 function SendTx() {
   const { mutate: send, data, isPending } = useSendTransaction()

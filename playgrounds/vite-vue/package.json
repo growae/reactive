@@ -8,9 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reactive/vue": "workspace:*",
-    "@reactive/core": "workspace:*",
-    "@reactive/connectors": "workspace:*",
+    "@growae/reactive-vue": "workspace:*",
+    "@growae/reactive": "workspace:*",
+    "@growae/reactive-connectors": "workspace:*",
     "@tanstack/vue-query": "^5.50.0",
     "vue": "^3.5.0"
   },

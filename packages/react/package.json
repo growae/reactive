@@ -1,5 +1,5 @@
 {
-  "name": "@reactive/react",
+  "name": "@growae/reactive-react",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/esm/exports/index.js",
@@ -23,7 +23,7 @@
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
   },
   "dependencies": {
-    "@reactive/core": "workspace:*",
+    "@growae/reactive": "workspace:*",
     "use-sync-external-store": "^1.4.0"
   },
   "peerDependencies": {

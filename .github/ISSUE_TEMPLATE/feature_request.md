@@ -28,12 +28,12 @@ const result = useNewFeature({ ... })
 
 <!-- Which package(s) would this affect? Check all that apply. -->
 
-- [ ] `@reactive/core`
-- [ ] `@reactive/react`
-- [ ] `@reactive/vue`
-- [ ] `@reactive/solid`
-- [ ] `@reactive/connectors`
-- [ ] `@reactive/cli`
+- [ ] `@growae/reactive`
+- [ ] `@growae/reactive-react`
+- [ ] `@growae/reactive-vue`
+- [ ] `@growae/reactive-solid`
+- [ ] `@growae/reactive-connectors`
+- [ ] `@growae/reactive-cli`
 - [ ] `create-reactive`
 - [ ] Documentation site
 

@@ -8,4 +8,4 @@ export { metamaskSnap, type MetaMaskSnapParameters } from '../metamaskSnap.js'
 export { walletDetect, type DetectedWallet, type WalletDetectResult } from '../walletDetect.js'
 export { version } from '../version.js'
 
-export { createConnector, mock, memory } from '@reactive/core'
+export { createConnector, mock, memory } from '@growae/reactive'

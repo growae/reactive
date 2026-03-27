@@ -2,7 +2,7 @@ import {
   type GetContractEventsParameters,
   type GetContractEventsReturnType,
   getContractEvents,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'
@@ -11,7 +11,7 @@ import { useNetworkId } from './useNetworkId.js'
 
 export type UseContractEventsParameters = Accessor<
   GetContractEventsParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >

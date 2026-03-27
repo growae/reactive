@@ -3,8 +3,8 @@ import type {
   UpdateNameParameters,
   UpdateNameReturnType,
   Compute,
-} from '@reactive/core'
-import { updateName } from '@reactive/core'
+} from '@growae/reactive'
+import { updateName } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

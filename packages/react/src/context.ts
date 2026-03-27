@@ -1,6 +1,6 @@
 'use client'
 
-import type { Config, State } from '@reactive/core'
+import type { Config, State } from '@growae/reactive'
 import { createContext, createElement, type ReactNode } from 'react'
 import { Hydrate } from './hydrate.js'
 

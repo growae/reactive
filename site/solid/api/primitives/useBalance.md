@@ -5,13 +5,13 @@ Primitive for fetching the AE balance of an address.
 ## Import
 
 ```typescript
-import { useBalance } from '@reactive/solid'
+import { useBalance } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useBalance } from '@reactive/solid'
+import { useBalance } from '@growae/reactive-solid'
 import { Show } from 'solid-js'
 
 function Balance() {

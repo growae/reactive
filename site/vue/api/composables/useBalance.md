@@ -5,14 +5,14 @@ Composable for fetching the AE balance of an address.
 ## Import
 
 ```typescript
-import { useBalance } from '@reactive/vue'
+import { useBalance } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useBalance } from '@reactive/vue'
+import { useBalance } from '@growae/reactive-vue'
 
 const { data, isLoading, error } = useBalance({
   address: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',

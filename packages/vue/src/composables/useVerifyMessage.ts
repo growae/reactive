@@ -3,8 +3,8 @@ import type {
   VerifyMessageReturnType,
   VerifyMessageErrorType,
   Compute,
-} from '@reactive/core'
-import { verifyMessage } from '@reactive/core'
+} from '@growae/reactive'
+import { verifyMessage } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

@@ -3,7 +3,7 @@ import {
   ConnectorNotConnectedError,
   ProviderNotFoundError,
   NetworkNotConfiguredError,
-} from '@reactive/core'
+} from '@growae/reactive'
 
 export type MetaMaskSnapParameters = {
   /** Snap package ID. @default 'npm:@aeternity-snap/plugin' */

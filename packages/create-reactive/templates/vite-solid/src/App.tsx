@@ -1,5 +1,5 @@
 import { For, Show } from 'solid-js'
-import { useConnect, useDisconnect, useBalance } from '@reactive/solid'
+import { useConnect, useDisconnect, useBalance } from '@growae/reactive-solid'
 
 function App() {
   const { connect, connectors, status, error } = useConnect()

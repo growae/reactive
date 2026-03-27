@@ -5,14 +5,14 @@ Composable for fetching the current block height.
 ## Import
 
 ```typescript
-import { useHeight } from '@reactive/vue'
+import { useHeight } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useHeight } from '@reactive/vue'
+import { useHeight } from '@growae/reactive-vue'
 
 const { data: height, isLoading } = useHeight()
 </script>

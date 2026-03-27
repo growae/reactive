@@ -3,7 +3,7 @@ import {
   type VerifyMessageReturnType,
   type VerifyMessageErrorType,
   verifyMessage,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'
@@ -11,7 +11,7 @@ import { useConfig } from './useConfig.js'
 
 export type UseVerifyMessageParameters = Accessor<
   VerifyMessageParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >

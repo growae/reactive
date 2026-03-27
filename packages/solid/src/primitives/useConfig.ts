@@ -1,4 +1,4 @@
-import type { Config } from '@reactive/core'
+import type { Config } from '@growae/reactive'
 import { createMemo, useContext } from 'solid-js'
 import type { Accessor } from 'solid-js'
 import { ReactiveContext } from '../context.js'

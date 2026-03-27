@@ -5,13 +5,13 @@ Primitive for sending AE tokens to a recipient.
 ## Import
 
 ```typescript
-import { useSpend } from '@reactive/solid'
+import { useSpend } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useSpend } from '@reactive/solid'
+import { useSpend } from '@growae/reactive-solid'
 
 function SendAE() {
   const spend = useSpend()

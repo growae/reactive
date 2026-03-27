@@ -2,8 +2,8 @@ import type {
   GetContractEventsParameters,
   GetContractEventsReturnType,
   Compute,
-} from '@reactive/core'
-import { getContractEvents } from '@reactive/core'
+} from '@growae/reactive'
+import { getContractEvents } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

@@ -15,7 +15,7 @@ AENS name registration follows a **commit-reveal scheme** to prevent front-runni
 ## Preclaim a Name
 
 ```typescript
-import { preclaimName } from '@reactive/core/actions'
+import { preclaimName } from '@growae/reactive/actions'
 
 const preclaim = await preclaimName(config, {
   name: 'alice.chain',
@@ -39,7 +39,7 @@ All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale
 After preclaiming, wait at least 1 key block, then claim:
 
 ```typescript
-import { claimName } from '@reactive/core/actions'
+import { claimName } from '@growae/reactive/actions'
 
 const claim = await claimName(config, {
   name: 'alice.chain',
@@ -59,7 +59,7 @@ const claim = await claimName(config, {
 ## Update Name Pointers
 
 ```typescript
-import { updateName } from '@reactive/core/actions'
+import { updateName } from '@growae/reactive/actions'
 
 await updateName(config, {
   name: 'alice.chain',
@@ -82,7 +82,7 @@ await updateName(config, {
 ## Transfer a Name
 
 ```typescript
-import { transferName } from '@reactive/core/actions'
+import { transferName } from '@growae/reactive/actions'
 
 await transferName(config, {
   name: 'alice.chain',
@@ -101,7 +101,7 @@ await transferName(config, {
 ## Resolve a Name
 
 ```typescript
-import { resolveName } from '@reactive/core/actions'
+import { resolveName } from '@growae/reactive/actions'
 
 const address = await resolveName(config, {
   name: 'alice.chain',
@@ -126,7 +126,7 @@ Names shorter than 13 characters go through an auction process. The auction last
 Use `bidName` to participate:
 
 ```typescript
-import { bidName } from '@reactive/core/actions'
+import { bidName } from '@growae/reactive/actions'
 
 await bidName(config, {
   name: 'ae.chain',

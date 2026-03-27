@@ -5,13 +5,13 @@ Hook for deploying a Sophia smart contract.
 ## Import
 
 ```typescript
-import { useDeployContract } from '@reactive/react'
+import { useDeployContract } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { useDeployContract } from '@reactive/react'
+import { useDeployContract } from '@growae/reactive-react'
 
 function Deploy() {
   const { mutate: deploy, data, isPending } = useDeployContract()

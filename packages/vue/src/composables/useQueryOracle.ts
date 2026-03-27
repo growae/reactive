@@ -3,8 +3,8 @@ import type {
   QueryOracleParameters,
   QueryOracleReturnType,
   Compute,
-} from '@reactive/core'
-import { queryOracle } from '@reactive/core'
+} from '@growae/reactive'
+import { queryOracle } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

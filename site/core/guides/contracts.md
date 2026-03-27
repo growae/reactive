@@ -9,7 +9,7 @@ Sophia is Aeternity's functional smart contract language. Contracts are compiled
 ## Deploying a Contract
 
 ```typescript
-import { deployContract } from '@reactive/core/actions'
+import { deployContract } from '@growae/reactive/actions'
 
 const result = await deployContract(config, {
   aci: tokenAci,
@@ -39,7 +39,7 @@ All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale
 Use `readContract` for stateless (dry-run) calls — no transaction, no fees:
 
 ```typescript
-import { readContract } from '@reactive/core/actions'
+import { readContract } from '@growae/reactive/actions'
 
 const balance = await readContract(config, {
   address: 'ct_token...',
@@ -54,7 +54,7 @@ const balance = await readContract(config, {
 Use `callContract` for stateful calls that create on-chain transactions:
 
 ```typescript
-import { callContract } from '@reactive/core/actions'
+import { callContract } from '@growae/reactive/actions'
 
 const result = await callContract(config, {
   address: 'ct_token...',

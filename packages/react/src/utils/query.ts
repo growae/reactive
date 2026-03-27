@@ -11,8 +11,8 @@ import {
   type UseQueryResult,
   useMutation,
 } from '@tanstack/react-query'
-import { hashFn } from '@reactive/core/query'
-import type { Compute, ExactPartial, LooseOmit, UnionStrictOmit } from '@reactive/core'
+import { hashFn } from '@growae/reactive/query'
+import type { Compute, ExactPartial, LooseOmit, UnionStrictOmit } from '@growae/reactive'
 
 export { useMutation }
 

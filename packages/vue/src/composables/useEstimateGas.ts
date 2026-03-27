@@ -3,8 +3,8 @@ import type {
   EstimateGasReturnType,
   EstimateGasErrorType,
   Compute,
-} from '@reactive/core'
-import { estimateGas } from '@reactive/core'
+} from '@growae/reactive'
+import { estimateGas } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { type UseQueryReturnType, useQuery } from '../utils/query.js'

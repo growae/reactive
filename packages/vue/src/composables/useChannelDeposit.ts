@@ -3,8 +3,8 @@ import type {
   ChannelDepositParameters,
   ChannelDepositReturnType,
   Compute,
-} from '@reactive/core'
-import { channelDeposit } from '@reactive/core'
+} from '@growae/reactive'
+import { channelDeposit } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

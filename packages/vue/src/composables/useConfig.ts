@@ -1,4 +1,4 @@
-import type { Config } from '@reactive/core'
+import type { Config } from '@growae/reactive'
 import { hasInjectionContext, inject, unref } from 'vue'
 import {
   ReactiveInjectionContextError,

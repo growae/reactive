@@ -3,8 +3,8 @@ import type {
   RevokeNameParameters,
   RevokeNameReturnType,
   Compute,
-} from '@reactive/core'
-import { revokeName } from '@reactive/core'
+} from '@growae/reactive'
+import { revokeName } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

@@ -1,6 +1,6 @@
 'use client'
 
-import type { Config } from '@reactive/core'
+import type { Config } from '@growae/reactive'
 import { useContext } from 'react'
 import { ReactiveContext } from '../context.js'
 import { ReactiveProviderNotFoundError } from '../errors/context.js'

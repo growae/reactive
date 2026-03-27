@@ -4,8 +4,8 @@ import type {
   CallContractReturnType,
   CallContractErrorType,
   Compute,
-} from '@reactive/core'
-import { callContract } from '@reactive/core'
+} from '@growae/reactive'
+import { callContract } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

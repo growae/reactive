@@ -3,11 +3,11 @@ import {
   type PreclaimNameParameters,
   type PreclaimNameReturnType,
   preclaimName,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UsePreclaimNameParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UsePreclaimNameParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
 
 export function usePreclaimName(
   parameters: UsePreclaimNameParameters = () => ({}),

@@ -3,8 +3,8 @@ import type {
   RegisterOracleParameters,
   RegisterOracleReturnType,
   Compute,
-} from '@reactive/core'
-import { registerOracle } from '@reactive/core'
+} from '@growae/reactive'
+import { registerOracle } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'

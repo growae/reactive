@@ -2,14 +2,14 @@
 
 ## Overview
 
-`@reactive/vue` provides Vue composables for interacting with the Aeternity blockchain. Built on top of `@reactive/core` and [TanStack Vue Query](https://tanstack.com/query/v5/docs/framework/vue), it offers reactive refs, automatic caching, and loading states.
+`@growae/reactive-vue` provides Vue composables for interacting with the Aeternity blockchain. Built on top of `@growae/reactive` and [TanStack Vue Query](https://tanstack.com/query/v5/docs/framework/vue), it offers reactive refs, automatic caching, and loading states.
 
 ## Quick Start
 
 ### 1. Install
 
 ```bash
-pnpm add @reactive/vue @tanstack/vue-query
+pnpm add @growae/reactive-vue @tanstack/vue-query
 ```
 
 ### 2. Set Up Plugin
@@ -18,10 +18,10 @@ pnpm add @reactive/vue @tanstack/vue-query
 // main.ts
 import { createApp } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
-import { ReactivePlugin } from '@reactive/vue'
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
+import { ReactivePlugin } from '@growae/reactive-vue'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
 import App from './App.vue'
 
 const config = createConfig({
@@ -39,7 +39,7 @@ app.mount('#app')
 
 ```vue
 <script setup lang="ts">
-import { useConnect, useBalance } from '@reactive/vue'
+import { useConnect, useBalance } from '@growae/reactive-vue'
 
 const { connect, connectors } = useConnect()
 const { data: balance } = useBalance({ address: 'ak_2dA...' })

@@ -8,9 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@reactive/react": "workspace:*",
-    "@reactive/core": "workspace:*",
-    "@reactive/connectors": "workspace:*",
+    "@growae/reactive-react": "workspace:*",
+    "@growae/reactive": "workspace:*",
+    "@growae/reactive-connectors": "workspace:*",
     "@tanstack/react-query": "^5.50.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
