@@ -54,5 +54,8 @@
   },
   "devDependencies": {
     "@tanstack/query-core": "^5.95.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

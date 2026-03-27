@@ -27,7 +27,14 @@
     "typescript": ">=5.7.0"
   },
   "peerDependenciesMeta": {
-    "@ledgerhq/hw-transport": { "optional": true },
-    "typescript": { "optional": true }
+    "@ledgerhq/hw-transport": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
