@@ -19,5 +19,12 @@
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+  },
+  "dependencies": {
+    "kolorist": "^1.8.0",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/prompts": "^2.4.9"
   }
 }
