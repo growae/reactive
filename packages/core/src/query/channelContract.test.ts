@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
-  channelContractCreateMutationOptions,
   channelContractCallMutationOptions,
   channelContractCallStaticMutationOptions,
+  channelContractCreateMutationOptions,
 } from './channelContract.js'
 
 describe('channelContractCreateMutationOptions', () => {

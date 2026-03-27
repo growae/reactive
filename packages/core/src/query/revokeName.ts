@@ -14,9 +14,15 @@ export function revokeNameMutationOptions(config: Config) {
       return revokeName(config, variables)
     },
     mutationKey: ['revokeName'],
-  } satisfies MutationOptions<RevokeNameReturnType, RevokeNameErrorType, RevokeNameParameters>
+  } satisfies MutationOptions<
+    RevokeNameReturnType,
+    RevokeNameErrorType,
+    RevokeNameParameters
+  >
 }
 
-export type RevokeNameMutationOptions = ReturnType<typeof revokeNameMutationOptions>
+export type RevokeNameMutationOptions = ReturnType<
+  typeof revokeNameMutationOptions
+>
 export type RevokeNameData = RevokeNameReturnType
 export type RevokeNameVariables = RevokeNameParameters

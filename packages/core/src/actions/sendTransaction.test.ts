@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { sendTransaction } from './sendTransaction.js'
 
 describe('sendTransaction', () => {
@@ -12,7 +12,9 @@ describe('sendTransaction', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
@@ -29,7 +31,9 @@ describe('sendTransaction', () => {
       state: { networkId: 'ae_uat' },
     }
 
-    const result = await sendTransaction(mockConfig as any, { tx: 'tx_encoded' })
+    const result = await sendTransaction(mockConfig as any, {
+      tx: 'tx_encoded',
+    })
     expect(mockNode.postTransaction).toHaveBeenCalledWith({ tx: 'tx_encoded' })
     expect(result.hash).toBe('th_result')
     expect(result.rawTx).toBe('tx_encoded')

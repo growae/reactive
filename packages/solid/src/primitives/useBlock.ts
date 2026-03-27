@@ -1,7 +1,7 @@
 import {
+  type GetBlockErrorType,
   type GetBlockParameters,
   type GetBlockReturnType,
-  type GetBlockErrorType,
   getBlock,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -29,15 +29,19 @@ export function useBlock(
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['block', {
-      height: parameters().height,
-      hash: parameters().hash,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getBlock(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'block',
+      {
+        height: parameters().height,
+        hash: parameters().hash,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getBlock(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: parameters().enabled ?? true,
   }))
 

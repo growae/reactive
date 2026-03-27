@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetAccountErrorType,
   GetAccountParameters,
   GetAccountReturnType,
-  GetAccountErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getAccount } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,16 +27,20 @@ export function useAccount(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['account', {
-      address: parameters.address,
-      networkId: parameters.networkId ?? networkId.value,
-      height: parameters.height,
-      hash: parameters.hash,
-    }] as const,
-    queryFn: () => getAccount(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'account',
+      {
+        address: parameters.address,
+        networkId: parameters.networkId ?? networkId.value,
+        height: parameters.height,
+        hash: parameters.hash,
+      },
+    ] as const,
+    queryFn: () =>
+      getAccount(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }))
 

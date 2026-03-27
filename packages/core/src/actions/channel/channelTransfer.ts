@@ -20,13 +20,7 @@ export async function channelTransfer(
 ): Promise<ChannelTransferReturnType> {
   const { channel, from, to, amount, sign, metadata } = parameters
 
-  const result = await channel.update(
-    from,
-    to,
-    Number(amount),
-    sign,
-    metadata,
-  )
+  const result = await channel.update(from, to, Number(amount), sign, metadata)
 
   return {
     accepted: result.accepted,

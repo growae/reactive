@@ -14,9 +14,16 @@ export function createGeneralizedAccountMutationOptions(config: Config) {
       return createGeneralizedAccount(config, variables)
     },
     mutationKey: ['createGeneralizedAccount'],
-  } satisfies MutationOptions<CreateGeneralizedAccountReturnType, CreateGeneralizedAccountErrorType, CreateGeneralizedAccountParameters>
+  } satisfies MutationOptions<
+    CreateGeneralizedAccountReturnType,
+    CreateGeneralizedAccountErrorType,
+    CreateGeneralizedAccountParameters
+  >
 }
 
-export type CreateGeneralizedAccountMutationOptions = ReturnType<typeof createGeneralizedAccountMutationOptions>
+export type CreateGeneralizedAccountMutationOptions = ReturnType<
+  typeof createGeneralizedAccountMutationOptions
+>
 export type CreateGeneralizedAccountData = CreateGeneralizedAccountReturnType
-export type CreateGeneralizedAccountVariables = CreateGeneralizedAccountParameters
+export type CreateGeneralizedAccountVariables =
+  CreateGeneralizedAccountParameters

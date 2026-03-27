@@ -14,7 +14,11 @@ export function bidNameMutationOptions(config: Config) {
       return bidName(config, variables)
     },
     mutationKey: ['bidName'],
-  } satisfies MutationOptions<BidNameReturnType, BidNameErrorType, BidNameParameters>
+  } satisfies MutationOptions<
+    BidNameReturnType,
+    BidNameErrorType,
+    BidNameParameters
+  >
 }
 
 export type BidNameMutationOptions = ReturnType<typeof bidNameMutationOptions>

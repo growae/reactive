@@ -1,12 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation((url: string) => ({ url })),
 }))
 
-import { createConfig } from './createConfig.js'
-import { testnet, mainnet } from './types/network.js'
 import { mock } from './connectors/mock.js'
+import { createConfig } from './createConfig.js'
+import { mainnet, testnet } from './types/network.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
@@ -157,9 +157,9 @@ describe('createConfig', () => {
 
     it('should throw for unconfigured networkId', () => {
       const config = createConfig({ networks: [testnet], storage: null })
-      expect(() =>
-        config.getNodeClient({ networkId: 'invalid_net' }),
-      ).toThrow('Network not configured')
+      expect(() => config.getNodeClient({ networkId: 'invalid_net' })).toThrow(
+        'Network not configured',
+      )
     })
   })
 })

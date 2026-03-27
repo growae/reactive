@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getAccount } from './getAccount.js'
 
 describe('getAccount', () => {
@@ -12,10 +12,14 @@ describe('getAccount', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
-    await expect(getAccount(mockConfig as any, { address: 'ak_test' })).rejects.toThrow()
+    await expect(
+      getAccount(mockConfig as any, { address: 'ak_test' }),
+    ).rejects.toThrow()
   })
 
   it('should return account info from node', async () => {
@@ -57,7 +61,10 @@ describe('getAccount', () => {
     }
 
     await getAccount(mockConfig as any, { address: 'ak_test', height: 100 })
-    expect(mockNode.getAccountByPubkeyAndHeight).toHaveBeenCalledWith('ak_test', 100)
+    expect(mockNode.getAccountByPubkeyAndHeight).toHaveBeenCalledWith(
+      'ak_test',
+      100,
+    )
   })
 
   it('should query by hash when provided', async () => {
@@ -76,7 +83,10 @@ describe('getAccount', () => {
     }
 
     await getAccount(mockConfig as any, { address: 'ak_test', hash: 'kh_abc' })
-    expect(mockNode.getAccountByPubkeyAndHash).toHaveBeenCalledWith('ak_test', 'kh_abc')
+    expect(mockNode.getAccountByPubkeyAndHash).toHaveBeenCalledWith(
+      'ak_test',
+      'kh_abc',
+    )
   })
 
   it('should default payable to false when undefined', async () => {

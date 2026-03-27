@@ -1,14 +1,16 @@
-import { createMutation } from '@tanstack/solid-query'
 import {
+  type PayForTransactionErrorType,
   type PayForTransactionParameters,
   type PayForTransactionReturnType,
-  type PayForTransactionErrorType,
   payForTransaction,
 } from '@growae/reactive'
+import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UsePayForTransactionParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
+export type UsePayForTransactionParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function usePayForTransaction(
   parameters: UsePayForTransactionParameters = () => ({}),
@@ -21,4 +23,6 @@ export function usePayForTransaction(
   }))
 }
 
-export type UsePayForTransactionReturnType = ReturnType<typeof usePayForTransaction>
+export type UsePayForTransactionReturnType = ReturnType<
+  typeof usePayForTransaction
+>

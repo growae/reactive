@@ -7,12 +7,9 @@ import {
 import type { Config } from '../createConfig.js'
 import type { ExactPartial } from '../types/utils.js'
 
-export type GetOracleQueriesOptions =
-  ExactPartial<GetOracleQueriesParameters>
+export type GetOracleQueriesOptions = ExactPartial<GetOracleQueriesParameters>
 
-export function getOracleQueriesQueryKey(
-  params: GetOracleQueriesOptions = {},
-) {
+export function getOracleQueriesQueryKey(params: GetOracleQueriesOptions = {}) {
   return ['getOracleQueries', params] as const
 }
 
@@ -36,4 +33,4 @@ export function getOracleQueriesQueryOptions(
 
 export type GetOracleQueriesQueryFnData = GetOracleQueriesReturnType
 export type GetOracleQueriesData = GetOracleQueriesQueryFnData
-export { type GetOracleQueriesErrorType }
+export type { GetOracleQueriesErrorType }

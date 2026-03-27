@@ -1,4 +1,10 @@
-import { useNetworkId, useHeight, useBalance, useConnect, useDisconnect } from '@growae/reactive-react'
+import {
+  useBalance,
+  useConnect,
+  useDisconnect,
+  useHeight,
+  useNetworkId,
+} from '@growae/reactive-react'
 
 export function App() {
   const networkId = useNetworkId()
@@ -14,11 +20,17 @@ export function App() {
 
       <h2>Connectors</h2>
       {connectors.map((connector) => (
-        <button key={connector.id} onClick={() => connect({ connector })}>
+        <button
+          type="button"
+          key={connector.id}
+          onClick={() => connect({ connector })}
+        >
           {connector.name}
         </button>
       ))}
-      <button onClick={() => disconnect()}>Disconnect</button>
+      <button type="button" onClick={() => disconnect()}>
+        Disconnect
+      </button>
     </div>
   )
 }

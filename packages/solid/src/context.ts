@@ -1,9 +1,9 @@
 import type { Config, State } from '@growae/reactive'
 import {
+  type ParentProps,
   createComponent,
   createContext,
   mergeProps,
-  type ParentProps,
 } from 'solid-js'
 import { Hydrate } from './hydrate.js'
 
@@ -15,7 +15,9 @@ export type ReactiveProviderProps = {
   reconnectOnMount?: boolean | undefined
 }
 
-export function ReactiveProvider(parameters: ParentProps<ReactiveProviderProps>) {
+export function ReactiveProvider(
+  parameters: ParentProps<ReactiveProviderProps>,
+) {
   const props = mergeProps({ reconnectOnMount: true }, parameters)
   return createComponent(Hydrate, {
     get config() {

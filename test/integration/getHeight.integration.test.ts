@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { getHeight } from '../../packages/core/src/actions/getHeight.js'
 import { createTestConfig, waitForNode } from '../setup/integration.js'
 

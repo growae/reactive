@@ -1,18 +1,18 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createElement } from 'react'
-import { renderHook } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useConnect } from './useConnect.js'
-import { ReactiveProvider } from '../context.js'
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive'
 import { mock } from '@growae/reactive'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { renderHook } from '@testing-library/react'
+import { createElement } from 'react'
+import { ReactiveProvider } from '../context.js'
+import { useConnect } from './useConnect.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

@@ -1,16 +1,16 @@
 import { Node } from '@aeternity/aepp-sdk'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
-import { createStore, type Mutate, type StoreApi } from 'zustand/vanilla'
+import { type Mutate, type StoreApi, createStore } from 'zustand/vanilla'
 
 import type {
   ConnectorEventMap,
   CreateConnectorFn,
 } from './connectors/createConnector.js'
-import { createEmitter, type Emitter, type EventData } from './createEmitter.js'
+import { type Emitter, type EventData, createEmitter } from './createEmitter.js'
 import {
+  type Storage,
   createStorage,
   getDefaultStorage,
-  type Storage,
 } from './createStorage.js'
 import { NetworkNotConfiguredError } from './errors/config.js'
 import type { Network } from './types/network.js'
@@ -420,7 +420,7 @@ export type Config<
 }
 
 type Internal<
-  networks extends readonly [Network, ...Network[]] = readonly [
+  _networks extends readonly [Network, ...Network[]] = readonly [
     Network,
     ...Network[],
   ],

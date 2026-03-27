@@ -1,17 +1,17 @@
-import { createMutation } from '@tanstack/solid-query'
 import {
   type ClaimNameParameters,
   type ClaimNameReturnType,
   claimName,
 } from '@growae/reactive'
+import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseClaimNameParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
+export type UseClaimNameParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
-export function useClaimName(
-  parameters: UseClaimNameParameters = () => ({}),
-) {
+export function useClaimName(parameters: UseClaimNameParameters = () => ({})) {
   const config = useConfig(parameters)
   return createMutation(() => ({
     mutationKey: ['claimName'],

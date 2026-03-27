@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { deepEqual } from './deepEqual.js'
 
 describe('deepEqual', () => {
@@ -34,8 +34,8 @@ describe('deepEqual', () => {
     })
 
     it('should handle NaN', () => {
-      expect(deepEqual(NaN, NaN)).toBe(true)
-      expect(deepEqual(NaN, 1)).toBe(false)
+      expect(deepEqual(Number.NaN, Number.NaN)).toBe(true)
+      expect(deepEqual(Number.NaN, 1)).toBe(false)
     })
   })
 

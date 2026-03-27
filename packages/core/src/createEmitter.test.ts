@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { createEmitter, Emitter } from './createEmitter.js'
+import { describe, expect, it, vi } from 'vitest'
+import { Emitter, createEmitter } from './createEmitter.js'
 
 type TestEventMap = {
   change: { value: string }

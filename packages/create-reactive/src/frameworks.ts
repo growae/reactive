@@ -36,9 +36,7 @@ export const frameworks: readonly Framework[] = [
     name: 'solid',
     display: 'Solid',
     color: blue,
-    variants: [
-      { name: 'vite-solid', display: 'Vite + Solid', color: blue },
-    ],
+    variants: [{ name: 'vite-solid', display: 'Vite + Solid', color: blue }],
   },
   {
     name: 'vanilla',

@@ -1,17 +1,14 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { mkdir, rm } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
+import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { frameworks } from './frameworks.js'
 import { copy } from './utils.js'
 
-const templatesDir = resolve(
-  fileURLToPath(import.meta.url),
-  '../../templates',
-)
+const templatesDir = resolve(fileURLToPath(import.meta.url), '../../templates')
 
 describe('template copying', () => {
   let tempDir: string
@@ -41,9 +38,9 @@ describe('template copying', () => {
     const pkg = JSON.parse(
       readFileSync(join(tempDir, 'package.json'), 'utf-8'),
     ) as Record<string, unknown>
-    const deps = pkg['dependencies'] as Record<string, string>
+    const deps = pkg.dependencies as Record<string, string>
     expect(deps['@growae/reactive-react']).toBeDefined()
-    expect(deps['react']).toBeDefined()
+    expect(deps.react).toBeDefined()
   })
 
   it('should copy vite-vue template files', () => {
@@ -80,9 +77,7 @@ describe('template copying', () => {
   })
 
   it('should have templates for all framework variants', () => {
-    const allVariants = frameworks.flatMap((f) =>
-      f.variants.map((v) => v.name),
-    )
+    const allVariants = frameworks.flatMap((f) => f.variants.map((v) => v.name))
 
     for (const variant of allVariants) {
       const templateDir = join(templatesDir, variant)

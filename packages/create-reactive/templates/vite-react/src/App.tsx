@@ -1,4 +1,4 @@
-import { useConnect, useDisconnect, useBalance } from '@growae/reactive-react'
+import { useBalance, useConnect, useDisconnect } from '@growae/reactive-react'
 
 function App() {
   const { connect, connectors, status, error } = useConnect()

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { useBalance } from './useBalance.js'
 
 const mockUseQuery = vi.fn(() => ({
@@ -19,7 +19,12 @@ vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({
     subscribe: vi.fn(() => vi.fn()),
     networks: [{ id: 'ae_uat' }],
-    state: { networkId: 'ae_uat', connections: new Map(), status: 'disconnected', current: undefined },
+    state: {
+      networkId: 'ae_uat',
+      connections: new Map(),
+      status: 'disconnected',
+      current: undefined,
+    },
   })),
 }))
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { toAe, toAettos, formatAmount } from './formatAmount.js'
+import { describe, expect, it } from 'vitest'
+import { formatAmount, toAe, toAettos } from './formatAmount.js'
 
 describe('toAettos', () => {
   it('should convert whole AE to aettos', () => {

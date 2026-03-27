@@ -1,14 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { ledger } from './ledger.js'
 import { createEmitter } from '@growae/reactive'
 import type { ConnectorEventMap } from '@growae/reactive'
 import type { Network } from '@growae/reactive'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ledger } from './ledger.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 const SIGNED_TX = 'tx_signed_abc123'
 const SIGNED_MSG = new Uint8Array([1, 2, 3, 4])
 
-function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' }]) {
+function makeConfig(
+  networks: Network[] = [
+    { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
+  ],
+) {
   const emitter = createEmitter<ConnectorEventMap>('test-uid')
   return {
     networks: networks as [Network, ...Network[]],
@@ -105,7 +109,9 @@ describe('ledger', () => {
     await instance.connect()
     await instance.disconnect()
 
-    await expect(instance.getAccounts()).rejects.toThrow('Connector not connected.')
+    await expect(instance.getAccounts()).rejects.toThrow(
+      'Connector not connected.',
+    )
   })
 
   it('should report isAuthorized based on connection state', async () => {
@@ -166,8 +172,16 @@ describe('ledger', () => {
   it('should switch network', async () => {
     const connector = ledger({ transport: mockTransport })
     const config = makeConfig([
-      { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
-      { id: 'ae_mainnet', name: 'Mainnet', nodeUrl: 'https://mainnet.aeternity.io' },
+      {
+        id: 'ae_uat',
+        name: 'Testnet',
+        nodeUrl: 'https://testnet.aeternity.io',
+      },
+      {
+        id: 'ae_mainnet',
+        name: 'Mainnet',
+        nodeUrl: 'https://mainnet.aeternity.io',
+      },
     ])
     const instance = connector(config)
     await instance.setup?.()

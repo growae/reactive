@@ -1,17 +1,15 @@
-import { describe, it, expect, vi } from 'vitest'
-import { mock } from './mock.js'
+import { describe, expect, it, vi } from 'vitest'
 import { createEmitter } from '../createEmitter.js'
-import { testnet, mainnet } from '../types/network.js'
+import { mainnet, testnet } from '../types/network.js'
 import type { ConnectorEventMap } from './createConnector.js'
+import { mock } from './mock.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
   'ak_wMd5Yco4BDvRH7MJJSExXkRrFxJ27BaFiDR1nTjJPFp5Rnw4V',
 ] as const
 
-function setupConnector(
-  features?: Parameters<typeof mock>[0]['features'],
-) {
+function setupConnector(features?: Parameters<typeof mock>[0]['features']) {
   const connectorFn = mock({ accounts: [...TEST_ACCOUNTS], features })
   const emitter = createEmitter<ConnectorEventMap>('test-uid')
   const connector = connectorFn({

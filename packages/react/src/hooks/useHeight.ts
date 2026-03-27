@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  type GetHeightErrorType,
   type GetHeightParameters,
   type GetHeightReturnType,
-  type GetHeightErrorType,
   getHeight,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -28,12 +28,16 @@ export function useHeight(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['height', {
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getHeight(config, {
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'height',
+      {
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getHeight(config, {
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: parameters.enabled ?? true,
   }) as UseHeightReturnType
 }

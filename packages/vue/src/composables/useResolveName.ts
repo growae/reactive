@@ -1,7 +1,7 @@
 import type {
+  Compute,
   ResolveNameParameters,
   ResolveNameReturnType,
-  Compute,
 } from '@growae/reactive'
 import { resolveName } from '@growae/reactive'
 import { computed } from 'vue'
@@ -26,15 +26,19 @@ export function useResolveName(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['resolveName', {
-      name: parameters.name,
-      key: parameters.key,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => resolveName(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'resolveName',
+      {
+        name: parameters.name,
+        key: parameters.key,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      resolveName(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.name) && (parameters.enabled ?? true),
   }))
 

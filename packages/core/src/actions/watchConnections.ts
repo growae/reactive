@@ -11,8 +11,5 @@ export function watchConnections(
   parameters: WatchConnectionsParameters,
 ): WatchConnectionsReturnType {
   const { onChange } = parameters
-  return config.subscribe(
-    (state) => state.connections ?? [],
-    onChange,
-  )
+  return config.subscribe((state) => state.connections ?? [], onChange)
 }

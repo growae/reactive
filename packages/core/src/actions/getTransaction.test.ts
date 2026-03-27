@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getTransaction } from './getTransaction.js'
 
 describe('getTransaction', () => {
@@ -12,10 +12,14 @@ describe('getTransaction', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
-    await expect(getTransaction(mockConfig as any, { hash: 'th_test' })).rejects.toThrow()
+    await expect(
+      getTransaction(mockConfig as any, { hash: 'th_test' }),
+    ).rejects.toThrow()
   })
 
   it('should return transaction details from node', async () => {

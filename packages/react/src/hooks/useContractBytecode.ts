@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  type GetContractBytecodeErrorType,
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
-  type GetContractBytecodeErrorType,
   getContractBytecode,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -28,14 +28,18 @@ export function useContractBytecode(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['contractBytecode', {
-      contractId: parameters.contractId,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getContractBytecode(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'contractBytecode',
+      {
+        contractId: parameters.contractId,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getContractBytecode(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.contractId) && (parameters.enabled ?? true),
   }) as UseContractBytecodeReturnType
 }

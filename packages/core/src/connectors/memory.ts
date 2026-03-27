@@ -1,7 +1,4 @@
-import {
-  MemoryAccount,
-  type AccountBase,
-} from '@aeternity/aepp-sdk'
+import { type AccountBase, MemoryAccount } from '@aeternity/aepp-sdk'
 
 import {
   ConnectorNotConnectedError,
@@ -32,12 +29,9 @@ export function memory(parameters: MemoryParameters) {
     },
 
     async connect({ networkId } = {}) {
-      const targetNetworkId =
-        networkId ?? config.networks[0].id
+      const targetNetworkId = networkId ?? config.networks[0].id
 
-      const isConfigured = config.networks.some(
-        (n) => n.id === targetNetworkId,
-      )
+      const isConfigured = config.networks.some((n) => n.id === targetNetworkId)
       if (!isConfigured) throw new NetworkNotConfiguredError()
 
       connected = true

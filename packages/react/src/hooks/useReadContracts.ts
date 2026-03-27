@@ -6,8 +6,8 @@ import {
   readContracts,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
 export type UseReadContractsParameters = Compute<
@@ -25,14 +25,18 @@ export function useReadContracts(
   const config = useConfig(parameters)
 
   return useQuery({
-    queryKey: ['readContracts', {
-      contracts: parameters.contracts?.map((c) => ({
-        address: c.address,
-        method: c.method,
-        args: c.args,
-      })),
-    }],
+    queryKey: [
+      'readContracts',
+      {
+        contracts: parameters.contracts?.map((c) => ({
+          address: c.address,
+          method: c.method,
+          args: c.args,
+        })),
+      },
+    ],
     queryFn: () => readContracts(config, parameters),
-    enabled: Boolean(parameters.contracts?.length) && (parameters.enabled ?? true),
+    enabled:
+      Boolean(parameters.contracts?.length) && (parameters.enabled ?? true),
   }) as UseReadContractsReturnType
 }

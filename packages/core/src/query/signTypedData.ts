@@ -13,7 +13,11 @@ export function signTypedDataMutationOptions(config: Config) {
       return signTypedData(config, variables)
     },
     mutationKey: ['signTypedData'],
-  } satisfies MutationOptions<SignTypedDataReturnType, SignTypedDataErrorType, SignTypedDataParameters>
+  } satisfies MutationOptions<
+    SignTypedDataReturnType,
+    SignTypedDataErrorType,
+    SignTypedDataParameters
+  >
 }
 
 export type SignTypedDataMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type SignTypedDataMutationOptions = ReturnType<
 >
 export type SignTypedDataData = SignTypedDataReturnType
 export type SignTypedDataVariables = SignTypedDataParameters
-export { type SignTypedDataErrorType }
+export type { SignTypedDataErrorType }

@@ -21,6 +21,7 @@ export function Hydrate(parameters: React.PropsWithChildren<HydrateProps>) {
   if (!config._internal.ssr) onMount()
 
   const active = useRef(true)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only effect
   useEffect(() => {
     if (!active.current) return
     if (!config._internal.ssr) return

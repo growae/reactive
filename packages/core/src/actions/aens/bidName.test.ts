@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { bidName, BidNameNoAccountError } from './bidName.js'
+import { describe, expect, it, vi } from 'vitest'
+import { BidNameNoAccountError, bidName } from './bidName.js'
 
 describe('bidName', () => {
   it('should be a function', () => {

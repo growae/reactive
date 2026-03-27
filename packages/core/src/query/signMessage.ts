@@ -13,7 +13,11 @@ export function signMessageMutationOptions(config: Config) {
       return signMessage(config, variables)
     },
     mutationKey: ['signMessage'],
-  } satisfies MutationOptions<SignMessageReturnType, SignMessageErrorType, SignMessageParameters>
+  } satisfies MutationOptions<
+    SignMessageReturnType,
+    SignMessageErrorType,
+    SignMessageParameters
+  >
 }
 
 export type SignMessageMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type SignMessageMutationOptions = ReturnType<
 >
 export type SignMessageData = SignMessageReturnType
 export type SignMessageVariables = SignMessageParameters
-export { type SignMessageErrorType }
+export type { SignMessageErrorType }

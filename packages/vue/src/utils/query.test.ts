@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const mockTanstackUseQuery = vi.fn((options: any) => {
-  const resolvedOpts = typeof options.value === 'object' ? options.value : options
+  const resolvedOpts =
+    typeof options.value === 'object' ? options.value : options
   return {
     data: { value: undefined },
     error: { value: null },
@@ -22,11 +23,14 @@ vi.mock('@tanstack/vue-query', () => ({
 }))
 
 vi.mock('@growae/reactive/query', () => ({
-  hashFn: (queryKey: readonly unknown[]) => JSON.stringify(queryKey, (_, v) => typeof v === 'bigint' ? v.toString() : v),
+  hashFn: (queryKey: readonly unknown[]) =>
+    JSON.stringify(queryKey, (_, v) =>
+      typeof v === 'bigint' ? v.toString() : v,
+    ),
 }))
 
-import { useQuery, useMutation } from './query.js'
 import { computed } from 'vue'
+import { useMutation, useQuery } from './query.js'
 
 describe('useQuery', () => {
   it('should inject hashFn as queryKeyHashFn', () => {

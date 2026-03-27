@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   UpdateNameParameters,
   UpdateNameReturnType,
-  Compute,
 } from '@growae/reactive'
 import { updateName } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -12,8 +12,16 @@ import { useConfig } from './useConfig.js'
 export type UseUpdateNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: UpdateNameReturnType, variables: UpdateNameParameters, context: context) => void
-      onError?: (error: Error, variables: UpdateNameParameters, context: context) => void
+      onSuccess?: (
+        data: UpdateNameReturnType,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +34,9 @@ export type UseUpdateNameReturnType<context = unknown> = Compute<
     context
   > & {
     updateName: (variables: UpdateNameParameters) => void
-    updateNameAsync: (variables: UpdateNameParameters) => Promise<UpdateNameReturnType>
+    updateNameAsync: (
+      variables: UpdateNameParameters,
+    ) => Promise<UpdateNameReturnType>
   }
 >
 

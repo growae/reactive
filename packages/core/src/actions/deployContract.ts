@@ -1,6 +1,6 @@
+import { DEFAULT_TTL } from '../constants.js'
 import type { Config } from '../createConfig.js'
 import { BaseError } from '../errors/base.js'
-import { DEFAULT_TTL } from '../constants.js'
 
 export type DeployContractParameters = {
   sourceCode?: string
@@ -75,15 +75,14 @@ export async function deployContract(
     ...(sourceCode ? { sourceCode } : {}),
     ...(bytecode ? { bytecode } : {}),
     ...(aci ? { aci } : {}),
-    ...(config.state.compilerUrl
-      ? { onCompiler: config.getCompiler() }
-      : {}),
+    ...(config.state.compilerUrl ? { onCompiler: config.getCompiler() } : {}),
   })
 
   const deployResult = await contractInstance.$deploy(initArgs, {
     amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
     gasLimit: txOptions.gasLimit,
-    gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
+    gasPrice:
+      txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
     deposit: txOptions.deposit != null ? Number(txOptions.deposit) : undefined,
     ttl: txOptions.ttl ?? DEFAULT_TTL,

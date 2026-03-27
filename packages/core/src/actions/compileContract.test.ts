@@ -1,5 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { compileContract, CompileContractNoCompilerError } from './compileContract.js'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  CompileContractNoCompilerError,
+  compileContract,
+} from './compileContract.js'
 
 describe('compileContract', () => {
   it('should be a function', () => {

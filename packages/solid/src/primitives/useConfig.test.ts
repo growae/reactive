@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { useConfig } from './useConfig.js'
+import { describe, expect, it, vi } from 'vitest'
 import { ReactiveProviderNotFoundError } from '../errors/context.js'
+import { useConfig } from './useConfig.js'
 
 describe('useConfig', () => {
   it('should be a function', () => {
@@ -25,6 +25,8 @@ describe('useConfig', () => {
 
   it('should throw with descriptive message', () => {
     const config = useConfig(() => ({}))
-    expect(() => config()).toThrow('`useConfig` must be used within `ReactiveProvider`.')
+    expect(() => config()).toThrow(
+      '`useConfig` must be used within `ReactiveProvider`.',
+    )
   })
 })

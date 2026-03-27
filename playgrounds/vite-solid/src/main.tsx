@@ -1,7 +1,7 @@
-import { render } from 'solid-js/web'
-import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { createConfig, testnet } from '@growae/reactive'
 import { ReactiveProvider } from '@growae/reactive-solid'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { render } from 'solid-js/web'
 import { App } from './App.js'
 
 const config = createConfig({

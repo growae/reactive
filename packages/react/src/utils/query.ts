@@ -1,18 +1,23 @@
 'use client'
 
+import type {
+  Compute,
+  ExactPartial,
+  LooseOmit,
+  UnionStrictOmit,
+} from '@growae/reactive'
+import { hashFn } from '@growae/reactive/query'
 import {
   type DefaultError,
   type MutateFunction,
   type QueryKey,
-  useQuery as tanstack_useQuery,
   type UseMutationOptions,
   type UseMutationResult,
   type UseQueryOptions,
   type UseQueryResult,
+  useQuery as tanstack_useQuery,
   useMutation,
 } from '@tanstack/react-query'
-import { hashFn } from '@growae/reactive/query'
-import type { Compute, ExactPartial, LooseOmit, UnionStrictOmit } from '@growae/reactive'
 
 export { useMutation }
 
@@ -65,7 +70,10 @@ export type UseQueryParameters<
   queryKey extends QueryKey = QueryKey,
 > = Compute<
   ExactPartial<
-    LooseOmit<UseQueryOptions<queryFnData, error, data, queryKey>, 'initialData'>
+    LooseOmit<
+      UseQueryOptions<queryFnData, error, data, queryKey>,
+      'initialData'
+    >
   > & {
     initialData?:
       | UseQueryOptions<queryFnData, error, data, queryKey>['initialData']

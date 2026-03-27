@@ -14,9 +14,15 @@ export function registerOracleMutationOptions(config: Config) {
       return registerOracle(config, variables)
     },
     mutationKey: ['registerOracle'],
-  } satisfies MutationOptions<RegisterOracleReturnType, RegisterOracleErrorType, RegisterOracleParameters>
+  } satisfies MutationOptions<
+    RegisterOracleReturnType,
+    RegisterOracleErrorType,
+    RegisterOracleParameters
+  >
 }
 
-export type RegisterOracleMutationOptions = ReturnType<typeof registerOracleMutationOptions>
+export type RegisterOracleMutationOptions = ReturnType<
+  typeof registerOracleMutationOptions
+>
 export type RegisterOracleData = RegisterOracleReturnType
 export type RegisterOracleVariables = RegisterOracleParameters

@@ -1,12 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { iframe } from './iframe.js'
 import { createEmitter } from '@growae/reactive'
 import type { ConnectorEventMap } from '@growae/reactive'
 import type { Network } from '@growae/reactive'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { iframe } from './iframe.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 
-function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' }]) {
+function makeConfig(
+  networks: Network[] = [
+    { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
+  ],
+) {
   const emitter = createEmitter<ConnectorEventMap>('test-uid')
   return {
     networks: networks as [Network, ...Network[]],
@@ -60,8 +64,9 @@ describe('iframe', () => {
   })
 
   it('should use parent window as default target', async () => {
-    const { BrowserWindowMessageConnection } =
-      await import('@aeternity/aepp-sdk')
+    const { BrowserWindowMessageConnection } = await import(
+      '@aeternity/aepp-sdk'
+    )
 
     const connector = iframe()
     const instance = connector(makeConfig())
@@ -76,8 +81,9 @@ describe('iframe', () => {
   })
 
   it('should pass custom origin to connection', async () => {
-    const { BrowserWindowMessageConnection } =
-      await import('@aeternity/aepp-sdk')
+    const { BrowserWindowMessageConnection } = await import(
+      '@aeternity/aepp-sdk'
+    )
 
     const connector = iframe({ origin: 'https://wallet.example.com' })
     const instance = connector(makeConfig())
@@ -95,7 +101,9 @@ describe('iframe', () => {
     await instance.connect()
     await instance.disconnect()
 
-    await expect(instance.getAccounts()).rejects.toThrow('Connector not connected.')
+    await expect(instance.getAccounts()).rejects.toThrow(
+      'Connector not connected.',
+    )
   })
 
   it('should report isAuthorized correctly', async () => {

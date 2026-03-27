@@ -1,7 +1,7 @@
 'use client'
 
 import type { Config, State } from '@growae/reactive'
-import { createContext, createElement, type ReactNode } from 'react'
+import { type ReactNode, createContext, createElement } from 'react'
 import { Hydrate } from './hydrate.js'
 
 export const ReactiveContext = createContext<Config | undefined>(undefined)

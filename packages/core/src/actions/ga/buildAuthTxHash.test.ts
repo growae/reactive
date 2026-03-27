@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   buildAuthTxHash: vi.fn().mockResolvedValue(Buffer.from('mockhash')),
@@ -15,7 +15,9 @@ describe('buildAuthTxHash', () => {
     const mockNode = {}
     const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
 
-    const result = await buildAuthTxHash(mockConfig as any, { tx: 'tx_encoded' })
+    const result = await buildAuthTxHash(mockConfig as any, {
+      tx: 'tx_encoded',
+    })
 
     expect(result.txHash).toBeInstanceOf(Buffer)
 

@@ -1,6 +1,6 @@
 import type { GetConnectionsReturnType } from '@growae/reactive'
 import { getConnections, watchConnections } from '@growae/reactive'
-import { onScopeDispose, ref, type Ref } from 'vue'
+import { type Ref, onScopeDispose, ref } from 'vue'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'
 
@@ -12,7 +12,9 @@ export function useConnections(
   parameters: UseConnectionsParameters = {},
 ): UseConnectionsReturnType {
   const config = useConfig(parameters)
-  const connections = ref(getConnections(config)) as Ref<GetConnectionsReturnType>
+  const connections = ref(
+    getConnections(config),
+  ) as Ref<GetConnectionsReturnType>
 
   const unsubscribe = watchConnections(config, {
     onChange(value) {

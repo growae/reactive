@@ -46,7 +46,9 @@ export function formatAmount(
     const parts = aeValue.split('.')
     if (decimals === 0) return parts[0]!
 
-    const decimalPart = (parts[1] ?? '').padEnd(decimals, '0').slice(0, decimals)
+    const decimalPart = (parts[1] ?? '')
+      .padEnd(decimals, '0')
+      .slice(0, decimals)
     return `${parts[0]}.${decimalPart}`
   }
 

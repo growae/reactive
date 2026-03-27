@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetTransactionCountErrorType,
   GetTransactionCountParameters,
   GetTransactionCountReturnType,
-  GetTransactionCountErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getTransactionCount } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,14 +27,18 @@ export function useTransactionCount(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['transactionCount', {
-      address: parameters.address,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getTransactionCount(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'transactionCount',
+      {
+        address: parameters.address,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getTransactionCount(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }))
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getNodeClient } from './getNodeClient.js'
 
 describe('getNodeClient', () => {
@@ -14,7 +14,9 @@ describe('getNodeClient', () => {
 
     const result = getNodeClient(mockConfig as any, { networkId: 'ae_uat' })
 
-    expect(mockConfig.getNodeClient).toHaveBeenCalledWith({ networkId: 'ae_uat' })
+    expect(mockConfig.getNodeClient).toHaveBeenCalledWith({
+      networkId: 'ae_uat',
+    })
     expect(result).toBe(mockNode)
   })
 
@@ -26,7 +28,9 @@ describe('getNodeClient', () => {
 
     const result = getNodeClient(mockConfig as any)
 
-    expect(mockConfig.getNodeClient).toHaveBeenCalledWith({ networkId: undefined })
+    expect(mockConfig.getNodeClient).toHaveBeenCalledWith({
+      networkId: undefined,
+    })
     expect(result).toBe(mockNode)
   })
 })

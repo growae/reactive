@@ -1,7 +1,7 @@
 import type {
+  Compute,
   GetOracleStateParameters,
   GetOracleStateReturnType,
-  Compute,
 } from '@growae/reactive'
 import { getOracleState } from '@growae/reactive'
 import { computed } from 'vue'
@@ -26,14 +26,18 @@ export function useOracleState(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['oracleState', {
-      oracleId: parameters.oracleId,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getOracleState(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'oracleState',
+      {
+        oracleId: parameters.oracleId,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getOracleState(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.oracleId) && (parameters.enabled ?? true),
   }))
 

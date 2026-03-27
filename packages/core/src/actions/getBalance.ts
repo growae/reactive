@@ -37,7 +37,10 @@ export async function getBalance(
     const whole = balance / AETTOS_PER_AE
     const remainder = balance % AETTOS_PER_AE
     if (remainder === 0n) return whole.toString()
-    const remainderStr = remainder.toString().padStart(18, '0').replace(/0+$/, '')
+    const remainderStr = remainder
+      .toString()
+      .padStart(18, '0')
+      .replace(/0+$/, '')
     return `${whole}.${remainderStr}`
   }
 

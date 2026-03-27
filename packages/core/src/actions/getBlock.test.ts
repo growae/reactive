@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getBlock } from './getBlock.js'
 
 describe('getBlock', () => {
@@ -12,7 +12,9 @@ describe('getBlock', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(getBlock(mockConfig as any, {})).rejects.toThrow()

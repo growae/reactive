@@ -13,10 +13,16 @@ export function buildTransactionMutationOptions(config: Config) {
       return buildTransaction(config, variables)
     },
     mutationKey: ['buildTransaction'],
-  } satisfies MutationOptions<BuildTransactionReturnType, BuildTransactionErrorType, BuildTransactionParameters>
+  } satisfies MutationOptions<
+    BuildTransactionReturnType,
+    BuildTransactionErrorType,
+    BuildTransactionParameters
+  >
 }
 
-export type BuildTransactionMutationOptions = ReturnType<typeof buildTransactionMutationOptions>
+export type BuildTransactionMutationOptions = ReturnType<
+  typeof buildTransactionMutationOptions
+>
 export type BuildTransactionData = BuildTransactionReturnType
 export type BuildTransactionVariables = BuildTransactionParameters
-export { type BuildTransactionErrorType }
+export type { BuildTransactionErrorType }

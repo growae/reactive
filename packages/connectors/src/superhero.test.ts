@@ -1,12 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { superhero } from './superhero.js'
 import { createEmitter } from '@growae/reactive'
 import type { ConnectorEventMap } from '@growae/reactive'
 import type { Network } from '@growae/reactive'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { superhero } from './superhero.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 
-function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' }]) {
+function makeConfig(
+  networks: Network[] = [
+    { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
+  ],
+) {
   const emitter = createEmitter<ConnectorEventMap>('test-uid')
   return {
     networks: networks as [Network, ...Network[]],
@@ -78,7 +82,9 @@ describe('superhero', () => {
     await instance.connect()
     await instance.disconnect()
 
-    await expect(instance.getAccounts()).rejects.toThrow('Connector not connected.')
+    await expect(instance.getAccounts()).rejects.toThrow(
+      'Connector not connected.',
+    )
   })
 
   it('should report isAuthorized correctly', async () => {

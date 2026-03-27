@@ -14,9 +14,15 @@ export function openChannelMutationOptions(config: Config) {
       return openChannel(config, variables)
     },
     mutationKey: ['openChannel'],
-  } satisfies MutationOptions<OpenChannelReturnType, OpenChannelErrorType, OpenChannelParameters>
+  } satisfies MutationOptions<
+    OpenChannelReturnType,
+    OpenChannelErrorType,
+    OpenChannelParameters
+  >
 }
 
-export type OpenChannelMutationOptions = ReturnType<typeof openChannelMutationOptions>
+export type OpenChannelMutationOptions = ReturnType<
+  typeof openChannelMutationOptions
+>
 export type OpenChannelData = OpenChannelReturnType
 export type OpenChannelVariables = OpenChannelParameters

@@ -35,7 +35,9 @@ export async function waitForTransaction(
 
   while (true) {
     if (timeout != null && Date.now() - startTime > timeout) {
-      throw new Error(`Waiting for transaction ${hash} timed out after ${timeout}ms`)
+      throw new Error(
+        `Waiting for transaction ${hash} timed out after ${timeout}ms`,
+      )
     }
 
     const tx = await node.getTransactionByHash(hash)

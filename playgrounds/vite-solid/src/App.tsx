@@ -1,4 +1,4 @@
-import { useNetworkId, useHeight } from '@growae/reactive-solid'
+import { useHeight, useNetworkId } from '@growae/reactive-solid'
 
 export function App() {
   const networkId = useNetworkId()

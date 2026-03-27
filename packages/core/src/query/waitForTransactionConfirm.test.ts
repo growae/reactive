@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { waitForTransactionConfirmQueryKey, waitForTransactionConfirmQueryOptions } from './waitForTransactionConfirm.js'
+import { describe, expect, it } from 'vitest'
+import {
+  waitForTransactionConfirmQueryKey,
+  waitForTransactionConfirmQueryOptions,
+} from './waitForTransactionConfirm.js'
 
 describe('waitForTransactionConfirmQueryOptions', () => {
   it('should be a function', () => {
@@ -8,8 +11,13 @@ describe('waitForTransactionConfirmQueryOptions', () => {
 
   it('should return query options with correct key', () => {
     const mockConfig = {} as any
-    const options = waitForTransactionConfirmQueryOptions(mockConfig, { hash: 'th_test' })
-    expect(options.queryKey).toEqual(['waitForTransactionConfirm', { hash: 'th_test' }])
+    const options = waitForTransactionConfirmQueryOptions(mockConfig, {
+      hash: 'th_test',
+    })
+    expect(options.queryKey).toEqual([
+      'waitForTransactionConfirm',
+      { hash: 'th_test' },
+    ])
     expect(typeof options.queryFn).toBe('function')
   })
 
@@ -21,14 +29,22 @@ describe('waitForTransactionConfirmQueryOptions', () => {
 
   it('should be enabled when hash is provided', () => {
     const mockConfig = {} as any
-    const options = waitForTransactionConfirmQueryOptions(mockConfig, { hash: 'th_test' })
+    const options = waitForTransactionConfirmQueryOptions(mockConfig, {
+      hash: 'th_test',
+    })
     expect(options.enabled).toBe(true)
   })
 })
 
 describe('waitForTransactionConfirmQueryKey', () => {
   it('should return correct query key', () => {
-    expect(waitForTransactionConfirmQueryKey()).toEqual(['waitForTransactionConfirm', {}])
-    expect(waitForTransactionConfirmQueryKey({ hash: 'th_test' })).toEqual(['waitForTransactionConfirm', { hash: 'th_test' }])
+    expect(waitForTransactionConfirmQueryKey()).toEqual([
+      'waitForTransactionConfirm',
+      {},
+    ])
+    expect(waitForTransactionConfirmQueryKey({ hash: 'th_test' })).toEqual([
+      'waitForTransactionConfirm',
+      { hash: 'th_test' },
+    ])
   })
 })

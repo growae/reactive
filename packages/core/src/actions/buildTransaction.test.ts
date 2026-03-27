@@ -1,12 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   buildTxAsync: vi.fn().mockResolvedValue('tx_encoded_build'),
   Tag: { SpendTx: 12, ContractCallTx: 43 },
 }))
 
-import { buildTransaction } from './buildTransaction.js'
 import { DEFAULT_TTL } from '../constants.js'
+import { buildTransaction } from './buildTransaction.js'
 
 describe('buildTransaction', () => {
   it('should be a function', () => {
@@ -19,7 +19,9 @@ describe('buildTransaction', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(

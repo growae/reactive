@@ -1,13 +1,15 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../../createConfig.js'
 import {
-  registerOracle,
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
+  registerOracle,
 } from './registerOracle.js'
-import type { Config } from '../../createConfig.js'
 
 test('registerOracle returns Promise<RegisterOracleReturnType>', () => {
-  expectTypeOf(registerOracle).returns.toEqualTypeOf<Promise<RegisterOracleReturnType>>()
+  expectTypeOf(registerOracle).returns.toEqualTypeOf<
+    Promise<RegisterOracleReturnType>
+  >()
 })
 
 test('RegisterOracleReturnType has oracleId', () => {

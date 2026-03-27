@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getOracleState } from './getOracleState.js'
 
 describe('getOracleState', () => {
@@ -15,10 +15,14 @@ describe('getOracleState', () => {
       ttl: 50000,
       abiVersion: 0,
     }
-    const mockNode = { getOracleByPubkey: vi.fn().mockResolvedValue(mockResult) }
+    const mockNode = {
+      getOracleByPubkey: vi.fn().mockResolvedValue(mockResult),
+    }
     const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
 
-    const result = await getOracleState(mockConfig as any, { oracleId: 'ok_oracle1' })
+    const result = await getOracleState(mockConfig as any, {
+      oracleId: 'ok_oracle1',
+    })
 
     expect(mockNode.getOracleByPubkey).toHaveBeenCalledWith('ok_oracle1')
     expect(result.id).toBe('ok_oracle1')

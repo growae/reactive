@@ -1,4 +1,9 @@
-import { defineNuxtModule, addPlugin, addImports, createResolver } from '@nuxt/kit'
+import {
+  addImports,
+  addPlugin,
+  createResolver,
+  defineNuxtModule,
+} from '@nuxt/kit'
 
 export interface ReactiveNuxtOptions {
   autoImports?: boolean

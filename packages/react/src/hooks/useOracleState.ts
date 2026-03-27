@@ -6,8 +6,8 @@ import {
   getOracleState,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -27,14 +27,18 @@ export function useOracleState(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['oracleState', {
-      oracleId: parameters.oracleId,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getOracleState(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'oracleState',
+      {
+        oracleId: parameters.oracleId,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getOracleState(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.oracleId) && (parameters.enabled ?? true),
   }) as UseOracleStateReturnType
 }

@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   PreclaimNameParameters,
   PreclaimNameReturnType,
-  Compute,
 } from '@growae/reactive'
 import { preclaimName } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -12,8 +12,16 @@ import { useConfig } from './useConfig.js'
 export type UsePreclaimNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: PreclaimNameReturnType, variables: PreclaimNameParameters, context: context) => void
-      onError?: (error: Error, variables: PreclaimNameParameters, context: context) => void
+      onSuccess?: (
+        data: PreclaimNameReturnType,
+        variables: PreclaimNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: PreclaimNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +34,9 @@ export type UsePreclaimNameReturnType<context = unknown> = Compute<
     context
   > & {
     preclaimName: (variables: PreclaimNameParameters) => void
-    preclaimNameAsync: (variables: PreclaimNameParameters) => Promise<PreclaimNameReturnType>
+    preclaimNameAsync: (
+      variables: PreclaimNameParameters,
+    ) => Promise<PreclaimNameReturnType>
   }
 >
 

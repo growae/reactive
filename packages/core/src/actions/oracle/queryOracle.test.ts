@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { queryOracle, QueryOracleNoAccountError } from './queryOracle.js'
+import { describe, expect, it, vi } from 'vitest'
+import { QueryOracleNoAccountError, queryOracle } from './queryOracle.js'
 
 describe('queryOracle', () => {
   it('should be a function', () => {

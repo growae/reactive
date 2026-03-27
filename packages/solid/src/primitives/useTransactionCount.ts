@@ -1,7 +1,7 @@
 import {
+  type GetTransactionCountErrorType,
   type GetTransactionCountParameters,
   type GetTransactionCountReturnType,
-  type GetTransactionCountErrorType,
   getTransactionCount,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -23,20 +23,25 @@ export type UseTransactionCountReturnType = UseQueryReturnType<
 >
 
 export function useTransactionCount(
-  parameters: UseTransactionCountParameters = () => ({} as GetTransactionCountParameters),
+  parameters: UseTransactionCountParameters = () =>
+    ({}) as GetTransactionCountParameters,
 ): UseTransactionCountReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['transactionCount', {
-      address: parameters().address,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getTransactionCount(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'transactionCount',
+      {
+        address: parameters().address,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getTransactionCount(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
   }))
 

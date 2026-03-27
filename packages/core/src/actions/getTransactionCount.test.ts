@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getTransactionCount } from './getTransactionCount.js'
 
 describe('getTransactionCount', () => {
@@ -12,7 +12,9 @@ describe('getTransactionCount', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
@@ -29,7 +31,9 @@ describe('getTransactionCount', () => {
       state: { networkId: 'ae_uat' },
     }
 
-    const result = await getTransactionCount(mockConfig as any, { address: 'ak_test' })
+    const result = await getTransactionCount(mockConfig as any, {
+      address: 'ak_test',
+    })
     expect(mockNode.getAccountNextNonce).toHaveBeenCalledWith('ak_test')
     expect(result).toBe(7)
   })

@@ -14,9 +14,15 @@ export function extendOracleMutationOptions(config: Config) {
       return extendOracle(config, variables)
     },
     mutationKey: ['extendOracle'],
-  } satisfies MutationOptions<ExtendOracleReturnType, ExtendOracleErrorType, ExtendOracleParameters>
+  } satisfies MutationOptions<
+    ExtendOracleReturnType,
+    ExtendOracleErrorType,
+    ExtendOracleParameters
+  >
 }
 
-export type ExtendOracleMutationOptions = ReturnType<typeof extendOracleMutationOptions>
+export type ExtendOracleMutationOptions = ReturnType<
+  typeof extendOracleMutationOptions
+>
 export type ExtendOracleData = ExtendOracleReturnType
 export type ExtendOracleVariables = ExtendOracleParameters

@@ -8,9 +8,7 @@ import type { ExactPartial } from '../types/utils.js'
 
 export type SimulateContractOptions = ExactPartial<SimulateContractParameters>
 
-export function simulateContractQueryKey(
-  params: SimulateContractOptions = {},
-) {
+export function simulateContractQueryKey(params: SimulateContractOptions = {}) {
   return ['simulateContract', params] as const
 }
 

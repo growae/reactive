@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetContractBytecodeErrorType,
   GetContractBytecodeParameters,
   GetContractBytecodeReturnType,
-  GetContractBytecodeErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getContractBytecode } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,14 +27,18 @@ export function useContractBytecode(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['contractBytecode', {
-      contractId: parameters.contractId,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getContractBytecode(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'contractBytecode',
+      {
+        contractId: parameters.contractId,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getContractBytecode(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.contractId) && (parameters.enabled ?? true),
   }))
 

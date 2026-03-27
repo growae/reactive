@@ -1,8 +1,8 @@
 import {
-  createConnector,
   ConnectorNotConnectedError,
-  ProviderNotFoundError,
   NetworkNotConfiguredError,
+  ProviderNotFoundError,
+  createConnector,
 } from '@growae/reactive'
 
 export type MetaMaskSnapParameters = {
@@ -93,9 +93,7 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
       connected = true
 
       const targetNetworkId = networkId ?? connectedNetworkId
-      const isConfigured = config.networks.some(
-        (n) => n.id === targetNetworkId,
-      )
+      const isConfigured = config.networks.some((n) => n.id === targetNetworkId)
       if (!isConfigured) throw new NetworkNotConfiguredError()
       connectedNetworkId = targetNetworkId
 

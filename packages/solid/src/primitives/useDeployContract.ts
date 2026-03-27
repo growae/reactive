@@ -1,14 +1,16 @@
-import { createMutation } from '@tanstack/solid-query'
 import {
+  type DeployContractErrorType,
   type DeployContractParameters,
   type DeployContractReturnType,
-  type DeployContractErrorType,
   deployContract,
 } from '@growae/reactive'
+import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseDeployContractParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
+export type UseDeployContractParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useDeployContract(
   parameters: UseDeployContractParameters = () => ({}),

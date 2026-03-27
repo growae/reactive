@@ -13,7 +13,11 @@ export function deployContractMutationOptions(config: Config) {
       return deployContract(config, variables)
     },
     mutationKey: ['deployContract'],
-  } satisfies MutationOptions<DeployContractReturnType, DeployContractErrorType, DeployContractParameters>
+  } satisfies MutationOptions<
+    DeployContractReturnType,
+    DeployContractErrorType,
+    DeployContractParameters
+  >
 }
 
 export type DeployContractMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type DeployContractMutationOptions = ReturnType<
 >
 export type DeployContractData = DeployContractReturnType
 export type DeployContractVariables = DeployContractParameters
-export { type DeployContractErrorType }
+export type { DeployContractErrorType }

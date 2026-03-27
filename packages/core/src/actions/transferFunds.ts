@@ -1,7 +1,7 @@
-import { buildTxAsync, Tag, unpackTx } from '@aeternity/aepp-sdk'
+import { Tag, buildTxAsync, unpackTx } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants.js'
 import type { Config, Connector } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import { DEFAULT_TTL } from '../constants.js'
 import { getBalance } from './getBalance.js'
 import { sendTransaction } from './sendTransaction.js'
 
@@ -29,12 +29,17 @@ export async function transferFunds(
   config: Config,
   parameters: TransferFundsParameters,
 ): Promise<TransferFundsReturnType> {
-  const { fraction, recipient, networkId, connector, ttl, waitMined = true } = parameters
+  const {
+    fraction,
+    recipient,
+    networkId,
+    connector,
+    ttl,
+    waitMined = true,
+  } = parameters
 
   if (fraction < 0 || fraction > 1) {
-    throw new Error(
-      `Invalid fraction: ${fraction}. Must be between 0 and 1.`,
-    )
+    throw new Error(`Invalid fraction: ${fraction}. Must be between 0 and 1.`)
   }
 
   let senderConnector: Connector | undefined = connector
@@ -62,7 +67,8 @@ export async function transferFunds(
     format: 'aettos',
   })
   const balance = BigInt(balanceStr)
-  const desiredAmount = (balance * BigInt(Math.round(fraction * 1e18))) / BigInt(1e18)
+  const desiredAmount =
+    (balance * BigInt(Math.round(fraction * 1e18))) / BigInt(1e18)
 
   const estimateTx = await buildTxAsync({
     tag: Tag.SpendTx,
@@ -75,8 +81,7 @@ export async function transferFunds(
   const unpacked = unpackTx(estimateTx, Tag.SpendTx)
   const fee = BigInt(unpacked.fee)
 
-  const amount =
-    desiredAmount + fee > balance ? balance - fee : desiredAmount
+  const amount = desiredAmount + fee > balance ? balance - fee : desiredAmount
 
   const tx = await buildTxAsync({
     tag: Tag.SpendTx,

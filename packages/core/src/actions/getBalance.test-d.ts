@@ -1,13 +1,15 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../createConfig.js'
 import {
-  getBalance,
   type GetBalanceParameters,
   type GetBalanceReturnType,
+  getBalance,
 } from './getBalance.js'
-import type { Config } from '../createConfig.js'
 
 test('getBalance returns Promise<GetBalanceReturnType>', () => {
-  expectTypeOf(getBalance).returns.toEqualTypeOf<Promise<GetBalanceReturnType>>()
+  expectTypeOf(getBalance).returns.toEqualTypeOf<
+    Promise<GetBalanceReturnType>
+  >()
 })
 
 test('GetBalanceReturnType is string', () => {

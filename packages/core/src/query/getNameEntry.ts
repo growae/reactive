@@ -31,4 +31,4 @@ export function getNameEntryQueryOptions(
 
 export type GetNameEntryQueryFnData = GetNameEntryReturnType
 export type GetNameEntryData = GetNameEntryQueryFnData
-export { type GetNameEntryErrorType }
+export type { GetNameEntryErrorType }

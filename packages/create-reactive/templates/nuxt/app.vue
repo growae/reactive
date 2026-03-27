@@ -5,10 +5,10 @@
 </template>
 
 <script setup lang="ts">
-import { ReactivePlugin } from '@growae/reactive-vue'
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive'
 import { superhero } from '@growae/reactive-connectors'
+import { ReactivePlugin } from '@growae/reactive-vue'
 
 const config = createConfig({
   networks: [testnet],

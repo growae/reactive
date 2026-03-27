@@ -1,12 +1,12 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type ChannelDepositParameters,
   type ChannelDepositReturnType,
   channelDeposit,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -14,8 +14,16 @@ import { useConfig } from './useConfig.js'
 export type UseChannelDepositParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ChannelDepositReturnType, variables: ChannelDepositParameters, context: context) => void
-      onError?: (error: Error, variables: ChannelDepositParameters, context: context) => void
+      onSuccess?: (
+        data: ChannelDepositReturnType,
+        variables: ChannelDepositParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: ChannelDepositParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseChannelDepositReturnType<context = unknown> = Compute<
     context
   > & {
     channelDeposit: (variables: ChannelDepositParameters) => void
-    channelDepositAsync: (variables: ChannelDepositParameters) => Promise<ChannelDepositReturnType>
+    channelDepositAsync: (
+      variables: ChannelDepositParameters,
+    ) => Promise<ChannelDepositReturnType>
   }
 >
 

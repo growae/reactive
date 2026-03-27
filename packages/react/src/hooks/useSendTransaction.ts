@@ -1,13 +1,13 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type SendTransactionErrorType,
   type SendTransactionParameters,
   type SendTransactionReturnType,
-  type SendTransactionErrorType,
   sendTransaction,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -15,8 +15,16 @@ import { useConfig } from './useConfig.js'
 export type UseSendTransactionParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SendTransactionReturnType, variables: SendTransactionParameters, context: context) => void
-      onError?: (error: SendTransactionErrorType, variables: SendTransactionParameters, context: context) => void
+      onSuccess?: (
+        data: SendTransactionReturnType,
+        variables: SendTransactionParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SendTransactionErrorType,
+        variables: SendTransactionParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseSendTransactionReturnType<context = unknown> = Compute<
     context
   > & {
     sendTransaction: (variables: SendTransactionParameters) => void
-    sendTransactionAsync: (variables: SendTransactionParameters) => Promise<SendTransactionReturnType>
+    sendTransactionAsync: (
+      variables: SendTransactionParameters,
+    ) => Promise<SendTransactionReturnType>
   }
 >
 
@@ -49,6 +59,7 @@ export function useSendTransaction<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     sendTransaction: mutation.mutate as Return['sendTransaction'],
-    sendTransactionAsync: mutation.mutateAsync as Return['sendTransactionAsync'],
+    sendTransactionAsync:
+      mutation.mutateAsync as Return['sendTransactionAsync'],
   }
 }

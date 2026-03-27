@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   hashTypedData: vi.fn().mockReturnValue(Buffer.from('mockhash', 'utf8')),
@@ -35,7 +35,9 @@ describe('signTypedData', () => {
     const mockConnector = {}
     const mockConfig = {
       state: {
-        connections: new Map([['uid1', { connector: mockConnector, accounts: ['ak_test'] }]]),
+        connections: new Map([
+          ['uid1', { connector: mockConnector, accounts: ['ak_test'] }],
+        ]),
         current: 'uid1',
       },
     }
@@ -55,7 +57,9 @@ describe('signTypedData', () => {
     }
     const mockConfig = {
       state: {
-        connections: new Map([['uid1', { connector: mockConnector, accounts: ['ak_test'] }]]),
+        connections: new Map([
+          ['uid1', { connector: mockConnector, accounts: ['ak_test'] }],
+        ]),
         current: 'uid1',
       },
     }

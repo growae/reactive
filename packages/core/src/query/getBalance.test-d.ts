@@ -1,10 +1,10 @@
 import { expectTypeOf, test } from 'vitest'
-import {
-  getBalanceQueryOptions,
-  getBalanceQueryKey,
-  type GetBalanceQueryKey,
-} from './getBalance.js'
 import type { Config } from '../createConfig.js'
+import {
+  type GetBalanceQueryKey,
+  getBalanceQueryKey,
+  getBalanceQueryOptions,
+} from './getBalance.js'
 
 test('getBalanceQueryOptions returns object with queryFn', () => {
   const options = getBalanceQueryOptions({} as Config)
@@ -29,5 +29,7 @@ test('getBalanceQueryKey returns readonly tuple', () => {
 })
 
 test('GetBalanceQueryKey type matches return type', () => {
-  expectTypeOf<GetBalanceQueryKey>().toEqualTypeOf<ReturnType<typeof getBalanceQueryKey>>()
+  expectTypeOf<GetBalanceQueryKey>().toEqualTypeOf<
+    ReturnType<typeof getBalanceQueryKey>
+  >()
 })

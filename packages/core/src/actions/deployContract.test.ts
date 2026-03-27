@@ -1,10 +1,10 @@
-import { describe, it, expect, vi } from 'vitest'
-import {
-  deployContract,
-  DeployContractNoCodeError,
-  DeployContractNoAccountError,
-} from './deployContract.js'
+import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_TTL } from '../constants.js'
+import {
+  DeployContractNoAccountError,
+  DeployContractNoCodeError,
+  deployContract,
+} from './deployContract.js'
 
 describe('deployContract', () => {
   it('should be a function', () => {
@@ -21,9 +21,9 @@ describe('deployContract', () => {
       state: { current: { account: 'ak_test' } },
     }
 
-    await expect(
-      deployContract(mockConfig as any, {}),
-    ).rejects.toThrow(DeployContractNoCodeError)
+    await expect(deployContract(mockConfig as any, {})).rejects.toThrow(
+      DeployContractNoCodeError,
+    )
   })
 
   it('should throw DeployContractNoAccountError without connected account', async () => {

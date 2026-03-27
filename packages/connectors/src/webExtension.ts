@@ -1,9 +1,9 @@
+import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 import {
-  createConnector,
   ConnectorNotConnectedError,
   ProviderNotFoundError,
+  createConnector,
 } from '@growae/reactive'
-import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 
 export type WebExtensionParameters = {
   /** Name advertised to the wallet during connection handshake. */
@@ -39,7 +39,6 @@ export function webExtension(parameters: WebExtensionParameters = {}) {
         WalletConnectorFrame: WCF,
         BrowserWindowMessageConnection,
         walletDetector,
-        MESSAGE_DIRECTION,
       } = await import('@aeternity/aepp-sdk')
 
       const scanConnection = new BrowserWindowMessageConnection({
@@ -138,8 +137,8 @@ export function webExtension(parameters: WebExtensionParameters = {}) {
     async signMessage({ message, onAccount }) {
       if (!provider) throw new ConnectorNotConnectedError()
       const account = onAccount
-        ? provider.accounts.find((a) => a.address === onAccount) ??
-          provider.accounts[0]
+        ? (provider.accounts.find((a) => a.address === onAccount) ??
+          provider.accounts[0])
         : provider.accounts[0]
       if (!account) throw new ConnectorNotConnectedError()
       const signature = await account.signMessage(message)

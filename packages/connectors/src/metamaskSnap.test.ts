@@ -1,14 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { metamaskSnap } from './metamaskSnap.js'
 import { createEmitter } from '@growae/reactive'
 import type { ConnectorEventMap } from '@growae/reactive'
 import type { Network } from '@growae/reactive'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { metamaskSnap } from './metamaskSnap.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 const SIGNED_TX = 'tx_signed_snap_abc123'
 const SIGNED_MSG_B64 = Buffer.from([1, 2, 3, 4]).toString('base64')
 
-function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' }]) {
+function makeConfig(
+  networks: Network[] = [
+    { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
+  ],
+) {
   const emitter = createEmitter<ConnectorEventMap>('test-uid')
   return {
     networks: networks as [Network, ...Network[]],
@@ -18,16 +22,18 @@ function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', node
 }
 
 function mockEthereum() {
-  const request = vi.fn().mockImplementation(async (args: { method: string; params?: any }) => {
-    if (args.method === 'wallet_requestSnaps') return {}
-    if (args.method === 'wallet_invokeSnap') {
-      const snapMethod = args.params?.request?.method
-      if (snapMethod === 'getPublicKey') return { publicKey: TEST_ADDRESS }
-      if (snapMethod === 'signTransaction') return { signedTx: SIGNED_TX }
-      if (snapMethod === 'signMessage') return { signature: SIGNED_MSG_B64 }
-    }
-    return null
-  })
+  const request = vi
+    .fn()
+    .mockImplementation(async (args: { method: string; params?: any }) => {
+      if (args.method === 'wallet_requestSnaps') return {}
+      if (args.method === 'wallet_invokeSnap') {
+        const snapMethod = args.params?.request?.method
+        if (snapMethod === 'getPublicKey') return { publicKey: TEST_ADDRESS }
+        if (snapMethod === 'signTransaction') return { signedTx: SIGNED_TX }
+        if (snapMethod === 'signMessage') return { signature: SIGNED_MSG_B64 }
+      }
+      return null
+    })
   ;(globalThis as any).window = { ethereum: { request } }
   return request
 }
@@ -100,7 +106,9 @@ describe('metamaskSnap', () => {
     const config = makeConfig()
     const instance = connector(config)
 
-    await expect(instance.getAccounts()).rejects.toThrow('Connector not connected.')
+    await expect(instance.getAccounts()).rejects.toThrow(
+      'Connector not connected.',
+    )
   })
 
   it('should throw ConnectorNotConnectedError on signTransaction when not connected', async () => {
@@ -122,7 +130,9 @@ describe('metamaskSnap', () => {
     await instance.connect()
     await instance.disconnect()
 
-    await expect(instance.getAccounts()).rejects.toThrow('Connector not connected.')
+    await expect(instance.getAccounts()).rejects.toThrow(
+      'Connector not connected.',
+    )
   })
 
   it('should report isAuthorized based on connection state', async () => {
@@ -172,8 +182,16 @@ describe('metamaskSnap', () => {
     mockEthereum()
     const connector = metamaskSnap()
     const config = makeConfig([
-      { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
-      { id: 'ae_mainnet', name: 'Mainnet', nodeUrl: 'https://mainnet.aeternity.io' },
+      {
+        id: 'ae_uat',
+        name: 'Testnet',
+        nodeUrl: 'https://testnet.aeternity.io',
+      },
+      {
+        id: 'ae_mainnet',
+        name: 'Mainnet',
+        nodeUrl: 'https://mainnet.aeternity.io',
+      },
     ])
     const instance = connector(config)
     await instance.setup?.()

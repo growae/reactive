@@ -15,8 +15,7 @@ export type CompilerConfig = {
  * Uses the Sophia HTTP compiler API to compile contracts.
  */
 export function compiler(config: CompilerConfig): Plugin {
-  const compilerUrl =
-    config.compilerUrl ?? 'https://v8.compiler.aepps.com'
+  const compilerUrl = config.compilerUrl ?? 'https://v8.compiler.aepps.com'
 
   return {
     name: 'Compiler',
@@ -37,8 +36,11 @@ export function compiler(config: CompilerConfig): Plugin {
 
       const result = (await response.json()) as Record<string, unknown>
       const name =
-        (result['contract_name'] as string | undefined) ??
-        config.source.replace(/\.aes$/, '').split('/').pop() ??
+        (result.contract_name as string | undefined) ??
+        config.source
+          .replace(/\.aes$/, '')
+          .split('/')
+          .pop() ??
         'Contract'
 
       const contract: ContractConfig = {

@@ -1,14 +1,16 @@
-import { createMutation } from '@tanstack/solid-query'
 import {
+  type SignTransactionErrorType,
   type SignTransactionParameters,
   type SignTransactionReturnType,
-  type SignTransactionErrorType,
   signTransaction,
 } from '@growae/reactive'
+import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseSignTransactionParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
+export type UseSignTransactionParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useSignTransaction(
   parameters: UseSignTransactionParameters = () => ({}),

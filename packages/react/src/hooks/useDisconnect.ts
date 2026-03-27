@@ -1,13 +1,13 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type DisconnectErrorType,
   type DisconnectParameters,
   type DisconnectReturnType,
-  type DisconnectErrorType,
   disconnect,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -15,8 +15,16 @@ import { useConfig } from './useConfig.js'
 export type UseDisconnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: DisconnectReturnType, variables: DisconnectParameters, context: context) => void
-      onError?: (error: DisconnectErrorType, variables: DisconnectParameters, context: context) => void
+      onSuccess?: (
+        data: DisconnectReturnType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: DisconnectErrorType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseDisconnectReturnType<context = unknown> = Compute<
     context
   > & {
     disconnect: (variables?: DisconnectParameters) => void
-    disconnectAsync: (variables?: DisconnectParameters) => Promise<DisconnectReturnType>
+    disconnectAsync: (
+      variables?: DisconnectParameters,
+    ) => Promise<DisconnectReturnType>
   }
 >
 

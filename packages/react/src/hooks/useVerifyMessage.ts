@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  type VerifyMessageErrorType,
   type VerifyMessageParameters,
   type VerifyMessageReturnType,
-  type VerifyMessageErrorType,
   verifyMessage,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
 export type UseVerifyMessageParameters = Compute<
@@ -26,14 +26,19 @@ export function useVerifyMessage(
   const config = useConfig(parameters)
 
   return useQuery({
-    queryKey: ['verifyMessage', {
-      message: parameters.message,
-      signature: parameters.signature,
-      address: parameters.address,
-    }],
+    queryKey: [
+      'verifyMessage',
+      {
+        message: parameters.message,
+        signature: parameters.signature,
+        address: parameters.address,
+      },
+    ],
     queryFn: () => verifyMessage(config, parameters),
-    enabled: Boolean(
-      parameters.message && parameters.signature && parameters.address,
-    ) && (parameters.enabled ?? true),
+    enabled:
+      Boolean(
+        parameters.message && parameters.signature && parameters.address,
+      ) &&
+      (parameters.enabled ?? true),
   }) as UseVerifyMessageReturnType
 }

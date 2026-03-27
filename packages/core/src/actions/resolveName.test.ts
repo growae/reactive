@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { resolveName } from './resolveName.js'
 
 describe('resolveName', () => {
@@ -12,7 +12,9 @@ describe('resolveName', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
@@ -44,7 +46,9 @@ describe('resolveName', () => {
       state: { networkId: 'ae_uat' },
     }
 
-    const result = await resolveName(mockConfig as any, { name: 'missing.chain' })
+    const result = await resolveName(mockConfig as any, {
+      name: 'missing.chain',
+    })
     expect(result).toBeNull()
   })
 

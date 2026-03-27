@@ -6,7 +6,9 @@ import {
 import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseConnectionParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
+export type UseConnectionParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export type UseConnectionReturnType = Accessor<GetConnectionReturnType>
 

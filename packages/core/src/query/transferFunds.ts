@@ -13,10 +13,16 @@ export function transferFundsMutationOptions(config: Config) {
       return transferFunds(config, variables)
     },
     mutationKey: ['transferFunds'],
-  } satisfies MutationOptions<TransferFundsReturnType, TransferFundsErrorType, TransferFundsParameters>
+  } satisfies MutationOptions<
+    TransferFundsReturnType,
+    TransferFundsErrorType,
+    TransferFundsParameters
+  >
 }
 
-export type TransferFundsMutationOptions = ReturnType<typeof transferFundsMutationOptions>
+export type TransferFundsMutationOptions = ReturnType<
+  typeof transferFundsMutationOptions
+>
 export type TransferFundsData = TransferFundsReturnType
 export type TransferFundsVariables = TransferFundsParameters
-export { type TransferFundsErrorType }
+export type { TransferFundsErrorType }

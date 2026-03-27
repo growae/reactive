@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetTransactionErrorType,
   GetTransactionParameters,
   GetTransactionReturnType,
-  GetTransactionErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getTransaction } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,14 +27,18 @@ export function useTransaction(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['transaction', {
-      hash: parameters.hash,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getTransaction(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'transaction',
+      {
+        hash: parameters.hash,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getTransaction(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.hash) && (parameters.enabled ?? true),
   }))
 

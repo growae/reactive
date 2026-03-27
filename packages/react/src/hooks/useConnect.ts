@@ -1,14 +1,14 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type Config,
+  type ConnectErrorType,
   type ConnectParameters,
   type ConnectReturnType,
-  type ConnectErrorType,
   connect,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
@@ -18,9 +18,22 @@ import { useConnectors } from './useConnectors.js'
 export type UseConnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ConnectReturnType, variables: ConnectParameters, context: context) => void
-      onError?: (error: ConnectErrorType, variables: ConnectParameters, context: context) => void
-      onSettled?: (data: ConnectReturnType | undefined, error: ConnectErrorType | null, variables: ConnectParameters, context: context) => void
+      onSuccess?: (
+        data: ConnectReturnType,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: ConnectErrorType,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: ConnectReturnType | undefined,
+        error: ConnectErrorType | null,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
     }
   }
 >

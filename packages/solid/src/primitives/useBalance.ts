@@ -1,7 +1,7 @@
 import {
+  type GetBalanceErrorType,
   type GetBalanceParameters,
   type GetBalanceReturnType,
-  type GetBalanceErrorType,
   getBalance,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -23,21 +23,25 @@ export type UseBalanceReturnType = UseQueryReturnType<
 >
 
 export function useBalance(
-  parameters: UseBalanceParameters = () => ({} as GetBalanceParameters),
+  parameters: UseBalanceParameters = () => ({}) as GetBalanceParameters,
 ): UseBalanceReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['balance', {
-      address: parameters().address,
-      networkId: parameters().networkId ?? networkId(),
-      format: parameters().format,
-    }] as const,
-    queryFn: () => getBalance(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'balance',
+      {
+        address: parameters().address,
+        networkId: parameters().networkId ?? networkId(),
+        format: parameters().format,
+      },
+    ] as const,
+    queryFn: () =>
+      getBalance(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
   }))
 

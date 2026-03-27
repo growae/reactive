@@ -13,10 +13,16 @@ export function verifyTypedDataMutationOptions(config: Config) {
       return verifyTypedData(config, variables)
     },
     mutationKey: ['verifyTypedData'],
-  } satisfies MutationOptions<VerifyTypedDataReturnType, VerifyTypedDataErrorType, VerifyTypedDataParameters>
+  } satisfies MutationOptions<
+    VerifyTypedDataReturnType,
+    VerifyTypedDataErrorType,
+    VerifyTypedDataParameters
+  >
 }
 
-export type VerifyTypedDataMutationOptions = ReturnType<typeof verifyTypedDataMutationOptions>
+export type VerifyTypedDataMutationOptions = ReturnType<
+  typeof verifyTypedDataMutationOptions
+>
 export type VerifyTypedDataData = VerifyTypedDataReturnType
 export type VerifyTypedDataVariables = VerifyTypedDataParameters
-export { type VerifyTypedDataErrorType }
+export type { VerifyTypedDataErrorType }

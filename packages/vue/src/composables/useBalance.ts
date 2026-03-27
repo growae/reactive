@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetBalanceErrorType,
   GetBalanceParameters,
   GetBalanceReturnType,
-  GetBalanceErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getBalance } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,15 +27,19 @@ export function useBalance(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['balance', {
-      address: parameters.address,
-      networkId: parameters.networkId ?? networkId.value,
-      format: parameters.format,
-    }] as const,
-    queryFn: () => getBalance(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'balance',
+      {
+        address: parameters.address,
+        networkId: parameters.networkId ?? networkId.value,
+        format: parameters.format,
+      },
+    ] as const,
+    queryFn: () =>
+      getBalance(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }))
 

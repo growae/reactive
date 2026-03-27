@@ -39,4 +39,4 @@ export function getContractBytecodeQueryOptions(
 
 export type GetContractBytecodeQueryFnData = GetContractBytecodeReturnType
 export type GetContractBytecodeData = GetContractBytecodeQueryFnData
-export { type GetContractBytecodeErrorType }
+export type { GetContractBytecodeErrorType }

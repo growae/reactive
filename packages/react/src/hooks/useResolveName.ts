@@ -6,8 +6,8 @@ import {
   resolveName,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -27,15 +27,19 @@ export function useResolveName(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['resolveName', {
-      name: parameters.name,
-      key: parameters.key,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => resolveName(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'resolveName',
+      {
+        name: parameters.name,
+        key: parameters.key,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      resolveName(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.name) && (parameters.enabled ?? true),
   }) as UseResolveNameReturnType
 }

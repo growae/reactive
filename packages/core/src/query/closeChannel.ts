@@ -14,9 +14,15 @@ export function closeChannelMutationOptions(config: Config) {
       return closeChannel(config, variables)
     },
     mutationKey: ['closeChannel'],
-  } satisfies MutationOptions<CloseChannelReturnType, CloseChannelErrorType, CloseChannelParameters>
+  } satisfies MutationOptions<
+    CloseChannelReturnType,
+    CloseChannelErrorType,
+    CloseChannelParameters
+  >
 }
 
-export type CloseChannelMutationOptions = ReturnType<typeof closeChannelMutationOptions>
+export type CloseChannelMutationOptions = ReturnType<
+  typeof closeChannelMutationOptions
+>
 export type CloseChannelData = CloseChannelReturnType
 export type CloseChannelVariables = CloseChannelParameters

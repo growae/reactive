@@ -1,10 +1,10 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../createConfig.js'
 import {
-  connect,
   type ConnectParameters,
   type ConnectReturnType,
+  connect,
 } from './connect.js'
-import type { Config } from '../createConfig.js'
 
 test('connect returns Promise<ConnectReturnType>', () => {
   expectTypeOf(connect).returns.toEqualTypeOf<Promise<ConnectReturnType>>()
@@ -13,7 +13,9 @@ test('connect returns Promise<ConnectReturnType>', () => {
 test('ConnectReturnType has accounts and networkId', () => {
   expectTypeOf<ConnectReturnType>().toHaveProperty('accounts')
   expectTypeOf<ConnectReturnType>().toHaveProperty('networkId')
-  expectTypeOf<ConnectReturnType['accounts']>().toEqualTypeOf<readonly string[]>()
+  expectTypeOf<ConnectReturnType['accounts']>().toEqualTypeOf<
+    readonly string[]
+  >()
   expectTypeOf<ConnectReturnType['networkId']>().toBeString()
 })
 

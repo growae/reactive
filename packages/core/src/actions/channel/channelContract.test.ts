@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
-  channelContractCreate,
   channelContractCall,
   channelContractCallStatic,
+  channelContractCreate,
 } from './channelContract.js'
 
 describe('channelContractCreate', () => {
@@ -32,7 +32,13 @@ describe('channelContractCreate', () => {
     })
 
     expect(mockChannel.createContract).toHaveBeenCalledWith(
-      { code: 'bytecode', callData: 'cb_data', deposit: 0, vmVersion: 7, abiVersion: 3 },
+      {
+        code: 'bytecode',
+        callData: 'cb_data',
+        deposit: 0,
+        vmVersion: 7,
+        abiVersion: 3,
+      },
       sign,
     )
     expect(result.accepted).toBe(true)
@@ -47,7 +53,9 @@ describe('channelContractCall', () => {
 
   it('should call channel.callContract with correct arguments', async () => {
     const mockChannel = {
-      callContract: vi.fn().mockResolvedValue({ accepted: true, signedTx: 'tx_call' }),
+      callContract: vi
+        .fn()
+        .mockResolvedValue({ accepted: true, signedTx: 'tx_call' }),
     }
     const sign = vi.fn()
     const mockConfig = {} as any
@@ -60,7 +68,12 @@ describe('channelContractCall', () => {
     })
 
     expect(mockChannel.callContract).toHaveBeenCalledWith(
-      { contract: 'ct_contract', callData: 'cb_data', amount: 0, abiVersion: undefined },
+      {
+        contract: 'ct_contract',
+        callData: 'cb_data',
+        amount: 0,
+        abiVersion: undefined,
+      },
       sign,
     )
     expect(result.accepted).toBe(true)

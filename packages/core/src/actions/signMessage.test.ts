@@ -1,14 +1,14 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { signMessage } from './signMessage.js'
-import { connect } from './connect.js'
+import { mock } from '../connectors/mock.js'
 import { createConfig } from '../createConfig.js'
 import { testnet } from '../types/network.js'
-import { mock } from '../connectors/mock.js'
+import { connect } from './connect.js'
+import { signMessage } from './signMessage.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
@@ -34,9 +34,9 @@ describe('signMessage', () => {
 
   it('should throw when no account is connected', async () => {
     const config = createTestConfig()
-    await expect(
-      signMessage(config, { message: 'test' }),
-    ).rejects.toThrow('No connected account')
+    await expect(signMessage(config, { message: 'test' })).rejects.toThrow(
+      'No connected account',
+    )
   })
 
   it('should throw when signMessageError is enabled', async () => {
@@ -53,8 +53,8 @@ describe('signMessage', () => {
     const connector = config.connectors[0]!
     await connect(config, { connector })
 
-    await expect(
-      signMessage(config, { message: 'test' }),
-    ).rejects.toThrow('Failed to sign message.')
+    await expect(signMessage(config, { message: 'test' })).rejects.toThrow(
+      'Failed to sign message.',
+    )
   })
 })

@@ -1,10 +1,10 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../../createConfig.js'
 import {
-  claimName,
   type ClaimNameParameters,
   type ClaimNameReturnType,
+  claimName,
 } from './claimName.js'
-import type { Config } from '../../createConfig.js'
 
 test('claimName returns Promise<ClaimNameReturnType>', () => {
   expectTypeOf(claimName).returns.toEqualTypeOf<Promise<ClaimNameReturnType>>()

@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { callContract, CallContractNoAccountError } from './callContract.js'
+import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_TTL } from '../constants.js'
+import { CallContractNoAccountError, callContract } from './callContract.js'
 
 describe('callContract', () => {
   it('should be a function', () => {
@@ -28,7 +28,9 @@ describe('callContract', () => {
 
   it('should throw when getNode fails', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => { throw new Error('No node') }),
+      getNode: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { current: undefined },
     }
 

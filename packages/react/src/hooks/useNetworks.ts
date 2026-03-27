@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  type GetNetworksReturnType,
-  getNetworks,
-} from '@growae/reactive'
+import { type GetNetworksReturnType, getNetworks } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'
 

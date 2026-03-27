@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getOracleQueries } from './getOracleQueries.js'
 
 describe('getOracleQueries', () => {
@@ -12,7 +12,9 @@ describe('getOracleQueries', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
@@ -42,7 +44,9 @@ describe('getOracleQueries', () => {
       state: { networkId: 'ae_uat' },
     }
 
-    const result = await getOracleQueries(mockConfig as any, { oracleId: 'ok_test' })
+    const result = await getOracleQueries(mockConfig as any, {
+      oracleId: 'ok_test',
+    })
     expect(result).toHaveLength(1)
     expect(result[0].id).toBe('oq_1')
     expect(result[0].senderId).toBe('ak_sender')
@@ -83,7 +87,9 @@ describe('getOracleQueries', () => {
       state: { networkId: 'ae_uat' },
     }
 
-    const result = await getOracleQueries(mockConfig as any, { oracleId: 'ok_test' })
+    const result = await getOracleQueries(mockConfig as any, {
+      oracleId: 'ok_test',
+    })
     expect(result).toEqual([])
   })
 })

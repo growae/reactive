@@ -1,13 +1,15 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../../createConfig.js'
 import {
-  openChannel,
   type OpenChannelParameters,
   type OpenChannelReturnType,
+  openChannel,
 } from './openChannel.js'
-import type { Config } from '../../createConfig.js'
 
 test('openChannel returns Promise<OpenChannelReturnType>', () => {
-  expectTypeOf(openChannel).returns.toEqualTypeOf<Promise<OpenChannelReturnType>>()
+  expectTypeOf(openChannel).returns.toEqualTypeOf<
+    Promise<OpenChannelReturnType>
+  >()
 })
 
 test('OpenChannelReturnType has channelId', () => {
@@ -22,7 +24,9 @@ test('OpenChannelParameters has url', () => {
 
 test('OpenChannelParameters has role', () => {
   expectTypeOf<OpenChannelParameters>().toHaveProperty('role')
-  expectTypeOf<OpenChannelParameters['role']>().toEqualTypeOf<'initiator' | 'responder'>()
+  expectTypeOf<OpenChannelParameters['role']>().toEqualTypeOf<
+    'initiator' | 'responder'
+  >()
 })
 
 test('OpenChannelParameters has initiatorId and responderId', () => {

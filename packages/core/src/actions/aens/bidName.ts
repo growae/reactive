@@ -1,6 +1,6 @@
+import { DEFAULT_TTL } from '../../constants.js'
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
-import { DEFAULT_TTL } from '../../constants.js'
 
 export type BidNameParameters = {
   name: string
@@ -41,7 +41,9 @@ export async function bidName(
     onAccount: connection.account,
   })
 
-  const result = await nameInstance.bid(nameFee.toString(), { ttl: ttl ?? DEFAULT_TTL })
+  const result = await nameInstance.bid(nameFee.toString(), {
+    ttl: ttl ?? DEFAULT_TTL,
+  })
 
   return {
     txHash: result.hash,

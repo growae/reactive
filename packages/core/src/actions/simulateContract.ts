@@ -1,7 +1,10 @@
 import type { Config } from '../createConfig.js'
 import type { CallContractParameters } from './callContract.js'
 
-export type SimulateContractParameters = Omit<CallContractParameters, 'options'> & {
+export type SimulateContractParameters = Omit<
+  CallContractParameters,
+  'options'
+> & {
   options?: Omit<NonNullable<CallContractParameters['options']>, 'callStatic'>
 }
 
@@ -18,7 +21,14 @@ export async function simulateContract(
   config: Config,
   parameters: SimulateContractParameters,
 ): Promise<SimulateContractReturnType> {
-  const { address, aci, method, args = [], options: txOptions = {}, networkId } = parameters
+  const {
+    address,
+    aci,
+    method,
+    args = [],
+    options: txOptions = {},
+    networkId,
+  } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -35,7 +45,8 @@ export async function simulateContract(
     callStatic: true,
     amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
     gasLimit: txOptions.gasLimit,
-    gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
+    gasPrice:
+      txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
   })
 

@@ -1,6 +1,6 @@
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { generate } from './generate.js'
@@ -25,9 +25,9 @@ describe('generate', () => {
   })
 
   it('should throw when specified config path does not exist', async () => {
-    await expect(
-      generate({ config: 'nonexistent.config.ts' }),
-    ).rejects.toThrow('Config not found at nonexistent.config.ts')
+    await expect(generate({ config: 'nonexistent.config.ts' })).rejects.toThrow(
+      'Config not found at nonexistent.config.ts',
+    )
   })
 
   it('should generate output from config with inline ACI', async () => {
@@ -93,9 +93,9 @@ describe('generate', () => {
     const configPath = join(tempDir, 'reactive.config.json')
     await writeFile(configPath, configContent)
 
-    await expect(
-      generate({ config: 'reactive.config.json' }),
-    ).rejects.toThrow('Contract name "Token" must be unique.')
+    await expect(generate({ config: 'reactive.config.json' })).rejects.toThrow(
+      'Contract name "Token" must be unique.',
+    )
   })
 
   it('should display message when no contracts found', async () => {

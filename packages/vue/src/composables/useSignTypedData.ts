@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
+  SignTypedDataErrorType,
   SignTypedDataParameters,
   SignTypedDataReturnType,
-  SignTypedDataErrorType,
-  Compute,
 } from '@growae/reactive'
 import { signTypedData } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -13,8 +13,16 @@ import { useConfig } from './useConfig.js'
 export type UseSignTypedDataParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SignTypedDataReturnType, variables: SignTypedDataParameters, context: context) => void
-      onError?: (error: SignTypedDataErrorType, variables: SignTypedDataParameters, context: context) => void
+      onSuccess?: (
+        data: SignTypedDataReturnType,
+        variables: SignTypedDataParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SignTypedDataErrorType,
+        variables: SignTypedDataParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -27,7 +35,9 @@ export type UseSignTypedDataReturnType<context = unknown> = Compute<
     context
   > & {
     signTypedData: (variables: SignTypedDataParameters) => void
-    signTypedDataAsync: (variables: SignTypedDataParameters) => Promise<SignTypedDataReturnType>
+    signTypedDataAsync: (
+      variables: SignTypedDataParameters,
+    ) => Promise<SignTypedDataReturnType>
   }
 >
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getNameEntry } from './getNameEntry.js'
 
 describe('getNameEntry', () => {
@@ -12,7 +12,9 @@ describe('getNameEntry', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
@@ -38,7 +40,9 @@ describe('getNameEntry', () => {
     expect(mockNode.getNameEntryByName).toHaveBeenCalledWith('test.chain')
     expect(result.id).toBe('nm_test')
     expect(result.owner).toBe('ak_owner')
-    expect(result.pointers).toEqual([{ key: 'account_pubkey', id: 'ak_pointed' }])
+    expect(result.pointers).toEqual([
+      { key: 'account_pubkey', id: 'ak_pointed' },
+    ])
     expect(result.ttl).toBe(50000)
   })
 
@@ -55,7 +59,9 @@ describe('getNameEntry', () => {
       state: { networkId: 'ae_uat' },
     }
 
-    const result = await getNameEntry(mockConfig as any, { name: 'empty.chain' })
+    const result = await getNameEntry(mockConfig as any, {
+      name: 'empty.chain',
+    })
     expect(result.pointers).toEqual([])
   })
 })

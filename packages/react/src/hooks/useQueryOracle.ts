@@ -1,12 +1,12 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type QueryOracleParameters,
   type QueryOracleReturnType,
   queryOracle,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -14,8 +14,16 @@ import { useConfig } from './useConfig.js'
 export type UseQueryOracleParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: QueryOracleReturnType, variables: QueryOracleParameters, context: context) => void
-      onError?: (error: Error, variables: QueryOracleParameters, context: context) => void
+      onSuccess?: (
+        data: QueryOracleReturnType,
+        variables: QueryOracleParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: QueryOracleParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseQueryOracleReturnType<context = unknown> = Compute<
     context
   > & {
     queryOracle: (variables: QueryOracleParameters) => void
-    queryOracleAsync: (variables: QueryOracleParameters) => Promise<QueryOracleReturnType>
+    queryOracleAsync: (
+      variables: QueryOracleParameters,
+    ) => Promise<QueryOracleReturnType>
   }
 >
 

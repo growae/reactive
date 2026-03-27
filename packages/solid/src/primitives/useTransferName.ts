@@ -1,13 +1,15 @@
-import { createMutation } from '@tanstack/solid-query'
 import {
   type TransferNameParameters,
   type TransferNameReturnType,
   transferName,
 } from '@growae/reactive'
+import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'
 
-export type UseTransferNameParameters = Accessor<{ config?: import('@growae/reactive').Config | undefined }>
+export type UseTransferNameParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useTransferName(
   parameters: UseTransferNameParameters = () => ({}),

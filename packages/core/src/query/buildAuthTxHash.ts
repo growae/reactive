@@ -14,9 +14,15 @@ export function buildAuthTxHashMutationOptions(config: Config) {
       return buildAuthTxHash(config, variables)
     },
     mutationKey: ['buildAuthTxHash'],
-  } satisfies MutationOptions<BuildAuthTxHashReturnType, BuildAuthTxHashErrorType, BuildAuthTxHashParameters>
+  } satisfies MutationOptions<
+    BuildAuthTxHashReturnType,
+    BuildAuthTxHashErrorType,
+    BuildAuthTxHashParameters
+  >
 }
 
-export type BuildAuthTxHashMutationOptions = ReturnType<typeof buildAuthTxHashMutationOptions>
+export type BuildAuthTxHashMutationOptions = ReturnType<
+  typeof buildAuthTxHashMutationOptions
+>
 export type BuildAuthTxHashData = BuildAuthTxHashReturnType
 export type BuildAuthTxHashVariables = BuildAuthTxHashParameters

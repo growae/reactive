@@ -27,9 +27,7 @@ export async function claimName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { TxBuilder, Tag, produceNameId } = await import(
-    '@aeternity/aepp-sdk'
-  )
+  const { TxBuilder, Tag, produceNameId } = await import('@aeternity/aepp-sdk')
 
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')

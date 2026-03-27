@@ -6,8 +6,8 @@ import {
   readContract,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -27,17 +27,22 @@ export function useReadContract(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['readContract', {
-      address: parameters.address,
-      method: parameters.method,
-      args: parameters.args,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => readContract(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
-    enabled: Boolean(parameters.address && parameters.aci && parameters.method) &&
+    queryKey: [
+      'readContract',
+      {
+        address: parameters.address,
+        method: parameters.method,
+        args: parameters.args,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      readContract(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
+    enabled:
+      Boolean(parameters.address && parameters.aci && parameters.method) &&
       (parameters.enabled ?? true),
   }) as UseReadContractReturnType
 }

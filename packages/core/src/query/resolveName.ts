@@ -31,4 +31,4 @@ export function resolveNameQueryOptions(
 
 export type ResolveNameQueryFnData = ResolveNameReturnType
 export type ResolveNameData = ResolveNameQueryFnData
-export { type ResolveNameErrorType }
+export type { ResolveNameErrorType }

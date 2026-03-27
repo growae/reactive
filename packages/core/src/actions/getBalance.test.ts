@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { mockNode } = vi.hoisted(() => ({
   mockNode: {
@@ -10,9 +10,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => mockNode),
 }))
 
-import { getBalance } from './getBalance.js'
 import { createConfig } from '../createConfig.js'
 import { testnet } from '../types/network.js'
+import { getBalance } from './getBalance.js'
 
 function createTestConfig() {
   return createConfig({ networks: [testnet], storage: null })
@@ -70,9 +70,9 @@ describe('getBalance', () => {
     mockNode.getAccountByPubkey.mockRejectedValue(new Error('Network error'))
 
     const config = createTestConfig()
-    await expect(
-      getBalance(config, { address: 'ak_test' }),
-    ).rejects.toThrow('Network error')
+    await expect(getBalance(config, { address: 'ak_test' })).rejects.toThrow(
+      'Network error',
+    )
   })
 
   it('should return fractional AE value', async () => {

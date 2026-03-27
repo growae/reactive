@@ -1,6 +1,6 @@
+import { DEFAULT_TTL } from '../constants.js'
 import type { Config } from '../createConfig.js'
 import { BaseError } from '../errors/base.js'
-import { DEFAULT_TTL } from '../constants.js'
 
 export type CallContractParameters = {
   address: string
@@ -27,9 +27,7 @@ export type CallContractReturnType = {
   gasUsed?: number
 }
 
-export type CallContractErrorType =
-  | CallContractNoAccountError
-  | BaseError
+export type CallContractErrorType = CallContractNoAccountError | BaseError
 
 export class CallContractNoAccountError extends BaseError {
   override name = 'CallContractNoAccountError'
@@ -69,7 +67,8 @@ export async function callContract(
     callStatic: txOptions.callStatic ?? false,
     amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
     gasLimit: txOptions.gasLimit,
-    gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
+    gasPrice:
+      txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
     ttl: txOptions.ttl ?? DEFAULT_TTL,
   })

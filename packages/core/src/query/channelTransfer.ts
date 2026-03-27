@@ -14,9 +14,15 @@ export function channelTransferMutationOptions(config: Config) {
       return channelTransfer(config, variables)
     },
     mutationKey: ['channelTransfer'],
-  } satisfies MutationOptions<ChannelTransferReturnType, ChannelTransferErrorType, ChannelTransferParameters>
+  } satisfies MutationOptions<
+    ChannelTransferReturnType,
+    ChannelTransferErrorType,
+    ChannelTransferParameters
+  >
 }
 
-export type ChannelTransferMutationOptions = ReturnType<typeof channelTransferMutationOptions>
+export type ChannelTransferMutationOptions = ReturnType<
+  typeof channelTransferMutationOptions
+>
 export type ChannelTransferData = ChannelTransferReturnType
 export type ChannelTransferVariables = ChannelTransferParameters

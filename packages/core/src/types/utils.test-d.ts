@@ -5,7 +5,11 @@ test('ExactPartial makes all properties optional', () => {
   type Original = { a: string; b: number }
   type Partial = ExactPartial<Original>
 
-  expectTypeOf<Partial>().toMatchTypeOf<{ a?: string | undefined; b?: number | undefined }>()
+  expectTypeOf<Partial>().toMatchTypeOf<{
+    a?: string | undefined
+    b?: number | undefined
+  }>()
+  // biome-ignore lint/complexity/noBannedTypes: testing empty object type compatibility
   expectTypeOf<{}>().toMatchTypeOf<Partial>()
 })
 

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { closeChannel, CloseChannelError } from './closeChannel.js'
+import { describe, expect, it } from 'vitest'
+import { CloseChannelError, closeChannel } from './closeChannel.js'
 
 describe('closeChannel', () => {
   it('should be a function', () => {
@@ -15,7 +15,10 @@ describe('closeChannel', () => {
     const mockConfig = {} as any
 
     await expect(
-      closeChannel(mockConfig, { channel: mockChannel, sign: async (tx: string) => tx }),
+      closeChannel(mockConfig, {
+        channel: mockChannel,
+        sign: async (tx: string) => tx,
+      }),
     ).rejects.toThrow(CloseChannelError)
   })
 

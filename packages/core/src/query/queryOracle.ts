@@ -14,9 +14,15 @@ export function queryOracleMutationOptions(config: Config) {
       return queryOracle(config, variables)
     },
     mutationKey: ['queryOracle'],
-  } satisfies MutationOptions<QueryOracleReturnType, QueryOracleErrorType, QueryOracleParameters>
+  } satisfies MutationOptions<
+    QueryOracleReturnType,
+    QueryOracleErrorType,
+    QueryOracleParameters
+  >
 }
 
-export type QueryOracleMutationOptions = ReturnType<typeof queryOracleMutationOptions>
+export type QueryOracleMutationOptions = ReturnType<
+  typeof queryOracleMutationOptions
+>
 export type QueryOracleData = QueryOracleReturnType
 export type QueryOracleVariables = QueryOracleParameters

@@ -1,13 +1,13 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { switchNetwork } from './switchNetwork.js'
 import { createConfig } from '../createConfig.js'
-import { testnet, mainnet } from '../types/network.js'
 import { NetworkNotConfiguredError } from '../errors/config.js'
+import { mainnet, testnet } from '../types/network.js'
+import { switchNetwork } from './switchNetwork.js'
 
 describe('switchNetwork', () => {
   it('should throw NetworkNotConfiguredError for unknown network', async () => {

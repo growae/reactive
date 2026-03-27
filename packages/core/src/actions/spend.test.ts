@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { mockNode } = vi.hoisted(() => ({
   mockNode: {
@@ -13,11 +13,11 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Tag: { SpendTx: 12 },
 }))
 
-import { spend } from './spend.js'
-import { connect } from './connect.js'
+import { mock } from '../connectors/mock.js'
 import { createConfig } from '../createConfig.js'
 import { testnet } from '../types/network.js'
-import { mock } from '../connectors/mock.js'
+import { connect } from './connect.js'
+import { spend } from './spend.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { useNetworkId } from './useNetworkId.js'
 
 let watchNetworkIdCallback: ((value: string) => void) | undefined
@@ -15,7 +15,12 @@ vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({
     subscribe: vi.fn(() => vi.fn()),
     networks: [{ id: 'ae_uat' }],
-    state: { networkId: 'ae_uat', connections: new Map(), status: 'disconnected', current: undefined },
+    state: {
+      networkId: 'ae_uat',
+      connections: new Map(),
+      status: 'disconnected',
+      current: undefined,
+    },
   })),
 }))
 
@@ -38,7 +43,12 @@ describe('useNetworkId', () => {
     const mockConfig = {
       subscribe: vi.fn(() => vi.fn()),
       networks: [{ id: 'ae_mainnet' }],
-      state: { networkId: 'ae_mainnet', connections: new Map(), status: 'disconnected', current: undefined },
+      state: {
+        networkId: 'ae_mainnet',
+        connections: new Map(),
+        status: 'disconnected',
+        current: undefined,
+      },
     }
     const networkId = useNetworkId({ config: mockConfig as any })
 

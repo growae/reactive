@@ -1,13 +1,13 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type CallContractErrorType,
   type CallContractParameters,
   type CallContractReturnType,
-  type CallContractErrorType,
   callContract,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -15,8 +15,16 @@ import { useConfig } from './useConfig.js'
 export type UseCallContractParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: CallContractReturnType, variables: CallContractParameters, context: context) => void
-      onError?: (error: CallContractErrorType, variables: CallContractParameters, context: context) => void
+      onSuccess?: (
+        data: CallContractReturnType,
+        variables: CallContractParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: CallContractErrorType,
+        variables: CallContractParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseCallContractReturnType<context = unknown> = Compute<
     context
   > & {
     callContract: (variables: CallContractParameters) => void
-    callContractAsync: (variables: CallContractParameters) => Promise<CallContractReturnType>
+    callContractAsync: (
+      variables: CallContractParameters,
+    ) => Promise<CallContractReturnType>
   }
 >
 

@@ -1,7 +1,7 @@
 import type {
+  Compute,
   GetOracleQueriesParameters,
   GetOracleQueriesReturnType,
-  Compute,
 } from '@growae/reactive'
 import { getOracleQueries } from '@growae/reactive'
 import { computed } from 'vue'
@@ -26,14 +26,18 @@ export function useOracleQueries(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['oracleQueries', {
-      oracleId: parameters.oracleId,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getOracleQueries(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'oracleQueries',
+      {
+        oracleId: parameters.oracleId,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getOracleQueries(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.oracleId) && (parameters.enabled ?? true),
   }))
 

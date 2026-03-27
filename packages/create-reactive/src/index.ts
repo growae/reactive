@@ -15,8 +15,7 @@ import {
   toValidPackageName,
 } from './utils.js'
 
-const templates = frameworks
-  .flatMap((f) => f.variants.map((v) => v.name))
+const templates = frameworks.flatMap((f) => f.variants.map((v) => v.name))
 
 const renameFiles: Record<string, string | undefined> = {
   '_env.local': '.env.local',
@@ -153,7 +152,7 @@ export async function createReactive(
 
   const template: string = variant || framework?.name || argTemplate
 
-  const pkgInfo = pkgFromUserAgent(process.env['npm_config_user_agent'])
+  const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   type PkgManager = 'bun' | 'npm' | 'pnpm' | 'yarn'
   let pkgManager: PkgManager
   if (options.bun) pkgManager = 'bun'
@@ -185,7 +184,7 @@ export async function createReactive(
     fs.readFileSync(path.join(templateDir, 'package.json'), 'utf-8'),
   ) as Record<string, unknown>
 
-  pkg['name'] = packageName || getProjectName()
+  pkg.name = packageName || getProjectName()
 
   write('package.json', `${JSON.stringify(pkg, null, 2)}\n`)
 

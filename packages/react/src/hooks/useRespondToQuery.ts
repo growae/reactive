@@ -1,12 +1,12 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type RespondToQueryParameters,
   type RespondToQueryReturnType,
   respondToQuery,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -14,8 +14,16 @@ import { useConfig } from './useConfig.js'
 export type UseRespondToQueryParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RespondToQueryReturnType, variables: RespondToQueryParameters, context: context) => void
-      onError?: (error: Error, variables: RespondToQueryParameters, context: context) => void
+      onSuccess?: (
+        data: RespondToQueryReturnType,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseRespondToQueryReturnType<context = unknown> = Compute<
     context
   > & {
     respondToQuery: (variables: RespondToQueryParameters) => void
-    respondToQueryAsync: (variables: RespondToQueryParameters) => Promise<RespondToQueryReturnType>
+    respondToQueryAsync: (
+      variables: RespondToQueryParameters,
+    ) => Promise<RespondToQueryReturnType>
   }
 >
 

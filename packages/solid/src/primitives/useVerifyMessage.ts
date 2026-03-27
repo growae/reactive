@@ -1,7 +1,7 @@
 import {
+  type VerifyMessageErrorType,
   type VerifyMessageParameters,
   type VerifyMessageReturnType,
-  type VerifyMessageErrorType,
   verifyMessage,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -22,20 +22,26 @@ export type UseVerifyMessageReturnType = UseQueryReturnType<
 >
 
 export function useVerifyMessage(
-  parameters: UseVerifyMessageParameters = () => ({} as VerifyMessageParameters),
+  parameters: UseVerifyMessageParameters = () =>
+    ({}) as VerifyMessageParameters,
 ): UseVerifyMessageReturnType {
   const config = useConfig(parameters)
 
   const options = createMemo(() => ({
-    queryKey: ['verifyMessage', {
-      message: parameters().message,
-      signature: parameters().signature,
-      address: parameters().address,
-    }] as const,
+    queryKey: [
+      'verifyMessage',
+      {
+        message: parameters().message,
+        signature: parameters().signature,
+        address: parameters().address,
+      },
+    ] as const,
     queryFn: () => verifyMessage(config(), parameters()),
-    enabled: Boolean(
-      parameters().message && parameters().signature && parameters().address,
-    ) && (parameters().enabled ?? true),
+    enabled:
+      Boolean(
+        parameters().message && parameters().signature && parameters().address,
+      ) &&
+      (parameters().enabled ?? true),
   }))
 
   return useQuery(options) as UseVerifyMessageReturnType

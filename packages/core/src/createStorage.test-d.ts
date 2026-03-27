@@ -1,5 +1,5 @@
 import { expectTypeOf, test } from 'vitest'
-import { createStorage, type Storage } from './createStorage.js'
+import { type Storage, createStorage } from './createStorage.js'
 
 test('createStorage returns Storage', () => {
   const storage = createStorage({ storage: undefined })

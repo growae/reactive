@@ -154,7 +154,14 @@ export * from '../actions/ga/createGeneralizedAccount.js'
 export * from '../actions/ga/buildAuthTxHash.js'
 
 // Constants
-export { DEFAULT_TTL, DEFAULT_NAME_TTL, DEFAULT_CLIENT_TTL, DEFAULT_ORACLE_TTL_VALUE, DEFAULT_QUERY_TTL_VALUE, DEFAULT_RESPONSE_TTL_VALUE } from '../constants.js'
+export {
+  DEFAULT_TTL,
+  DEFAULT_NAME_TTL,
+  DEFAULT_CLIENT_TTL,
+  DEFAULT_ORACLE_TTL_VALUE,
+  DEFAULT_QUERY_TTL_VALUE,
+  DEFAULT_RESPONSE_TTL_VALUE,
+} from '../constants.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utilities

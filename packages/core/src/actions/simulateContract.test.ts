@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { simulateContract } from './simulateContract.js'
 
 describe('simulateContract', () => {
@@ -12,7 +12,9 @@ describe('simulateContract', () => {
 
   it('should throw when getNode fails', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => { throw new Error('No node') }),
+      getNode: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { current: undefined },
     }
 

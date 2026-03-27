@@ -13,10 +13,16 @@ export function signDelegationMutationOptions(config: Config) {
       return signDelegation(config, variables)
     },
     mutationKey: ['signDelegation'],
-  } satisfies MutationOptions<SignDelegationReturnType, SignDelegationErrorType, SignDelegationParameters>
+  } satisfies MutationOptions<
+    SignDelegationReturnType,
+    SignDelegationErrorType,
+    SignDelegationParameters
+  >
 }
 
-export type SignDelegationMutationOptions = ReturnType<typeof signDelegationMutationOptions>
+export type SignDelegationMutationOptions = ReturnType<
+  typeof signDelegationMutationOptions
+>
 export type SignDelegationData = SignDelegationReturnType
 export type SignDelegationVariables = SignDelegationParameters
-export { type SignDelegationErrorType }
+export type { SignDelegationErrorType }

@@ -14,9 +14,15 @@ export function channelWithdrawMutationOptions(config: Config) {
       return channelWithdraw(config, variables)
     },
     mutationKey: ['channelWithdraw'],
-  } satisfies MutationOptions<ChannelWithdrawReturnType, ChannelWithdrawErrorType, ChannelWithdrawParameters>
+  } satisfies MutationOptions<
+    ChannelWithdrawReturnType,
+    ChannelWithdrawErrorType,
+    ChannelWithdrawParameters
+  >
 }
 
-export type ChannelWithdrawMutationOptions = ReturnType<typeof channelWithdrawMutationOptions>
+export type ChannelWithdrawMutationOptions = ReturnType<
+  typeof channelWithdrawMutationOptions
+>
 export type ChannelWithdrawData = ChannelWithdrawReturnType
 export type ChannelWithdrawVariables = ChannelWithdrawParameters

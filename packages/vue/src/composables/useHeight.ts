@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetHeightErrorType,
   GetHeightParameters,
   GetHeightReturnType,
-  GetHeightErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getHeight } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,12 +27,16 @@ export function useHeight(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['height', {
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getHeight(config, {
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'height',
+      {
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getHeight(config, {
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: parameters.enabled ?? true,
   }))
 

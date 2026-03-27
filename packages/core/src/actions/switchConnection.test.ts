@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { switchConnection } from './switchConnection.js'
+import { describe, expect, it, vi } from 'vitest'
 import { ConnectorNotFoundError } from '../errors/config.js'
+import { switchConnection } from './switchConnection.js'
 
 describe('switchConnection', () => {
   it('should be a function', () => {
@@ -14,9 +14,9 @@ describe('switchConnection', () => {
     }
     const connector = { uid: 'unknown' }
 
-    expect(() => switchConnection(mockConfig as any, { connector: connector as any })).toThrow(
-      ConnectorNotFoundError,
-    )
+    expect(() =>
+      switchConnection(mockConfig as any, { connector: connector as any }),
+    ).toThrow(ConnectorNotFoundError)
   })
 
   it('should call setState when connector is found', () => {

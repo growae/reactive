@@ -18,7 +18,7 @@ export async function signTypedData(
   config: Config,
   parameters: SignTypedDataParameters,
 ): Promise<SignTypedDataReturnType> {
-  const { domain, aci, data, networkId } = parameters
+  const { domain, aci, data } = parameters
 
   const connection = config.state.connections.get(config.state.current!)
   if (!connection) {

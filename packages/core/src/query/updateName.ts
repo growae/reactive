@@ -13,7 +13,11 @@ export function updateNameMutationOptions(config: Config) {
       return updateName(config, variables)
     },
     mutationKey: ['updateName'],
-  } satisfies MutationOptions<UpdateNameReturnType, UpdateNameErrorType, UpdateNameParameters>
+  } satisfies MutationOptions<
+    UpdateNameReturnType,
+    UpdateNameErrorType,
+    UpdateNameParameters
+  >
 }
 
 export type UpdateNameMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type UpdateNameMutationOptions = ReturnType<
 >
 export type UpdateNameData = UpdateNameReturnType
 export type UpdateNameVariables = UpdateNameParameters
-export { type UpdateNameErrorType }
+export type { UpdateNameErrorType }

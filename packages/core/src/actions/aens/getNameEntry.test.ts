@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getNameEntry } from './getNameEntry.js'
 
 describe('getNameEntry', () => {
@@ -13,7 +13,9 @@ describe('getNameEntry', () => {
       ttl: 50000,
       pointers: [{ key: 'account_pubkey', id: 'ak_pointer' }],
     }
-    const mockNode = { getNameEntryByName: vi.fn().mockResolvedValue(mockEntry) }
+    const mockNode = {
+      getNameEntryByName: vi.fn().mockResolvedValue(mockEntry),
+    }
     const mockConfig = {
       getNode: vi.fn().mockReturnValue(mockNode),
     }
@@ -24,7 +26,9 @@ describe('getNameEntry', () => {
     expect(result.id).toBe('nm_test')
     expect(result.owner).toBe('ak_owner')
     expect(result.ttl).toBe(50000)
-    expect(result.pointers).toEqual([{ key: 'account_pubkey', id: 'ak_pointer' }])
+    expect(result.pointers).toEqual([
+      { key: 'account_pubkey', id: 'ak_pointer' },
+    ])
   })
 
   it('should map pointers correctly', async () => {
@@ -37,7 +41,9 @@ describe('getNameEntry', () => {
         { key: 'contract_pubkey', id: 'ct_2', extra: 'ignored' },
       ],
     }
-    const mockNode = { getNameEntryByName: vi.fn().mockResolvedValue(mockEntry) }
+    const mockNode = {
+      getNameEntryByName: vi.fn().mockResolvedValue(mockEntry),
+    }
     const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
 
     const result = await getNameEntry(mockConfig as any, { name: 'x.chain' })

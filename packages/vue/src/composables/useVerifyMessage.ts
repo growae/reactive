@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  VerifyMessageErrorType,
   VerifyMessageParameters,
   VerifyMessageReturnType,
-  VerifyMessageErrorType,
-  Compute,
 } from '@growae/reactive'
 import { verifyMessage } from '@growae/reactive'
 import { computed } from 'vue'
@@ -25,15 +25,20 @@ export function useVerifyMessage(
   const config = useConfig(parameters)
 
   const options = computed(() => ({
-    queryKey: ['verifyMessage', {
-      message: parameters.message,
-      signature: parameters.signature,
-      address: parameters.address,
-    }] as const,
+    queryKey: [
+      'verifyMessage',
+      {
+        message: parameters.message,
+        signature: parameters.signature,
+        address: parameters.address,
+      },
+    ] as const,
     queryFn: () => verifyMessage(config, parameters),
-    enabled: Boolean(
-      parameters.message && parameters.signature && parameters.address,
-    ) && (parameters.enabled ?? true),
+    enabled:
+      Boolean(
+        parameters.message && parameters.signature && parameters.address,
+      ) &&
+      (parameters.enabled ?? true),
   }))
 
   return useQuery(options) as UseVerifyMessageReturnType

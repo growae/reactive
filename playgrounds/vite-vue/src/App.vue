@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNetworkId, useHeight } from '@growae/reactive-vue'
+import { useHeight, useNetworkId } from '@growae/reactive-vue'
 
 const { data: networkId } = useNetworkId()
 const { data: height } = useHeight()

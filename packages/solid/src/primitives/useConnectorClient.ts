@@ -11,7 +11,9 @@ import { useConnection } from './useConnection.js'
 import { useNetworkId } from './useNetworkId.js'
 
 export type UseConnectorClientParameters = Accessor<
-  GetConnectorClientParameters & { config?: import('@growae/reactive').Config | undefined }
+  GetConnectorClientParameters & {
+    config?: import('@growae/reactive').Config | undefined
+  }
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<
@@ -27,15 +29,19 @@ export function useConnectorClient(
   const connection = useConnection(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['connectorClient', {
-      networkId: parameters().networkId ?? networkId(),
-      connector: connection()?.connector?.uid,
-    }] as const,
-    queryFn: () => getConnectorClient(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-      connector: parameters().connector ?? connection()?.connector,
-    }),
+    queryKey: [
+      'connectorClient',
+      {
+        networkId: parameters().networkId ?? networkId(),
+        connector: connection()?.connector?.uid,
+      },
+    ] as const,
+    queryFn: () =>
+      getConnectorClient(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+        connector: parameters().connector ?? connection()?.connector,
+      }),
     enabled: !!connection()?.connector,
   }))
 

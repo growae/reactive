@@ -1,7 +1,7 @@
 import type {
+  Compute,
   SimulateContractParameters,
   SimulateContractReturnType,
-  Compute,
 } from '@growae/reactive'
 import { simulateContract } from '@growae/reactive'
 import { computed } from 'vue'
@@ -26,17 +26,22 @@ export function useSimulateContract(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['simulateContract', {
-      address: parameters.address,
-      method: parameters.method,
-      args: parameters.args,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => simulateContract(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
-    enabled: Boolean(parameters.address && parameters.aci && parameters.method) &&
+    queryKey: [
+      'simulateContract',
+      {
+        address: parameters.address,
+        method: parameters.method,
+        args: parameters.args,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      simulateContract(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
+    enabled:
+      Boolean(parameters.address && parameters.aci && parameters.method) &&
       (parameters.enabled ?? true),
   }))
 

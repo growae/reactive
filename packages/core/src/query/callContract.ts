@@ -13,7 +13,11 @@ export function callContractMutationOptions(config: Config) {
       return callContract(config, variables)
     },
     mutationKey: ['callContract'],
-  } satisfies MutationOptions<CallContractReturnType, CallContractErrorType, CallContractParameters>
+  } satisfies MutationOptions<
+    CallContractReturnType,
+    CallContractErrorType,
+    CallContractParameters
+  >
 }
 
 export type CallContractMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type CallContractMutationOptions = ReturnType<
 >
 export type CallContractData = CallContractReturnType
 export type CallContractVariables = CallContractParameters
-export { type CallContractErrorType }
+export type { CallContractErrorType }

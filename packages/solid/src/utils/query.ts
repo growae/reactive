@@ -1,3 +1,10 @@
+import type {
+  Compute,
+  ExactPartial,
+  LooseOmit,
+  UnionStrictOmit,
+} from '@growae/reactive'
+import { hashFn } from '@growae/reactive/query'
 import {
   type DefaultError,
   type MutateFunction,
@@ -5,11 +12,9 @@ import {
   type SolidMutationOptions,
   type CreateMutationResult as UseMutationResult,
   type CreateQueryResult as UseQueryResult,
-  createMutation as useMutation,
   createQuery as tanstack_useQuery,
+  createMutation as useMutation,
 } from '@tanstack/solid-query'
-import { hashFn } from '@growae/reactive/query'
-import type { Compute, ExactPartial, LooseOmit, UnionStrictOmit } from '@growae/reactive'
 import { type Accessor, mergeProps } from 'solid-js'
 
 export type SolidMutationParameters<
@@ -53,7 +58,11 @@ export type SolidQueryParameters<
 > = Compute<
   ExactPartial<
     LooseOmit<
-      Parameters<typeof tanstack_useQuery<queryFnData, error, data, queryKey>>[0] extends Accessor<infer T> ? T : never,
+      Parameters<
+        typeof tanstack_useQuery<queryFnData, error, data, queryKey>
+      >[0] extends Accessor<infer T>
+        ? T
+        : never,
       'initialData'
     >
   > & {

@@ -31,4 +31,4 @@ export function getOracleStateQueryOptions(
 
 export type GetOracleStateQueryFnData = GetOracleStateReturnType
 export type GetOracleStateData = GetOracleStateQueryFnData
-export { type GetOracleStateErrorType }
+export type { GetOracleStateErrorType }

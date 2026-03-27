@@ -1,6 +1,6 @@
+import { DEFAULT_TTL } from '../../constants.js'
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
-import { DEFAULT_TTL } from '../../constants.js'
 
 export type PreclaimNameParameters = {
   name: string

@@ -19,8 +19,7 @@ export type GenerateOptions = {
 export async function generate(options: GenerateOptions = {}): Promise<void> {
   const configPath = findConfig(options)
   if (!configPath) {
-    if (options.config)
-      throw new Error(`Config not found at ${options.config}`)
+    if (options.config) throw new Error(`Config not found at ${options.config}`)
     throw new Error('Config not found')
   }
 
@@ -48,9 +47,7 @@ export async function generate(options: GenerateOptions = {}): Promise<void> {
       try {
         const freshConfig = await resolveConfig({ configPath })
         await runGenerate(freshConfig)
-      } catch (error) {
-        console.error('Regeneration failed:', (error as Error).message)
-      }
+      } catch (_error) {}
     })
 
     process.once('SIGINT', () => {
@@ -81,9 +78,7 @@ async function runGenerate(config: ReactiveConfig): Promise<void> {
   const contracts: ResolvedContract[] = []
   for (const contractConfig of contractConfigs) {
     if (contractNames.has(contractConfig.name)) {
-      throw new Error(
-        `Contract name "${contractConfig.name}" must be unique.`,
-      )
+      throw new Error(`Contract name "${contractConfig.name}" must be unique.`)
     }
     contractNames.add(contractConfig.name)
 
@@ -156,20 +151,20 @@ function extractFunctions(aci: Record<string, unknown>): AciFunction[] {
   const entries = Array.isArray(aci) ? aci : [aci]
   for (const entry of entries) {
     const entryObj = entry as Record<string, unknown>
-    if (entryObj['contract'] && typeof entryObj['contract'] === 'object') {
-      const contract = entryObj['contract'] as Record<string, unknown>
-      const fns = contract['functions']
+    if (entryObj.contract && typeof entryObj.contract === 'object') {
+      const contract = entryObj.contract as Record<string, unknown>
+      const fns = contract.functions
       if (Array.isArray(fns)) {
         for (const fn of fns) {
           const fnObj = fn as Record<string, unknown>
           functions.push({
-            name: fnObj['name'] as string,
-            arguments: (fnObj['arguments'] ?? []) as {
+            name: fnObj.name as string,
+            arguments: (fnObj.arguments ?? []) as {
               name: string
               type: string
             }[],
-            returns: (fnObj['returns'] as string) ?? 'unit',
-            stateful: (fnObj['stateful'] as boolean) ?? false,
+            returns: (fnObj.returns as string) ?? 'unit',
+            stateful: (fnObj.stateful as boolean) ?? false,
           })
         }
       }
@@ -187,18 +182,16 @@ function generateContractCode(
   const lines: string[] = []
 
   lines.push(
-    `//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////`,
+    '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////',
   )
   lines.push(`// ${name}`)
   lines.push(
-    `//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////`,
+    '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////',
   )
   lines.push('')
 
   if (address) {
-    lines.push(
-      `export const ${camelCase(name)}Address = '${address}' as const`,
-    )
+    lines.push(`export const ${camelCase(name)}Address = '${address}' as const`)
     lines.push('')
   }
 
@@ -210,9 +203,9 @@ function generateContractCode(
       lines.push(`    arguments: [${args}],`)
       lines.push(`    returns: '${fn.returns}',`)
       lines.push(`    stateful: ${String(fn.stateful)},`)
-      lines.push(`  },`)
+      lines.push('  },')
     }
-    lines.push(`} as const`)
+    lines.push('} as const')
   }
 
   return lines.join('\n')

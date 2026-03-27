@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  type GetTransactionCountErrorType,
   type GetTransactionCountParameters,
   type GetTransactionCountReturnType,
-  type GetTransactionCountErrorType,
   getTransactionCount,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -28,14 +28,18 @@ export function useTransactionCount(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['transactionCount', {
-      address: parameters.address,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getTransactionCount(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'transactionCount',
+      {
+        address: parameters.address,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getTransactionCount(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }) as UseTransactionCountReturnType
 }

@@ -32,7 +32,7 @@ export class OpenChannelNoAccountError extends BaseError {
 }
 
 export async function openChannel(
-  config: Config,
+  _config: Config,
   parameters: OpenChannelParameters,
 ): Promise<OpenChannelReturnType> {
   const {

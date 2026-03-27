@@ -31,4 +31,4 @@ export function getBalanceQueryOptions(
 
 export type GetBalanceQueryFnData = GetBalanceReturnType
 export type GetBalanceData = GetBalanceQueryFnData
-export { type GetBalanceErrorType }
+export type { GetBalanceErrorType }

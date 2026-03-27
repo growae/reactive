@@ -1,9 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   isValidAddress,
   isValidContractAddress,
-  isValidTxHash,
   isValidName,
+  isValidTxHash,
 } from './encoding.js'
 
 describe('isValidAddress', () => {
@@ -19,9 +19,7 @@ describe('isValidAddress', () => {
 
   it('should return false for ct_ prefix', () => {
     expect(
-      isValidAddress(
-        'ct_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
-      ),
+      isValidAddress('ct_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM'),
     ).toBe(false)
   })
 
@@ -61,17 +59,13 @@ describe('isValidContractAddress', () => {
 describe('isValidTxHash', () => {
   it('should return true for valid th_ hash', () => {
     expect(
-      isValidTxHash(
-        'th_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
-      ),
+      isValidTxHash('th_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM'),
     ).toBe(true)
   })
 
   it('should return false for ak_ address', () => {
     expect(
-      isValidTxHash(
-        'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
-      ),
+      isValidTxHash('ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM'),
     ).toBe(false)
   })
 

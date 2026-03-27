@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { revokeName, RevokeNameNoAccountError } from './revokeName.js'
+import { describe, expect, it, vi } from 'vitest'
+import { RevokeNameNoAccountError, revokeName } from './revokeName.js'
 
 describe('revokeName', () => {
   it('should be a function', () => {

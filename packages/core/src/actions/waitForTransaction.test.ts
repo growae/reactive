@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { waitForTransaction } from './waitForTransaction.js'
 
 describe('waitForTransaction', () => {
@@ -12,7 +12,9 @@ describe('waitForTransaction', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
@@ -74,7 +76,8 @@ describe('waitForTransaction', () => {
         blockHeight: -1,
         tx: {},
       }),
-      getCurrentKeyBlockHeight: vi.fn()
+      getCurrentKeyBlockHeight: vi
+        .fn()
         .mockResolvedValueOnce({ height: 100 })
         .mockResolvedValueOnce({ height: 100 })
         .mockResolvedValue({ height: 200 }),

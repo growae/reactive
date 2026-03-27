@@ -19,13 +19,7 @@ export function verifyMessage(
   const { message, signature, address } = parameters
 
   const signatureBytes =
-    typeof signature === 'string'
-      ? Buffer.from(signature, 'hex')
-      : signature
+    typeof signature === 'string' ? Buffer.from(signature, 'hex') : signature
 
-  return verifyMessageSignature(
-    message,
-    signatureBytes,
-    address as any,
-  )
+  return verifyMessageSignature(message, signatureBytes, address as any)
 }

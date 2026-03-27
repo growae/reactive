@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  WaitForTransactionErrorType,
   WaitForTransactionParameters,
   WaitForTransactionReturnType,
-  WaitForTransactionErrorType,
-  Compute,
 } from '@growae/reactive'
 import { waitForTransaction } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,14 +27,18 @@ export function useWaitForTransaction(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['waitForTransaction', {
-      hash: parameters.hash,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => waitForTransaction(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'waitForTransaction',
+      {
+        hash: parameters.hash,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      waitForTransaction(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.hash) && (parameters.enabled ?? true),
   }))
 

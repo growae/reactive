@@ -36,7 +36,7 @@ export function aci(config: AciConfig): Plugin {
         const content = await readFile(filePath, 'utf-8')
         const aciData = JSON.parse(content) as Record<string, unknown>
         const name =
-          (aciData['contract_name'] as string | undefined) ??
+          (aciData.contract_name as string | undefined) ??
           file.replace(/\.json$/, '')
         contracts.push({
           name,

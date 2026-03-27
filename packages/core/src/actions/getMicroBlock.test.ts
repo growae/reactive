@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getMicroBlock } from './getMicroBlock.js'
 
 describe('getMicroBlock', () => {
@@ -12,10 +12,14 @@ describe('getMicroBlock', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
-    await expect(getMicroBlock(mockConfig as any, { hash: 'mh_test' })).rejects.toThrow()
+    await expect(
+      getMicroBlock(mockConfig as any, { hash: 'mh_test' }),
+    ).rejects.toThrow()
   })
 
   it('should fetch micro block header and transactions', async () => {
@@ -44,7 +48,9 @@ describe('getMicroBlock', () => {
 
     const result = await getMicroBlock(mockConfig as any, { hash: 'mh_test' })
     expect(mockNode.getMicroBlockHeaderByHash).toHaveBeenCalledWith('mh_test')
-    expect(mockNode.getMicroBlockTransactionsByHash).toHaveBeenCalledWith('mh_test')
+    expect(mockNode.getMicroBlockTransactionsByHash).toHaveBeenCalledWith(
+      'mh_test',
+    )
     expect(result.hash).toBe('mh_test')
     expect(result.transactions).toHaveLength(2)
     expect(result.version).toBe(5)

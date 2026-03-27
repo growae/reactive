@@ -31,4 +31,4 @@ export function getAccountQueryOptions(
 
 export type GetAccountQueryFnData = GetAccountReturnType
 export type GetAccountData = GetAccountQueryFnData
-export { type GetAccountErrorType }
+export type { GetAccountErrorType }

@@ -1,7 +1,7 @@
 import {
+  type GetTransactionErrorType,
   type GetTransactionParameters,
   type GetTransactionReturnType,
-  type GetTransactionErrorType,
   getTransaction,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -23,20 +23,24 @@ export type UseTransactionReturnType = UseQueryReturnType<
 >
 
 export function useTransaction(
-  parameters: UseTransactionParameters = () => ({} as GetTransactionParameters),
+  parameters: UseTransactionParameters = () => ({}) as GetTransactionParameters,
 ): UseTransactionReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['transaction', {
-      hash: parameters().hash,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getTransaction(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'transaction',
+      {
+        hash: parameters().hash,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getTransaction(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().hash) && (parameters().enabled ?? true),
   }))
 

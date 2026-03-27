@@ -1,13 +1,13 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type SpendErrorType,
   type SpendParameters,
   type SpendReturnType,
-  type SpendErrorType,
   spend,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -15,8 +15,16 @@ import { useConfig } from './useConfig.js'
 export type UseSpendParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SpendReturnType, variables: SpendParameters, context: context) => void
-      onError?: (error: SpendErrorType, variables: SpendParameters, context: context) => void
+      onSuccess?: (
+        data: SpendReturnType,
+        variables: SpendParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SpendErrorType,
+        variables: SpendParameters,
+        context: context,
+      ) => void
     }
   }
 >

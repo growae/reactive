@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   OpenChannelParameters,
   OpenChannelReturnType,
-  Compute,
 } from '@growae/reactive'
 import { openChannel } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -12,8 +12,16 @@ import { useConfig } from './useConfig.js'
 export type UseOpenChannelParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: OpenChannelReturnType, variables: OpenChannelParameters, context: context) => void
-      onError?: (error: Error, variables: OpenChannelParameters, context: context) => void
+      onSuccess?: (
+        data: OpenChannelReturnType,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +34,9 @@ export type UseOpenChannelReturnType<context = unknown> = Compute<
     context
   > & {
     openChannel: (variables: OpenChannelParameters) => void
-    openChannelAsync: (variables: OpenChannelParameters) => Promise<OpenChannelReturnType>
+    openChannelAsync: (
+      variables: OpenChannelParameters,
+    ) => Promise<OpenChannelReturnType>
   }
 >
 

@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  GetBlockErrorType,
   GetBlockParameters,
   GetBlockReturnType,
-  GetBlockErrorType,
-  Compute,
 } from '@growae/reactive'
 import { getBlock } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,15 +27,19 @@ export function useBlock(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['block', {
-      height: parameters.height,
-      hash: parameters.hash,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getBlock(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'block',
+      {
+        height: parameters.height,
+        hash: parameters.hash,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getBlock(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: parameters.enabled ?? true,
   }))
 

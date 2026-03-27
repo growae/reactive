@@ -1,6 +1,6 @@
+import { DEFAULT_TTL } from '../constants.js'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import { DEFAULT_TTL } from '../constants.js'
 
 export type SpendParameters = {
   recipientId: string
@@ -25,8 +25,13 @@ export async function spend(
   config: Config,
   parameters: SpendParameters,
 ): Promise<SpendReturnType> {
-  const { recipientId, amount, payload, networkId, options: txOptions = {} } =
-    parameters
+  const {
+    recipientId,
+    amount,
+    payload,
+    networkId,
+    options: txOptions = {},
+  } = parameters
 
   const connection = config.state.connections.get(config.state.current!)
   if (!connection) {

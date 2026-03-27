@@ -1,5 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { registerOracle, RegisterOracleNoAccountError } from './registerOracle.js'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  RegisterOracleNoAccountError,
+  registerOracle,
+} from './registerOracle.js'
 
 describe('registerOracle', () => {
   it('should be a function', () => {

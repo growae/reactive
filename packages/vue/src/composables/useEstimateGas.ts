@@ -1,8 +1,8 @@
 import type {
+  Compute,
+  EstimateGasErrorType,
   EstimateGasParameters,
   EstimateGasReturnType,
-  EstimateGasErrorType,
-  Compute,
 } from '@growae/reactive'
 import { estimateGas } from '@growae/reactive'
 import { computed } from 'vue'
@@ -27,16 +27,22 @@ export function useEstimateGas(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['estimateGas', {
-      tx: parameters.tx,
-      accountAddress: parameters.accountAddress,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => estimateGas(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
-    enabled: Boolean(parameters.tx && parameters.accountAddress) && (parameters.enabled ?? true),
+    queryKey: [
+      'estimateGas',
+      {
+        tx: parameters.tx,
+        accountAddress: parameters.accountAddress,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      estimateGas(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
+    enabled:
+      Boolean(parameters.tx && parameters.accountAddress) &&
+      (parameters.enabled ?? true),
   }))
 
   return useQuery(options) as UseEstimateGasReturnType

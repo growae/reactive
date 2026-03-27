@@ -26,7 +26,7 @@ export async function getContractEvents(
 
   const node = config.getNode({ networkId })
 
-  const txs = await node.getTransactionInfoByHash
+  const txs = (await node.getTransactionInfoByHash)
     ? await fetchContractEventsFromNode(node, address, fromHeight, toHeight)
     : []
 

@@ -29,4 +29,4 @@ export function getBlockQueryOptions(
 
 export type GetBlockQueryFnData = GetBlockReturnType
 export type GetBlockData = GetBlockQueryFnData
-export { type GetBlockErrorType }
+export type { GetBlockErrorType }

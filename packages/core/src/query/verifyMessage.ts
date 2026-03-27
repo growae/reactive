@@ -13,10 +13,16 @@ export function verifyMessageMutationOptions(config: Config) {
       return verifyMessage(config, variables)
     },
     mutationKey: ['verifyMessage'],
-  } satisfies MutationOptions<VerifyMessageReturnType, VerifyMessageErrorType, VerifyMessageParameters>
+  } satisfies MutationOptions<
+    VerifyMessageReturnType,
+    VerifyMessageErrorType,
+    VerifyMessageParameters
+  >
 }
 
-export type VerifyMessageMutationOptions = ReturnType<typeof verifyMessageMutationOptions>
+export type VerifyMessageMutationOptions = ReturnType<
+  typeof verifyMessageMutationOptions
+>
 export type VerifyMessageData = VerifyMessageReturnType
 export type VerifyMessageVariables = VerifyMessageParameters
-export { type VerifyMessageErrorType }
+export type { VerifyMessageErrorType }

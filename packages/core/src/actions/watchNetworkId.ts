@@ -11,8 +11,5 @@ export function watchNetworkId(
   parameters: WatchNetworkIdParameters,
 ): WatchNetworkIdReturnType {
   const { onChange } = parameters
-  return config.subscribe(
-    (state) => state.networkId,
-    onChange,
-  )
+  return config.subscribe((state) => state.networkId, onChange)
 }

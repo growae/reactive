@@ -1,7 +1,7 @@
 import {
+  type GetHeightErrorType,
   type GetHeightParameters,
   type GetHeightReturnType,
-  type GetHeightErrorType,
   getHeight,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -29,12 +29,16 @@ export function useHeight(
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['height', {
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getHeight(config(), {
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'height',
+      {
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getHeight(config(), {
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: parameters().enabled ?? true,
   }))
 

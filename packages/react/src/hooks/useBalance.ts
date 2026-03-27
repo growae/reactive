@@ -1,14 +1,14 @@
 'use client'
 
 import {
+  type GetBalanceErrorType,
   type GetBalanceParameters,
   type GetBalanceReturnType,
-  type GetBalanceErrorType,
   getBalance,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -28,15 +28,19 @@ export function useBalance(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['balance', {
-      address: parameters.address,
-      networkId: parameters.networkId ?? networkId,
-      format: parameters.format,
-    }],
-    queryFn: () => getBalance(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'balance',
+      {
+        address: parameters.address,
+        networkId: parameters.networkId ?? networkId,
+        format: parameters.format,
+      },
+    ],
+    queryFn: () =>
+      getBalance(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }) as UseBalanceReturnType
 }

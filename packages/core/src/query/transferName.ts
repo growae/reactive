@@ -14,9 +14,15 @@ export function transferNameMutationOptions(config: Config) {
       return transferName(config, variables)
     },
     mutationKey: ['transferName'],
-  } satisfies MutationOptions<TransferNameReturnType, TransferNameErrorType, TransferNameParameters>
+  } satisfies MutationOptions<
+    TransferNameReturnType,
+    TransferNameErrorType,
+    TransferNameParameters
+  >
 }
 
-export type TransferNameMutationOptions = ReturnType<typeof transferNameMutationOptions>
+export type TransferNameMutationOptions = ReturnType<
+  typeof transferNameMutationOptions
+>
 export type TransferNameData = TransferNameReturnType
 export type TransferNameVariables = TransferNameParameters

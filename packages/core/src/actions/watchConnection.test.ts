@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { watchConnection } from './watchConnection.js'
 
 describe('watchConnection', () => {
@@ -15,7 +15,10 @@ describe('watchConnection', () => {
 
     const result = watchConnection(mockConfig as any, { onChange })
 
-    expect(mockConfig.subscribe).toHaveBeenCalledWith(expect.any(Function), onChange)
+    expect(mockConfig.subscribe).toHaveBeenCalledWith(
+      expect.any(Function),
+      onChange,
+    )
     expect(result).toBe(unsubscribe)
   })
 

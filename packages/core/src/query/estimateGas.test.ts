@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { estimateGasQueryKey, estimateGasQueryOptions } from './estimateGas.js'
 
 describe('estimateGasQueryOptions', () => {
@@ -29,6 +29,9 @@ describe('estimateGasQueryOptions', () => {
 describe('estimateGasQueryKey', () => {
   it('should return correct query key', () => {
     expect(estimateGasQueryKey()).toEqual(['estimateGas', {}])
-    expect(estimateGasQueryKey({ tx: 'tx_test' })).toEqual(['estimateGas', { tx: 'tx_test' }])
+    expect(estimateGasQueryKey({ tx: 'tx_test' })).toEqual([
+      'estimateGas',
+      { tx: 'tx_test' },
+    ])
   })
 })

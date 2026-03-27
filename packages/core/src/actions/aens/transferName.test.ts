@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { transferName, TransferNameNoAccountError } from './transferName.js'
+import { describe, expect, it, vi } from 'vitest'
+import { TransferNameNoAccountError, transferName } from './transferName.js'
 
 describe('transferName', () => {
   it('should be a function', () => {
@@ -12,7 +12,10 @@ describe('transferName', () => {
       getNode: vi.fn().mockReturnValue({}),
     }
     await expect(
-      transferName(mockConfig as any, { name: 'test.chain', recipient: 'ak_recipient' }),
+      transferName(mockConfig as any, {
+        name: 'test.chain',
+        recipient: 'ak_recipient',
+      }),
     ).rejects.toThrow(TransferNameNoAccountError)
   })
 

@@ -6,8 +6,8 @@ import {
   getOracleQueries,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworkId } from './useNetworkId.js'
 
@@ -27,14 +27,18 @@ export function useOracleQueries(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['oracleQueries', {
-      oracleId: parameters.oracleId,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getOracleQueries(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'oracleQueries',
+      {
+        oracleId: parameters.oracleId,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getOracleQueries(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.oracleId) && (parameters.enabled ?? true),
   }) as UseOracleQueriesReturnType
 }

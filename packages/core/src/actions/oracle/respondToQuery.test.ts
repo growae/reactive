@@ -1,5 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
-import { respondToQuery, RespondToQueryNoAccountError } from './respondToQuery.js'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  RespondToQueryNoAccountError,
+  respondToQuery,
+} from './respondToQuery.js'
 
 describe('respondToQuery', () => {
   it('should be a function', () => {

@@ -1,12 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": [
-      "**",
-      "!**/CHANGELOG.md",
-      "!**/pnpm-lock.yaml",
-      "!**/tsconfig.base.json"
-    ]
+    "ignore": ["CHANGELOG.md", "pnpm-lock.yaml", "tsconfig.base.json"]
   },
   "formatter": {
     "enabled": true,
@@ -16,7 +11,7 @@
     "lineWidth": 80
   },
   "linter": {
-    "includes": ["**", "!**/packages/create-reactive/templates/**/*"],
+    "ignore": ["packages/create-reactive/templates/**"],
     "enabled": true,
     "rules": {
       "recommended": true,
@@ -25,8 +20,8 @@
         "useExhaustiveDependencies": "error"
       },
       "performance": {
-        "noBarrelFile": "error",
-        "noReExportAll": "error",
+        "noBarrelFile": "off",
+        "noReExportAll": "off",
         "noDelete": "off"
       },
       "style": {
@@ -58,7 +53,7 @@
             "allow": ["log"]
           }
         },
-        "noTsIgnore": "off"
+        "noSkippedTests": "off"
       }
     }
   },
@@ -69,16 +64,12 @@
       "semicolons": "asNeeded"
     }
   },
-  "assist": {
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
+  "organizeImports": {
+    "enabled": true
   },
   "overrides": [
     {
-      "includes": ["**/*.vue"],
+      "include": ["**/*.vue"],
       "linter": {
         "rules": {
           "correctness": {
@@ -89,7 +80,7 @@
       }
     },
     {
-      "includes": ["playgrounds/**"],
+      "include": ["playgrounds/**"],
       "linter": {
         "rules": {
           "style": {

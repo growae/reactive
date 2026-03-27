@@ -62,7 +62,6 @@ export {
   useConnectorClient,
   type UseConnectorClientParameters,
   type UseConnectorClientReturnType,
-
   // Chain reads
   useBalance,
   type UseBalanceParameters,
@@ -91,7 +90,6 @@ export {
   useEstimateGas,
   type UseEstimateGasParameters,
   type UseEstimateGasReturnType,
-
   // Transactions
   useSendTransaction,
   type UseSendTransactionParameters,
@@ -102,7 +100,6 @@ export {
   usePayForTransaction,
   type UsePayForTransactionParameters,
   type UsePayForTransactionReturnType,
-
   // Signing
   useSignMessage,
   type UseSignMessageParameters,
@@ -119,7 +116,6 @@ export {
   useVerifyTypedData,
   type UseVerifyTypedDataParameters,
   type UseVerifyTypedDataReturnType,
-
   // Contracts
   useDeployContract,
   type UseDeployContractParameters,
@@ -139,7 +135,6 @@ export {
   useContractEvents,
   type UseContractEventsParameters,
   type UseContractEventsReturnType,
-
   // AENS
   usePreclaimName,
   type UsePreclaimNameParameters,
@@ -159,7 +154,6 @@ export {
   useResolveName,
   type UseResolveNameParameters,
   type UseResolveNameReturnType,
-
   // Oracles
   useRegisterOracle,
   type UseRegisterOracleParameters,
@@ -176,7 +170,6 @@ export {
   useOracleQueries,
   type UseOracleQueriesParameters,
   type UseOracleQueriesReturnType,
-
   // Channels
   useOpenChannel,
   type UseOpenChannelParameters,
@@ -187,7 +180,6 @@ export {
   useChannelDeposit,
   type UseChannelDepositParameters,
   type UseChannelDepositReturnType,
-
   // Watchers
   useWatchHeight,
   type UseWatchHeightParameters,

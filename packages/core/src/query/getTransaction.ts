@@ -31,4 +31,4 @@ export function getTransactionQueryOptions(
 
 export type GetTransactionQueryFnData = GetTransactionReturnType
 export type GetTransactionData = GetTransactionQueryFnData
-export { type GetTransactionErrorType }
+export type { GetTransactionErrorType }

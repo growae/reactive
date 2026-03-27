@@ -1,13 +1,15 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../createConfig.js'
 import {
-  signMessage,
   type SignMessageParameters,
   type SignMessageReturnType,
+  signMessage,
 } from './signMessage.js'
-import type { Config } from '../createConfig.js'
 
 test('signMessage returns Promise<SignMessageReturnType>', () => {
-  expectTypeOf(signMessage).returns.toEqualTypeOf<Promise<SignMessageReturnType>>()
+  expectTypeOf(signMessage).returns.toEqualTypeOf<
+    Promise<SignMessageReturnType>
+  >()
 })
 
 test('SignMessageParameters has message field', () => {

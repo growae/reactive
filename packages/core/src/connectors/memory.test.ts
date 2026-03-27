@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   MemoryAccount: vi.fn().mockImplementation(() => ({
@@ -8,10 +8,10 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   })),
 }))
 
-import { memory } from './memory.js'
 import { createEmitter } from '../createEmitter.js'
-import { testnet, mainnet } from '../types/network.js'
+import { mainnet, testnet } from '../types/network.js'
 import type { ConnectorEventMap } from './createConnector.js'
+import { memory } from './memory.js'
 
 function setupConnector(secretKey = 'test_secret_key', name?: string) {
   const connectorFn = memory({ secretKey, name })

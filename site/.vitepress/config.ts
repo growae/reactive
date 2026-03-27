@@ -188,9 +188,7 @@ function vueSidebar(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'Configuration',
-      items: [
-        { text: 'ReactivePlugin', link: '/vue/api/ReactivePlugin' },
-      ],
+      items: [{ text: 'ReactivePlugin', link: '/vue/api/ReactivePlugin' }],
     },
     {
       text: 'Composables',
@@ -304,9 +302,7 @@ function cliSidebar(): DefaultTheme.SidebarItem[] {
     },
     {
       text: 'Scaffolder',
-      items: [
-        { text: 'create-reactive', link: '/cli/create-reactive' },
-      ],
+      items: [{ text: 'create-reactive', link: '/cli/create-reactive' }],
     },
   ]
 }

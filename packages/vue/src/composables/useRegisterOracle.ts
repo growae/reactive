@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   RegisterOracleParameters,
   RegisterOracleReturnType,
-  Compute,
 } from '@growae/reactive'
 import { registerOracle } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -12,8 +12,16 @@ import { useConfig } from './useConfig.js'
 export type UseRegisterOracleParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RegisterOracleReturnType, variables: RegisterOracleParameters, context: context) => void
-      onError?: (error: Error, variables: RegisterOracleParameters, context: context) => void
+      onSuccess?: (
+        data: RegisterOracleReturnType,
+        variables: RegisterOracleParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RegisterOracleParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +34,9 @@ export type UseRegisterOracleReturnType<context = unknown> = Compute<
     context
   > & {
     registerOracle: (variables: RegisterOracleParameters) => void
-    registerOracleAsync: (variables: RegisterOracleParameters) => Promise<RegisterOracleReturnType>
+    registerOracleAsync: (
+      variables: RegisterOracleParameters,
+    ) => Promise<RegisterOracleReturnType>
   }
 >
 

@@ -14,9 +14,15 @@ export function channelDepositMutationOptions(config: Config) {
       return channelDeposit(config, variables)
     },
     mutationKey: ['channelDeposit'],
-  } satisfies MutationOptions<ChannelDepositReturnType, ChannelDepositErrorType, ChannelDepositParameters>
+  } satisfies MutationOptions<
+    ChannelDepositReturnType,
+    ChannelDepositErrorType,
+    ChannelDepositParameters
+  >
 }
 
-export type ChannelDepositMutationOptions = ReturnType<typeof channelDepositMutationOptions>
+export type ChannelDepositMutationOptions = ReturnType<
+  typeof channelDepositMutationOptions
+>
 export type ChannelDepositData = ChannelDepositReturnType
 export type ChannelDepositVariables = ChannelDepositParameters

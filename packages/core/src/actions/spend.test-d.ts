@@ -1,10 +1,6 @@
 import { expectTypeOf, test } from 'vitest'
-import {
-  spend,
-  type SpendParameters,
-  type SpendReturnType,
-} from './spend.js'
 import type { Config } from '../createConfig.js'
+import { type SpendParameters, type SpendReturnType, spend } from './spend.js'
 
 test('spend returns Promise<SpendReturnType>', () => {
   expectTypeOf(spend).returns.toEqualTypeOf<Promise<SpendReturnType>>()

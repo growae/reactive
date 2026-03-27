@@ -1,12 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { getNetworkId } from './getNetworkId.js'
 import { createConfig } from '../createConfig.js'
-import { testnet, mainnet } from '../types/network.js'
+import { mainnet, testnet } from '../types/network.js'
+import { getNetworkId } from './getNetworkId.js'
 
 describe('getNetworkId', () => {
   it('should return the current network id', () => {

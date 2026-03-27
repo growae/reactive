@@ -20,10 +20,16 @@ export function channelContractCreateMutationOptions(config: Config) {
       return channelContractCreate(config, variables)
     },
     mutationKey: ['channelContractCreate'],
-  } satisfies MutationOptions<ChannelContractCreateReturnType, ChannelContractCreateErrorType, ChannelContractCreateParameters>
+  } satisfies MutationOptions<
+    ChannelContractCreateReturnType,
+    ChannelContractCreateErrorType,
+    ChannelContractCreateParameters
+  >
 }
 
-export type ChannelContractCreateMutationOptions = ReturnType<typeof channelContractCreateMutationOptions>
+export type ChannelContractCreateMutationOptions = ReturnType<
+  typeof channelContractCreateMutationOptions
+>
 export type ChannelContractCreateData = ChannelContractCreateReturnType
 export type ChannelContractCreateVariables = ChannelContractCreateParameters
 
@@ -35,10 +41,16 @@ export function channelContractCallMutationOptions(config: Config) {
       return channelContractCall(config, variables)
     },
     mutationKey: ['channelContractCall'],
-  } satisfies MutationOptions<ChannelContractCallReturnType, ChannelContractCallErrorType, ChannelContractCallParameters>
+  } satisfies MutationOptions<
+    ChannelContractCallReturnType,
+    ChannelContractCallErrorType,
+    ChannelContractCallParameters
+  >
 }
 
-export type ChannelContractCallMutationOptions = ReturnType<typeof channelContractCallMutationOptions>
+export type ChannelContractCallMutationOptions = ReturnType<
+  typeof channelContractCallMutationOptions
+>
 export type ChannelContractCallData = ChannelContractCallReturnType
 export type ChannelContractCallVariables = ChannelContractCallParameters
 
@@ -50,9 +62,16 @@ export function channelContractCallStaticMutationOptions(config: Config) {
       return channelContractCallStatic(config, variables)
     },
     mutationKey: ['channelContractCallStatic'],
-  } satisfies MutationOptions<ChannelContractCallStaticReturnType, ChannelContractCallStaticErrorType, ChannelContractCallStaticParameters>
+  } satisfies MutationOptions<
+    ChannelContractCallStaticReturnType,
+    ChannelContractCallStaticErrorType,
+    ChannelContractCallStaticParameters
+  >
 }
 
-export type ChannelContractCallStaticMutationOptions = ReturnType<typeof channelContractCallStaticMutationOptions>
+export type ChannelContractCallStaticMutationOptions = ReturnType<
+  typeof channelContractCallStaticMutationOptions
+>
 export type ChannelContractCallStaticData = ChannelContractCallStaticReturnType
-export type ChannelContractCallStaticVariables = ChannelContractCallStaticParameters
+export type ChannelContractCallStaticVariables =
+  ChannelContractCallStaticParameters

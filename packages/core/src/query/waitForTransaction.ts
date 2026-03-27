@@ -36,4 +36,4 @@ export function waitForTransactionQueryOptions(
 
 export type WaitForTransactionQueryFnData = WaitForTransactionReturnType
 export type WaitForTransactionData = WaitForTransactionQueryFnData
-export { type WaitForTransactionErrorType }
+export type { WaitForTransactionErrorType }

@@ -1,12 +1,12 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { watchNetworkId } from './watchNetworkId.js'
 import { createConfig } from '../createConfig.js'
-import { testnet, mainnet } from '../types/network.js'
+import { mainnet, testnet } from '../types/network.js'
+import { watchNetworkId } from './watchNetworkId.js'
 
 describe('watchNetworkId', () => {
   it('should call onChange when networkId changes', () => {

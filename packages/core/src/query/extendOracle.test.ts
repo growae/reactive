@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { extendOracleMutationOptions } from './extendOracle.js'
 
 describe('extendOracleMutationOptions', () => {

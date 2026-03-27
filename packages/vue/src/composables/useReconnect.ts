@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
+  ReconnectErrorType,
   ReconnectParameters,
   ReconnectReturnType,
-  ReconnectErrorType,
-  Compute,
 } from '@growae/reactive'
 import { reconnect } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -13,8 +13,16 @@ import { useConfig } from './useConfig.js'
 export type UseReconnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ReconnectReturnType, variables: ReconnectParameters, context: context) => void
-      onError?: (error: ReconnectErrorType, variables: ReconnectParameters, context: context) => void
+      onSuccess?: (
+        data: ReconnectReturnType,
+        variables: ReconnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: ReconnectErrorType,
+        variables: ReconnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -27,7 +35,9 @@ export type UseReconnectReturnType<context = unknown> = Compute<
     context
   > & {
     reconnect: (variables?: ReconnectParameters) => void
-    reconnectAsync: (variables?: ReconnectParameters) => Promise<ReconnectReturnType>
+    reconnectAsync: (
+      variables?: ReconnectParameters,
+    ) => Promise<ReconnectReturnType>
   }
 >
 

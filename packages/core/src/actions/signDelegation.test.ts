@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { signDelegation } from './signDelegation.js'
 
 describe('signDelegation', () => {
@@ -53,7 +53,9 @@ describe('signDelegation', () => {
       },
     }
 
-    const result = await signDelegation(mockConfig as any, { delegation: { type: 'test' } })
+    const result = await signDelegation(mockConfig as any, {
+      delegation: { type: 'test' },
+    })
     expect(result).toBe('signed_delegation')
     expect(mockConnector.signDelegation).toHaveBeenCalledWith(
       { type: 'test' },

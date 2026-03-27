@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { claimName, ClaimNameNoAccountError } from './claimName.js'
+import { describe, expect, it, vi } from 'vitest'
+import { ClaimNameNoAccountError, claimName } from './claimName.js'
 
 describe('claimName', () => {
   it('should be a function', () => {

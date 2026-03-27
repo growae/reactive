@@ -1,6 +1,10 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { getBalance } from '../../packages/core/src/actions/getBalance.js'
-import { createTestConfig, waitForNode, FAUCET_PUBLIC_KEY } from '../setup/integration.js'
+import {
+  FAUCET_PUBLIC_KEY,
+  createTestConfig,
+  waitForNode,
+} from '../setup/integration.js'
 
 describe.skipIf(!process.env.INTEGRATION)('getBalance (integration)', () => {
   beforeAll(async () => {

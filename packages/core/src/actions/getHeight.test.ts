@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { mockNode } = vi.hoisted(() => ({
   mockNode: {
@@ -10,9 +10,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => mockNode),
 }))
 
-import { getHeight } from './getHeight.js'
 import { createConfig } from '../createConfig.js'
 import { testnet } from '../types/network.js'
+import { getHeight } from './getHeight.js'
 
 describe('getHeight', () => {
   beforeEach(() => {

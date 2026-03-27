@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { channelTransfer } from './channelTransfer.js'
 
 describe('channelTransfer', () => {
@@ -8,7 +8,9 @@ describe('channelTransfer', () => {
 
   it('should call channel.update with correct arguments', async () => {
     const mockChannel = {
-      update: vi.fn().mockResolvedValue({ accepted: true, signedTx: 'tx_transfer' }),
+      update: vi
+        .fn()
+        .mockResolvedValue({ accepted: true, signedTx: 'tx_transfer' }),
     }
     const sign = vi.fn()
     const mockConfig = {} as any

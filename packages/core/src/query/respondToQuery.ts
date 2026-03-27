@@ -14,9 +14,15 @@ export function respondToQueryMutationOptions(config: Config) {
       return respondToQuery(config, variables)
     },
     mutationKey: ['respondToQuery'],
-  } satisfies MutationOptions<RespondToQueryReturnType, RespondToQueryErrorType, RespondToQueryParameters>
+  } satisfies MutationOptions<
+    RespondToQueryReturnType,
+    RespondToQueryErrorType,
+    RespondToQueryParameters
+  >
 }
 
-export type RespondToQueryMutationOptions = ReturnType<typeof respondToQueryMutationOptions>
+export type RespondToQueryMutationOptions = ReturnType<
+  typeof respondToQueryMutationOptions
+>
 export type RespondToQueryData = RespondToQueryReturnType
 export type RespondToQueryVariables = RespondToQueryParameters

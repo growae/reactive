@@ -1,9 +1,9 @@
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, testnet } from '@growae/reactive'
 import { ReactiveProvider } from '@growae/reactive-react'
-import { useState, type ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { type ReactNode, useState } from 'react'
 
 const config = createConfig({
   networks: [testnet],
@@ -15,9 +15,7 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactiveProvider config={config}>
-        {children}
-      </ReactiveProvider>
+      <ReactiveProvider config={config}>{children}</ReactiveProvider>
     </QueryClientProvider>
   )
 }

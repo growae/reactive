@@ -13,10 +13,16 @@ export function payForTransactionMutationOptions(config: Config) {
       return payForTransaction(config, variables)
     },
     mutationKey: ['payForTransaction'],
-  } satisfies MutationOptions<PayForTransactionReturnType, PayForTransactionErrorType, PayForTransactionParameters>
+  } satisfies MutationOptions<
+    PayForTransactionReturnType,
+    PayForTransactionErrorType,
+    PayForTransactionParameters
+  >
 }
 
-export type PayForTransactionMutationOptions = ReturnType<typeof payForTransactionMutationOptions>
+export type PayForTransactionMutationOptions = ReturnType<
+  typeof payForTransactionMutationOptions
+>
 export type PayForTransactionData = PayForTransactionReturnType
 export type PayForTransactionVariables = PayForTransactionParameters
-export { type PayForTransactionErrorType }
+export type { PayForTransactionErrorType }

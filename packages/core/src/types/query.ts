@@ -23,7 +23,10 @@ export type QueryOptions<
   enabled?: boolean | undefined
   gcTime?: number | undefined
   queryKey: queryKey
-  queryFn: (context: { queryKey: queryKey; signal: AbortSignal }) => Promise<queryFnData>
+  queryFn: (context: {
+    queryKey: queryKey
+    signal: AbortSignal
+  }) => Promise<queryFnData>
   refetchInterval?:
     | number
     | false
@@ -32,11 +35,21 @@ export type QueryOptions<
   refetchOnMount?: boolean | 'always' | undefined
   refetchOnReconnect?: boolean | 'always' | undefined
   refetchOnWindowFocus?: boolean | 'always' | undefined
-  retry?: boolean | number | ((failureCount: number, error: error) => boolean) | undefined
-  retryDelay?: number | ((failureCount: number, error: error) => number) | undefined
+  retry?:
+    | boolean
+    | number
+    | ((failureCount: number, error: error) => boolean)
+    | undefined
+  retryDelay?:
+    | number
+    | ((failureCount: number, error: error) => number)
+    | undefined
   select?: ((data: queryFnData) => data) | undefined
   staleTime?: number | undefined
-  structuralSharing?: boolean | ((oldData: data | undefined, newData: data) => data) | undefined
+  structuralSharing?:
+    | boolean
+    | ((oldData: data | undefined, newData: data) => data)
+    | undefined
 }
 
 export type MutationParameter<
@@ -48,12 +61,38 @@ export type MutationParameter<
   mutation?:
     | {
         gcTime?: number | undefined
-        onError?: ((error: error, variables: variables, context: context | undefined) => unknown) | undefined
-        onMutate?: ((variables: variables) => Promise<context | undefined> | context | undefined) | undefined
-        onSettled?: ((data: data | undefined, error: error | null, variables: variables, context: context | undefined) => unknown) | undefined
-        onSuccess?: ((data: data, variables: variables, context: context) => unknown) | undefined
-        retry?: boolean | number | ((failureCount: number, error: error) => boolean) | undefined
-        retryDelay?: number | ((failureCount: number, error: error) => number) | undefined
+        onError?:
+          | ((
+              error: error,
+              variables: variables,
+              context: context | undefined,
+            ) => unknown)
+          | undefined
+        onMutate?:
+          | ((
+              variables: variables,
+            ) => Promise<context | undefined> | context | undefined)
+          | undefined
+        onSettled?:
+          | ((
+              data: data | undefined,
+              error: error | null,
+              variables: variables,
+              context: context | undefined,
+            ) => unknown)
+          | undefined
+        onSuccess?:
+          | ((data: data, variables: variables, context: context) => unknown)
+          | undefined
+        retry?:
+          | boolean
+          | number
+          | ((failureCount: number, error: error) => boolean)
+          | undefined
+        retryDelay?:
+          | number
+          | ((failureCount: number, error: error) => number)
+          | undefined
       }
     | undefined
 }

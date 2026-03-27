@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useConnect, useDisconnect, useBalance } from '@growae/reactive-vue'
+import { useBalance, useConnect, useDisconnect } from '@growae/reactive-vue'
 
 const { connect, connectors, status, error } = useConnect()
 const { disconnect } = useDisconnect()

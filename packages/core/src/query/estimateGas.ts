@@ -1,4 +1,9 @@
-import { type EstimateGasErrorType, type EstimateGasParameters, type EstimateGasReturnType, estimateGas } from '../actions/estimateGas.js'
+import {
+  type EstimateGasErrorType,
+  type EstimateGasParameters,
+  type EstimateGasReturnType,
+  estimateGas,
+} from '../actions/estimateGas.js'
 import type { Config } from '../createConfig.js'
 import type { ExactPartial } from '../types/utils.js'
 
@@ -9,7 +14,10 @@ export function estimateGasQueryKey(params: EstimateGasOptions = {}) {
 }
 export type EstimateGasQueryKey = ReturnType<typeof estimateGasQueryKey>
 
-export function estimateGasQueryOptions(config: Config, params: EstimateGasOptions = {}) {
+export function estimateGasQueryOptions(
+  config: Config,
+  params: EstimateGasOptions = {},
+) {
   return {
     enabled: Boolean(params.tx),
     queryFn: async () => {
@@ -23,4 +31,4 @@ export function estimateGasQueryOptions(config: Config, params: EstimateGasOptio
 
 export type EstimateGasQueryFnData = EstimateGasReturnType
 export type EstimateGasData = EstimateGasQueryFnData
-export { type EstimateGasErrorType }
+export type { EstimateGasErrorType }

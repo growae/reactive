@@ -1,7 +1,7 @@
 import {
+  type VerifyTypedDataErrorType,
   type VerifyTypedDataParameters,
   type VerifyTypedDataReturnType,
-  type VerifyTypedDataErrorType,
   verifyTypedData,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -22,20 +22,26 @@ export type UseVerifyTypedDataReturnType = UseQueryReturnType<
 >
 
 export function useVerifyTypedData(
-  parameters: UseVerifyTypedDataParameters = () => ({} as VerifyTypedDataParameters),
+  parameters: UseVerifyTypedDataParameters = () =>
+    ({}) as VerifyTypedDataParameters,
 ): UseVerifyTypedDataReturnType {
   const config = useConfig(parameters)
 
   const options = createMemo(() => ({
-    queryKey: ['verifyTypedData', {
-      data: parameters().data,
-      signature: parameters().signature,
-      address: parameters().address,
-    }] as const,
+    queryKey: [
+      'verifyTypedData',
+      {
+        data: parameters().data,
+        signature: parameters().signature,
+        address: parameters().address,
+      },
+    ] as const,
     queryFn: () => verifyTypedData(config(), parameters()),
-    enabled: Boolean(
-      parameters().data && parameters().signature && parameters().address,
-    ) && (parameters().enabled ?? true),
+    enabled:
+      Boolean(
+        parameters().data && parameters().signature && parameters().address,
+      ) &&
+      (parameters().enabled ?? true),
   }))
 
   return useQuery(options) as UseVerifyTypedDataReturnType

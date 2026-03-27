@@ -1,10 +1,10 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../../createConfig.js'
 import {
-  createGeneralizedAccount,
   type CreateGeneralizedAccountParameters,
   type CreateGeneralizedAccountReturnType,
+  createGeneralizedAccount,
 } from './createGeneralizedAccount.js'
-import type { Config } from '../../createConfig.js'
 
 test('createGeneralizedAccount returns Promise<CreateGeneralizedAccountReturnType>', () => {
   expectTypeOf(createGeneralizedAccount).returns.toEqualTypeOf<
@@ -13,8 +13,12 @@ test('createGeneralizedAccount returns Promise<CreateGeneralizedAccountReturnTyp
 })
 
 test('CreateGeneralizedAccountReturnType has gaContractId', () => {
-  expectTypeOf<CreateGeneralizedAccountReturnType>().toHaveProperty('gaContractId')
-  expectTypeOf<CreateGeneralizedAccountReturnType['gaContractId']>().toBeString()
+  expectTypeOf<CreateGeneralizedAccountReturnType>().toHaveProperty(
+    'gaContractId',
+  )
+  expectTypeOf<
+    CreateGeneralizedAccountReturnType['gaContractId']
+  >().toBeString()
 })
 
 test('CreateGeneralizedAccountReturnType has owner and txHash', () => {
@@ -25,11 +29,15 @@ test('CreateGeneralizedAccountReturnType has owner and txHash', () => {
 })
 
 test('CreateGeneralizedAccountParameters has authFnName', () => {
-  expectTypeOf<CreateGeneralizedAccountParameters>().toHaveProperty('authFnName')
+  expectTypeOf<CreateGeneralizedAccountParameters>().toHaveProperty(
+    'authFnName',
+  )
   expectTypeOf<CreateGeneralizedAccountParameters['authFnName']>().toBeString()
 })
 
 test('CreateGeneralizedAccountParameters has args', () => {
   expectTypeOf<CreateGeneralizedAccountParameters>().toHaveProperty('args')
-  expectTypeOf<CreateGeneralizedAccountParameters['args']>().toEqualTypeOf<any[]>()
+  expectTypeOf<CreateGeneralizedAccountParameters['args']>().toEqualTypeOf<
+    any[]
+  >()
 })

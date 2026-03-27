@@ -1,7 +1,7 @@
 import {
+  type GetContractBytecodeErrorType,
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
-  type GetContractBytecodeErrorType,
   getContractBytecode,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -23,20 +23,25 @@ export type UseContractBytecodeReturnType = UseQueryReturnType<
 >
 
 export function useContractBytecode(
-  parameters: UseContractBytecodeParameters = () => ({} as GetContractBytecodeParameters),
+  parameters: UseContractBytecodeParameters = () =>
+    ({}) as GetContractBytecodeParameters,
 ): UseContractBytecodeReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['contractBytecode', {
-      contractId: parameters().contractId,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getContractBytecode(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'contractBytecode',
+      {
+        contractId: parameters().contractId,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getContractBytecode(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().contractId) && (parameters().enabled ?? true),
   }))
 

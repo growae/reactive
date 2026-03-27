@@ -1,13 +1,15 @@
 import { expectTypeOf, test } from 'vitest'
+import type { Config } from '../createConfig.js'
 import {
-  deployContract,
   type DeployContractParameters,
   type DeployContractReturnType,
+  deployContract,
 } from './deployContract.js'
-import type { Config } from '../createConfig.js'
 
 test('deployContract returns Promise<DeployContractReturnType>', () => {
-  expectTypeOf(deployContract).returns.toEqualTypeOf<Promise<DeployContractReturnType>>()
+  expectTypeOf(deployContract).returns.toEqualTypeOf<
+    Promise<DeployContractReturnType>
+  >()
 })
 
 test('DeployContractParameters has optional sourceCode', () => {

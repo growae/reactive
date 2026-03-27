@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
-  createGeneralizedAccount,
   CreateGANoAccountError,
   CreateGANoCodeError,
+  createGeneralizedAccount,
 } from './createGeneralizedAccount.js'
 
 describe('createGeneralizedAccount', () => {
@@ -43,7 +43,11 @@ describe('createGeneralizedAccount', () => {
   })
 
   it('should have correct error messages', () => {
-    expect(new CreateGANoAccountError().message).toContain('without a connected account')
-    expect(new CreateGANoCodeError().message).toContain('without sourceCode or bytecode')
+    expect(new CreateGANoAccountError().message).toContain(
+      'without a connected account',
+    )
+    expect(new CreateGANoCodeError().message).toContain(
+      'without sourceCode or bytecode',
+    )
   })
 })

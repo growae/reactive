@@ -28,10 +28,9 @@ export async function walletDetect(
     onDetected?: (wallet: DetectedWallet) => void
   } = {},
 ): Promise<WalletDetectResult> {
-  const {
-    walletDetector,
-    BrowserWindowMessageConnection,
-  } = await import('@aeternity/aepp-sdk')
+  const { walletDetector, BrowserWindowMessageConnection } = await import(
+    '@aeternity/aepp-sdk'
+  )
 
   const connection = new BrowserWindowMessageConnection({
     debug: options.debug,

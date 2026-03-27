@@ -1,13 +1,13 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type SignMessageErrorType,
   type SignMessageParameters,
   type SignMessageReturnType,
-  type SignMessageErrorType,
   signMessage,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -15,8 +15,16 @@ import { useConfig } from './useConfig.js'
 export type UseSignMessageParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SignMessageReturnType, variables: SignMessageParameters, context: context) => void
-      onError?: (error: SignMessageErrorType, variables: SignMessageParameters, context: context) => void
+      onSuccess?: (
+        data: SignMessageReturnType,
+        variables: SignMessageParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SignMessageErrorType,
+        variables: SignMessageParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseSignMessageReturnType<context = unknown> = Compute<
     context
   > & {
     signMessage: (variables: SignMessageParameters) => void
-    signMessageAsync: (variables: SignMessageParameters) => Promise<SignMessageReturnType>
+    signMessageAsync: (
+      variables: SignMessageParameters,
+    ) => Promise<SignMessageReturnType>
   }
 >
 

@@ -1,7 +1,7 @@
 import type {
+  Compute,
   GetContractEventsParameters,
   GetContractEventsReturnType,
-  Compute,
 } from '@growae/reactive'
 import { getContractEvents } from '@growae/reactive'
 import { computed } from 'vue'
@@ -26,16 +26,20 @@ export function useContractEvents(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['contractEvents', {
-      address: parameters.address,
-      fromHeight: parameters.fromHeight,
-      toHeight: parameters.toHeight,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => getContractEvents(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'contractEvents',
+      {
+        address: parameters.address,
+        fromHeight: parameters.fromHeight,
+        toHeight: parameters.toHeight,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      getContractEvents(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }))
 

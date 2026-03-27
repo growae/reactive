@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { channelWithdraw } from './channelWithdraw.js'
 
 describe('channelWithdraw', () => {
@@ -8,7 +8,9 @@ describe('channelWithdraw', () => {
 
   it('should call channel.withdraw with correct arguments', async () => {
     const mockChannel = {
-      withdraw: vi.fn().mockResolvedValue({ accepted: true, signedTx: 'tx_withdraw' }),
+      withdraw: vi
+        .fn()
+        .mockResolvedValue({ accepted: true, signedTx: 'tx_withdraw' }),
     }
     const sign = vi.fn()
     const mockConfig = {} as any

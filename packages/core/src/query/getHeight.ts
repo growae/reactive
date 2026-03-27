@@ -29,4 +29,4 @@ export function getHeightQueryOptions(
 
 export type GetHeightQueryFnData = GetHeightReturnType
 export type GetHeightData = GetHeightQueryFnData
-export { type GetHeightErrorType }
+export type { GetHeightErrorType }

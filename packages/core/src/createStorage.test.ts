@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import { createStorage, noopStorage } from './createStorage.js'
+import { describe, expect, it } from 'vitest'
 import { createMemoryBaseStorage } from '../test/utils.js'
+import { createStorage, noopStorage } from './createStorage.js'
 
 describe('noopStorage', () => {
   it('should return null for getItem', () => {
@@ -50,7 +50,10 @@ describe('createStorage', () => {
     const base = createMemoryBaseStorage()
     const storage = createStorage({ storage: base })
 
-    const result = await storage.getItem('recentConnectorId', 'default-val' as any)
+    const result = await storage.getItem(
+      'recentConnectorId',
+      'default-val' as any,
+    )
     expect(result).toBe('default-val')
   })
 

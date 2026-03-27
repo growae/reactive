@@ -31,4 +31,4 @@ export function getMicroBlockQueryOptions(
 
 export type GetMicroBlockQueryFnData = GetMicroBlockReturnType
 export type GetMicroBlockData = GetMicroBlockQueryFnData
-export { type GetMicroBlockErrorType }
+export type { GetMicroBlockErrorType }

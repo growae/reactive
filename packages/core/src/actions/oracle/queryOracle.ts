@@ -1,6 +1,6 @@
+import { DEFAULT_TTL } from '../../constants.js'
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
-import { DEFAULT_TTL } from '../../constants.js'
 
 export type QueryOracleParameters = {
   oracleId: string
@@ -31,7 +31,8 @@ export async function queryOracle(
   config: Config,
   parameters: QueryOracleParameters,
 ): Promise<QueryOracleReturnType> {
-  const { oracleId, query, queryFee, queryTtl, responseTtl, ttl, networkId } = parameters
+  const { oracleId, query, queryFee, queryTtl, responseTtl, ttl, networkId } =
+    parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -48,7 +49,9 @@ export async function queryOracle(
     ...(responseTtl ? { responseTtl } : {}),
   })
 
-  const result = await oracleClient.postQuery(query, { ttl: ttl ?? DEFAULT_TTL })
+  const result = await oracleClient.postQuery(query, {
+    ttl: ttl ?? DEFAULT_TTL,
+  })
 
   return {
     queryId: result.queryId,

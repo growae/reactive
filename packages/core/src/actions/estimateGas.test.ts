@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { estimateGas } from './estimateGas.js'
 
 describe('estimateGas', () => {
@@ -12,21 +12,28 @@ describe('estimateGas', () => {
 
   it('should throw without a valid node', async () => {
     const mockConfig = {
-      getNodeClient: vi.fn(() => { throw new Error('No node') }),
+      getNodeClient: vi.fn(() => {
+        throw new Error('No node')
+      }),
       state: { networkId: 'ae_uat' },
     }
     await expect(
-      estimateGas(mockConfig as any, { tx: 'tx_test', accountAddress: 'ak_test' }),
+      estimateGas(mockConfig as any, {
+        tx: 'tx_test',
+        accountAddress: 'ak_test',
+      }),
     ).rejects.toThrow()
   })
 
   it('should return gas estimation from dry run', async () => {
     const mockNode = {
       protectedDryRunTxs: vi.fn().mockResolvedValue({
-        results: [{
-          result: 'ok',
-          callObj: { gasUsed: 5000, gasPrice: 1000000000n },
-        }],
+        results: [
+          {
+            result: 'ok',
+            callObj: { gasUsed: 5000, gasPrice: 1000000000n },
+          },
+        ],
       }),
     }
     const mockConfig = {
@@ -54,7 +61,10 @@ describe('estimateGas', () => {
     }
 
     await expect(
-      estimateGas(mockConfig as any, { tx: 'tx_test', accountAddress: 'ak_test' }),
+      estimateGas(mockConfig as any, {
+        tx: 'tx_test',
+        accountAddress: 'ak_test',
+      }),
     ).rejects.toThrow(/Dry-run failed/)
   })
 

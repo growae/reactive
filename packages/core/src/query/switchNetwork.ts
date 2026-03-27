@@ -13,7 +13,11 @@ export function switchNetworkMutationOptions(config: Config) {
       return switchNetwork(config, variables)
     },
     mutationKey: ['switchNetwork'],
-  } satisfies MutationOptions<SwitchNetworkReturnType, SwitchNetworkErrorType, SwitchNetworkParameters>
+  } satisfies MutationOptions<
+    SwitchNetworkReturnType,
+    SwitchNetworkErrorType,
+    SwitchNetworkParameters
+  >
 }
 
 export type SwitchNetworkMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type SwitchNetworkMutationOptions = ReturnType<
 >
 export type SwitchNetworkData = SwitchNetworkReturnType
 export type SwitchNetworkVariables = SwitchNetworkParameters
-export { type SwitchNetworkErrorType }
+export type { SwitchNetworkErrorType }

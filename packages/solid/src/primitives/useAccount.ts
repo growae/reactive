@@ -1,7 +1,7 @@
 import {
+  type GetAccountErrorType,
   type GetAccountParameters,
   type GetAccountReturnType,
-  type GetAccountErrorType,
   getAccount,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
@@ -23,22 +23,26 @@ export type UseAccountReturnType = UseQueryReturnType<
 >
 
 export function useAccount(
-  parameters: UseAccountParameters = () => ({} as GetAccountParameters),
+  parameters: UseAccountParameters = () => ({}) as GetAccountParameters,
 ): UseAccountReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['account', {
-      address: parameters().address,
-      networkId: parameters().networkId ?? networkId(),
-      height: parameters().height,
-      hash: parameters().hash,
-    }] as const,
-    queryFn: () => getAccount(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'account',
+      {
+        address: parameters().address,
+        networkId: parameters().networkId ?? networkId(),
+        height: parameters().height,
+        hash: parameters().hash,
+      },
+    ] as const,
+    queryFn: () =>
+      getAccount(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
   }))
 

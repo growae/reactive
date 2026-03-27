@@ -22,20 +22,25 @@ export type UseOracleQueriesReturnType = UseQueryReturnType<
 >
 
 export function useOracleQueries(
-  parameters: UseOracleQueriesParameters = () => ({} as GetOracleQueriesParameters),
+  parameters: UseOracleQueriesParameters = () =>
+    ({}) as GetOracleQueriesParameters,
 ): UseOracleQueriesReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['oracleQueries', {
-      oracleId: parameters().oracleId,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getOracleQueries(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'oracleQueries',
+      {
+        oracleId: parameters().oracleId,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getOracleQueries(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().oracleId) && (parameters().enabled ?? true),
   }))
 

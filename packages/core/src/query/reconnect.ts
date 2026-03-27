@@ -13,7 +13,11 @@ export function reconnectMutationOptions(config: Config) {
       return reconnect(config, variables)
     },
     mutationKey: ['reconnect'],
-  } satisfies MutationOptions<ReconnectReturnType, ReconnectErrorType, ReconnectParameters>
+  } satisfies MutationOptions<
+    ReconnectReturnType,
+    ReconnectErrorType,
+    ReconnectParameters
+  >
 }
 
 export type ReconnectMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type ReconnectMutationOptions = ReturnType<
 >
 export type ReconnectData = ReconnectReturnType
 export type ReconnectVariables = ReconnectParameters
-export { type ReconnectErrorType }
+export type { ReconnectErrorType }

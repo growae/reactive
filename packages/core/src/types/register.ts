@@ -1,6 +1,7 @@
 import type { Config } from '../createConfig.js'
 
-export interface Register {}
+// biome-ignore lint/complexity/noBannedTypes: intentionally empty for module augmentation
+export type Register = {}
 
 export type ResolvedRegister = {
   config: Register extends { config: infer config extends Config }

@@ -1,9 +1,9 @@
+import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 import {
-  createConnector,
   ConnectorNotConnectedError,
   ProviderNotFoundError,
+  createConnector,
 } from '@growae/reactive'
-import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 
 export type IframeParameters = {
   /** Name advertised to the wallet during connection handshake. */
@@ -35,10 +35,8 @@ export function iframe(parameters: IframeParameters = {}) {
     type: iframe.type,
 
     async connect({ networkId } = {}) {
-      const {
-        WalletConnectorFrame: WCF,
-        BrowserWindowMessageConnection,
-      } = await import('@aeternity/aepp-sdk')
+      const { WalletConnectorFrame: WCF, BrowserWindowMessageConnection } =
+        await import('@aeternity/aepp-sdk')
 
       const target =
         parameters.target ??
@@ -128,8 +126,8 @@ export function iframe(parameters: IframeParameters = {}) {
     async signMessage({ message, onAccount }) {
       if (!provider) throw new ConnectorNotConnectedError()
       const account = onAccount
-        ? provider.accounts.find((a) => a.address === onAccount) ??
-          provider.accounts[0]
+        ? (provider.accounts.find((a) => a.address === onAccount) ??
+          provider.accounts[0])
         : provider.accounts[0]
       if (!account) throw new ConnectorNotConnectedError()
       const signature = await account.signMessage(message)

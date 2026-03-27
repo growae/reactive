@@ -13,10 +13,16 @@ export function signTransactionMutationOptions(config: Config) {
       return signTransaction(config, variables)
     },
     mutationKey: ['signTransaction'],
-  } satisfies MutationOptions<SignTransactionReturnType, SignTransactionErrorType, SignTransactionParameters>
+  } satisfies MutationOptions<
+    SignTransactionReturnType,
+    SignTransactionErrorType,
+    SignTransactionParameters
+  >
 }
 
-export type SignTransactionMutationOptions = ReturnType<typeof signTransactionMutationOptions>
+export type SignTransactionMutationOptions = ReturnType<
+  typeof signTransactionMutationOptions
+>
 export type SignTransactionData = SignTransactionReturnType
 export type SignTransactionVariables = SignTransactionParameters
-export { type SignTransactionErrorType }
+export type { SignTransactionErrorType }

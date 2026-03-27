@@ -22,22 +22,27 @@ export type UseContractEventsReturnType = UseQueryReturnType<
 >
 
 export function useContractEvents(
-  parameters: UseContractEventsParameters = () => ({} as GetContractEventsParameters),
+  parameters: UseContractEventsParameters = () =>
+    ({}) as GetContractEventsParameters,
 ): UseContractEventsReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['contractEvents', {
-      address: parameters().address,
-      fromHeight: parameters().fromHeight,
-      toHeight: parameters().toHeight,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getContractEvents(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'contractEvents',
+      {
+        address: parameters().address,
+        fromHeight: parameters().fromHeight,
+        toHeight: parameters().toHeight,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getContractEvents(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
   }))
 

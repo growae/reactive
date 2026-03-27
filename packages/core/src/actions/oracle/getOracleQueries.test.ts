@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { getOracleQueries } from './getOracleQueries.js'
 
 describe('getOracleQueries', () => {
@@ -21,10 +21,14 @@ describe('getOracleQueries', () => {
         },
       ],
     }
-    const mockNode = { getOracleQueriesByPubkey: vi.fn().mockResolvedValue(mockQueries) }
+    const mockNode = {
+      getOracleQueriesByPubkey: vi.fn().mockResolvedValue(mockQueries),
+    }
     const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
 
-    const result = await getOracleQueries(mockConfig as any, { oracleId: 'ok_oracle1' })
+    const result = await getOracleQueries(mockConfig as any, {
+      oracleId: 'ok_oracle1',
+    })
 
     expect(mockNode.getOracleQueriesByPubkey).toHaveBeenCalledWith('ok_oracle1')
     expect(result).toHaveLength(1)
@@ -35,11 +39,15 @@ describe('getOracleQueries', () => {
 
   it('should return empty array when no queries', async () => {
     const mockNode = {
-      getOracleQueriesByPubkey: vi.fn().mockResolvedValue({ oracleQueries: [] }),
+      getOracleQueriesByPubkey: vi
+        .fn()
+        .mockResolvedValue({ oracleQueries: [] }),
     }
     const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
 
-    const result = await getOracleQueries(mockConfig as any, { oracleId: 'ok_oracle1' })
+    const result = await getOracleQueries(mockConfig as any, {
+      oracleId: 'ok_oracle1',
+    })
 
     expect(result).toEqual([])
   })

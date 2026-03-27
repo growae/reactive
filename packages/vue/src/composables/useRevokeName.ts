@@ -1,10 +1,10 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   RevokeNameParameters,
   RevokeNameReturnType,
-  Compute,
 } from '@growae/reactive'
 import { revokeName } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
@@ -12,8 +12,16 @@ import { useConfig } from './useConfig.js'
 export type UseRevokeNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RevokeNameReturnType, variables: RevokeNameParameters, context: context) => void
-      onError?: (error: Error, variables: RevokeNameParameters, context: context) => void
+      onSuccess?: (
+        data: RevokeNameReturnType,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +34,9 @@ export type UseRevokeNameReturnType<context = unknown> = Compute<
     context
   > & {
     revokeName: (variables: RevokeNameParameters) => void
-    revokeNameAsync: (variables: RevokeNameParameters) => Promise<RevokeNameReturnType>
+    revokeNameAsync: (
+      variables: RevokeNameParameters,
+    ) => Promise<RevokeNameReturnType>
   }
 >
 

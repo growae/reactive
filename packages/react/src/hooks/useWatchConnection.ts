@@ -1,7 +1,7 @@
 'use client'
 
 import { watchConnection } from '@growae/reactive'
-import type { Connection, Compute } from '@growae/reactive'
+import type { Compute, Connection } from '@growae/reactive'
 import { useEffect, useRef } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'

@@ -39,4 +39,4 @@ export function getTransactionCountQueryOptions(
 
 export type GetTransactionCountQueryFnData = GetTransactionCountReturnType
 export type GetTransactionCountData = GetTransactionCountQueryFnData
-export { type GetTransactionCountErrorType }
+export type { GetTransactionCountErrorType }

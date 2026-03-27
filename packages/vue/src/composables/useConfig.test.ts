@@ -1,14 +1,22 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createApp, defineComponent, h, inject, provide } from 'vue'
-import { useConfig } from './useConfig.js'
+import {
+  ReactiveInjectionContextError,
+  ReactivePluginNotFoundError,
+} from '../errors/plugin.js'
 import { configKey } from '../plugin.js'
-import { ReactivePluginNotFoundError, ReactiveInjectionContextError } from '../errors/plugin.js'
+import { useConfig } from './useConfig.js'
 
 function createMockConfig() {
   return {
     networks: [{ id: 'ae_uat', nodeUrl: 'https://testnet.aeternity.io' }],
     connectors: [],
-    state: { networkId: 'ae_uat', connections: new Map(), status: 'disconnected', current: undefined },
+    state: {
+      networkId: 'ae_uat',
+      connections: new Map(),
+      status: 'disconnected',
+      current: undefined,
+    },
     setState: vi.fn(),
     subscribe: vi.fn(() => vi.fn()),
     _internal: {
