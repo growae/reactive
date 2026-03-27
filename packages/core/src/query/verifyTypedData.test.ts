@@ -1,0 +1,15 @@
+import { describe, it, expect } from 'vitest'
+import { verifyTypedDataMutationOptions } from './verifyTypedData.js'
+
+describe('verifyTypedDataMutationOptions', () => {
+  it('should be a function', () => {
+    expect(typeof verifyTypedDataMutationOptions).toBe('function')
+  })
+
+  it('should return mutation options with correct key', () => {
+    const mockConfig = {} as any
+    const options = verifyTypedDataMutationOptions(mockConfig)
+    expect(options.mutationKey).toEqual(['verifyTypedData'])
+    expect(typeof options.mutationFn).toBe('function')
+  })
+})
