@@ -36,16 +36,23 @@
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
   },
   "dependencies": {
-    "zustand": "^5.0.0",
+    "@aeternity/aepp-sdk": "^14.0.0",
     "eventemitter3": "^5.0.0",
-    "@aeternity/aepp-sdk": "^14.0.0"
+    "zustand": "^5.0.0"
   },
   "peerDependencies": {
     "@tanstack/query-core": ">=5.0.0",
     "typescript": ">=5.7.0"
   },
   "peerDependenciesMeta": {
-    "@tanstack/query-core": { "optional": true },
-    "typescript": { "optional": true }
+    "@tanstack/query-core": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@tanstack/query-core": "^5.95.2"
   }
 }

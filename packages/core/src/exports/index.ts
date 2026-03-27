@@ -113,6 +113,12 @@ export * from '../actions/claimName.js'
 export * from '../actions/updateName.js'
 export * from '../actions/getOracleState.js'
 export * from '../actions/getOracleQueries.js'
+export * from '../actions/watchNetworkId.js'
+export * from '../actions/watchConnectors.js'
+export * from '../actions/watchConnections.js'
+export * from '../actions/watchConnection.js'
+export * from '../actions/watchHeight.js'
+export * from '../actions/watchNodeClient.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utilities
