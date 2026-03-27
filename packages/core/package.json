@@ -1,0 +1,51 @@
+{
+  "name": "@reactive/core",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/esm/exports/index.js",
+  "types": "dist/types/exports/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/types/exports/index.d.ts",
+      "default": "./dist/esm/exports/index.js"
+    },
+    "./actions": {
+      "types": "./dist/types/exports/actions.d.ts",
+      "default": "./dist/esm/exports/actions.js"
+    },
+    "./query": {
+      "types": "./dist/types/exports/query.d.ts",
+      "default": "./dist/esm/exports/query.js"
+    },
+    "./networks": {
+      "types": "./dist/types/exports/networks.d.ts",
+      "default": "./dist/esm/exports/networks.js"
+    },
+    "./internal": {
+      "types": "./dist/types/exports/internal.d.ts",
+      "default": "./dist/esm/exports/internal.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "pnpm run build:esm+types",
+    "build:esm+types": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "clean": "rm -rf dist",
+    "check:types": "tsc --noEmit",
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+  },
+  "dependencies": {
+    "zustand": "^5.0.0",
+    "eventemitter3": "^5.0.0",
+    "@aeternity/aepp-sdk": "^14.0.0"
+  },
+  "peerDependencies": {
+    "@tanstack/query-core": ">=5.0.0",
+    "typescript": ">=5.7.0"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/query-core": { "optional": true },
+    "typescript": { "optional": true }
+  }
+}

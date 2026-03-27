@@ -1,0 +1,23 @@
+{
+  "name": "create-reactive",
+  "version": "0.0.1",
+  "type": "module",
+  "bin": {
+    "create-reactive": "./dist/esm/cli.js"
+  },
+  "main": "dist/esm/cli.js",
+  "types": "dist/types/cli.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/cli.d.ts",
+      "default": "./dist/esm/cli.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "clean": "rm -rf dist",
+    "check:types": "tsc --noEmit",
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+  }
+}

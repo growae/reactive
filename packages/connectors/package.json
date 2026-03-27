@@ -1,0 +1,30 @@
+{
+  "name": "@reactive/connectors",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/esm/exports/index.js",
+  "types": "dist/types/exports/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/types/exports/index.d.ts",
+      "default": "./dist/esm/exports/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "clean": "rm -rf dist",
+    "check:types": "tsc --noEmit",
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+  },
+  "dependencies": {
+    "@reactive/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.7.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": { "optional": true }
+  }
+}
