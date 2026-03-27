@@ -12,6 +12,7 @@
     "clean": "pnpm -r --filter='./packages/**' run clean",
     "dev": "pnpm -r --filter='./packages/**' run dev",
     "test": "vitest",
+    "test:integration": "INTEGRATION=true vitest run test/integration/",
     "test:cov": "vitest --coverage",
     "check": "biome check --write .",
     "check:ci": "biome ci .",
