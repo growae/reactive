@@ -1,5 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { Tag, buildTx } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type NamePointer = {
   key: string
@@ -32,8 +33,6 @@ export async function updateName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { buildTx, Tag } = await import('@aeternity/aepp-sdk')
-
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 

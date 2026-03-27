@@ -3,9 +3,9 @@ import {
   type GetBalanceParameters,
   type GetBalanceReturnType,
   getBalance,
-} from '../actions/getBalance.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/getBalance'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type GetBalanceOptions = ExactPartial<GetBalanceParameters>
 

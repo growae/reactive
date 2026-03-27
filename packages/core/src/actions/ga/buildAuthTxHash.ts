@@ -1,4 +1,5 @@
-import type { Config } from '../../createConfig.js'
+import { buildAuthTxHash as sdkBuildAuthTxHash } from '@aeternity/aepp-sdk'
+import type { Config } from '../../createConfig'
 
 export type BuildAuthTxHashParameters = {
   tx: string
@@ -20,8 +21,7 @@ export async function buildAuthTxHash(
 
   const node = config.getNodeClient({ networkId })
 
-  const sdk = await import('@aeternity/aepp-sdk')
-  const hash = await sdk.buildAuthTxHash(tx as any, {
+  const hash = await sdkBuildAuthTxHash(tx as any, {
     onNode: node,
     ...(fee != null ? { fee: fee.toString() } : {}),
     ...(gasPrice != null ? { gasPrice: gasPrice.toString() } : {}),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { openChannelMutationOptions } from './openChannel.js'
+import { openChannelMutationOptions } from './openChannel'
 
 describe('openChannelMutationOptions', () => {
   it('should be a function', () => {

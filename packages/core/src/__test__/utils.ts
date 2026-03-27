@@ -1,4 +1,4 @@
-import type { BaseStorage } from '../createStorage.js'
+import type { BaseStorage } from '../createStorage'
 
 export const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

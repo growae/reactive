@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../constants.js'
-import type { Config } from '../createConfig.js'
-import { BaseError } from '../errors/base.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants'
+import type { Config } from '../createConfig'
+import { BaseError } from '../errors/base'
 
 export type CallContractParameters = {
   address: string
@@ -55,7 +56,6 @@ export async function callContract(
     throw new CallContractNoAccountError()
   }
 
-  const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
     ...(connection

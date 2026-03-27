@@ -3,7 +3,7 @@ import {
   type ClaimNameParameters,
   type ClaimNameReturnType,
   claimName,
-} from './claimName.js'
+} from './claimName'
 
 test('claimName returns Promise<ClaimNameReturnType>', () => {
   expectTypeOf(claimName).returns.toEqualTypeOf<Promise<ClaimNameReturnType>>()

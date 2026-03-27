@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { registerOracleMutationOptions } from './registerOracle.js'
+import { registerOracleMutationOptions } from './registerOracle'
 
 describe('registerOracleMutationOptions', () => {
   it('should be a function', () => {

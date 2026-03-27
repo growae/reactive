@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { verifyMessageMutationOptions } from './verifyMessage.js'
+import { verifyMessageMutationOptions } from './verifyMessage'
 
 describe('verifyMessageMutationOptions', () => {
   it('should be a function', () => {

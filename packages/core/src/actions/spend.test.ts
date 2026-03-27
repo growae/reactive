@@ -13,11 +13,12 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Tag: { SpendTx: 12 },
 }))
 
-import { mock } from '../connectors/mock.js'
-import { createConfig } from '../createConfig.js'
-import { testnet } from '../types/network.js'
-import { connect } from './connect.js'
-import { spend } from './spend.js'
+import { buildTx } from '@aeternity/aepp-sdk'
+import { mock } from '../connectors/mock'
+import { createConfig } from '../createConfig'
+import { testnet } from '../types/network'
+import { connect } from './connect'
+import { spend } from './spend'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
@@ -103,7 +104,6 @@ describe('spend', () => {
       options: { nonce: 42 },
     })
 
-    const { buildTx } = await import('@aeternity/aepp-sdk')
     expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 42 }))
   })
 
@@ -122,7 +122,6 @@ describe('spend', () => {
       amount: 100n,
     })
 
-    const { buildTx } = await import('@aeternity/aepp-sdk')
     expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 11 }))
   })
 })

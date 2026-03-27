@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useRegisterOracle } from './useRegisterOracle.js'
+import { useRegisterOracle } from './useRegisterOracle'
 
 describe('useRegisterOracle', () => {
   it('should be a function', () => {

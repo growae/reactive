@@ -3,8 +3,8 @@ import {
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
   registerOracle,
-} from '../actions/oracle/registerOracle.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/oracle/registerOracle'
+import type { Config } from '../createConfig'
 
 export type RegisterOracleErrorType = Error
 

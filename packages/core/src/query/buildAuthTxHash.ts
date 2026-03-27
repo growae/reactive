@@ -3,8 +3,8 @@ import {
   type BuildAuthTxHashParameters,
   type BuildAuthTxHashReturnType,
   buildAuthTxHash,
-} from '../actions/ga/buildAuthTxHash.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/ga/buildAuthTxHash'
+import type { Config } from '../createConfig'
 
 export type BuildAuthTxHashErrorType = Error
 

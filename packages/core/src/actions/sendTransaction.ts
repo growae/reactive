@@ -1,10 +1,10 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SendTransactionParameters = {
   tx: string
   networkId?: string | undefined
-  connector?: import('../createConfig.js').Connector | undefined
+  connector?: import('../createConfig').Connector | undefined
   waitMined?: boolean | undefined
   options?: {
     verify?: boolean | undefined

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   waitForTransactionConfirmQueryKey,
   waitForTransactionConfirmQueryOptions,
-} from './waitForTransactionConfirm.js'
+} from './waitForTransactionConfirm'
 
 describe('waitForTransactionConfirmQueryOptions', () => {
   it('should be a function', () => {

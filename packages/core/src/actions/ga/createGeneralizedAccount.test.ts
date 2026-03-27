@@ -3,7 +3,7 @@ import {
   CreateGANoAccountError,
   CreateGANoCodeError,
   createGeneralizedAccount,
-} from './createGeneralizedAccount.js'
+} from './createGeneralizedAccount'
 
 describe('createGeneralizedAccount', () => {
   it('should be a function', () => {

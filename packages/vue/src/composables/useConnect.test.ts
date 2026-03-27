@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { useConnect } from './useConnect.js'
+import { useConnect } from './useConnect'
 
 vi.mock('@tanstack/vue-query', () => ({
   useMutation: vi.fn(() => ({

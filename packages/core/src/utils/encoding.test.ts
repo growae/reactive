@@ -4,7 +4,7 @@ import {
   isValidContractAddress,
   isValidName,
   isValidTxHash,
-} from './encoding.js'
+} from './encoding'
 
 describe('isValidAddress', () => {
   it('should return true for valid ak_ address', () => {

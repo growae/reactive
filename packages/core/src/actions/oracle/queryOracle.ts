@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../../constants.js'
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { OracleClient } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type QueryOracleParameters = {
   oracleId: string
@@ -40,7 +41,6 @@ export async function queryOracle(
     throw new QueryOracleNoAccountError()
   }
 
-  const { OracleClient } = await import('@aeternity/aepp-sdk')
   const oracleClient = new OracleClient(oracleId as any, {
     onNode: node,
     onAccount: connection.accounts[0] as any,

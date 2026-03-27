@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { createComponent } from 'solid-js'
-import { useConnect } from './useConnect.js'
+import { describe, expect, it, vi } from 'vitest'
+import { useConnect } from './useConnect'
 
 function createMockConfig() {
   return {

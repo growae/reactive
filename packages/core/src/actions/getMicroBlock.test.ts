@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getMicroBlock } from './getMicroBlock.js'
+import { getMicroBlock } from './getMicroBlock'
 
 describe('getMicroBlock', () => {
   it('should be a function', () => {

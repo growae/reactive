@@ -2,7 +2,7 @@ import { createEmitter } from '@growae/reactive'
 import type { ConnectorEventMap } from '@growae/reactive'
 import type { Network } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { webExtension } from './webExtension.js'
+import { webExtension } from './webExtension'
 
 function makeConfig(
   networks: Network[] = [
@@ -18,8 +18,7 @@ function makeConfig(
 }
 
 const { TEST_ADDRESS, mockFrame, mockGetConnection } = vi.hoisted(() => {
-  const TEST_ADDRESS =
-    'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
+  const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
   return {
     TEST_ADDRESS,
     mockFrame: {

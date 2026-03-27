@@ -1,14 +1,15 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
+import { watch } from 'chokidar'
 
 import type {
   ContractConfig,
   Plugin,
   ReactiveConfig,
   ResolvedContract,
-} from '../config.js'
-import { findConfig } from '../utils/findConfig.js'
-import { resolveConfig } from '../utils/resolveConfig.js'
+} from '../config'
+import { findConfig } from '../utils/findConfig'
+import { resolveConfig } from '../utils/resolveConfig'
 
 export type GenerateOptions = {
   config?: string
@@ -27,7 +28,6 @@ export async function generate(options: GenerateOptions = {}): Promise<void> {
   await runGenerate(config)
 
   if (options.watch) {
-    const { watch } = await import('chokidar')
     const paths = config.contracts
       .filter((c) => c.sourceCode || typeof c.aci === 'string')
       .map((c) => resolve(process.cwd(), (c.sourceCode ?? c.aci) as string))

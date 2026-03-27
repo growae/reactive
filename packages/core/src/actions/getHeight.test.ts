@@ -10,9 +10,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => mockNode),
 }))
 
-import { createConfig } from '../createConfig.js'
-import { testnet } from '../types/network.js'
-import { getHeight } from './getHeight.js'
+import { createConfig } from '../createConfig'
+import { testnet } from '../types/network'
+import { getHeight } from './getHeight'
 
 describe('getHeight', () => {
   beforeEach(() => {

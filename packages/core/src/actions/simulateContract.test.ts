@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { simulateContract } from './simulateContract.js'
+import { simulateContract } from './simulateContract'
 
 describe('simulateContract', () => {
   it('should be a function', () => {

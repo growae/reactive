@@ -1,5 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { Tag, buildTx, commitmentHash, genSalt } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type PreclaimNameParameters = {
   name: string
@@ -26,10 +27,6 @@ export async function preclaimName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { genSalt, commitmentHash, buildTx, Tag } = await import(
-    '@aeternity/aepp-sdk'
-  )
-
   const salt = genSalt()
   const commitmentId = commitmentHash(name as `${string}.chain`, salt)
 

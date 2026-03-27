@@ -2,9 +2,9 @@ import {
   type ReadContractParameters,
   type ReadContractReturnType,
   readContract,
-} from '../actions/readContract.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/readContract'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type ReadContractOptions = ExactPartial<ReadContractParameters>
 

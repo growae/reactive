@@ -4,9 +4,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '../createConfig.js'
-import { mainnet, testnet } from '../types/network.js'
-import { getNetworks } from './getNetworks.js'
+import { createConfig } from '../createConfig'
+import { mainnet, testnet } from '../types/network'
+import { getNetworks } from './getNetworks'
 
 describe('getNetworks', () => {
   it('should return configured networks', () => {

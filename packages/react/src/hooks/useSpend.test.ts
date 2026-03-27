@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useSpend } from './useSpend.js'
+import { useSpend } from './useSpend'
 
 describe('useSpend', () => {
   it('should be a function', () => {

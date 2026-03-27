@@ -1,7 +1,7 @@
 import { type Tag, buildTxAsync } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants.js'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type BuildTransactionParameters = {
   tag: Tag

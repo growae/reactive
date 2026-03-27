@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useReconnect } from './useReconnect.js'
+import { useReconnect } from './useReconnect'
 
 describe('useReconnect', () => {
   it('should be a function', () => {

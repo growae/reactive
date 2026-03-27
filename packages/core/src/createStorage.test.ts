@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { createMemoryBaseStorage } from './__test__/utils.js'
-import { createStorage, noopStorage } from './createStorage.js'
+import { createMemoryBaseStorage } from './__test__/utils'
+import { createStorage, noopStorage } from './createStorage'
 
 describe('noopStorage', () => {
   it('should return null for getItem', () => {

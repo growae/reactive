@@ -5,7 +5,8 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   verifySignature: vi.fn().mockReturnValue(true),
 }))
 
-import { verifyTypedData } from './verifyTypedData.js'
+import { hashTypedData } from '@aeternity/aepp-sdk'
+import { verifyTypedData } from './verifyTypedData'
 
 describe('verifyTypedData', () => {
   it('should be a function', () => {
@@ -50,7 +51,6 @@ describe('verifyTypedData', () => {
   })
 
   it('should use empty domain object by default', async () => {
-    const { hashTypedData } = await import('@aeternity/aepp-sdk')
     const mockConfig = { state: { networkId: 'ae_uat' } }
 
     verifyTypedData(mockConfig as any, {

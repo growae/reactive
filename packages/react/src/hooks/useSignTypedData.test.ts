@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useSignTypedData } from './useSignTypedData.js'
+import { useSignTypedData } from './useSignTypedData'
 
 describe('useSignTypedData', () => {
   it('should be a function', () => {

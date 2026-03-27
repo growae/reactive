@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getTransactionCount } from './getTransactionCount.js'
+import { getTransactionCount } from './getTransactionCount'
 
 describe('getTransactionCount', () => {
   it('should be a function', () => {

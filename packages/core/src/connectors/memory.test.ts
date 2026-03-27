@@ -8,10 +8,11 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   })),
 }))
 
-import { createEmitter } from '../createEmitter.js'
-import { mainnet, testnet } from '../types/network.js'
-import type { ConnectorEventMap } from './createConnector.js'
-import { memory } from './memory.js'
+import { MemoryAccount } from '@aeternity/aepp-sdk'
+import { createEmitter } from '../createEmitter'
+import { mainnet, testnet } from '../types/network'
+import type { ConnectorEventMap } from './createConnector'
+import { memory } from './memory'
 
 function setupConnector(secretKey = 'test_secret_key', name?: string) {
   const connectorFn = memory({ secretKey, name })
@@ -48,7 +49,6 @@ describe('memory connector', () => {
     it('should create MemoryAccount with secretKey', async () => {
       const { connector } = setupConnector('sk_test123')
       await connector.setup?.()
-      const { MemoryAccount } = await import('@aeternity/aepp-sdk')
       expect(MemoryAccount).toHaveBeenCalledWith('sk_test123')
     })
   })

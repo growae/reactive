@@ -1,8 +1,8 @@
 import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
-} from '../errors/config.js'
-import { createConnector } from './createConnector.js'
+} from '../errors/config'
+import { createConnector } from './createConnector'
 
 export type MockParameters = {
   accounts: readonly [string, ...string[]]

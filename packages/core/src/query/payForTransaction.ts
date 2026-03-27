@@ -4,8 +4,8 @@ import {
   type PayForTransactionParameters,
   type PayForTransactionReturnType,
   payForTransaction,
-} from '../actions/payForTransaction.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/payForTransaction'
+import type { Config } from '../createConfig'
 
 export function payForTransactionMutationOptions(config: Config) {
   return {

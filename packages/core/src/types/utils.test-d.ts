@@ -1,5 +1,5 @@
 import { expectTypeOf, test } from 'vitest'
-import type { Compute, ExactPartial } from './utils.js'
+import type { Compute, ExactPartial } from './utils'
 
 test('ExactPartial makes all properties optional', () => {
   type Original = { a: string; b: number }

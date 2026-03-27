@@ -4,10 +4,10 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '../createConfig.js'
-import { NetworkNotConfiguredError } from '../errors/config.js'
-import { mainnet, testnet } from '../types/network.js'
-import { switchNetwork } from './switchNetwork.js'
+import { createConfig } from '../createConfig'
+import { NetworkNotConfiguredError } from '../errors/config'
+import { mainnet, testnet } from '../types/network'
+import { switchNetwork } from './switchNetwork'
 
 describe('switchNetwork', () => {
   it('should throw NetworkNotConfiguredError for unknown network', async () => {

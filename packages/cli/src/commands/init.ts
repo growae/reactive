@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { relative, resolve } from 'node:path'
 
-import { findConfig } from '../utils/findConfig.js'
+import { findConfig } from '../utils/findConfig'
 
 export type InitOptions = {
   config?: string

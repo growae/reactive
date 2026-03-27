@@ -10,9 +10,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => mockNode),
 }))
 
-import { createConfig } from '../createConfig.js'
-import { testnet } from '../types/network.js'
-import { getBalance } from './getBalance.js'
+import { createConfig } from '../createConfig'
+import { testnet } from '../types/network'
+import { getBalance } from './getBalance'
 
 function createTestConfig() {
   return createConfig({ networks: [testnet], storage: null })

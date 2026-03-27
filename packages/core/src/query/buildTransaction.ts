@@ -4,8 +4,8 @@ import {
   type BuildTransactionParameters,
   type BuildTransactionReturnType,
   buildTransaction,
-} from '../actions/buildTransaction.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/buildTransaction'
+import type { Config } from '../createConfig'
 
 export function buildTransactionMutationOptions(config: Config) {
   return {

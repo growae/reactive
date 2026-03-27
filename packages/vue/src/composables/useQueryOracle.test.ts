@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useQueryOracle } from './useQueryOracle.js'
+import { useQueryOracle } from './useQueryOracle'
 
 describe('useQueryOracle', () => {
   it('should be a function', () => {

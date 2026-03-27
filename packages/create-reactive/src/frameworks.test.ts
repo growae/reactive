@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { frameworks } from './frameworks.js'
+import { frameworks } from './frameworks'
 
 describe('frameworks', () => {
   it('should have at least one framework', () => {

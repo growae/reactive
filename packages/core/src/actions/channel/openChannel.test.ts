@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { OpenChannelNoAccountError, openChannel } from './openChannel.js'
+import { OpenChannelNoAccountError, openChannel } from './openChannel'
 
 describe('openChannel', () => {
   it('should be a function', () => {

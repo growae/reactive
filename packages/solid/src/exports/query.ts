@@ -9,4 +9,4 @@ export {
   type SolidMutationParameters,
   type UseQueryReturnType,
   type UseMutationReturnType,
-} from '../utils/query.js'
+} from '../utils/query'

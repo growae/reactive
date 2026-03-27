@@ -1,9 +1,9 @@
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 import {
   type CallContractParameters,
   type CallContractReturnType,
   callContract,
-} from './callContract.js'
+} from './callContract'
 
 export type ReadContractParameters = Omit<CallContractParameters, 'options'> & {
   options?: Omit<NonNullable<CallContractParameters['options']>, 'callStatic'>

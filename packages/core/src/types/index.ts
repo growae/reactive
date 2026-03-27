@@ -1,7 +1,7 @@
-export type { Network } from './network.js'
-export { mainnet, testnet } from './network.js'
+export type { Network } from './network'
+export { mainnet, testnet } from './network'
 
-export type { Register, ResolvedRegister } from './register.js'
+export type { Register, ResolvedRegister } from './register'
 
 export type {
   AccountParameter,
@@ -11,14 +11,14 @@ export type {
   NetworkIdParameter,
   ScopeKeyParameter,
   SyncConnectedNetworkParameter,
-} from './properties.js'
+} from './properties'
 
 export type {
   MutationParameter,
   QueryOptions,
   QueryParameter,
   RequiredQueryOptions,
-} from './query.js'
+} from './query'
 
 export type {
   Compute,
@@ -39,4 +39,4 @@ export type {
   UnionExactPartial,
   UnionLooseOmit,
   UnionStrictOmit,
-} from './utils.js'
+} from './utils'

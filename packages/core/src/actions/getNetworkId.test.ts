@@ -4,9 +4,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '../createConfig.js'
-import { mainnet, testnet } from '../types/network.js'
-import { getNetworkId } from './getNetworkId.js'
+import { createConfig } from '../createConfig'
+import { mainnet, testnet } from '../types/network'
+import { getNetworkId } from './getNetworkId'
 
 describe('getNetworkId', () => {
   it('should return the current network id', () => {

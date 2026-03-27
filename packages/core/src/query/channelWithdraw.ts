@@ -3,8 +3,8 @@ import {
   type ChannelWithdrawParameters,
   type ChannelWithdrawReturnType,
   channelWithdraw,
-} from '../actions/channel/channelWithdraw.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/channel/channelWithdraw'
+import type { Config } from '../createConfig'
 
 export type ChannelWithdrawErrorType = Error
 

@@ -1,8 +1,8 @@
 import type { GetNetworkIdReturnType } from '@growae/reactive'
 import { getNetworkId, watchNetworkId } from '@growae/reactive'
 import { type Ref, onScopeDispose, ref } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
+import type { ConfigParameter } from '../types/properties'
+import { useConfig } from './useConfig'
 
 export type UseNetworkIdParameters = ConfigParameter
 

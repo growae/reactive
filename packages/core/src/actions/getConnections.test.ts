@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { getConnections } from './getConnections.js'
+import { getConnections } from './getConnections'
 
 describe('getConnections', () => {
   it('should be a function', () => {

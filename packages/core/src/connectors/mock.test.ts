@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createEmitter } from '../createEmitter.js'
-import { mainnet, testnet } from '../types/network.js'
-import type { ConnectorEventMap } from './createConnector.js'
-import { mock } from './mock.js'
+import { createEmitter } from '../createEmitter'
+import { mainnet, testnet } from '../types/network'
+import type { ConnectorEventMap } from './createConnector'
+import { mock } from './mock'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

@@ -3,8 +3,8 @@ import {
   type OpenChannelParameters,
   type OpenChannelReturnType,
   openChannel,
-} from '../actions/channel/openChannel.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/channel/openChannel'
+import type { Config } from '../createConfig'
 
 export type OpenChannelErrorType = Error
 

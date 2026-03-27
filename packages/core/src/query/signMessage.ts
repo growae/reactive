@@ -4,8 +4,8 @@ import {
   type SignMessageParameters,
   type SignMessageReturnType,
   signMessage,
-} from '../actions/signMessage.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/signMessage'
+import type { Config } from '../createConfig'
 
 export function signMessageMutationOptions(config: Config) {
   return {

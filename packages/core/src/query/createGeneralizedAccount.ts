@@ -3,8 +3,8 @@ import {
   type CreateGeneralizedAccountParameters,
   type CreateGeneralizedAccountReturnType,
   createGeneralizedAccount,
-} from '../actions/ga/createGeneralizedAccount.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/ga/createGeneralizedAccount'
+import type { Config } from '../createConfig'
 
 export type CreateGeneralizedAccountErrorType = Error
 

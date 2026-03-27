@@ -3,9 +3,9 @@ import {
   type GetNameEntryParameters,
   type GetNameEntryReturnType,
   getNameEntry,
-} from '../actions/getNameEntry.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/getNameEntry'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type GetNameEntryOptions = ExactPartial<GetNameEntryParameters>
 

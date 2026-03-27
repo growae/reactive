@@ -9,8 +9,8 @@ import {
   channelContractCall,
   channelContractCallStatic,
   channelContractCreate,
-} from '../actions/channel/channelContract.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/channel/channelContract'
+import type { Config } from '../createConfig'
 
 export type ChannelContractCreateErrorType = Error
 

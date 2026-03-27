@@ -2,29 +2,29 @@ export {
   registerOracle,
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
-} from './registerOracle.js'
+} from './registerOracle'
 export {
   extendOracle,
   type ExtendOracleParameters,
   type ExtendOracleReturnType,
-} from './extendOracle.js'
+} from './extendOracle'
 export {
   queryOracle,
   type QueryOracleParameters,
   type QueryOracleReturnType,
-} from './queryOracle.js'
+} from './queryOracle'
 export {
   respondToQuery,
   type RespondToQueryParameters,
   type RespondToQueryReturnType,
-} from './respondToQuery.js'
+} from './respondToQuery'
 export {
   getOracleState,
   type GetOracleStateParameters,
   type GetOracleStateReturnType,
-} from './getOracleState.js'
+} from './getOracleState'
 export {
   getOracleQueries,
   type GetOracleQueriesParameters,
   type GetOracleQueriesReturnType,
-} from './getOracleQueries.js'
+} from './getOracleQueries'

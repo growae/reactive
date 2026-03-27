@@ -10,7 +10,7 @@ import { testnet } from '@growae/reactive'
 import { mock } from '@growae/reactive'
 import { render, renderHook } from '@testing-library/react'
 import { createElement, useContext } from 'react'
-import { ReactiveContext, ReactiveProvider } from './context.js'
+import { ReactiveContext, ReactiveProvider } from './context'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

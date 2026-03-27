@@ -2,9 +2,9 @@
 
 import type { Config } from '@growae/reactive'
 import { useContext } from 'react'
-import { ReactiveContext } from '../context.js'
-import { ReactiveProviderNotFoundError } from '../errors/context.js'
-import type { ConfigParameter } from '../types/properties.js'
+import { ReactiveContext } from '../context'
+import { ReactiveProviderNotFoundError } from '../errors/context'
+import type { ConfigParameter } from '../types/properties'
 
 export type UseConfigParameters<config extends Config = Config> =
   ConfigParameter<config>

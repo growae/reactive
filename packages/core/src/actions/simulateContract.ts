@@ -1,5 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { CallContractParameters } from './callContract.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
+import type { CallContractParameters } from './callContract'
 
 export type SimulateContractParameters = Omit<
   CallContractParameters,
@@ -33,7 +34,6 @@ export async function simulateContract(
   const node = config.getNodeClient({ networkId })
   const connection = config.state.connections.get(config.state.current!)
 
-  const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
     ...(connection

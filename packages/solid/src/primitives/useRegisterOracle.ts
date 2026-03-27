@@ -1,7 +1,7 @@
 import { type RegisterOracleParameters, registerOracle } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
 export type UseRegisterOracleParameters = Accessor<{
   config?: import('@growae/reactive').Config | undefined

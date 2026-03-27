@@ -5,10 +5,10 @@ import {
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnection } from './useConnection.js'
-import { useNetworkId } from './useNetworkId.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnection } from './useConnection'
+import { useNetworkId } from './useNetworkId'
 
 export type UseConnectorClientParameters = Accessor<
   GetNodeClientParameters & {

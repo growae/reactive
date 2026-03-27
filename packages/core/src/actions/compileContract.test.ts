@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   CompileContractNoCompilerError,
   compileContract,
-} from './compileContract.js'
+} from './compileContract'
 
 describe('compileContract', () => {
   it('should be a function', () => {

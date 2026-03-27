@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { green, reset } from 'kolorist'
 import prompts from 'prompts'
 
-import { type Framework, frameworks } from './frameworks.js'
+import { type Framework, frameworks } from './frameworks'
 import {
   copy,
   emptyDir,
@@ -13,7 +13,7 @@ import {
   isValidPackageName,
   pkgFromUserAgent,
   toValidPackageName,
-} from './utils.js'
+} from './utils'
 
 const templates = frameworks.flatMap((f) => f.variants.map((v) => v.name))
 

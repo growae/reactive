@@ -32,7 +32,7 @@ vi.mock('@growae/reactive/query', () => ({
 }))
 
 import { computed } from 'vue'
-import { useMutation, useQuery } from './query.js'
+import { useMutation, useQuery } from './query'
 
 describe('useQuery', () => {
   it('should inject hashFn as queryKeyHashFn', () => {

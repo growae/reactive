@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { useBalance } from './useBalance.js'
+import { useBalance } from './useBalance'
 
 const mockUseQuery = vi.fn((_options?: unknown) => ({
   data: { value: undefined },

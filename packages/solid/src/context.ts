@@ -5,7 +5,7 @@ import {
   createContext,
   mergeProps,
 } from 'solid-js'
-import { Hydrate } from './hydrate.js'
+import { Hydrate } from './hydrate'
 
 export const ReactiveContext = createContext<Config | undefined>(undefined)
 

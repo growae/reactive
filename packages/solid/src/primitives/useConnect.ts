@@ -1,7 +1,7 @@
 import { type ConnectParameters, connect } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
 import { type Accessor, createEffect, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
 export type UseConnectParameters = Accessor<{
   config?: import('@growae/reactive').Config | undefined

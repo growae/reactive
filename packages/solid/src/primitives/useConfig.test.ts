@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ReactiveProviderNotFoundError } from '../errors/context.js'
-import { useConfig } from './useConfig.js'
+import { ReactiveProviderNotFoundError } from '../errors/context'
+import { useConfig } from './useConfig'
 
 describe('useConfig', () => {
   it('should be a function', () => {

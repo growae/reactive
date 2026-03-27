@@ -3,8 +3,8 @@ import { type AccountBase, MemoryAccount } from '@aeternity/aepp-sdk'
 import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
-} from '../errors/config.js'
-import { createConnector } from './createConnector.js'
+} from '../errors/config'
+import { createConnector } from './createConnector'
 
 export type MemoryParameters = {
   secretKey: string

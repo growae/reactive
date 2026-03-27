@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs'
-import { mkdir, readFile, rm } from 'node:fs/promises'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { init } from './init.js'
+import { init } from './init'
 
 describe('init', () => {
   let tempDir: string
@@ -39,7 +39,6 @@ describe('init', () => {
   })
 
   it('should skip if config already exists', async () => {
-    const { writeFile } = await import('node:fs/promises')
     const existingPath = join(tempDir, 'reactive.config.ts')
     await writeFile(existingPath, 'existing content')
 

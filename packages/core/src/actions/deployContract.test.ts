@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
-import { DEFAULT_TTL } from '../constants.js'
+import { DEFAULT_TTL } from '../constants'
 import {
   DeployContractNoAccountError,
   DeployContractNoCodeError,
   deployContract,
-} from './deployContract.js'
+} from './deployContract'
 
 describe('deployContract', () => {
   it('should be a function', () => {

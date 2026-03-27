@@ -6,17 +6,17 @@ export {
   ReactiveContext,
   ReactiveProvider,
   type ReactiveProviderProps,
-} from '../context.js'
+} from '../context'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors
 ////////////////////////////////////////////////////////////////////////////////
 
-export { BaseError, type BaseErrorType } from '../errors/base.js'
+export { BaseError, type BaseErrorType } from '../errors/base'
 export {
   ReactiveProviderNotFoundError,
   type ReactiveProviderNotFoundErrorType,
-} from '../errors/context.js'
+} from '../errors/context'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hydrate
@@ -25,7 +25,7 @@ export {
 export {
   Hydrate,
   type HydrateProps,
-} from '../hydrate.js'
+} from '../hydrate'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hooks
@@ -197,7 +197,7 @@ export {
   useWatchConnectors,
   type UseWatchConnectorsParameters,
   type UseWatchConnectorsReturnType,
-} from '../hooks/index.js'
+} from '../hooks/index'
 
 ////////////////////////////////////////////////////////////////////////////////
 // @growae/reactive re-exports

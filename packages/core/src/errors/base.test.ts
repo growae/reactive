@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { BaseError } from './base.js'
+import { BaseError } from './base'
 
 describe('BaseError', () => {
   it('should have name ReactiveError', () => {

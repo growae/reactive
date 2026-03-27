@@ -3,9 +3,9 @@ import {
   type WaitForTransactionConfirmParameters,
   type WaitForTransactionConfirmReturnType,
   waitForTransactionConfirm,
-} from '../actions/waitForTransactionConfirm.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/waitForTransactionConfirm'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type WaitForTransactionConfirmOptions =
   ExactPartial<WaitForTransactionConfirmParameters>

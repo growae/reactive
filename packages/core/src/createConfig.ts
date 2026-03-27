@@ -5,18 +5,14 @@ import { type Mutate, type StoreApi, createStore } from 'zustand/vanilla'
 import type {
   ConnectorEventMap,
   CreateConnectorFn,
-} from './connectors/createConnector.js'
-import { type Emitter, type EventData, createEmitter } from './createEmitter.js'
-import {
-  type Storage,
-  createStorage,
-  getDefaultStorage,
-} from './createStorage.js'
-import { NetworkNotConfiguredError } from './errors/config.js'
-import type { Network } from './types/network.js'
-import type { Compute, ExactPartial, RemoveUndefined } from './types/utils.js'
-import { uid } from './utils/uid.js'
-import { version } from './version.js'
+} from './connectors/createConnector'
+import { type Emitter, type EventData, createEmitter } from './createEmitter'
+import { type Storage, createStorage, getDefaultStorage } from './createStorage'
+import { NetworkNotConfiguredError } from './errors/config'
+import type { Network } from './types/network'
+import type { Compute, ExactPartial, RemoveUndefined } from './types/utils'
+import { uid } from './utils/uid'
+import { version } from './version'
 
 export function createConfig<
   const networks extends readonly [Network, ...Network[]],

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { readContracts } from './readContracts.js'
+import { readContract } from './readContract'
+import { readContracts } from './readContracts'
 
 vi.mock('./readContract.js', () => ({
   readContract: vi.fn().mockResolvedValue({
@@ -19,7 +20,6 @@ describe('readContracts', () => {
   })
 
   it('should call readContract for each contract in the list', async () => {
-    const { readContract } = await import('./readContract.js')
     const mockConfig = {} as any
 
     const contracts = [

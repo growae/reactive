@@ -1,6 +1,6 @@
 import { verifyMessageSignature } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type VerifyMessageParameters = {
   message: string

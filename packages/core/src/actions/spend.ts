@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../constants.js'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { Tag, buildTx } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SpendParameters = {
   recipientId: string
@@ -40,7 +41,6 @@ export async function spend(
 
   const node = config.getNodeClient({ networkId })
 
-  const { buildTx, Tag } = await import('@aeternity/aepp-sdk')
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 

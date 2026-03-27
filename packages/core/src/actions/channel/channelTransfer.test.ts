@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { channelTransfer } from './channelTransfer.js'
+import { channelTransfer } from './channelTransfer'
 
 describe('channelTransfer', () => {
   it('should be a function', () => {

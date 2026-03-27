@@ -23,8 +23,8 @@
     "verbatimModuleSyntax": true,
 
     // Language and environment
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
     "target": "ES2021",
     "lib": ["ES2022", "DOM"],
 

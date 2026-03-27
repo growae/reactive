@@ -5,8 +5,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Tag: { SpendTx: 12, ContractCallTx: 43 },
 }))
 
-import { DEFAULT_TTL } from '../constants.js'
-import { buildTransaction } from './buildTransaction.js'
+import { buildTxAsync } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants'
+import { buildTransaction } from './buildTransaction'
 
 describe('buildTransaction', () => {
   it('should be a function', () => {
@@ -30,7 +31,6 @@ describe('buildTransaction', () => {
   })
 
   it('should build transaction using SDK buildTxAsync', async () => {
-    const { buildTxAsync } = await import('@aeternity/aepp-sdk')
     const mockNode = {}
     const mockConfig = {
       getNodeClient: vi.fn(() => mockNode),

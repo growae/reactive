@@ -4,7 +4,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   hashTypedData: vi.fn().mockReturnValue(Buffer.from('mockhash', 'utf8')),
 }))
 
-import { signTypedData } from './signTypedData.js'
+import { signTypedData } from './signTypedData'
 
 describe('signTypedData', () => {
   it('should be a function', () => {

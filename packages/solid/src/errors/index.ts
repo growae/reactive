@@ -1,5 +1,5 @@
-export { BaseError, type BaseErrorType } from './base.js'
+export { BaseError, type BaseErrorType } from './base'
 export {
   ReactiveProviderNotFoundError,
   type ReactiveProviderNotFoundErrorType,
-} from './context.js'
+} from './context'

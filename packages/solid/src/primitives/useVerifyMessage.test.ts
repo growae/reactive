@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useVerifyMessage } from './useVerifyMessage.js'
+import { useVerifyMessage } from './useVerifyMessage'
 
 describe('useVerifyMessage', () => {
   it('should be a function', () => {

@@ -2,27 +2,27 @@ export {
   openChannel,
   type OpenChannelParameters,
   type OpenChannelReturnType,
-} from './openChannel.js'
+} from './openChannel'
 export {
   closeChannel,
   type CloseChannelParameters,
   type CloseChannelReturnType,
-} from './closeChannel.js'
+} from './closeChannel'
 export {
   channelDeposit,
   type ChannelDepositParameters,
   type ChannelDepositReturnType,
-} from './channelDeposit.js'
+} from './channelDeposit'
 export {
   channelWithdraw,
   type ChannelWithdrawParameters,
   type ChannelWithdrawReturnType,
-} from './channelWithdraw.js'
+} from './channelWithdraw'
 export {
   channelTransfer,
   type ChannelTransferParameters,
   type ChannelTransferReturnType,
-} from './channelTransfer.js'
+} from './channelTransfer'
 export {
   channelContractCreate,
   channelContractCall,
@@ -33,4 +33,4 @@ export {
   type ChannelContractCallReturnType,
   type ChannelContractCallStaticParameters,
   type ChannelContractCallStaticReturnType,
-} from './channelContract.js'
+} from './channelContract'

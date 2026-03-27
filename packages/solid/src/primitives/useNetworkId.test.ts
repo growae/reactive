@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { useNetworkId } from './useNetworkId.js'
+import { useNetworkId } from './useNetworkId'
 
 function createMockConfig() {
   return {

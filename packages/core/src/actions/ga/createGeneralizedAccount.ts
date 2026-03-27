@@ -1,5 +1,6 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { createGeneralizedAccount as sdkCreateGeneralizedAccount } from '@aeternity/aepp-sdk'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type CreateGeneralizedAccountParameters = {
   authFnName: string
@@ -52,8 +53,7 @@ export async function createGeneralizedAccount(
 
   const node = config.getNodeClient({ networkId })
 
-  const sdk = await import('@aeternity/aepp-sdk')
-  const result = await sdk.createGeneralizedAccount(
+  const result = await sdkCreateGeneralizedAccount(
     authFnName,
     args as any[],
     {

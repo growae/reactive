@@ -4,11 +4,11 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { mock } from '../connectors/mock.js'
-import { createConfig } from '../createConfig.js'
-import { ConnectorAlreadyConnectedError } from '../errors/config.js'
-import { mainnet, testnet } from '../types/network.js'
-import { connect } from './connect.js'
+import { mock } from '../connectors/mock'
+import { createConfig } from '../createConfig'
+import { ConnectorAlreadyConnectedError } from '../errors/config'
+import { mainnet, testnet } from '../types/network'
+import { connect } from './connect'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

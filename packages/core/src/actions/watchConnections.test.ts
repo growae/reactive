@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { watchConnections } from './watchConnections.js'
+import { watchConnections } from './watchConnections'
 
 describe('watchConnections', () => {
   it('should be a function', () => {

@@ -1,8 +1,8 @@
 import { Tag, buildTxAsync } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants.js'
-import type { Config, Connector } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import { sendTransaction } from './sendTransaction.js'
+import { DEFAULT_TTL } from '../constants'
+import type { Config, Connector } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
+import { sendTransaction } from './sendTransaction'
 
 export type PayForTransactionParameters = {
   innerTx: string

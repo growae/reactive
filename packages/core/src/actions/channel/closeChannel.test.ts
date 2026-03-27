@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CloseChannelError, closeChannel } from './closeChannel.js'
+import { CloseChannelError, closeChannel } from './closeChannel'
 
 describe('closeChannel', () => {
   it('should be a function', () => {

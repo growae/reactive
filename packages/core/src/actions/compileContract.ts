@@ -1,6 +1,6 @@
 import type { CompilerBase } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
-import { BaseError } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import { BaseError } from '../errors/base'
 
 export type CompileContractParameters = {
   sourceCode: string

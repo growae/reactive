@@ -3,7 +3,7 @@ import {
   channelContractCall,
   channelContractCallStatic,
   channelContractCreate,
-} from './channelContract.js'
+} from './channelContract'
 
 describe('channelContractCreate', () => {
   it('should be a function', () => {

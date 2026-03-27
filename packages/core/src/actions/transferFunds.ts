@@ -1,9 +1,9 @@
 import { Tag, buildTxAsync, unpackTx } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants.js'
-import type { Config, Connector } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import { getBalance } from './getBalance.js'
-import { sendTransaction } from './sendTransaction.js'
+import { DEFAULT_TTL } from '../constants'
+import type { Config, Connector } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
+import { getBalance } from './getBalance'
+import { sendTransaction } from './sendTransaction'
 
 export type TransferFundsParameters = {
   fraction: number

@@ -4,9 +4,9 @@ import { createApp, defineComponent } from 'vue'
 import {
   ReactiveInjectionContextError,
   ReactivePluginNotFoundError,
-} from '../errors/plugin.js'
-import { configKey } from '../plugin.js'
-import { useConfig } from './useConfig.js'
+} from '../errors/plugin'
+import { configKey } from '../plugin'
+import { useConfig } from './useConfig'
 
 function createMockConfig() {
   return {

@@ -3,8 +3,8 @@ import {
   type BidNameParameters,
   type BidNameReturnType,
   bidName,
-} from '../actions/aens/bidName.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/aens/bidName'
+import type { Config } from '../createConfig'
 
 export type BidNameErrorType = Error
 

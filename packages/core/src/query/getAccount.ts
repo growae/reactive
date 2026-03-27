@@ -3,9 +3,9 @@ import {
   type GetAccountParameters,
   type GetAccountReturnType,
   getAccount,
-} from '../actions/getAccount.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/getAccount'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type GetAccountOptions = ExactPartial<GetAccountParameters>
 

@@ -1,5 +1,6 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Channel } from '@aeternity/aepp-sdk'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type OpenChannelParameters = {
   url: string
@@ -53,23 +54,26 @@ export async function openChannel(
     networkId: _networkId,
   } = parameters
 
-  const { Channel } = await import('@aeternity/aepp-sdk')
-  const channel = await Channel.initialize({
+  const options: Record<string, unknown> = {
     url,
     role,
-    initiatorId: initiatorId as any,
-    responderId: responderId as any,
+    initiatorId,
+    responderId,
     initiatorAmount: Number(initiatorAmount),
     responderAmount: Number(responderAmount),
     pushAmount: Number(pushAmount),
     channelReserve: Number(channelReserve),
-    ...(ttl != null ? { ttl } : {}),
-    ...(host ? { host } : {}),
-    ...(port != null ? { port } : {}),
-    ...(lockPeriod != null ? { lockPeriod } : {}),
-    sign: sign as any,
-    ...(debug != null ? { debug } : {}),
-  } as any)
+    sign,
+  }
+  if (ttl != null) options.ttl = ttl
+  if (host) options.host = host
+  if (port != null) options.port = port
+  if (lockPeriod != null) options.lockPeriod = lockPeriod
+  if (debug != null) options.debug = debug
+
+  const channel = await Channel.initialize(
+    options as unknown as Parameters<typeof Channel.initialize>[0],
+  )
 
   return {
     channel,

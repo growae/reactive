@@ -11,8 +11,8 @@ import { mock } from '@growae/reactive'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook } from '@testing-library/react'
 import { createElement } from 'react'
-import { ReactiveProvider } from '../context.js'
-import { useBalance } from './useBalance.js'
+import { ReactiveProvider } from '../context'
+import { useBalance } from './useBalance'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

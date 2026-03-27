@@ -5,8 +5,8 @@ import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
-import { frameworks } from './frameworks.js'
-import { copy } from './utils.js'
+import { frameworks } from './frameworks'
+import { copy } from './utils'
 
 const templatesDir = resolve(fileURLToPath(import.meta.url), '../../templates')
 

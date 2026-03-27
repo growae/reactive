@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../../constants.js'
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type NamePointer = {
   key: string
@@ -41,7 +42,6 @@ export async function updateName(
     throw new UpdateNameNoAccountError()
   }
 
-  const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
     onAccount: connection.accounts[0] as any,

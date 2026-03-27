@@ -5,11 +5,11 @@ import type {
 } from '@growae/reactive'
 import { getConnection } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnection } from './useConnection.js'
-import { useNetworkId } from './useNetworkId.js'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnection } from './useConnection'
+import { useNetworkId } from './useNetworkId'
 
 export type UseConnectorClientParameters = Compute<
   GetNodeClientParameters & ConfigParameter

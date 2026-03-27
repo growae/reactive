@@ -3,7 +3,7 @@ import {
   type CreateGeneralizedAccountParameters,
   type CreateGeneralizedAccountReturnType,
   createGeneralizedAccount,
-} from './createGeneralizedAccount.js'
+} from './createGeneralizedAccount'
 
 test('createGeneralizedAccount returns Promise<CreateGeneralizedAccountReturnType>', () => {
   expectTypeOf(createGeneralizedAccount).returns.toEqualTypeOf<

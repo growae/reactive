@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { PreclaimNameNoAccountError, preclaimName } from './preclaimName.js'
+import { PreclaimNameNoAccountError, preclaimName } from './preclaimName'
 
 describe('preclaimName', () => {
   it('should be a function', () => {

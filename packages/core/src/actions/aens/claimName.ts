@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../../constants.js'
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Name, produceNameId } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type ClaimNameParameters = {
   name: string
@@ -37,7 +38,6 @@ export async function claimName(
     throw new ClaimNameNoAccountError()
   }
 
-  const { Name, produceNameId } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
     onAccount: connection.accounts[0] as any,

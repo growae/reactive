@@ -2,40 +2,40 @@ export {
   preclaimName,
   type PreclaimNameParameters,
   type PreclaimNameReturnType,
-} from './preclaimName.js'
+} from './preclaimName'
 export {
   claimName,
   type ClaimNameParameters,
   type ClaimNameReturnType,
-} from './claimName.js'
+} from './claimName'
 export {
   updateName,
   type UpdateNameParameters,
   type UpdateNameReturnType,
   type NamePointer,
-} from './updateName.js'
+} from './updateName'
 export {
   transferName,
   type TransferNameParameters,
   type TransferNameReturnType,
-} from './transferName.js'
+} from './transferName'
 export {
   revokeName,
   type RevokeNameParameters,
   type RevokeNameReturnType,
-} from './revokeName.js'
+} from './revokeName'
 export {
   bidName,
   type BidNameParameters,
   type BidNameReturnType,
-} from './bidName.js'
+} from './bidName'
 export {
   getNameEntry,
   type GetNameEntryParameters,
   type GetNameEntryReturnType,
-} from './getNameEntry.js'
+} from './getNameEntry'
 export {
   resolveName,
   type ResolveNameParameters,
   type ResolveNameReturnType,
-} from './resolveName.js'
+} from './resolveName'

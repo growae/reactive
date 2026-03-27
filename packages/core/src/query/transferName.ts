@@ -3,8 +3,8 @@ import {
   type TransferNameParameters,
   type TransferNameReturnType,
   transferName,
-} from '../actions/aens/transferName.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/aens/transferName'
+import type { Config } from '../createConfig'
 
 export type TransferNameErrorType = Error
 

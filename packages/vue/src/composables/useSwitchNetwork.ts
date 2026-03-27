@@ -6,11 +6,11 @@ import type {
 } from '@growae/reactive'
 import { switchNetwork } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
-import type { ConfigParameter } from '../types/properties.js'
-import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworks } from './useNetworks.js'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworks } from './useNetworks'
 
 export type UseSwitchNetworkParameters<context = unknown> = Compute<
   ConfigParameter & {
@@ -59,14 +59,12 @@ export function useSwitchNetwork<context = unknown>(
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
     onSettled: mutationOnSettled,
-    ...mutationRest
   } = parameters.mutation ?? {}
 
   const mutation = useMutation({
     mutationKey: ['switchNetwork'],
     mutationFn: (variables: SwitchNetworkParameters) =>
       switchNetwork(config, variables),
-    ...mutationRest,
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,

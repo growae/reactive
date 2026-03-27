@@ -3,9 +3,9 @@ import {
   type GetOracleStateParameters,
   type GetOracleStateReturnType,
   getOracleState,
-} from '../actions/getOracleState.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/getOracleState'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type GetOracleStateOptions = ExactPartial<GetOracleStateParameters>
 

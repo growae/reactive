@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ReactiveContext, ReactiveProvider } from './context.js'
+import { ReactiveContext, ReactiveProvider } from './context'
 
 describe('ReactiveContext', () => {
   it('should be defined', () => {

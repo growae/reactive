@@ -4,8 +4,8 @@ import {
   type SignTransactionParameters,
   type SignTransactionReturnType,
   signTransaction,
-} from '../actions/signTransaction.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/signTransaction'
+import type { Config } from '../createConfig'
 
 export function signTransactionMutationOptions(config: Config) {
   return {

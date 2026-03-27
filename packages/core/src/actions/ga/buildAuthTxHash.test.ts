@@ -4,7 +4,8 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   buildAuthTxHash: vi.fn().mockResolvedValue(Buffer.from('mockhash')),
 }))
 
-import { buildAuthTxHash } from './buildAuthTxHash.js'
+import { buildAuthTxHash as sdkBuildAuthTxHash } from '@aeternity/aepp-sdk'
+import { buildAuthTxHash } from './buildAuthTxHash'
 
 describe('buildAuthTxHash', () => {
   it('should be a function', () => {
@@ -21,8 +22,7 @@ describe('buildAuthTxHash', () => {
 
     expect(result.txHash).toBeInstanceOf(Buffer)
 
-    const sdk = await import('@aeternity/aepp-sdk')
-    expect(sdk.buildAuthTxHash).toHaveBeenCalledWith('tx_encoded', {
+    expect(sdkBuildAuthTxHash).toHaveBeenCalledWith('tx_encoded', {
       onNode: mockNode,
     })
   })

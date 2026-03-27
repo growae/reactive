@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { estimateGasQueryKey, estimateGasQueryOptions } from './estimateGas.js'
+import { estimateGasQueryKey, estimateGasQueryOptions } from './estimateGas'
 
 describe('estimateGasQueryOptions', () => {
   it('should be a function', () => {

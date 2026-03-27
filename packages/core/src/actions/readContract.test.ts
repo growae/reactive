@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { readContract } from './readContract.js'
+import { callContract } from './callContract'
+import { readContract } from './readContract'
 
 vi.mock('./callContract.js', () => ({
   callContract: vi.fn().mockResolvedValue({
@@ -19,7 +20,6 @@ describe('readContract', () => {
   })
 
   it('should delegate to callContract with callStatic: true', async () => {
-    const { callContract } = await import('./callContract.js')
     const mockConfig = {} as any
 
     await readContract(mockConfig, {
@@ -37,7 +37,6 @@ describe('readContract', () => {
   })
 
   it('should merge user options with callStatic', async () => {
-    const { callContract } = await import('./callContract.js')
     const mockConfig = {} as any
 
     await readContract(mockConfig, {

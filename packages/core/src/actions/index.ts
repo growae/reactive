@@ -4,66 +4,66 @@ export {
   type ConnectParameters,
   type ConnectReturnType,
   type ConnectErrorType,
-} from './connect.js'
+} from './connect'
 
 export {
   disconnect,
   type DisconnectParameters,
   type DisconnectReturnType,
   type DisconnectErrorType,
-} from './disconnect.js'
+} from './disconnect'
 
 export {
   reconnect,
   type ReconnectParameters,
   type ReconnectReturnType,
   type ReconnectErrorType,
-} from './reconnect.js'
+} from './reconnect'
 
 export {
   getConnectors,
   type GetConnectorsReturnType,
-} from './getConnectors.js'
+} from './getConnectors'
 
 export {
   getConnection,
   type GetConnectionReturnType,
-} from './getConnection.js'
+} from './getConnection'
 
 export {
   getConnections,
   type GetConnectionsReturnType,
-} from './getConnections.js'
+} from './getConnections'
 
 export {
   switchConnection,
   type SwitchConnectionParameters,
   type SwitchConnectionReturnType,
   type SwitchConnectionErrorType,
-} from './switchConnection.js'
+} from './switchConnection'
 
 export {
   getNetworkId,
   type GetNetworkIdReturnType,
-} from './getNetworkId.js'
+} from './getNetworkId'
 
 export {
   getNetworks,
   type GetNetworksReturnType,
-} from './getNetworks.js'
+} from './getNetworks'
 
 export {
   switchNetwork,
   type SwitchNetworkParameters,
   type SwitchNetworkReturnType,
   type SwitchNetworkErrorType,
-} from './switchNetwork.js'
+} from './switchNetwork'
 
 export {
   getNodeClient,
   type GetNodeClientParameters,
   type GetNodeClientReturnType,
-} from './getNodeClient.js'
+} from './getNodeClient'
 
 // Chain read actions
 export {
@@ -71,77 +71,77 @@ export {
   type GetBalanceParameters,
   type GetBalanceReturnType,
   type GetBalanceErrorType,
-} from './getBalance.js'
+} from './getBalance'
 
 export {
   getHeight,
   type GetHeightParameters,
   type GetHeightReturnType,
   type GetHeightErrorType,
-} from './getHeight.js'
+} from './getHeight'
 
 export {
   getAccount,
   type GetAccountParameters,
   type GetAccountReturnType,
   type GetAccountErrorType,
-} from './getAccount.js'
+} from './getAccount'
 
 export {
   getBlock,
   type GetBlockParameters,
   type GetBlockReturnType,
   type GetBlockErrorType,
-} from './getBlock.js'
+} from './getBlock'
 
 export {
   getMicroBlock,
   type GetMicroBlockParameters,
   type GetMicroBlockReturnType,
   type GetMicroBlockErrorType,
-} from './getMicroBlock.js'
+} from './getMicroBlock'
 
 export {
   getTransaction,
   type GetTransactionParameters,
   type GetTransactionReturnType,
   type GetTransactionErrorType,
-} from './getTransaction.js'
+} from './getTransaction'
 
 export {
   getTransactionCount,
   type GetTransactionCountParameters,
   type GetTransactionCountReturnType,
   type GetTransactionCountErrorType,
-} from './getTransactionCount.js'
+} from './getTransactionCount'
 
 export {
   waitForTransaction,
   type WaitForTransactionParameters,
   type WaitForTransactionReturnType,
   type WaitForTransactionErrorType,
-} from './waitForTransaction.js'
+} from './waitForTransaction'
 
 export {
   waitForTransactionConfirm,
   type WaitForTransactionConfirmParameters,
   type WaitForTransactionConfirmReturnType,
   type WaitForTransactionConfirmErrorType,
-} from './waitForTransactionConfirm.js'
+} from './waitForTransactionConfirm'
 
 export {
   getContractBytecode,
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
   type GetContractBytecodeErrorType,
-} from './getContractBytecode.js'
+} from './getContractBytecode'
 
 export {
   estimateGas,
   type EstimateGasParameters,
   type EstimateGasReturnType,
   type EstimateGasErrorType,
-} from './estimateGas.js'
+} from './estimateGas'
 
 // Transaction actions
 export {
@@ -149,35 +149,35 @@ export {
   type SendTransactionParameters,
   type SendTransactionReturnType,
   type SendTransactionErrorType,
-} from './sendTransaction.js'
+} from './sendTransaction'
 
 export {
   buildTransaction,
   type BuildTransactionParameters,
   type BuildTransactionReturnType,
   type BuildTransactionErrorType,
-} from './buildTransaction.js'
+} from './buildTransaction'
 
 export {
   spend,
   type SpendParameters,
   type SpendReturnType,
   type SpendErrorType,
-} from './spend.js'
+} from './spend'
 
 export {
   transferFunds,
   type TransferFundsParameters,
   type TransferFundsReturnType,
   type TransferFundsErrorType,
-} from './transferFunds.js'
+} from './transferFunds'
 
 export {
   payForTransaction,
   type PayForTransactionParameters,
   type PayForTransactionReturnType,
   type PayForTransactionErrorType,
-} from './payForTransaction.js'
+} from './payForTransaction'
 
 // Signing actions
 export {
@@ -185,39 +185,39 @@ export {
   type SignMessageParameters,
   type SignMessageReturnType,
   type SignMessageErrorType,
-} from './signMessage.js'
+} from './signMessage'
 
 export {
   signTypedData,
   type SignTypedDataParameters,
   type SignTypedDataReturnType,
   type SignTypedDataErrorType,
-} from './signTypedData.js'
+} from './signTypedData'
 
 export {
   signTransaction,
   type SignTransactionParameters,
   type SignTransactionReturnType,
   type SignTransactionErrorType,
-} from './signTransaction.js'
+} from './signTransaction'
 
 export {
   verifyMessage,
   type VerifyMessageParameters,
   type VerifyMessageReturnType,
   type VerifyMessageErrorType,
-} from './verifyMessage.js'
+} from './verifyMessage'
 
 export {
   verifyTypedData,
   type VerifyTypedDataParameters,
   type VerifyTypedDataReturnType,
   type VerifyTypedDataErrorType,
-} from './verifyTypedData.js'
+} from './verifyTypedData'
 
 export {
   signDelegation,
   type SignDelegationParameters,
   type SignDelegationReturnType,
   type SignDelegationErrorType,
-} from './signDelegation.js'
+} from './signDelegation'

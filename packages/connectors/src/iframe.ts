@@ -1,5 +1,9 @@
 import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 import {
+  BrowserWindowMessageConnection,
+  WalletConnectorFrame as WCF,
+} from '@aeternity/aepp-sdk'
+import {
   ConnectorNotConnectedError,
   ProviderNotFoundError,
   createConnector,
@@ -35,9 +39,6 @@ export function iframe(parameters: IframeParameters = {}) {
     type: iframe.type,
 
     async connect({ networkId } = {}) {
-      const { WalletConnectorFrame: WCF, BrowserWindowMessageConnection } =
-        await import('@aeternity/aepp-sdk')
-
       const target =
         parameters.target ??
         (typeof window !== 'undefined' ? window.parent : undefined)

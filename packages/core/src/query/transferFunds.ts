@@ -4,8 +4,8 @@ import {
   type TransferFundsParameters,
   type TransferFundsReturnType,
   transferFunds,
-} from '../actions/transferFunds.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/transferFunds'
+import type { Config } from '../createConfig'
 
 export function transferFundsMutationOptions(config: Config) {
   return {

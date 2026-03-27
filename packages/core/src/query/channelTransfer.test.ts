@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { channelTransferMutationOptions } from './channelTransfer.js'
+import { channelTransferMutationOptions } from './channelTransfer'
 
 describe('channelTransferMutationOptions', () => {
   it('should be a function', () => {

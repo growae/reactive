@@ -3,8 +3,8 @@ import {
   type ChannelDepositParameters,
   type ChannelDepositReturnType,
   channelDeposit,
-} from '../actions/channel/channelDeposit.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/channel/channelDeposit'
+import type { Config } from '../createConfig'
 
 export type ChannelDepositErrorType = Error
 

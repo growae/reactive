@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useReadContract } from './useReadContract.js'
+import { useReadContract } from './useReadContract'
 
 describe('useReadContract', () => {
   it('should be a function', () => {

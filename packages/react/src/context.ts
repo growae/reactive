@@ -2,7 +2,7 @@
 
 import type { Config, State } from '@growae/reactive'
 import { createContext, createElement } from 'react'
-import { Hydrate } from './hydrate.js'
+import { Hydrate } from './hydrate'
 
 export const ReactiveContext = createContext<Config | undefined>(undefined)
 

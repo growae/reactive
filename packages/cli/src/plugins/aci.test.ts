@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { aci } from './aci.js'
+import { aci } from './aci'
 
 describe('aci plugin', () => {
   let tempDir: string

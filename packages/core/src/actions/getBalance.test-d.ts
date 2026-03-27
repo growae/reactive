@@ -3,7 +3,7 @@ import {
   type GetBalanceParameters,
   type GetBalanceReturnType,
   getBalance,
-} from './getBalance.js'
+} from './getBalance'
 
 test('getBalance returns Promise<GetBalanceReturnType>', () => {
   expectTypeOf(getBalance).returns.toEqualTypeOf<

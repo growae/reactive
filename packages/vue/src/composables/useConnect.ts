@@ -7,11 +7,11 @@ import type {
 import { connect } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import { onScopeDispose } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnectors } from './useConnectors.js'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnectors } from './useConnectors'
 
 export type UseConnectParameters<context = unknown> = Compute<
   ConfigParameter & {
@@ -58,13 +58,11 @@ export function useConnect<context = unknown>(
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
     onSettled: mutationOnSettled,
-    ...mutationRest
   } = parameters.mutation ?? {}
 
   const mutation = useMutation({
     mutationKey: ['connect'],
     mutationFn: (variables: ConnectParameters) => connect(config, variables),
-    ...mutationRest,
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,

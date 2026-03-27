@@ -4,8 +4,8 @@ import {
   type SignDelegationParameters,
   type SignDelegationReturnType,
   signDelegation,
-} from '../actions/signDelegation.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/signDelegation'
+import type { Config } from '../createConfig'
 
 export function signDelegationMutationOptions(config: Config) {
   return {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { defaultConfig, defineConfig } from './config.js'
+import { defaultConfig, defineConfig } from './config'
 
 describe('defineConfig', () => {
   it('should return the same config object', () => {

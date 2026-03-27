@@ -3,6 +3,10 @@ import type {
   WalletConnectorFrame,
 } from '@aeternity/aepp-sdk'
 import {
+  BrowserWindowMessageConnection,
+  WalletConnectorFrame as WCF,
+} from '@aeternity/aepp-sdk'
+import {
   ConnectorNotConnectedError,
   ProviderNotFoundError,
   createConnector,
@@ -37,9 +41,6 @@ export function superhero(parameters: SuperheroParameters = {}) {
     type: superhero.type,
 
     async connect({ networkId } = {}) {
-      const { WalletConnectorFrame: WCF, BrowserWindowMessageConnection } =
-        await import('@aeternity/aepp-sdk')
-
       const connection = new BrowserWindowMessageConnection({
         sendDirection: 'to_waellet' as MESSAGE_DIRECTION,
         receiveDirection: 'to_aepp' as MESSAGE_DIRECTION,

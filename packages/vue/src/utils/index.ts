@@ -1,4 +1,4 @@
-export { deepUnref } from './cloneDeep.js'
+export { deepUnref } from './cloneDeep'
 export {
   useQuery,
   useMutation,
@@ -6,4 +6,4 @@ export {
   type UseQueryReturnType,
   type UseMutationParameters,
   type UseMutationReturnType,
-} from './query.js'
+} from './query'

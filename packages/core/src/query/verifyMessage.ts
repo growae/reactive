@@ -4,8 +4,8 @@ import {
   type VerifyMessageParameters,
   type VerifyMessageReturnType,
   verifyMessage,
-} from '../actions/verifyMessage.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/verifyMessage'
+import type { Config } from '../createConfig'
 
 export function verifyMessageMutationOptions(config: Config) {
   return {

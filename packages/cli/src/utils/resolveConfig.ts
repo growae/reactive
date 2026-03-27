@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 
-import type { ReactiveConfig } from '../config.js'
+import type { ReactiveConfig } from '../config'
 
 export type ResolveConfigParameters = {
   configPath: string

@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../../constants.js'
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Oracle } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type ExtendOracleParameters = {
   oracleId: string
@@ -35,7 +36,6 @@ export async function extendOracle(
     throw new ExtendOracleNoAccountError()
   }
 
-  const { Oracle } = await import('@aeternity/aepp-sdk')
   const oracle = new Oracle(
     connection.accounts[0] as any,
     {

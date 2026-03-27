@@ -4,9 +4,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '../createConfig.js'
-import { testnet } from '../types/network.js'
-import { connectMutationOptions } from './connect.js'
+import { createConfig } from '../createConfig'
+import { testnet } from '../types/network'
+import { connectMutationOptions } from './connect'
 
 describe('connectMutationOptions', () => {
   it('should return mutation options with mutationKey', () => {

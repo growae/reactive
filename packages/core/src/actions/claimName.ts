@@ -1,5 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { Tag, buildTx, produceNameId } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type ClaimNameParameters = {
   name: string
@@ -27,8 +28,6 @@ export async function claimName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const { buildTx, Tag, produceNameId } = await import('@aeternity/aepp-sdk')
-
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useRespondToQuery } from './useRespondToQuery.js'
+import { useRespondToQuery } from './useRespondToQuery'
 
 describe('useRespondToQuery', () => {
   it('should be a function', () => {

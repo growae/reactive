@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { channelDepositMutationOptions } from './channelDeposit.js'
+import { channelDepositMutationOptions } from './channelDeposit'
 
 describe('channelDepositMutationOptions', () => {
   it('should be a function', () => {

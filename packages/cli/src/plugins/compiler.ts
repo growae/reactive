@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
-import type { ContractConfig, Plugin } from '../config.js'
+import type { ContractConfig, Plugin } from '../config'
 
 export type CompilerConfig = {
   /** Path to Sophia source file or directory of .aes files */

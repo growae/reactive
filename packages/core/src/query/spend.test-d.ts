@@ -1,6 +1,6 @@
 import { expectTypeOf, test } from 'vitest'
-import type { Config } from '../createConfig.js'
-import { spendMutationOptions } from './spend.js'
+import type { Config } from '../createConfig'
+import { spendMutationOptions } from './spend'
 
 test('spendMutationOptions returns object with mutationFn', () => {
   const options = spendMutationOptions({} as Config)

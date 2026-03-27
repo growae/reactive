@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { revokeNameMutationOptions } from './revokeName.js'
+import { revokeNameMutationOptions } from './revokeName'
 
 describe('revokeNameMutationOptions', () => {
   it('should be a function', () => {

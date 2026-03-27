@@ -1,7 +1,7 @@
-import type { Emitter } from '../createEmitter.js'
-import type { Storage } from '../createStorage.js'
-import type { Network } from '../types/network.js'
-import type { Compute } from '../types/utils.js'
+import type { Emitter } from '../createEmitter'
+import type { Storage } from '../createStorage'
+import type { Network } from '../types/network'
+import type { Compute } from '../types/utils'
 
 export type ConnectorEventMap = {
   change: {

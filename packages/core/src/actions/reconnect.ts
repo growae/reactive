@@ -1,6 +1,6 @@
-import type { CreateConnectorFn } from '../connectors/createConnector.js'
-import type { Config, Connection, Connector } from '../createConfig.js'
-import type { ErrorType } from '../errors/base.js'
+import type { CreateConnectorFn } from '../connectors/createConnector'
+import type { Config, Connection, Connector } from '../createConfig'
+import type { ErrorType } from '../errors/base'
 
 export type ReconnectParameters = {
   connectors?: readonly (CreateConnectorFn | Connector)[] | undefined

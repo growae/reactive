@@ -1,5 +1,10 @@
 import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 import {
+  BrowserWindowMessageConnection,
+  WalletConnectorFrame as WCF,
+  walletDetector,
+} from '@aeternity/aepp-sdk'
+import {
   ConnectorNotConnectedError,
   ProviderNotFoundError,
   createConnector,
@@ -35,12 +40,6 @@ export function webExtension(parameters: WebExtensionParameters = {}) {
     type: webExtension.type,
 
     async connect({ networkId } = {}) {
-      const {
-        WalletConnectorFrame: WCF,
-        BrowserWindowMessageConnection,
-        walletDetector,
-      } = await import('@aeternity/aepp-sdk')
-
       const scanConnection = new BrowserWindowMessageConnection({
         debug: parameters.debug,
       })

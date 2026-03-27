@@ -4,8 +4,8 @@ import {
   type DeployContractParameters,
   type DeployContractReturnType,
   deployContract,
-} from '../actions/deployContract.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/deployContract'
+import type { Config } from '../createConfig'
 
 export function deployContractMutationOptions(config: Config) {
   return {

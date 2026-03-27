@@ -1,4 +1,5 @@
-import type { Config } from '../createConfig.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
 
 export type GetContractEventsParameters = {
   address: string
@@ -31,7 +32,6 @@ export async function getContractEvents(
     : []
 
   if (aci) {
-    const { Contract } = await import('@aeternity/aepp-sdk')
     const contractInstance = await Contract.initialize({
       onNode: node,
       aci,

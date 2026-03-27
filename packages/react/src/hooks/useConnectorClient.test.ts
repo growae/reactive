@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useConnectorClient } from './useConnectorClient.js'
+import { useConnectorClient } from './useConnectorClient'
 
 describe('useConnectorClient', () => {
   it('should be a function', () => {

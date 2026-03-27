@@ -3,7 +3,7 @@ import {
   type SignMessageParameters,
   type SignMessageReturnType,
   signMessage,
-} from './signMessage.js'
+} from './signMessage'
 
 test('signMessage returns Promise<SignMessageReturnType>', () => {
   expectTypeOf(signMessage).returns.toEqualTypeOf<

@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { generate } from './generate.js'
+import { generate } from './generate'
 
 describe('generate', () => {
   let tempDir: string

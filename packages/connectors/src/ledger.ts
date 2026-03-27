@@ -1,4 +1,4 @@
-import type { AccountLedgerFactory } from '@aeternity/aepp-sdk'
+import { AccountLedgerFactory } from '@aeternity/aepp-sdk'
 import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
@@ -46,11 +46,7 @@ export function ledger(parameters: LedgerParameters) {
     },
 
     async connect({ networkId } = {}) {
-      const { AccountLedgerFactory: Factory } = await import(
-        '@aeternity/aepp-sdk'
-      )
-
-      factory = new Factory(parameters.transport as never)
+      factory = new AccountLedgerFactory(parameters.transport as never)
       await factory.ensureReady()
 
       const address = await factory.getAddress(accountIndex)

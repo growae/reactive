@@ -7,231 +7,231 @@ export {
   type ConnectReturnType,
   type ConnectErrorType,
   connect,
-} from '../actions/connect.js'
+} from '../actions/connect'
 
 export {
   type DisconnectParameters,
   type DisconnectReturnType,
   type DisconnectErrorType,
   disconnect,
-} from '../actions/disconnect.js'
+} from '../actions/disconnect'
 
 export {
   type ReconnectParameters,
   type ReconnectReturnType,
   type ReconnectErrorType,
   reconnect,
-} from '../actions/reconnect.js'
+} from '../actions/reconnect'
 
 export {
   type GetConnectionReturnType,
   getConnection,
-} from '../actions/getConnection.js'
+} from '../actions/getConnection'
 
 export {
   type GetConnectionsReturnType,
   getConnections,
-} from '../actions/getConnections.js'
+} from '../actions/getConnections'
 
 export {
   type GetConnectorsReturnType,
   getConnectors,
-} from '../actions/getConnectors.js'
+} from '../actions/getConnectors'
 
 export {
   type SwitchConnectionParameters,
   type SwitchConnectionReturnType,
   type SwitchConnectionErrorType,
   switchConnection,
-} from '../actions/switchConnection.js'
+} from '../actions/switchConnection'
 
 export {
   type SwitchNetworkParameters,
   type SwitchNetworkReturnType,
   type SwitchNetworkErrorType,
   switchNetwork,
-} from '../actions/switchNetwork.js'
+} from '../actions/switchNetwork'
 
 export {
   type GetNetworkIdReturnType,
   getNetworkId,
-} from '../actions/getNetworkId.js'
+} from '../actions/getNetworkId'
 
 export {
   type GetNetworksReturnType,
   getNetworks,
-} from '../actions/getNetworks.js'
+} from '../actions/getNetworks'
 
 export {
   type GetNodeClientParameters,
   type GetNodeClientReturnType,
   getNodeClient,
-} from '../actions/getNodeClient.js'
+} from '../actions/getNodeClient'
 
 export {
   type GetBalanceParameters,
   type GetBalanceReturnType,
   type GetBalanceErrorType,
   getBalance,
-} from '../actions/getBalance.js'
+} from '../actions/getBalance'
 
 export {
   type GetHeightParameters,
   type GetHeightReturnType,
   type GetHeightErrorType,
   getHeight,
-} from '../actions/getHeight.js'
+} from '../actions/getHeight'
 
 export {
   type GetAccountParameters,
   type GetAccountReturnType,
   type GetAccountErrorType,
   getAccount,
-} from '../actions/getAccount.js'
+} from '../actions/getAccount'
 
 export {
   type GetBlockParameters,
   type GetBlockReturnType,
   type GetBlockErrorType,
   getBlock,
-} from '../actions/getBlock.js'
+} from '../actions/getBlock'
 
 export {
   type GetMicroBlockParameters,
   type GetMicroBlockReturnType,
   type GetMicroBlockErrorType,
   getMicroBlock,
-} from '../actions/getMicroBlock.js'
+} from '../actions/getMicroBlock'
 
 export {
   type GetTransactionParameters,
   type GetTransactionReturnType,
   type GetTransactionErrorType,
   getTransaction,
-} from '../actions/getTransaction.js'
+} from '../actions/getTransaction'
 
 export {
   type GetTransactionCountParameters,
   type GetTransactionCountReturnType,
   type GetTransactionCountErrorType,
   getTransactionCount,
-} from '../actions/getTransactionCount.js'
+} from '../actions/getTransactionCount'
 
 export {
   type WaitForTransactionParameters,
   type WaitForTransactionReturnType,
   type WaitForTransactionErrorType,
   waitForTransaction,
-} from '../actions/waitForTransaction.js'
+} from '../actions/waitForTransaction'
 
 export {
   type SendTransactionParameters,
   type SendTransactionReturnType,
   type SendTransactionErrorType,
   sendTransaction,
-} from '../actions/sendTransaction.js'
+} from '../actions/sendTransaction'
 
 export {
   type SpendParameters,
   type SpendReturnType,
   type SpendErrorType,
   spend,
-} from '../actions/spend.js'
+} from '../actions/spend'
 
 export {
   type SignMessageParameters,
   type SignMessageReturnType,
   type SignMessageErrorType,
   signMessage,
-} from '../actions/signMessage.js'
+} from '../actions/signMessage'
 
 export {
   type SignTypedDataParameters,
   type SignTypedDataReturnType,
   type SignTypedDataErrorType,
   signTypedData,
-} from '../actions/signTypedData.js'
+} from '../actions/signTypedData'
 
 export {
   type ReadContractParameters,
   type ReadContractReturnType,
   readContract,
-} from '../actions/readContract.js'
+} from '../actions/readContract'
 
 export {
   type ReadContractsParameters,
   type ReadContractsReturnType,
   readContracts,
-} from '../actions/readContracts.js'
+} from '../actions/readContracts'
 
 export {
   type CallContractParameters,
   type CallContractReturnType,
   type CallContractErrorType,
   callContract,
-} from '../actions/callContract.js'
+} from '../actions/callContract'
 
 export {
   type DeployContractParameters,
   type DeployContractReturnType,
   type DeployContractErrorType,
   deployContract,
-} from '../actions/deployContract.js'
+} from '../actions/deployContract'
 
 export {
   type SimulateContractParameters,
   type SimulateContractReturnType,
   simulateContract,
-} from '../actions/simulateContract.js'
+} from '../actions/simulateContract'
 
 export {
   type CompileContractParameters,
   type CompileContractReturnType,
   type CompileContractErrorType,
   compileContract,
-} from '../actions/compileContract.js'
+} from '../actions/compileContract'
 
 export {
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
   type GetContractBytecodeErrorType,
   getContractBytecode,
-} from '../actions/getContractBytecode.js'
+} from '../actions/getContractBytecode'
 
 export {
   type GetContractEventsParameters,
   type GetContractEventsReturnType,
   type ContractEvent,
   getContractEvents,
-} from '../actions/getContractEvents.js'
+} from '../actions/getContractEvents'
 
 export {
   type GetNameEntryParameters,
   type GetNameEntryReturnType,
   type GetNameEntryErrorType,
   getNameEntry,
-} from '../actions/getNameEntry.js'
+} from '../actions/getNameEntry'
 
 export {
   type ResolveNameParameters,
   type ResolveNameReturnType,
   type ResolveNameErrorType,
   resolveName,
-} from '../actions/resolveName.js'
+} from '../actions/resolveName'
 
 export {
   type PreclaimNameParameters,
   type PreclaimNameReturnType,
   type PreclaimNameErrorType,
   preclaimName,
-} from '../actions/preclaimName.js'
+} from '../actions/preclaimName'
 
 export {
   type ClaimNameParameters,
   type ClaimNameReturnType,
   type ClaimNameErrorType,
   claimName,
-} from '../actions/claimName.js'
+} from '../actions/claimName'
 
 export {
   type UpdateNameParameters,
@@ -239,14 +239,14 @@ export {
   type UpdateNameErrorType,
   type NamePointer,
   updateName,
-} from '../actions/updateName.js'
+} from '../actions/updateName'
 
 export {
   type GetOracleStateParameters,
   type GetOracleStateReturnType,
   type GetOracleStateErrorType,
   getOracleState,
-} from '../actions/getOracleState.js'
+} from '../actions/getOracleState'
 
 export {
   type GetOracleQueriesParameters,
@@ -254,106 +254,106 @@ export {
   type GetOracleQueriesErrorType,
   type OracleQuery,
   getOracleQueries,
-} from '../actions/getOracleQueries.js'
+} from '../actions/getOracleQueries'
 
 export {
   type WatchNetworkIdParameters,
   type WatchNetworkIdReturnType,
   watchNetworkId,
-} from '../actions/watchNetworkId.js'
+} from '../actions/watchNetworkId'
 
 export {
   type WatchConnectorsParameters,
   type WatchConnectorsReturnType,
   watchConnectors,
-} from '../actions/watchConnectors.js'
+} from '../actions/watchConnectors'
 
 export {
   type WatchConnectionsParameters,
   type WatchConnectionsReturnType,
   watchConnections,
-} from '../actions/watchConnections.js'
+} from '../actions/watchConnections'
 
 export {
   type WatchConnectionParameters,
   type WatchConnectionReturnType,
   watchConnection,
-} from '../actions/watchConnection.js'
+} from '../actions/watchConnection'
 
 export {
   type WatchHeightParameters,
   type WatchHeightReturnType,
   watchHeight,
-} from '../actions/watchHeight.js'
+} from '../actions/watchHeight'
 
 export {
   type WatchNodeClientParameters,
   type WatchNodeClientReturnType,
   watchNodeClient,
-} from '../actions/watchNodeClient.js'
+} from '../actions/watchNodeClient'
 
 export {
   type WaitForTransactionConfirmParameters,
   type WaitForTransactionConfirmReturnType,
   type WaitForTransactionConfirmErrorType,
   waitForTransactionConfirm,
-} from '../actions/waitForTransactionConfirm.js'
+} from '../actions/waitForTransactionConfirm'
 
 export {
   type EstimateGasParameters,
   type EstimateGasReturnType,
   type EstimateGasErrorType,
   estimateGas,
-} from '../actions/estimateGas.js'
+} from '../actions/estimateGas'
 
 export {
   type BuildTransactionParameters,
   type BuildTransactionReturnType,
   type BuildTransactionErrorType,
   buildTransaction,
-} from '../actions/buildTransaction.js'
+} from '../actions/buildTransaction'
 
 export {
   type TransferFundsParameters,
   type TransferFundsReturnType,
   type TransferFundsErrorType,
   transferFunds,
-} from '../actions/transferFunds.js'
+} from '../actions/transferFunds'
 
 export {
   type PayForTransactionParameters,
   type PayForTransactionReturnType,
   type PayForTransactionErrorType,
   payForTransaction,
-} from '../actions/payForTransaction.js'
+} from '../actions/payForTransaction'
 
 export {
   type SignTransactionParameters,
   type SignTransactionReturnType,
   type SignTransactionErrorType,
   signTransaction,
-} from '../actions/signTransaction.js'
+} from '../actions/signTransaction'
 
 export {
   type VerifyMessageParameters,
   type VerifyMessageReturnType,
   type VerifyMessageErrorType,
   verifyMessage,
-} from '../actions/verifyMessage.js'
+} from '../actions/verifyMessage'
 
 export {
   type VerifyTypedDataParameters,
   type VerifyTypedDataReturnType,
   type VerifyTypedDataErrorType,
   verifyTypedData,
-} from '../actions/verifyTypedData.js'
+} from '../actions/verifyTypedData'
 
 export {
   type SignDelegationParameters,
   type SignDelegationReturnType,
   type SignDelegationErrorType,
   signDelegation,
-} from '../actions/signDelegation.js'
+} from '../actions/signDelegation'
 
 // AENS sub-module actions (non-conflicting with root-level)
 
@@ -361,19 +361,19 @@ export {
   type BidNameParameters,
   type BidNameReturnType,
   bidName,
-} from '../actions/aens/bidName.js'
+} from '../actions/aens/bidName'
 
 export {
   type RevokeNameParameters,
   type RevokeNameReturnType,
   revokeName,
-} from '../actions/aens/revokeName.js'
+} from '../actions/aens/revokeName'
 
 export {
   type TransferNameParameters,
   type TransferNameReturnType,
   transferName,
-} from '../actions/aens/transferName.js'
+} from '../actions/aens/transferName'
 
 // Channel sub-module actions
 
@@ -381,31 +381,31 @@ export {
   type OpenChannelParameters,
   type OpenChannelReturnType,
   openChannel,
-} from '../actions/channel/openChannel.js'
+} from '../actions/channel/openChannel'
 
 export {
   type CloseChannelParameters,
   type CloseChannelReturnType,
   closeChannel,
-} from '../actions/channel/closeChannel.js'
+} from '../actions/channel/closeChannel'
 
 export {
   type ChannelDepositParameters,
   type ChannelDepositReturnType,
   channelDeposit,
-} from '../actions/channel/channelDeposit.js'
+} from '../actions/channel/channelDeposit'
 
 export {
   type ChannelWithdrawParameters,
   type ChannelWithdrawReturnType,
   channelWithdraw,
-} from '../actions/channel/channelWithdraw.js'
+} from '../actions/channel/channelWithdraw'
 
 export {
   type ChannelTransferParameters,
   type ChannelTransferReturnType,
   channelTransfer,
-} from '../actions/channel/channelTransfer.js'
+} from '../actions/channel/channelTransfer'
 
 export {
   type ChannelContractCreateParameters,
@@ -417,7 +417,7 @@ export {
   channelContractCreate,
   channelContractCall,
   channelContractCallStatic,
-} from '../actions/channel/channelContract.js'
+} from '../actions/channel/channelContract'
 
 // Oracle sub-module actions (non-conflicting with root-level)
 
@@ -425,25 +425,25 @@ export {
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
   registerOracle,
-} from '../actions/oracle/registerOracle.js'
+} from '../actions/oracle/registerOracle'
 
 export {
   type ExtendOracleParameters,
   type ExtendOracleReturnType,
   extendOracle,
-} from '../actions/oracle/extendOracle.js'
+} from '../actions/oracle/extendOracle'
 
 export {
   type QueryOracleParameters,
   type QueryOracleReturnType,
   queryOracle,
-} from '../actions/oracle/queryOracle.js'
+} from '../actions/oracle/queryOracle'
 
 export {
   type RespondToQueryParameters,
   type RespondToQueryReturnType,
   respondToQuery,
-} from '../actions/oracle/respondToQuery.js'
+} from '../actions/oracle/respondToQuery'
 
 // GA sub-module actions
 
@@ -451,10 +451,10 @@ export {
   type CreateGeneralizedAccountParameters,
   type CreateGeneralizedAccountReturnType,
   createGeneralizedAccount,
-} from '../actions/ga/createGeneralizedAccount.js'
+} from '../actions/ga/createGeneralizedAccount'
 
 export {
   type BuildAuthTxHashParameters,
   type BuildAuthTxHashReturnType,
   buildAuthTxHash,
-} from '../actions/ga/buildAuthTxHash.js'
+} from '../actions/ga/buildAuthTxHash'

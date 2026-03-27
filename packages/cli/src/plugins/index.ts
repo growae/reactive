@@ -1,2 +1,2 @@
-export { aci } from './aci.js'
-export { compiler } from './compiler.js'
+export { aci } from './aci'
+export { compiler } from './compiler'

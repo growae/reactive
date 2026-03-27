@@ -3,9 +3,9 @@ import {
   type GetMicroBlockParameters,
   type GetMicroBlockReturnType,
   getMicroBlock,
-} from '../actions/getMicroBlock.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/getMicroBlock'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type GetMicroBlockOptions = ExactPartial<GetMicroBlockParameters>
 

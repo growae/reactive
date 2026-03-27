@@ -1,6 +1,7 @@
-import { DEFAULT_TTL } from '../constants.js'
-import type { Config } from '../createConfig.js'
-import { BaseError } from '../errors/base.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants'
+import type { Config } from '../createConfig'
+import { BaseError } from '../errors/base'
 
 export type DeployContractParameters = {
   sourceCode?: string
@@ -71,7 +72,6 @@ export async function deployContract(
 
   const node = config.getNodeClient({ networkId })
 
-  const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
     onAccount: connection.accounts[0] as `ak_${string}`,

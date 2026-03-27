@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ConnectorNotFoundError } from '../errors/config.js'
-import { switchConnection } from './switchConnection.js'
+import { ConnectorNotFoundError } from '../errors/config'
+import { switchConnection } from './switchConnection'
 
 describe('switchConnection', () => {
   it('should be a function', () => {

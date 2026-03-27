@@ -8,9 +8,9 @@ import {
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseDeployContractParameters<context = unknown> = Compute<
   ConfigParameter & {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useWaitForTransaction } from './useWaitForTransaction.js'
+import { useWaitForTransaction } from './useWaitForTransaction'
 
 describe('useWaitForTransaction', () => {
   it('should be a function', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { preclaimName } from './preclaimName.js'
+import { preclaimName } from './preclaimName'
 
 describe('preclaimName', () => {
   it('should be a function', () => {

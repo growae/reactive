@@ -4,8 +4,8 @@ import {
   type SendTransactionParameters,
   type SendTransactionReturnType,
   sendTransaction,
-} from '../actions/sendTransaction.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/sendTransaction'
+import type { Config } from '../createConfig'
 
 export function sendTransactionMutationOptions(config: Config) {
   return {

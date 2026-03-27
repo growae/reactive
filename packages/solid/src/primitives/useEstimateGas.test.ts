@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useEstimateGas } from './useEstimateGas.js'
+import { useEstimateGas } from './useEstimateGas'
 
 describe('useEstimateGas', () => {
   it('should be a function', () => {

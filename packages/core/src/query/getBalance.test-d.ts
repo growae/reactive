@@ -1,10 +1,10 @@
 import { expectTypeOf, test } from 'vitest'
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 import {
   type GetBalanceQueryKey,
   getBalanceQueryKey,
   getBalanceQueryOptions,
-} from './getBalance.js'
+} from './getBalance'
 
 test('getBalanceQueryOptions returns object with queryFn', () => {
   const options = getBalanceQueryOptions({} as Config)

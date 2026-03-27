@@ -4,8 +4,8 @@ import {
   type UpdateNameParameters,
   type UpdateNameReturnType,
   updateName,
-} from '../actions/updateName.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/updateName'
+import type { Config } from '../createConfig'
 
 export function updateNameMutationOptions(config: Config) {
   return {

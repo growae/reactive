@@ -2,7 +2,7 @@ import { createEmitter } from '@growae/reactive'
 import type { ConnectorEventMap } from '@growae/reactive'
 import type { Network } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { metamaskSnap } from './metamaskSnap.js'
+import { metamaskSnap } from './metamaskSnap'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 const SIGNED_TX = 'tx_signed_snap_abc123'

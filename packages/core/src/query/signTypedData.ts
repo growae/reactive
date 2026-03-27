@@ -4,8 +4,8 @@ import {
   type SignTypedDataParameters,
   type SignTypedDataReturnType,
   signTypedData,
-} from '../actions/signTypedData.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/signTypedData'
+import type { Config } from '../createConfig'
 
 export function signTypedDataMutationOptions(config: Config) {
   return {

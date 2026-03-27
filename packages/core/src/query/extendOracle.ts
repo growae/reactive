@@ -3,8 +3,8 @@ import {
   type ExtendOracleParameters,
   type ExtendOracleReturnType,
   extendOracle,
-} from '../actions/oracle/extendOracle.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/oracle/extendOracle'
+import type { Config } from '../createConfig'
 
 export type ExtendOracleErrorType = Error
 

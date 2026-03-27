@@ -4,8 +4,8 @@ import {
   type DisconnectParameters,
   type DisconnectReturnType,
   disconnect,
-} from '../actions/disconnect.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/disconnect'
+import type { Config } from '../createConfig'
 
 export function disconnectMutationOptions(config: Config) {
   return {

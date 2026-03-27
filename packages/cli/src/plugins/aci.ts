@@ -1,7 +1,7 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 
-import type { ContractConfig, Plugin } from '../config.js'
+import type { ContractConfig, Plugin } from '../config'
 
 export type AciConfig = {
   /** Directory containing ACI JSON files */
@@ -18,7 +18,6 @@ export function aci(config: AciConfig): Plugin {
   return {
     name: 'ACI',
     async contracts() {
-      const { readdir } = await import('node:fs/promises')
       const dir = resolve(process.cwd(), config.directory)
       const pattern = config.pattern ?? '.json'
 

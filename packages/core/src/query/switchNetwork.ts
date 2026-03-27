@@ -4,8 +4,8 @@ import {
   type SwitchNetworkParameters,
   type SwitchNetworkReturnType,
   switchNetwork,
-} from '../actions/switchNetwork.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/switchNetwork'
+import type { Config } from '../createConfig'
 
 export function switchNetworkMutationOptions(config: Config) {
   return {

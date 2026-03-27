@@ -3,7 +3,7 @@ import {
   type ConnectParameters,
   type ConnectReturnType,
   connect,
-} from './connect.js'
+} from './connect'
 
 test('connect returns Promise<ConnectReturnType>', () => {
   expectTypeOf(connect).returns.toEqualTypeOf<Promise<ConnectReturnType>>()
