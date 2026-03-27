@@ -1,7 +1,5 @@
 import {
-  type PayForTransactionErrorType,
   type PayForTransactionParameters,
-  type PayForTransactionReturnType,
   payForTransaction,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

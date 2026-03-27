@@ -52,12 +52,12 @@ export function useQueryOracle<context = unknown>(
     mutationFn: (variables: QueryOracleParameters) =>
       queryOracle(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseQueryOracleReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    queryOracle: mutation.mutate as Return['queryOracle'],
-    queryOracleAsync: mutation.mutateAsync as Return['queryOracleAsync'],
+    queryOracle: mutation.mutate as unknown as Return['queryOracle'],
+    queryOracleAsync: mutation.mutateAsync as unknown as Return['queryOracleAsync'],
   }
 }

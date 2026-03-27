@@ -52,12 +52,12 @@ export function useTransferName<context = unknown>(
     mutationFn: (variables: TransferNameParameters) =>
       transferName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseTransferNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    transferName: mutation.mutate as Return['transferName'],
-    transferNameAsync: mutation.mutateAsync as Return['transferNameAsync'],
+    transferName: mutation.mutate as unknown as Return['transferName'],
+    transferNameAsync: mutation.mutateAsync as unknown as Return['transferNameAsync'],
   }
 }

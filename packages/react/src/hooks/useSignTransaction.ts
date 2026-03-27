@@ -53,13 +53,13 @@ export function useSignTransaction<context = unknown>(
     mutationFn: (variables: SignTransactionParameters) =>
       signTransaction(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSignTransactionReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    signTransaction: mutation.mutate as Return['signTransaction'],
+    signTransaction: mutation.mutate as unknown as Return['signTransaction'],
     signTransactionAsync:
-      mutation.mutateAsync as Return['signTransactionAsync'],
+      mutation.mutateAsync as unknown as Return['signTransactionAsync'],
   }
 }

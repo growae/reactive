@@ -1,6 +1,5 @@
 import {
   type UpdateNameParameters,
-  type UpdateNameReturnType,
   updateName,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

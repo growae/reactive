@@ -50,12 +50,12 @@ export function useSpend<context = unknown>(
     mutationKey: ['spend'],
     mutationFn: (variables: SpendParameters) => spend(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSpendReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    spend: mutation.mutate as Return['spend'],
-    spendAsync: mutation.mutateAsync as Return['spendAsync'],
+    spend: mutation.mutate as unknown as Return['spend'],
+    spendAsync: mutation.mutateAsync as unknown as Return['spendAsync'],
   }
 }

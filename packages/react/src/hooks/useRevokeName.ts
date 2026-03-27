@@ -52,12 +52,12 @@ export function useRevokeName<context = unknown>(
     mutationFn: (variables: RevokeNameParameters) =>
       revokeName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseRevokeNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    revokeName: mutation.mutate as Return['revokeName'],
-    revokeNameAsync: mutation.mutateAsync as Return['revokeNameAsync'],
+    revokeName: mutation.mutate as unknown as Return['revokeName'],
+    revokeNameAsync: mutation.mutateAsync as unknown as Return['revokeNameAsync'],
   }
 }

@@ -53,12 +53,12 @@ export function useReconnect<context = unknown>(
     mutationFn: (variables: ReconnectParameters = {}) =>
       reconnect(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseReconnectReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    reconnect: mutation.mutate as Return['reconnect'],
-    reconnectAsync: mutation.mutateAsync as Return['reconnectAsync'],
+    reconnect: mutation.mutate as unknown as Return['reconnect'],
+    reconnectAsync: mutation.mutateAsync as unknown as Return['reconnectAsync'],
   }
 }

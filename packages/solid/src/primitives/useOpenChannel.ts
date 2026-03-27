@@ -1,6 +1,5 @@
 import {
   type OpenChannelParameters,
-  type OpenChannelReturnType,
   openChannel,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

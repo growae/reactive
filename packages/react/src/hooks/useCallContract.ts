@@ -53,12 +53,12 @@ export function useCallContract<context = unknown>(
     mutationFn: (variables: CallContractParameters) =>
       callContract(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseCallContractReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    callContract: mutation.mutate as Return['callContract'],
-    callContractAsync: mutation.mutateAsync as Return['callContractAsync'],
+    callContract: mutation.mutate as unknown as Return['callContract'],
+    callContractAsync: mutation.mutateAsync as unknown as Return['callContractAsync'],
   }
 }

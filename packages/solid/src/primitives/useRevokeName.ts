@@ -1,6 +1,5 @@
 import {
   type RevokeNameParameters,
-  type RevokeNameReturnType,
   revokeName,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

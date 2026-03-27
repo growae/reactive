@@ -52,12 +52,12 @@ export function usePreclaimName<context = unknown>(
     mutationFn: (variables: PreclaimNameParameters) =>
       preclaimName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UsePreclaimNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    preclaimName: mutation.mutate as Return['preclaimName'],
-    preclaimNameAsync: mutation.mutateAsync as Return['preclaimNameAsync'],
+    preclaimName: mutation.mutate as unknown as Return['preclaimName'],
+    preclaimNameAsync: mutation.mutateAsync as unknown as Return['preclaimNameAsync'],
   }
 }

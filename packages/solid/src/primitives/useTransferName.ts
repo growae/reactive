@@ -1,6 +1,5 @@
 import {
   type TransferNameParameters,
-  type TransferNameReturnType,
   transferName,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

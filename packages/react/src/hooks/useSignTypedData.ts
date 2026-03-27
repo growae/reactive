@@ -53,12 +53,12 @@ export function useSignTypedData<context = unknown>(
     mutationFn: (variables: SignTypedDataParameters) =>
       signTypedData(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSignTypedDataReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    signTypedData: mutation.mutate as Return['signTypedData'],
-    signTypedDataAsync: mutation.mutateAsync as Return['signTypedDataAsync'],
+    signTypedData: mutation.mutate as unknown as Return['signTypedData'],
+    signTypedDataAsync: mutation.mutateAsync as unknown as Return['signTypedDataAsync'],
   }
 }

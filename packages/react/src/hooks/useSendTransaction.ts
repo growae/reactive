@@ -53,13 +53,13 @@ export function useSendTransaction<context = unknown>(
     mutationFn: (variables: SendTransactionParameters) =>
       sendTransaction(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSendTransactionReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    sendTransaction: mutation.mutate as Return['sendTransaction'],
+    sendTransaction: mutation.mutate as unknown as Return['sendTransaction'],
     sendTransactionAsync:
-      mutation.mutateAsync as Return['sendTransactionAsync'],
+      mutation.mutateAsync as unknown as Return['sendTransactionAsync'],
   }
 }

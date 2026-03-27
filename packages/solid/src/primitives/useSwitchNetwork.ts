@@ -1,7 +1,5 @@
 import {
-  type SwitchNetworkErrorType,
   type SwitchNetworkParameters,
-  type SwitchNetworkReturnType,
   switchNetwork,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

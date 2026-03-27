@@ -1,7 +1,5 @@
 import {
-  type SignTypedDataErrorType,
   type SignTypedDataParameters,
-  type SignTypedDataReturnType,
   signTypedData,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

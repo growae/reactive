@@ -52,12 +52,12 @@ export function useCloseChannel<context = unknown>(
     mutationFn: (variables: CloseChannelParameters) =>
       closeChannel(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseCloseChannelReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    closeChannel: mutation.mutate as Return['closeChannel'],
-    closeChannelAsync: mutation.mutateAsync as Return['closeChannelAsync'],
+    closeChannel: mutation.mutate as unknown as Return['closeChannel'],
+    closeChannelAsync: mutation.mutateAsync as unknown as Return['closeChannelAsync'],
   }
 }

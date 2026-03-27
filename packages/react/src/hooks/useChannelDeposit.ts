@@ -52,12 +52,12 @@ export function useChannelDeposit<context = unknown>(
     mutationFn: (variables: ChannelDepositParameters) =>
       channelDeposit(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseChannelDepositReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    channelDeposit: mutation.mutate as Return['channelDeposit'],
-    channelDepositAsync: mutation.mutateAsync as Return['channelDepositAsync'],
+    channelDeposit: mutation.mutate as unknown as Return['channelDeposit'],
+    channelDepositAsync: mutation.mutateAsync as unknown as Return['channelDepositAsync'],
   }
 }

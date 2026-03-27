@@ -10,7 +10,6 @@ import { useNetworkId } from './useNetworkId.js'
 export type UseWatchHeightParameters = Compute<
   ConfigParameter & {
     onHeight: (height: number) => void
-    onError?: (error: Error) => void
     enabled?: boolean
     interval?: number
     networkId?: string
@@ -28,17 +27,14 @@ export function useWatchHeight(
   const networkId = paramNetworkId ?? configNetworkId
 
   const onHeightRef = useRef(parameters.onHeight)
-  const onErrorRef = useRef(parameters.onError)
   onHeightRef.current = parameters.onHeight
-  onErrorRef.current = parameters.onError
 
   useEffect(() => {
     if (!enabled) return
     if (!onHeightRef.current) return
     return watchHeight(config, {
       onChange: (height) => onHeightRef.current?.(height),
-      onError: (error) => onErrorRef.current?.(error),
-      interval,
+      pollingInterval: interval,
       networkId,
     })
   }, [config, enabled, interval, networkId])

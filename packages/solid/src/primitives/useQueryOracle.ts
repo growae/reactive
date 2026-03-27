@@ -1,6 +1,5 @@
 import {
   type QueryOracleParameters,
-  type QueryOracleReturnType,
   queryOracle,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

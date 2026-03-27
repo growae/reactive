@@ -1,6 +1,5 @@
 import {
   type PreclaimNameParameters,
-  type PreclaimNameReturnType,
   preclaimName,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

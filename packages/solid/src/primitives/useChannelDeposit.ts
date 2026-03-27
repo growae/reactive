@@ -1,6 +1,5 @@
 import {
   type ChannelDepositParameters,
-  type ChannelDepositReturnType,
   channelDeposit,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

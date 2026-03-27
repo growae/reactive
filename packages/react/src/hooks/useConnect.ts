@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  type Config,
   type ConnectErrorType,
   type ConnectParameters,
   type ConnectReturnType,
@@ -60,7 +59,7 @@ export function useConnect<context = unknown>(
     mutationKey: ['connect'],
     mutationFn: (variables: ConnectParameters) => connect(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   useEffect(() => {
     return config.subscribe(
@@ -75,8 +74,8 @@ export function useConnect<context = unknown>(
   type Return = UseConnectReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    connect: mutation.mutate as Return['connect'],
-    connectAsync: mutation.mutateAsync as Return['connectAsync'],
+    connect: mutation.mutate as unknown as Return['connect'],
+    connectAsync: mutation.mutateAsync as unknown as Return['connectAsync'],
     connectors: useConnectors({ config }),
   }
 }

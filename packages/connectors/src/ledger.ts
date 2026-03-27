@@ -103,7 +103,7 @@ export function ledger(parameters: LedgerParameters) {
     async signTransaction({ tx, networkId, innerTx }) {
       if (!factory || !connected) throw new ConnectorNotConnectedError()
       const account = await factory.initialize(accountIndex)
-      return account.signTransaction(tx, {
+      return account.signTransaction(tx as `tx_${string}`, {
         networkId,
         innerTx,
       })

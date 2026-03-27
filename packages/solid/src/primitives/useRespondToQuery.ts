@@ -1,6 +1,5 @@
 import {
   type RespondToQueryParameters,
-  type RespondToQueryReturnType,
   respondToQuery,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

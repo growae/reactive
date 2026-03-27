@@ -1,7 +1,5 @@
 import {
-  type SendTransactionErrorType,
   type SendTransactionParameters,
-  type SendTransactionReturnType,
   sendTransaction,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

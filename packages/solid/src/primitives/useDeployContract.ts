@@ -1,7 +1,5 @@
 import {
-  type DeployContractErrorType,
   type DeployContractParameters,
-  type DeployContractReturnType,
   deployContract,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

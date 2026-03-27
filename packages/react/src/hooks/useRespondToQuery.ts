@@ -52,12 +52,12 @@ export function useRespondToQuery<context = unknown>(
     mutationFn: (variables: RespondToQueryParameters) =>
       respondToQuery(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseRespondToQueryReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    respondToQuery: mutation.mutate as Return['respondToQuery'],
-    respondToQueryAsync: mutation.mutateAsync as Return['respondToQueryAsync'],
+    respondToQuery: mutation.mutate as unknown as Return['respondToQuery'],
+    respondToQueryAsync: mutation.mutateAsync as unknown as Return['respondToQueryAsync'],
   }
 }

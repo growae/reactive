@@ -1,9 +1,9 @@
 'use client'
 
 import {
-  type GetConnectorClientParameters,
-  type GetConnectorClientReturnType,
-  getConnectorClient,
+  type GetConnectionReturnType,
+  type GetNodeClientParameters,
+  getConnection,
 } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties.js'
@@ -14,11 +14,11 @@ import { useConnection } from './useConnection.js'
 import { useNetworkId } from './useNetworkId.js'
 
 export type UseConnectorClientParameters = Compute<
-  GetConnectorClientParameters & ConfigParameter
+  GetNodeClientParameters & ConfigParameter
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<
-  GetConnectorClientReturnType,
+  GetConnectionReturnType,
   Error
 >
 
@@ -37,12 +37,7 @@ export function useConnectorClient(
         connector: connection?.connector?.uid,
       },
     ],
-    queryFn: () =>
-      getConnectorClient(config, {
-        ...parameters,
-        networkId: parameters.networkId ?? networkId,
-        connector: parameters.connector ?? connection?.connector,
-      }),
+    queryFn: () => getConnection(config),
     enabled: !!connection?.connector,
   }) as UseConnectorClientReturnType
 }

@@ -62,12 +62,12 @@ export function iframe(parameters: IframeParameters = {}) {
       )
       currentAccounts = accounts.map((a) => a.address)
 
-      frame.on('accountsChange', (accs) => {
-        currentAccounts = accs.map((a) => a.address)
+      frame.on('accountsChange', (accs: readonly { address: string }[]) => {
+        currentAccounts = accs.map((a: { address: string }) => a.address)
         this.onAccountsChanged([...currentAccounts])
       })
 
-      frame.on('networkIdChange', (nId) => {
+      frame.on('networkIdChange', (nId: string) => {
         currentNetworkId = nId
         this.onNetworkChanged(nId)
       })
@@ -120,7 +120,10 @@ export function iframe(parameters: IframeParameters = {}) {
       if (!provider) throw new ConnectorNotConnectedError()
       const account = provider.accounts[0]
       if (!account) throw new ConnectorNotConnectedError()
-      return account.signTransaction(tx, { networkId, innerTx })
+      return account.signTransaction(tx as `tx_${string}`, {
+        networkId,
+        innerTx,
+      })
     },
 
     async signMessage({ message, onAccount }) {

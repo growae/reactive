@@ -1,7 +1,5 @@
 import {
-  type ReconnectErrorType,
   type ReconnectParameters,
-  type ReconnectReturnType,
   reconnect,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

@@ -1,7 +1,5 @@
 import {
-  type SpendErrorType,
   type SpendParameters,
-  type SpendReturnType,
   spend,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

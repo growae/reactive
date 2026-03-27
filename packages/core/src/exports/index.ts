@@ -50,6 +50,26 @@ export { version } from '../version.js'
 export type { Network } from '../types/network.js'
 export { mainnet, testnet } from '../types/network.js'
 export type { Register, ResolvedRegister } from '../types/register.js'
+export type {
+  Compute,
+  ExactPartial,
+  ExactRequired,
+  IsNarrowable,
+  IsNever,
+  IsUnknown,
+  LooseOmit,
+  Merge,
+  Mutable,
+  OneOf,
+  PartialBy,
+  RemoveUndefined,
+  RequiredBy,
+  StrictOmit,
+  UnionCompute,
+  UnionExactPartial,
+  UnionLooseOmit,
+  UnionStrictOmit,
+} from '../types/utils.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors

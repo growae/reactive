@@ -52,12 +52,12 @@ export function useOpenChannel<context = unknown>(
     mutationFn: (variables: OpenChannelParameters) =>
       openChannel(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseOpenChannelReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    openChannel: mutation.mutate as Return['openChannel'],
-    openChannelAsync: mutation.mutateAsync as Return['openChannelAsync'],
+    openChannel: mutation.mutate as unknown as Return['openChannel'],
+    openChannelAsync: mutation.mutateAsync as unknown as Return['openChannelAsync'],
   }
 }

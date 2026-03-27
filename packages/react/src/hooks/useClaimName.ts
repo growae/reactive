@@ -52,12 +52,12 @@ export function useClaimName<context = unknown>(
     mutationFn: (variables: ClaimNameParameters) =>
       claimName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseClaimNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    claimName: mutation.mutate as Return['claimName'],
-    claimNameAsync: mutation.mutateAsync as Return['claimNameAsync'],
+    claimName: mutation.mutate as unknown as Return['claimName'],
+    claimNameAsync: mutation.mutateAsync as unknown as Return['claimNameAsync'],
   }
 }

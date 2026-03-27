@@ -1,7 +1,5 @@
 import {
-  type SignTransactionErrorType,
   type SignTransactionParameters,
-  type SignTransactionReturnType,
   signTransaction,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

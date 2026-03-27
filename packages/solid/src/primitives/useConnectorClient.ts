@@ -1,7 +1,7 @@
 import {
-  type GetConnectorClientParameters,
-  type GetConnectorClientReturnType,
-  getConnectorClient,
+  type GetConnectionReturnType,
+  type GetNodeClientParameters,
+  getConnection,
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
@@ -11,13 +11,13 @@ import { useConnection } from './useConnection.js'
 import { useNetworkId } from './useNetworkId.js'
 
 export type UseConnectorClientParameters = Accessor<
-  GetConnectorClientParameters & {
+  GetNodeClientParameters & {
     config?: import('@growae/reactive').Config | undefined
   }
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<
-  GetConnectorClientReturnType,
+  GetConnectionReturnType,
   Error
 >
 
@@ -36,12 +36,7 @@ export function useConnectorClient(
         connector: connection()?.connector?.uid,
       },
     ] as const,
-    queryFn: () =>
-      getConnectorClient(config(), {
-        ...parameters(),
-        networkId: parameters().networkId ?? networkId(),
-        connector: parameters().connector ?? connection()?.connector,
-      }),
+    queryFn: () => getConnection(config()),
     enabled: !!connection()?.connector,
   }))
 

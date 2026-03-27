@@ -52,12 +52,12 @@ export function useUpdateName<context = unknown>(
     mutationFn: (variables: UpdateNameParameters) =>
       updateName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseUpdateNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    updateName: mutation.mutate as Return['updateName'],
-    updateNameAsync: mutation.mutateAsync as Return['updateNameAsync'],
+    updateName: mutation.mutate as unknown as Return['updateName'],
+    updateNameAsync: mutation.mutateAsync as unknown as Return['updateNameAsync'],
   }
 }

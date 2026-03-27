@@ -53,12 +53,12 @@ export function useDeployContract<context = unknown>(
     mutationFn: (variables: DeployContractParameters) =>
       deployContract(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseDeployContractReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    deployContract: mutation.mutate as Return['deployContract'],
-    deployContractAsync: mutation.mutateAsync as Return['deployContractAsync'],
+    deployContract: mutation.mutate as unknown as Return['deployContract'],
+    deployContractAsync: mutation.mutateAsync as unknown as Return['deployContractAsync'],
   }
 }

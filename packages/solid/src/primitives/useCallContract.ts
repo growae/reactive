@@ -1,7 +1,5 @@
 import {
-  type CallContractErrorType,
   type CallContractParameters,
-  type CallContractReturnType,
   callContract,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

@@ -1,7 +1,5 @@
 import {
-  type DisconnectErrorType,
   type DisconnectParameters,
-  type DisconnectReturnType,
   disconnect,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

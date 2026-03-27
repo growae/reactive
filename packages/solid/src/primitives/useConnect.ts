@@ -1,7 +1,5 @@
 import {
-  type ConnectErrorType,
   type ConnectParameters,
-  type ConnectReturnType,
   connect,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

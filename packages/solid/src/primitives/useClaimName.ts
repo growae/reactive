@@ -1,6 +1,5 @@
 import {
   type ClaimNameParameters,
-  type ClaimNameReturnType,
   claimName,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'

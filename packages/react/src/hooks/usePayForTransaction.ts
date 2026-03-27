@@ -53,13 +53,13 @@ export function usePayForTransaction<context = unknown>(
     mutationFn: (variables: PayForTransactionParameters) =>
       payForTransaction(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UsePayForTransactionReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    payForTransaction: mutation.mutate as Return['payForTransaction'],
+    payForTransaction: mutation.mutate as unknown as Return['payForTransaction'],
     payForTransactionAsync:
-      mutation.mutateAsync as Return['payForTransactionAsync'],
+      mutation.mutateAsync as unknown as Return['payForTransactionAsync'],
   }
 }
