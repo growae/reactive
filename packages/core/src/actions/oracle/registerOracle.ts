@@ -69,10 +69,7 @@ export async function registerOracle(
 
   const result = await node.postTransaction({ tx: signed })
 
-  const oracleId = senderId.replace(
-    'ak_',
-    'ok_',
-  ) as `ok_${string}`
+  const oracleId = senderId.replace('ak_', 'ok_') as `ok_${string}`
 
   return {
     oracleId,
