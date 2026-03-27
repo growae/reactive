@@ -1,0 +1,7 @@
+import type { Config } from '../createConfig.js'
+
+export type GetNetworkIdReturnType = string
+
+export function getNetworkId(config: Config): GetNetworkIdReturnType {
+  return config.state.networkId
+}
