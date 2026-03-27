@@ -86,7 +86,7 @@ describe('template copying', () => {
 
     for (const variant of allVariants) {
       const templateDir = join(templatesDir, variant)
-      if (!existsSync(templateDir)) continue
+      expect(existsSync(templateDir)).toBe(true)
       const files = readdirSync(templateDir)
       expect(files.length).toBeGreaterThan(0)
       expect(files).toContain('package.json')
