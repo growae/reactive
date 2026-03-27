@@ -19,13 +19,11 @@ describe('useConfig', () => {
   })
 
   it('should throw ReactiveProviderNotFoundError when no config', () => {
-    const config = useConfig(() => ({}))
-    expect(() => config()).toThrow(ReactiveProviderNotFoundError)
+    expect(() => useConfig(() => ({}))).toThrow(ReactiveProviderNotFoundError)
   })
 
   it('should throw with descriptive message', () => {
-    const config = useConfig(() => ({}))
-    expect(() => config()).toThrow(
+    expect(() => useConfig(() => ({}))).toThrow(
       '`useConfig` must be used within `ReactiveProvider`.',
     )
   })

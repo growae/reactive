@@ -9,7 +9,7 @@ describe('watchNodeClient', () => {
   it('should call config.subscribe and return unsubscribe function', () => {
     const unsubscribe = vi.fn()
     const mockConfig = {
-      getNode: vi.fn().mockReturnValue({}),
+      getNodeClient: vi.fn().mockReturnValue({}),
       subscribe: vi.fn().mockReturnValue(unsubscribe),
     }
 
@@ -25,7 +25,7 @@ describe('watchNodeClient', () => {
   it('should handle missing node gracefully', () => {
     const unsubscribe = vi.fn()
     const mockConfig = {
-      getNode: vi.fn().mockImplementation(() => {
+      getNodeClient: vi.fn().mockImplementation(() => {
         throw new Error('no node')
       }),
       subscribe: vi.fn().mockReturnValue(unsubscribe),

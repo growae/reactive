@@ -17,7 +17,7 @@ describe('deployContract', () => {
 
   it('should throw DeployContractNoCodeError without sourceCode or bytecode', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => ({})),
+      getNodeClient: vi.fn(() => ({})),
       state: { current: { account: 'ak_test' } },
     }
 
@@ -28,8 +28,8 @@ describe('deployContract', () => {
 
   it('should throw DeployContractNoAccountError without connected account', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => ({})),
-      state: { current: undefined },
+      getNodeClient: vi.fn(() => ({})),
+      state: { current: undefined, connections: new Map() },
     }
 
     await expect(

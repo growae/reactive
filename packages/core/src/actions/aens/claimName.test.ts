@@ -8,8 +8,8 @@ describe('claimName', () => {
 
   it('should throw ClaimNameNoAccountError without connected account', async () => {
     const mockConfig = {
-      state: { current: null },
-      getNode: vi.fn().mockReturnValue({}),
+      state: { current: null, connections: new Map() },
+      getNodeClient: vi.fn().mockReturnValue({}),
     }
     await expect(
       claimName(mockConfig as any, { name: 'test.chain' }),

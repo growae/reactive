@@ -8,8 +8,8 @@ describe('extendOracle', () => {
 
   it('should throw ExtendOracleNoAccountError without connected account', async () => {
     const mockConfig = {
-      state: { current: null },
-      getNode: vi.fn().mockReturnValue({}),
+      state: { current: null, connections: new Map() },
+      getNodeClient: vi.fn().mockReturnValue({}),
     }
     await expect(
       extendOracle(mockConfig as any, {

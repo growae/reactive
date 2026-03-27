@@ -4,8 +4,6 @@ import type { Network } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { iframe } from './iframe.js'
 
-const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
-
 function makeConfig(
   networks: Network[] = [
     { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
@@ -19,15 +17,22 @@ function makeConfig(
   }
 }
 
-const mockFrame = {
-  networkId: 'ae_uat',
-  isConnected: true,
-  accounts: [{ address: TEST_ADDRESS }],
-  subscribeAccounts: vi.fn().mockResolvedValue([{ address: TEST_ADDRESS }]),
-  askToSelectNetwork: vi.fn().mockResolvedValue(undefined),
-  disconnect: vi.fn(),
-  on: vi.fn(),
-}
+const { TEST_ADDRESS, mockFrame } = vi.hoisted(() => {
+  const TEST_ADDRESS =
+    'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
+  return {
+    TEST_ADDRESS,
+    mockFrame: {
+      networkId: 'ae_uat',
+      isConnected: true,
+      accounts: [{ address: TEST_ADDRESS }],
+      subscribeAccounts: vi.fn().mockResolvedValue([{ address: TEST_ADDRESS }]),
+      askToSelectNetwork: vi.fn().mockResolvedValue(undefined),
+      disconnect: vi.fn(),
+      on: vi.fn(),
+    },
+  }
+})
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   WalletConnectorFrame: {

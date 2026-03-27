@@ -55,7 +55,6 @@ export function useRevokeName<context = unknown>(
   const {
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
-    onSettled: mutationOnSettled,
     ...mutationRest
   } = parameters.mutation ?? {}
 
@@ -67,7 +66,6 @@ export function useRevokeName<context = unknown>(
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,
-      onSettled: mutationOnSettled,
     }),
   })
 

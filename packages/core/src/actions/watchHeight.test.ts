@@ -8,7 +8,7 @@ describe('watchHeight', () => {
 
   it('should return an unsubscribe function', () => {
     const mockConfig = {
-      getNode: vi.fn().mockReturnValue({
+      getNodeClient: vi.fn().mockReturnValue({
         getStatus: vi.fn().mockResolvedValue({ topBlockHeight: 100 }),
       }),
     }
@@ -24,7 +24,7 @@ describe('watchHeight', () => {
 
   it('should stop polling when unsubscribed', () => {
     const mockConfig = {
-      getNode: vi.fn().mockReturnValue({
+      getNodeClient: vi.fn().mockReturnValue({
         getStatus: vi.fn().mockResolvedValue({ topBlockHeight: 1 }),
       }),
     }

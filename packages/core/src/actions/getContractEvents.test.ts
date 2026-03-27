@@ -12,7 +12,7 @@ describe('getContractEvents', () => {
 
   it('should throw when getNode fails', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => {
+      getNodeClient: vi.fn(() => {
         throw new Error('No node')
       }),
       state: { networkId: 'ae_uat' },
@@ -25,7 +25,7 @@ describe('getContractEvents', () => {
   it('should return empty array when node has no getTransactionInfoByHash', async () => {
     const mockNode = {}
     const mockConfig = {
-      getNode: vi.fn(() => mockNode),
+      getNodeClient: vi.fn(() => mockNode),
       state: { networkId: 'ae_uat' },
     }
 

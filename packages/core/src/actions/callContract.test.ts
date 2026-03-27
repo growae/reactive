@@ -13,8 +13,8 @@ describe('callContract', () => {
 
   it('should throw CallContractNoAccountError when no account and not static', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => ({})),
-      state: { current: undefined },
+      getNodeClient: vi.fn(() => ({})),
+      state: { current: undefined, connections: new Map() },
     }
 
     await expect(
@@ -28,10 +28,10 @@ describe('callContract', () => {
 
   it('should throw when getNode fails', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => {
+      getNodeClient: vi.fn(() => {
         throw new Error('No node')
       }),
-      state: { current: undefined },
+      state: { current: undefined, connections: new Map() },
     }
 
     await expect(

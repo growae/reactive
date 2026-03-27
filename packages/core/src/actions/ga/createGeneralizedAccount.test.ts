@@ -12,8 +12,8 @@ describe('createGeneralizedAccount', () => {
 
   it('should throw CreateGANoAccountError without connected account', async () => {
     const mockConfig = {
-      state: { current: null },
-      getNode: vi.fn().mockReturnValue({}),
+      state: { current: null, connections: new Map() },
+      getNodeClient: vi.fn().mockReturnValue({}),
     }
     await expect(
       createGeneralizedAccount(mockConfig as any, {
@@ -25,9 +25,13 @@ describe('createGeneralizedAccount', () => {
   })
 
   it('should throw CreateGANoCodeError without sourceCode or bytecode', async () => {
+    const current = { account: {} }
     const mockConfig = {
-      state: { current: { account: {} } },
-      getNode: vi.fn().mockReturnValue({}),
+      state: {
+        current,
+        connections: new Map([[current, {}]]),
+      },
+      getNodeClient: vi.fn().mockReturnValue({}),
     }
     await expect(
       createGeneralizedAccount(mockConfig as any, {

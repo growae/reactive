@@ -12,7 +12,7 @@ describe('simulateContract', () => {
 
   it('should throw when getNode fails', async () => {
     const mockConfig = {
-      getNode: vi.fn(() => {
+      getNodeClient: vi.fn(() => {
         throw new Error('No node')
       }),
       state: { current: undefined },

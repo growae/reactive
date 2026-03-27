@@ -8,8 +8,8 @@ describe('queryOracle', () => {
 
   it('should throw QueryOracleNoAccountError without connected account', async () => {
     const mockConfig = {
-      state: { current: null },
-      getNode: vi.fn().mockReturnValue({}),
+      state: { current: null, connections: new Map() },
+      getNodeClient: vi.fn().mockReturnValue({}),
     }
     await expect(
       queryOracle(mockConfig as any, {

@@ -18,7 +18,7 @@ describe('getOracleState', () => {
     const mockNode = {
       getOracleByPubkey: vi.fn().mockResolvedValue(mockResult),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await getOracleState(mockConfig as any, {
       oracleId: 'ok_oracle1',

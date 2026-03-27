@@ -55,7 +55,6 @@ export function useCloseChannel<context = unknown>(
   const {
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
-    onSettled: mutationOnSettled,
     ...mutationRest
   } = parameters.mutation ?? {}
 
@@ -67,7 +66,6 @@ export function useCloseChannel<context = unknown>(
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,
-      onSettled: mutationOnSettled,
     }),
   })
 

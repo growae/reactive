@@ -24,7 +24,7 @@ describe('getContractBytecode', () => {
 
   it('should return bytecode from node', async () => {
     const mockNode = {
-      getContractByPubkey: vi.fn().mockResolvedValue({
+      getContractCode: vi.fn().mockResolvedValue({
         bytecode: 'cb_bytecode123',
       }),
     }
@@ -36,13 +36,13 @@ describe('getContractBytecode', () => {
     const result = await getContractBytecode(mockConfig as any, {
       address: 'ct_test',
     })
-    expect(mockNode.getContractByPubkey).toHaveBeenCalledWith('ct_test')
+    expect(mockNode.getContractCode).toHaveBeenCalledWith('ct_test')
     expect(result.bytecode).toBe('cb_bytecode123')
   })
 
   it('should default bytecode to empty string when undefined', async () => {
     const mockNode = {
-      getContractByPubkey: vi.fn().mockResolvedValue({}),
+      getContractCode: vi.fn().mockResolvedValue({}),
     }
     const mockConfig = {
       getNodeClient: vi.fn(() => mockNode),

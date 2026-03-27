@@ -17,7 +17,7 @@ describe('getNameEntry', () => {
       getNameEntryByName: vi.fn().mockResolvedValue(mockEntry),
     }
     const mockConfig = {
-      getNode: vi.fn().mockReturnValue(mockNode),
+      getNodeClient: vi.fn().mockReturnValue(mockNode),
     }
 
     const result = await getNameEntry(mockConfig as any, { name: 'test.chain' })
@@ -44,7 +44,7 @@ describe('getNameEntry', () => {
     const mockNode = {
       getNameEntryByName: vi.fn().mockResolvedValue(mockEntry),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await getNameEntry(mockConfig as any, { name: 'x.chain' })
 

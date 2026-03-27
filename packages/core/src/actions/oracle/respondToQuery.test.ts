@@ -11,8 +11,8 @@ describe('respondToQuery', () => {
 
   it('should throw RespondToQueryNoAccountError without connected account', async () => {
     const mockConfig = {
-      state: { current: null },
-      getNode: vi.fn().mockReturnValue({}),
+      state: { current: null, connections: new Map() },
+      getNodeClient: vi.fn().mockReturnValue({}),
     }
     await expect(
       respondToQuery(mockConfig as any, {

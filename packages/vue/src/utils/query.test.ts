@@ -1,18 +1,20 @@
 import { describe, expect, it, vi } from 'vitest'
 
-const mockTanstackUseQuery = vi.fn((options: any) => {
-  const resolvedOpts =
-    typeof options.value === 'object' ? options.value : options
-  return {
-    data: { value: undefined },
-    error: { value: null },
-    isError: { value: false },
-    isPending: { value: true },
-    isSuccess: { value: false },
-    status: { value: 'pending' },
-    _passedOptions: resolvedOpts,
-  }
-})
+const mockTanstackUseQuery = vi.hoisted(() =>
+  vi.fn((options: any) => {
+    const resolvedOpts =
+      typeof options.value === 'object' ? options.value : options
+    return {
+      data: { value: undefined },
+      error: { value: null },
+      isError: { value: false },
+      isPending: { value: true },
+      isSuccess: { value: false },
+      status: { value: 'pending' },
+      _passedOptions: resolvedOpts,
+    }
+  }),
+)
 
 vi.mock('@tanstack/vue-query', () => ({
   useQuery: mockTanstackUseQuery,

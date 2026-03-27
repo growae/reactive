@@ -56,7 +56,6 @@ export function useSignMessage<context = unknown>(
   const {
     onSuccess: mutationOnSuccess,
     onError: mutationOnError,
-    onSettled: mutationOnSettled,
     ...mutationRest
   } = parameters.mutation ?? {}
 
@@ -68,7 +67,6 @@ export function useSignMessage<context = unknown>(
     ...adaptLegacyMutationCallbacks<context>({
       onSuccess: mutationOnSuccess,
       onError: mutationOnError,
-      onSettled: mutationOnSettled,
     }),
   })
 

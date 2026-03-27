@@ -13,7 +13,7 @@ describe('buildAuthTxHash', () => {
 
   it('should call sdk.buildAuthTxHash with tx and node', async () => {
     const mockNode = {}
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await buildAuthTxHash(mockConfig as any, {
       tx: 'tx_encoded',

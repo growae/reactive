@@ -15,7 +15,12 @@ describe('ReactiveProvider', () => {
 
   it('should accept config prop', () => {
     const mockConfig = {
-      _internal: { ssr: false },
+      _internal: {
+        ssr: false,
+        store: { persist: { hasHydrated: () => true, rehydrate: vi.fn() } },
+        revalidate: vi.fn(),
+      },
+      networks: [{ id: 'ae_uat' }],
       subscribe: vi.fn(() => vi.fn()),
       setState: vi.fn(),
       getState: vi.fn(() => ({

@@ -6,33 +6,31 @@ describe('watchConnectors', () => {
     expect(typeof watchConnectors).toBe('function')
   })
 
-  it('should call config.subscribe and return unsubscribe function', () => {
+  it('should call connectors.subscribe and return unsubscribe function', () => {
     const unsubscribe = vi.fn()
+    const subscribe = vi.fn().mockReturnValue(unsubscribe)
     const mockConfig = {
-      subscribe: vi.fn().mockReturnValue(unsubscribe),
+      _internal: { connectors: { subscribe } },
     }
     const onChange = vi.fn()
 
     const result = watchConnectors(mockConfig as any, { onChange })
 
-    expect(mockConfig.subscribe).toHaveBeenCalledWith(
-      expect.any(Function),
-      onChange,
-    )
+    expect(subscribe).toHaveBeenCalledWith(onChange)
     expect(typeof result).toBe('function')
     expect(result).toBe(unsubscribe)
   })
 
-  it('should select connectors from state', () => {
+  it('does not use a state selector; forwards listener to connectors store', () => {
+    const subscribe = vi.fn().mockReturnValue(vi.fn())
     const mockConfig = {
-      subscribe: vi.fn().mockReturnValue(vi.fn()),
+      _internal: { connectors: { subscribe } },
     }
     const onChange = vi.fn()
 
     watchConnectors(mockConfig as any, { onChange })
 
-    const selector = mockConfig.subscribe.mock.calls[0]![0]
-    expect(selector({ connectors: ['a', 'b'] })).toEqual(['a', 'b'])
-    expect(selector({})).toEqual([])
+    expect(subscribe).toHaveBeenCalledWith(onChange)
+    expect(subscribe.mock.calls[0]).toEqual([onChange])
   })
 })

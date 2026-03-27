@@ -37,7 +37,8 @@ describe('signTransaction', () => {
 
     const result = await signTransaction(mockConfig as any, { tx: 'tx_test' })
     expect(result).toBe('signed_tx')
-    expect(mockConnector.signTransaction).toHaveBeenCalledWith('tx_test', {
+    expect(mockConnector.signTransaction).toHaveBeenCalledWith({
+      tx: 'tx_test',
       networkId: 'ae_uat',
       innerTx: undefined,
     })
@@ -75,7 +76,8 @@ describe('signTransaction', () => {
     }
 
     await signTransaction(mockConfig as any, { tx: 'tx_test', innerTx: true })
-    expect(mockConnector.signTransaction).toHaveBeenCalledWith('tx_test', {
+    expect(mockConnector.signTransaction).toHaveBeenCalledWith({
+      tx: 'tx_test',
       networkId: 'ae_uat',
       innerTx: true,
     })

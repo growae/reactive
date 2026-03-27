@@ -12,7 +12,7 @@ describe('resolveName', () => {
         pointers: [{ key: 'account_pubkey', id: 'ak_resolved' }],
       }),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await resolveName(mockConfig as any, { name: 'test.chain' })
 
@@ -25,7 +25,7 @@ describe('resolveName', () => {
         pointers: [{ key: 'contract_pubkey', id: 'ct_other' }],
       }),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await resolveName(mockConfig as any, { name: 'test.chain' })
 
@@ -36,7 +36,7 @@ describe('resolveName', () => {
     const mockNode = {
       getNameEntryByName: vi.fn().mockRejectedValue(new Error('not found')),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     await expect(
       resolveName(mockConfig as any, { name: 'missing.chain' }),

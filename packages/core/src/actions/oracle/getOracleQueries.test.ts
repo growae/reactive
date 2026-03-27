@@ -24,7 +24,7 @@ describe('getOracleQueries', () => {
     const mockNode = {
       getOracleQueriesByPubkey: vi.fn().mockResolvedValue(mockQueries),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await getOracleQueries(mockConfig as any, {
       oracleId: 'ok_oracle1',
@@ -43,7 +43,7 @@ describe('getOracleQueries', () => {
         .fn()
         .mockResolvedValue({ oracleQueries: [] }),
     }
-    const mockConfig = { getNode: vi.fn().mockReturnValue(mockNode) }
+    const mockConfig = { getNodeClient: vi.fn().mockReturnValue(mockNode) }
 
     const result = await getOracleQueries(mockConfig as any, {
       oracleId: 'ok_oracle1',
