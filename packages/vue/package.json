@@ -14,6 +14,10 @@
       "types": "./dist/types/exports/query.d.ts",
       "default": "./dist/esm/exports/query.js"
     },
+    "./nuxt": {
+      "types": "./dist/types/nuxt/index.d.ts",
+      "default": "./dist/esm/nuxt/index.js"
+    },
     "./package.json": "./package.json"
   },
   "scripts": {
