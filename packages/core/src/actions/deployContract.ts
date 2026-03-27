@@ -1,5 +1,6 @@
 import type { Config } from '../createConfig.js'
 import { BaseError } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants.js'
 
 export type DeployContractParameters = {
   sourceCode?: string
@@ -12,6 +13,8 @@ export type DeployContractParameters = {
     gasPrice?: bigint
     fee?: bigint
     deposit?: bigint
+    /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+    ttl?: number
   }
   networkId?: string
 }
@@ -83,6 +86,7 @@ export async function deployContract(
     gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
     deposit: txOptions.deposit != null ? Number(txOptions.deposit) : undefined,
+    ttl: txOptions.ttl ?? DEFAULT_TTL,
   })
 
   return {

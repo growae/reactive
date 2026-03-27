@@ -1,6 +1,7 @@
 import { buildTxAsync, Tag } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants.js'
 
 export type BuildTransactionParameters = {
   tag: Tag
@@ -22,6 +23,7 @@ export async function buildTransaction(
   const tx = await buildTxAsync({
     ...txFields,
     tag,
+    ttl: txFields.ttl ?? DEFAULT_TTL,
     onNode: node,
   })
 

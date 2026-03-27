@@ -1,5 +1,6 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type QueryOracleParameters = {
   oracleId: string
@@ -7,6 +8,8 @@ export type QueryOracleParameters = {
   queryFee?: bigint
   queryTtl?: { type: 'delta' | 'block'; value: number }
   responseTtl?: { type: 'delta' | 'block'; value: number }
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -28,7 +31,7 @@ export async function queryOracle(
   config: Config,
   parameters: QueryOracleParameters,
 ): Promise<QueryOracleReturnType> {
-  const { oracleId, query, queryFee, queryTtl, responseTtl, networkId } = parameters
+  const { oracleId, query, queryFee, queryTtl, responseTtl, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -45,7 +48,7 @@ export async function queryOracle(
     ...(responseTtl ? { responseTtl } : {}),
   })
 
-  const result = await oracleClient.postQuery(query)
+  const result = await oracleClient.postQuery(query, { ttl: ttl ?? DEFAULT_TTL })
 
   return {
     queryId: result.queryId,

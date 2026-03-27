@@ -1,11 +1,14 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type RegisterOracleParameters = {
   queryFormat: string
   responseFormat: string
   queryFee?: bigint
   oracleTtl?: { type: 'delta' | 'block'; value: number }
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -27,7 +30,7 @@ export async function registerOracle(
   config: Config,
   parameters: RegisterOracleParameters,
 ): Promise<RegisterOracleReturnType> {
-  const { queryFormat, responseFormat, queryFee, oracleTtl, networkId } = parameters
+  const { queryFormat, responseFormat, queryFee, oracleTtl, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -42,7 +45,7 @@ export async function registerOracle(
     ...(oracleTtl ? { oracleTtl } : {}),
   })
 
-  const result = await oracle.register(queryFormat, responseFormat)
+  const result = await oracle.register(queryFormat, responseFormat, { ttl: ttl ?? DEFAULT_TTL })
 
   return {
     oracleId: oracle.address,

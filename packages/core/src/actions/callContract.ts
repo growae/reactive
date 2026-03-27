@@ -1,5 +1,6 @@
 import type { Config } from '../createConfig.js'
 import { BaseError } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants.js'
 
 export type CallContractParameters = {
   address: string
@@ -11,6 +12,8 @@ export type CallContractParameters = {
     gasLimit?: number
     gasPrice?: bigint
     fee?: bigint
+    /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+    ttl?: number
     callStatic?: boolean
   }
   networkId?: string
@@ -68,6 +71,7 @@ export async function callContract(
     gasLimit: txOptions.gasLimit,
     gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
+    ttl: txOptions.ttl ?? DEFAULT_TTL,
   })
 
   return {

@@ -1,10 +1,13 @@
 import { buildTxAsync, Tag } from '@aeternity/aepp-sdk'
 import type { Config, Connector } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants.js'
 import { sendTransaction } from './sendTransaction.js'
 
 export type PayForTransactionParameters = {
   innerTx: string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number | undefined
   networkId?: string | undefined
   connector?: Connector | undefined
   waitMined?: boolean | undefined
@@ -24,7 +27,7 @@ export async function payForTransaction(
   config: Config,
   parameters: PayForTransactionParameters,
 ): Promise<PayForTransactionReturnType> {
-  const { innerTx, networkId, connector, waitMined = true } = parameters
+  const { innerTx, ttl, networkId, connector, waitMined = true } = parameters
 
   let payerConnector: Connector | undefined = connector
   if (!payerConnector) {
@@ -49,6 +52,7 @@ export async function payForTransaction(
     tag: Tag.PayingForTx,
     payerId,
     tx: innerTx,
+    ttl: ttl ?? DEFAULT_TTL,
     onNode: node,
   })
 

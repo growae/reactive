@@ -1,8 +1,11 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type RevokeNameParameters = {
   name: string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -23,7 +26,7 @@ export async function revokeName(
   config: Config,
   parameters: RevokeNameParameters,
 ): Promise<RevokeNameReturnType> {
-  const { name, networkId } = parameters
+  const { name, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -37,7 +40,7 @@ export async function revokeName(
     onAccount: connection.account,
   })
 
-  const result = await nameInstance.revoke()
+  const result = await nameInstance.revoke({ ttl: ttl ?? DEFAULT_TTL })
 
   return {
     txHash: result.hash,

@@ -1,6 +1,7 @@
 import { buildTxAsync, Tag, unpackTx } from '@aeternity/aepp-sdk'
 import type { Config, Connector } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants.js'
 import { getBalance } from './getBalance.js'
 import { sendTransaction } from './sendTransaction.js'
 
@@ -9,6 +10,8 @@ export type TransferFundsParameters = {
   recipient: string
   networkId?: string | undefined
   connector?: Connector | undefined
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number | undefined
   waitMined?: boolean | undefined
 }
 
@@ -26,7 +29,7 @@ export async function transferFunds(
   config: Config,
   parameters: TransferFundsParameters,
 ): Promise<TransferFundsReturnType> {
-  const { fraction, recipient, networkId, connector, waitMined = true } = parameters
+  const { fraction, recipient, networkId, connector, ttl, waitMined = true } = parameters
 
   if (fraction < 0 || fraction > 1) {
     throw new Error(
@@ -66,6 +69,7 @@ export async function transferFunds(
     senderId,
     recipientId: recipient,
     amount: desiredAmount.toString(),
+    ttl: ttl ?? DEFAULT_TTL,
     onNode: node,
   })
   const unpacked = unpackTx(estimateTx, Tag.SpendTx)
@@ -79,6 +83,7 @@ export async function transferFunds(
     senderId,
     recipientId: recipient,
     amount: (amount < 0n ? 0n : amount).toString(),
+    ttl: ttl ?? DEFAULT_TTL,
     onNode: node,
   })
 

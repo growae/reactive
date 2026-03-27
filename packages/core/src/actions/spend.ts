@@ -1,5 +1,6 @@
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { DEFAULT_TTL } from '../constants.js'
 
 export type SpendParameters = {
   recipientId: string
@@ -48,7 +49,7 @@ export async function spend(
     amount: BigInt(amount),
     payload: payload ?? '',
     fee: txOptions.fee ? BigInt(txOptions.fee) : undefined,
-    ttl: txOptions.ttl,
+    ttl: txOptions.ttl ?? DEFAULT_TTL,
     nonce,
   })
 

@@ -1,10 +1,13 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type ClaimNameParameters = {
   name: string
   salt?: number
   nameFee?: bigint | string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -26,7 +29,7 @@ export async function claimName(
   config: Config,
   parameters: ClaimNameParameters,
 ): Promise<ClaimNameReturnType> {
-  const { name, salt: _salt, nameFee, networkId } = parameters
+  const { name, salt: _salt, nameFee, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -42,6 +45,7 @@ export async function claimName(
 
   const result = await nameInstance.claim({
     ...(nameFee != null ? { nameFee: nameFee.toString() } : {}),
+    ttl: ttl ?? DEFAULT_TTL,
   })
 
   return {

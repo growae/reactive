@@ -1,5 +1,6 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type NamePointer = {
   key: string
@@ -10,6 +11,8 @@ export type UpdateNameParameters = {
   name: string
   pointers: NamePointer[]
   extendPointers?: boolean
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -30,7 +33,7 @@ export async function updateName(
   config: Config,
   parameters: UpdateNameParameters,
 ): Promise<UpdateNameReturnType> {
-  const { name, pointers, extendPointers, networkId } = parameters
+  const { name, pointers, extendPointers, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -50,6 +53,7 @@ export async function updateName(
 
   const result = await nameInstance.update(pointersMap as any, {
     extendPointers,
+    ttl: ttl ?? DEFAULT_TTL,
   })
 
   return {

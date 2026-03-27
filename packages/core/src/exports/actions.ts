@@ -255,3 +255,206 @@ export {
   type OracleQuery,
   getOracleQueries,
 } from '../actions/getOracleQueries.js'
+
+export {
+  type WatchNetworkIdParameters,
+  type WatchNetworkIdReturnType,
+  watchNetworkId,
+} from '../actions/watchNetworkId.js'
+
+export {
+  type WatchConnectorsParameters,
+  type WatchConnectorsReturnType,
+  watchConnectors,
+} from '../actions/watchConnectors.js'
+
+export {
+  type WatchConnectionsParameters,
+  type WatchConnectionsReturnType,
+  watchConnections,
+} from '../actions/watchConnections.js'
+
+export {
+  type WatchConnectionParameters,
+  type WatchConnectionReturnType,
+  watchConnection,
+} from '../actions/watchConnection.js'
+
+export {
+  type WatchHeightParameters,
+  type WatchHeightReturnType,
+  watchHeight,
+} from '../actions/watchHeight.js'
+
+export {
+  type WatchNodeClientParameters,
+  type WatchNodeClientReturnType,
+  watchNodeClient,
+} from '../actions/watchNodeClient.js'
+
+export {
+  type WaitForTransactionConfirmParameters,
+  type WaitForTransactionConfirmReturnType,
+  type WaitForTransactionConfirmErrorType,
+  waitForTransactionConfirm,
+} from '../actions/waitForTransactionConfirm.js'
+
+export {
+  type EstimateGasParameters,
+  type EstimateGasReturnType,
+  type EstimateGasErrorType,
+  estimateGas,
+} from '../actions/estimateGas.js'
+
+export {
+  type BuildTransactionParameters,
+  type BuildTransactionReturnType,
+  type BuildTransactionErrorType,
+  buildTransaction,
+} from '../actions/buildTransaction.js'
+
+export {
+  type TransferFundsParameters,
+  type TransferFundsReturnType,
+  type TransferFundsErrorType,
+  transferFunds,
+} from '../actions/transferFunds.js'
+
+export {
+  type PayForTransactionParameters,
+  type PayForTransactionReturnType,
+  type PayForTransactionErrorType,
+  payForTransaction,
+} from '../actions/payForTransaction.js'
+
+export {
+  type SignTransactionParameters,
+  type SignTransactionReturnType,
+  type SignTransactionErrorType,
+  signTransaction,
+} from '../actions/signTransaction.js'
+
+export {
+  type VerifyMessageParameters,
+  type VerifyMessageReturnType,
+  type VerifyMessageErrorType,
+  verifyMessage,
+} from '../actions/verifyMessage.js'
+
+export {
+  type VerifyTypedDataParameters,
+  type VerifyTypedDataReturnType,
+  type VerifyTypedDataErrorType,
+  verifyTypedData,
+} from '../actions/verifyTypedData.js'
+
+export {
+  type SignDelegationParameters,
+  type SignDelegationReturnType,
+  type SignDelegationErrorType,
+  signDelegation,
+} from '../actions/signDelegation.js'
+
+// AENS sub-module actions (non-conflicting with root-level)
+
+export {
+  type BidNameParameters,
+  type BidNameReturnType,
+  bidName,
+} from '../actions/aens/bidName.js'
+
+export {
+  type RevokeNameParameters,
+  type RevokeNameReturnType,
+  revokeName,
+} from '../actions/aens/revokeName.js'
+
+export {
+  type TransferNameParameters,
+  type TransferNameReturnType,
+  transferName,
+} from '../actions/aens/transferName.js'
+
+// Channel sub-module actions
+
+export {
+  type OpenChannelParameters,
+  type OpenChannelReturnType,
+  openChannel,
+} from '../actions/channel/openChannel.js'
+
+export {
+  type CloseChannelParameters,
+  type CloseChannelReturnType,
+  closeChannel,
+} from '../actions/channel/closeChannel.js'
+
+export {
+  type ChannelDepositParameters,
+  type ChannelDepositReturnType,
+  channelDeposit,
+} from '../actions/channel/channelDeposit.js'
+
+export {
+  type ChannelWithdrawParameters,
+  type ChannelWithdrawReturnType,
+  channelWithdraw,
+} from '../actions/channel/channelWithdraw.js'
+
+export {
+  type ChannelTransferParameters,
+  type ChannelTransferReturnType,
+  channelTransfer,
+} from '../actions/channel/channelTransfer.js'
+
+export {
+  type ChannelContractCreateParameters,
+  type ChannelContractCreateReturnType,
+  type ChannelContractCallParameters,
+  type ChannelContractCallReturnType,
+  type ChannelContractCallStaticParameters,
+  type ChannelContractCallStaticReturnType,
+  channelContractCreate,
+  channelContractCall,
+  channelContractCallStatic,
+} from '../actions/channel/channelContract.js'
+
+// Oracle sub-module actions (non-conflicting with root-level)
+
+export {
+  type RegisterOracleParameters,
+  type RegisterOracleReturnType,
+  registerOracle,
+} from '../actions/oracle/registerOracle.js'
+
+export {
+  type ExtendOracleParameters,
+  type ExtendOracleReturnType,
+  extendOracle,
+} from '../actions/oracle/extendOracle.js'
+
+export {
+  type QueryOracleParameters,
+  type QueryOracleReturnType,
+  queryOracle,
+} from '../actions/oracle/queryOracle.js'
+
+export {
+  type RespondToQueryParameters,
+  type RespondToQueryReturnType,
+  respondToQuery,
+} from '../actions/oracle/respondToQuery.js'
+
+// GA sub-module actions
+
+export {
+  type CreateGeneralizedAccountParameters,
+  type CreateGeneralizedAccountReturnType,
+  createGeneralizedAccount,
+} from '../actions/ga/createGeneralizedAccount.js'
+
+export {
+  type BuildAuthTxHashParameters,
+  type BuildAuthTxHashReturnType,
+  buildAuthTxHash,
+} from '../actions/ga/buildAuthTxHash.js'

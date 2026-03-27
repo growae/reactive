@@ -1,9 +1,12 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type BidNameParameters = {
   name: string
   nameFee: bigint | string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -24,7 +27,7 @@ export async function bidName(
   config: Config,
   parameters: BidNameParameters,
 ): Promise<BidNameReturnType> {
-  const { name, nameFee, networkId } = parameters
+  const { name, nameFee, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -38,7 +41,7 @@ export async function bidName(
     onAccount: connection.account,
   })
 
-  const result = await nameInstance.bid(nameFee.toString())
+  const result = await nameInstance.bid(nameFee.toString(), { ttl: ttl ?? DEFAULT_TTL })
 
   return {
     txHash: result.hash,

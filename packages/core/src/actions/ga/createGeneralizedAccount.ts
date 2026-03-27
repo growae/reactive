@@ -1,5 +1,6 @@
 import type { Config } from '../../createConfig.js'
 import { BaseError } from '../../errors/base.js'
+import { DEFAULT_TTL } from '../../constants.js'
 
 export type CreateGeneralizedAccountParameters = {
   authFnName: string
@@ -7,6 +8,8 @@ export type CreateGeneralizedAccountParameters = {
   sourceCode?: string
   bytecode?: string
   aci?: any
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -35,7 +38,7 @@ export async function createGeneralizedAccount(
   config: Config,
   parameters: CreateGeneralizedAccountParameters,
 ): Promise<CreateGeneralizedAccountReturnType> {
-  const { authFnName, args, sourceCode, bytecode, aci, networkId } = parameters
+  const { authFnName, args, sourceCode, bytecode, aci, ttl, networkId } = parameters
 
   const node = config.getNode({ networkId })
   const connection = config.state.current
@@ -55,6 +58,7 @@ export async function createGeneralizedAccount(
     ...(sourceCode ? { sourceCode } : {}),
     ...(bytecode ? { bytecode } : {}),
     ...(aci ? { aci } : {}),
+    ttl: ttl ?? DEFAULT_TTL,
   })
 
   return {
