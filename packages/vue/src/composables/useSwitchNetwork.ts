@@ -7,6 +7,7 @@ import type {
 import { switchNetwork } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 import { useNetworks } from './useNetworks.js'
@@ -21,6 +22,12 @@ export type UseSwitchNetworkParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: SwitchNetworkErrorType,
+        variables: SwitchNetworkParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: SwitchNetworkReturnType | undefined,
+        error: SwitchNetworkErrorType | null,
         variables: SwitchNetworkParameters,
         context: context,
       ) => void
@@ -48,11 +55,23 @@ export function useSwitchNetwork<context = unknown>(
 ): UseSwitchNetworkReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['switchNetwork'],
     mutationFn: (variables: SwitchNetworkParameters) =>
       switchNetwork(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseSwitchNetworkReturnType<context>

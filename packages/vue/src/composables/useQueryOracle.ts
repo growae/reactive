@@ -6,6 +6,7 @@ import type {
 import { queryOracle } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -19,6 +20,12 @@ export type UseQueryOracleParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: Error,
+        variables: QueryOracleParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: QueryOracleReturnType | undefined,
+        error: Error | null,
         variables: QueryOracleParameters,
         context: context,
       ) => void
@@ -45,11 +52,23 @@ export function useQueryOracle<context = unknown>(
 ): UseQueryOracleReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['queryOracle'],
     mutationFn: (variables: QueryOracleParameters) =>
       queryOracle(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseQueryOracleReturnType<context>

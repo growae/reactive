@@ -58,6 +58,7 @@ export function useQueryOracle<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     queryOracle: mutation.mutate as unknown as Return['queryOracle'],
-    queryOracleAsync: mutation.mutateAsync as unknown as Return['queryOracleAsync'],
+    queryOracleAsync:
+      mutation.mutateAsync as unknown as Return['queryOracleAsync'],
   }
 }

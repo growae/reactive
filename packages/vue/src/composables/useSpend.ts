@@ -7,6 +7,7 @@ import type {
 import { spend } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -20,6 +21,12 @@ export type UseSpendParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: SpendErrorType,
+        variables: SpendParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: SpendReturnType | undefined,
+        error: SpendErrorType | null,
         variables: SpendParameters,
         context: context,
       ) => void
@@ -44,10 +51,22 @@ export function useSpend<context = unknown>(
 ): UseSpendReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['spend'],
     mutationFn: (variables: SpendParameters) => spend(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseSpendReturnType<context>

@@ -7,6 +7,7 @@ import type {
 import { deployContract } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -20,6 +21,12 @@ export type UseDeployContractParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: DeployContractErrorType,
+        variables: DeployContractParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: DeployContractReturnType | undefined,
+        error: DeployContractErrorType | null,
         variables: DeployContractParameters,
         context: context,
       ) => void
@@ -46,11 +53,23 @@ export function useDeployContract<context = unknown>(
 ): UseDeployContractReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['deployContract'],
     mutationFn: (variables: DeployContractParameters) =>
       deployContract(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseDeployContractReturnType<context>

@@ -58,6 +58,7 @@ export function useRespondToQuery<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     respondToQuery: mutation.mutate as unknown as Return['respondToQuery'],
-    respondToQueryAsync: mutation.mutateAsync as unknown as Return['respondToQueryAsync'],
+    respondToQueryAsync:
+      mutation.mutateAsync as unknown as Return['respondToQueryAsync'],
   }
 }

@@ -61,7 +61,8 @@ export function useSwitchNetwork<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     switchNetwork: mutation.mutate as unknown as Return['switchNetwork'],
-    switchNetworkAsync: mutation.mutateAsync as unknown as Return['switchNetworkAsync'],
+    switchNetworkAsync:
+      mutation.mutateAsync as unknown as Return['switchNetworkAsync'],
     networks: useNetworks({ config }),
   }
 }

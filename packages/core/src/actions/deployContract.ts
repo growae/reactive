@@ -83,15 +83,19 @@ export async function deployContract(
       : {}),
   } as any)
 
-  const deployResult = await contractInstance.$deploy(initArgs as any, {
-    amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
-    gasLimit: txOptions.gasLimit,
-    gasPrice:
-      txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
-    fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
-    deposit: txOptions.deposit != null ? Number(txOptions.deposit) : undefined,
-    ttl: txOptions.ttl ?? DEFAULT_TTL,
-  } as Parameters<typeof contractInstance.$deploy>[1])
+  const deployResult = await contractInstance.$deploy(
+    initArgs as any,
+    {
+      amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
+      gasLimit: txOptions.gasLimit,
+      gasPrice:
+        txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
+      fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
+      deposit:
+        txOptions.deposit != null ? Number(txOptions.deposit) : undefined,
+      ttl: txOptions.ttl ?? DEFAULT_TTL,
+    } as Parameters<typeof contractInstance.$deploy>[1],
+  )
 
   return {
     address: (deployResult.address as string) ?? '',

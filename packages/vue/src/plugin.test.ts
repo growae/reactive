@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createApp, inject } from 'vue'
+import { createApp, defineComponent, inject } from 'vue'
 import { ReactivePlugin, configKey } from './plugin.js'
 
 function createMockConfig() {
@@ -30,23 +30,17 @@ describe('ReactivePlugin', () => {
 
   it('should provide config via configKey when installed', () => {
     const mockConfig = createMockConfig()
-    const app = createApp({
+    const el = document.createElement('div')
+    const TestRoot = defineComponent({
       setup() {
+        expect(inject(configKey)).toBe(mockConfig)
         return () => null
       },
     })
-
-    let _injectedConfig: unknown
-    app.component('TestChild', {
-      setup() {
-        _injectedConfig = inject(configKey)
-        return () => null
-      },
-    })
-
+    const app = createApp(TestRoot)
     app.use(ReactivePlugin, { config: mockConfig as any })
-
-    expect(app).toBeDefined()
+    app.mount(el)
+    app.unmount()
   })
 
   it('should default reconnectOnMount to true', () => {

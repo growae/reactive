@@ -41,9 +41,12 @@ export async function transferName(
     onAccount: connection.accounts[0] as any,
   })
 
-  const result = await nameInstance.transfer(recipient as any, {
-    ttl: ttl ?? DEFAULT_TTL,
-  } as any)
+  const result = await nameInstance.transfer(
+    recipient as any,
+    {
+      ttl: ttl ?? DEFAULT_TTL,
+    } as any,
+  )
 
   return {
     txHash: result.hash,

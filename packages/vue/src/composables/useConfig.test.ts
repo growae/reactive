@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createApp, defineComponent, h, inject, provide } from 'vue'
+import { createApp, defineComponent } from 'vue'
 import {
   ReactiveInjectionContextError,
   ReactivePluginNotFoundError,

@@ -7,6 +7,7 @@ import type {
 import { signTransaction } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -20,6 +21,12 @@ export type UseSignTransactionParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: SignTransactionErrorType,
+        variables: SignTransactionParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: string | undefined,
+        error: SignTransactionErrorType | null,
         variables: SignTransactionParameters,
         context: context,
       ) => void
@@ -46,11 +53,23 @@ export function useSignTransaction<context = unknown>(
 ): UseSignTransactionReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['signTransaction'],
     mutationFn: (variables: SignTransactionParameters) =>
       signTransaction(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseSignTransactionReturnType<context>

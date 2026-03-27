@@ -7,6 +7,7 @@ import type {
 import { disconnect } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -20,6 +21,12 @@ export type UseDisconnectParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: DisconnectErrorType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: DisconnectReturnType | undefined,
+        error: DisconnectErrorType | null,
         variables: DisconnectParameters,
         context: context,
       ) => void
@@ -46,11 +53,23 @@ export function useDisconnect<context = unknown>(
 ): UseDisconnectReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['disconnect'],
     mutationFn: (variables: DisconnectParameters = {}) =>
       disconnect(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseDisconnectReturnType<context>

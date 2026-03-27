@@ -59,6 +59,7 @@ export function useDeployContract<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     deployContract: mutation.mutate as unknown as Return['deployContract'],
-    deployContractAsync: mutation.mutateAsync as unknown as Return['deployContractAsync'],
+    deployContractAsync:
+      mutation.mutateAsync as unknown as Return['deployContractAsync'],
   }
 }

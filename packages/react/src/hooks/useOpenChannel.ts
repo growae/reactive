@@ -58,6 +58,7 @@ export function useOpenChannel<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     openChannel: mutation.mutate as unknown as Return['openChannel'],
-    openChannelAsync: mutation.mutateAsync as unknown as Return['openChannelAsync'],
+    openChannelAsync:
+      mutation.mutateAsync as unknown as Return['openChannelAsync'],
   }
 }

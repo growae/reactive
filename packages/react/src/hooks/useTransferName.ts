@@ -58,6 +58,7 @@ export function useTransferName<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     transferName: mutation.mutate as unknown as Return['transferName'],
-    transferNameAsync: mutation.mutateAsync as unknown as Return['transferNameAsync'],
+    transferNameAsync:
+      mutation.mutateAsync as unknown as Return['transferNameAsync'],
   }
 }

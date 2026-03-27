@@ -36,10 +36,13 @@ export async function extendOracle(
   }
 
   const { Oracle } = await import('@aeternity/aepp-sdk')
-  const oracle = new Oracle(connection.accounts[0] as any, {
-    onNode: node,
-    oracleTtl,
-  } as any)
+  const oracle = new Oracle(
+    connection.accounts[0] as any,
+    {
+      onNode: node,
+      oracleTtl,
+    } as any,
+  )
 
   const result = await oracle.extendTtl({
     oracleTtl,

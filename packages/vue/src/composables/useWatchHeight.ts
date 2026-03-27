@@ -8,7 +8,6 @@ import { useNetworkId } from './useNetworkId.js'
 export type UseWatchHeightParameters = Compute<
   ConfigParameter & {
     onHeight: (height: number) => void
-    onError?: (error: Error) => void
     enabled?: MaybeRef<boolean>
     interval?: number
     networkId?: string
@@ -39,8 +38,7 @@ export function useWatchHeight(
 
       cleanup.value = watchHeight(config, {
         onChange: (height) => parameters.onHeight(height),
-        onError: (error) => parameters.onError?.(error),
-        interval: opts.interval,
+        pollingInterval: opts.interval,
         networkId: opts.networkId,
       })
     },

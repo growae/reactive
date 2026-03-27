@@ -47,7 +47,11 @@
     }
   },
   "devDependencies": {
-    "@vue/test-utils": "^2.4.6"
+    "@nuxt/kit": "^3.21.2",
+    "@tanstack/vue-query": "^5.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "nuxt": "^3.21.2",
+    "vue": "^3.5.0"
   },
   "publishConfig": {
     "access": "public"

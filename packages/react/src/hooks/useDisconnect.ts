@@ -59,6 +59,7 @@ export function useDisconnect<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     disconnect: mutation.mutate as unknown as Return['disconnect'],
-    disconnectAsync: mutation.mutateAsync as unknown as Return['disconnectAsync'],
+    disconnectAsync:
+      mutation.mutateAsync as unknown as Return['disconnectAsync'],
   }
 }

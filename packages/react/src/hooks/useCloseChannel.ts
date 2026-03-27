@@ -58,6 +58,7 @@ export function useCloseChannel<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     closeChannel: mutation.mutate as unknown as Return['closeChannel'],
-    closeChannelAsync: mutation.mutateAsync as unknown as Return['closeChannelAsync'],
+    closeChannelAsync:
+      mutation.mutateAsync as unknown as Return['closeChannelAsync'],
   }
 }

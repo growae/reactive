@@ -38,15 +38,8 @@ export async function createGeneralizedAccount(
   config: Config,
   parameters: CreateGeneralizedAccountParameters,
 ): Promise<CreateGeneralizedAccountReturnType> {
-  const {
-    authFnName,
-    args,
-    sourceCode,
-    bytecode,
-    aci,
-    onCompiler,
-    networkId,
-  } = parameters
+  const { authFnName, args, sourceCode, bytecode, aci, onCompiler, networkId } =
+    parameters
 
   const connection = config.state.connections.get(config.state.current!)
   if (!connection) {

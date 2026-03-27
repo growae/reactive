@@ -58,6 +58,7 @@ export function useUpdateName<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     updateName: mutation.mutate as unknown as Return['updateName'],
-    updateNameAsync: mutation.mutateAsync as unknown as Return['updateNameAsync'],
+    updateNameAsync:
+      mutation.mutateAsync as unknown as Return['updateNameAsync'],
   }
 }

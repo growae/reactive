@@ -7,6 +7,7 @@ import type {
 import { payForTransaction } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -20,6 +21,12 @@ export type UsePayForTransactionParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: PayForTransactionErrorType,
+        variables: PayForTransactionParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: PayForTransactionReturnType | undefined,
+        error: PayForTransactionErrorType | null,
         variables: PayForTransactionParameters,
         context: context,
       ) => void
@@ -46,11 +53,23 @@ export function usePayForTransaction<context = unknown>(
 ): UsePayForTransactionReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['payForTransaction'],
     mutationFn: (variables: PayForTransactionParameters) =>
       payForTransaction(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UsePayForTransactionReturnType<context>

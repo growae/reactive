@@ -58,6 +58,7 @@ export function useRegisterOracle<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     registerOracle: mutation.mutate as unknown as Return['registerOracle'],
-    registerOracleAsync: mutation.mutateAsync as unknown as Return['registerOracleAsync'],
+    registerOracleAsync:
+      mutation.mutateAsync as unknown as Return['registerOracleAsync'],
   }
 }

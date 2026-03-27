@@ -4,6 +4,7 @@ import {
   createResolver,
   defineNuxtModule,
 } from '@nuxt/kit'
+import type { Nuxt } from 'nuxt/schema'
 
 export interface ReactiveNuxtOptions {
   autoImports?: boolean
@@ -20,7 +21,7 @@ export default defineNuxtModule<ReactiveNuxtOptions>({
   defaults: {
     autoImports: true,
   },
-  setup(options, nuxt) {
+  setup(options: ReactiveNuxtOptions, nuxt: Nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
     nuxt.options.build.transpile.push('@growae/reactive-vue')

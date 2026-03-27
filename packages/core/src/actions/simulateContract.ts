@@ -36,7 +36,9 @@ export async function simulateContract(
   const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
-    ...(connection ? { onAccount: connection.accounts[0] as `ak_${string}` } : {}),
+    ...(connection
+      ? { onAccount: connection.accounts[0] as `ak_${string}` }
+      : {}),
     aci,
     address: address as `ct_${string}`,
   } as any)

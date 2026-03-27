@@ -30,7 +30,7 @@ export function useContractBytecode(
     queryKey: [
       'contractBytecode',
       {
-        contractId: parameters.contractId,
+        address: parameters.address,
         networkId: parameters.networkId ?? networkId.value,
       },
     ] as const,
@@ -39,7 +39,7 @@ export function useContractBytecode(
         ...parameters,
         networkId: parameters.networkId ?? networkId.value,
       }),
-    enabled: Boolean(parameters.contractId) && (parameters.enabled ?? true),
+    enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }))
 
   return useQuery(options) as UseContractBytecodeReturnType

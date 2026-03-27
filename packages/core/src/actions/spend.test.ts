@@ -104,9 +104,7 @@ describe('spend', () => {
     })
 
     const { buildTx } = await import('@aeternity/aepp-sdk')
-    expect(buildTx).toHaveBeenCalledWith(
-      expect.objectContaining({ nonce: 42 }),
-    )
+    expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 42 }))
   })
 
   it('should auto-increment nonce from account info', async () => {
@@ -125,8 +123,6 @@ describe('spend', () => {
     })
 
     const { buildTx } = await import('@aeternity/aepp-sdk')
-    expect(buildTx).toHaveBeenCalledWith(
-      expect.objectContaining({ nonce: 11 }),
-    )
+    expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 11 }))
   })
 })

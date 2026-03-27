@@ -59,6 +59,7 @@ export function useSignMessage<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     signMessage: mutation.mutate as unknown as Return['signMessage'],
-    signMessageAsync: mutation.mutateAsync as unknown as Return['signMessageAsync'],
+    signMessageAsync:
+      mutation.mutateAsync as unknown as Return['signMessageAsync'],
   }
 }

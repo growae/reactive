@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { useBalance } from './useBalance.js'
 
-const mockUseQuery = vi.fn(() => ({
+const mockUseQuery = vi.fn((_options?: unknown) => ({
   data: { value: undefined },
   error: { value: null },
   isError: { value: false },
@@ -12,7 +12,7 @@ const mockUseQuery = vi.fn(() => ({
 }))
 
 vi.mock('../utils/query.js', () => ({
-  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useQuery: (options: unknown) => mockUseQuery(options),
 }))
 
 vi.mock('./useConfig.js', () => ({

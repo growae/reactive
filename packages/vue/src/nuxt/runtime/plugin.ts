@@ -1,8 +1,13 @@
+import type { Config } from '@growae/reactive'
 import { ReactivePlugin } from '@growae/reactive-vue'
-import { defineNuxtPlugin, useRuntimeConfig } from '#imports'
+import { defineNuxtPlugin } from 'nuxt/app'
+import type { NuxtApp } from 'nuxt/app'
 
-export default defineNuxtPlugin((nuxtApp) => {
-  const config = nuxtApp.$reactive?.config
+type ReactiveNuxtInject = { config?: Config }
+
+export default defineNuxtPlugin((nuxtApp: NuxtApp) => {
+  const config = (nuxtApp as NuxtApp & { $reactive?: ReactiveNuxtInject })
+    .$reactive?.config
   if (config) {
     nuxtApp.vueApp.use(ReactivePlugin, { config })
   }

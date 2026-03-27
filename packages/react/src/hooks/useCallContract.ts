@@ -59,6 +59,7 @@ export function useCallContract<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     callContract: mutation.mutate as unknown as Return['callContract'],
-    callContractAsync: mutation.mutateAsync as unknown as Return['callContractAsync'],
+    callContractAsync:
+      mutation.mutateAsync as unknown as Return['callContractAsync'],
   }
 }

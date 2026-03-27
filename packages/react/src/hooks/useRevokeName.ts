@@ -58,6 +58,7 @@ export function useRevokeName<context = unknown>(
   return {
     ...(mutation as unknown as Return),
     revokeName: mutation.mutate as unknown as Return['revokeName'],
-    revokeNameAsync: mutation.mutateAsync as unknown as Return['revokeNameAsync'],
+    revokeNameAsync:
+      mutation.mutateAsync as unknown as Return['revokeNameAsync'],
   }
 }

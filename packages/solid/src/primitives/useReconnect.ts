@@ -1,7 +1,4 @@
-import {
-  type ReconnectParameters,
-  reconnect,
-} from '@growae/reactive'
+import { type ReconnectParameters, reconnect } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig.js'

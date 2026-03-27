@@ -51,10 +51,13 @@ export async function updateName(
     pointers.map(({ key, id }) => [key, id]),
   )
 
-  const result = await nameInstance.update(pointersMap as any, {
-    extendPointers,
-    ttl: ttl ?? DEFAULT_TTL,
-  } as any)
+  const result = await nameInstance.update(
+    pointersMap as any,
+    {
+      extendPointers,
+      ttl: ttl ?? DEFAULT_TTL,
+    } as any,
+  )
 
   return {
     txHash: result.hash,

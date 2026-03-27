@@ -58,7 +58,8 @@ export function usePayForTransaction<context = unknown>(
   type Return = UsePayForTransactionReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    payForTransaction: mutation.mutate as unknown as Return['payForTransaction'],
+    payForTransaction:
+      mutation.mutate as unknown as Return['payForTransaction'],
     payForTransactionAsync:
       mutation.mutateAsync as unknown as Return['payForTransactionAsync'],
   }

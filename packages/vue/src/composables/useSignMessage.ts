@@ -7,6 +7,7 @@ import type {
 import { signMessage } from '@growae/reactive'
 import { useMutation } from '@tanstack/vue-query'
 import type { ConfigParameter } from '../types/properties.js'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks.js'
 import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
@@ -20,6 +21,12 @@ export type UseSignMessageParameters<context = unknown> = Compute<
       ) => void
       onError?: (
         error: SignMessageErrorType,
+        variables: SignMessageParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: SignMessageReturnType | undefined,
+        error: SignMessageErrorType | null,
         variables: SignMessageParameters,
         context: context,
       ) => void
@@ -46,11 +53,23 @@ export function useSignMessage<context = unknown>(
 ): UseSignMessageReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+    ...mutationRest
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['signMessage'],
     mutationFn: (variables: SignMessageParameters) =>
       signMessage(config, variables),
-    ...parameters.mutation,
+    ...mutationRest,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseSignMessageReturnType<context>
