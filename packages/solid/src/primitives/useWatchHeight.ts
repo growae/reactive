@@ -1,13 +1,12 @@
-import { watchHeight } from '@reactive/core'
+import { watchHeight } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createEffect, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseWatchHeightParameters = Accessor<{
-  config?: import('@reactive/core').Config | undefined
+  config?: import('@growae/reactive').Config | undefined
   onHeight: (height: number) => void
-  onError?: (error: Error) => void
   enabled?: boolean
   interval?: number
   networkId?: string
@@ -27,7 +26,6 @@ export function useWatchHeight(
       interval,
       networkId: paramNetworkId,
       onHeight,
-      onError,
     } = parameters()
     if (!enabled) return
     if (!onHeight) return
@@ -35,8 +33,7 @@ export function useWatchHeight(
     const networkId = paramNetworkId ?? configNetworkId()
     const unwatch = watchHeight(config(), {
       onChange: onHeight,
-      onError,
-      interval,
+      pollingInterval: interval,
       networkId,
     })
     onCleanup(() => unwatch())

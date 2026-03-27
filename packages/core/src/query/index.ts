@@ -2,7 +2,7 @@
 // Query Utilities
 ////////////////////////////////////////////////////////////////////////////////
 
-export { hashFn } from './hashFn.js'
+export { hashFn } from './hashFn'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Read Action Query Options
@@ -16,7 +16,7 @@ export {
   type GetBalanceQueryKey,
   getBalanceQueryKey,
   getBalanceQueryOptions,
-} from './getBalance.js'
+} from './getBalance'
 
 export {
   type GetHeightData,
@@ -26,7 +26,7 @@ export {
   type GetHeightQueryKey,
   getHeightQueryKey,
   getHeightQueryOptions,
-} from './getHeight.js'
+} from './getHeight'
 
 export {
   type GetAccountData,
@@ -36,7 +36,7 @@ export {
   type GetAccountQueryKey,
   getAccountQueryKey,
   getAccountQueryOptions,
-} from './getAccount.js'
+} from './getAccount'
 
 export {
   type GetBlockData,
@@ -46,7 +46,7 @@ export {
   type GetBlockQueryKey,
   getBlockQueryKey,
   getBlockQueryOptions,
-} from './getBlock.js'
+} from './getBlock'
 
 export {
   type GetMicroBlockData,
@@ -56,7 +56,7 @@ export {
   type GetMicroBlockQueryKey,
   getMicroBlockQueryKey,
   getMicroBlockQueryOptions,
-} from './getMicroBlock.js'
+} from './getMicroBlock'
 
 export {
   type GetTransactionData,
@@ -66,7 +66,7 @@ export {
   type GetTransactionQueryKey,
   getTransactionQueryKey,
   getTransactionQueryOptions,
-} from './getTransaction.js'
+} from './getTransaction'
 
 export {
   type GetTransactionCountData,
@@ -76,7 +76,7 @@ export {
   type GetTransactionCountQueryKey,
   getTransactionCountQueryKey,
   getTransactionCountQueryOptions,
-} from './getTransactionCount.js'
+} from './getTransactionCount'
 
 export {
   type GetContractBytecodeData,
@@ -86,7 +86,7 @@ export {
   type GetContractBytecodeQueryKey,
   getContractBytecodeQueryKey,
   getContractBytecodeQueryOptions,
-} from './getContractBytecode.js'
+} from './getContractBytecode'
 
 export {
   type ReadContractData,
@@ -95,7 +95,7 @@ export {
   type ReadContractQueryKey,
   readContractQueryKey,
   readContractQueryOptions,
-} from './readContract.js'
+} from './readContract'
 
 export {
   type ReadContractsData,
@@ -104,7 +104,7 @@ export {
   type ReadContractsQueryKey,
   readContractsQueryKey,
   readContractsQueryOptions,
-} from './readContracts.js'
+} from './readContracts'
 
 export {
   type SimulateContractData,
@@ -113,7 +113,7 @@ export {
   type SimulateContractQueryKey,
   simulateContractQueryKey,
   simulateContractQueryOptions,
-} from './simulateContract.js'
+} from './simulateContract'
 
 export {
   type GetContractEventsData,
@@ -122,7 +122,7 @@ export {
   type GetContractEventsQueryKey,
   getContractEventsQueryKey,
   getContractEventsQueryOptions,
-} from './getContractEvents.js'
+} from './getContractEvents'
 
 export {
   type GetNameEntryData,
@@ -132,7 +132,7 @@ export {
   type GetNameEntryQueryKey,
   getNameEntryQueryKey,
   getNameEntryQueryOptions,
-} from './getNameEntry.js'
+} from './getNameEntry'
 
 export {
   type ResolveNameData,
@@ -142,7 +142,7 @@ export {
   type ResolveNameQueryKey,
   resolveNameQueryKey,
   resolveNameQueryOptions,
-} from './resolveName.js'
+} from './resolveName'
 
 export {
   type GetOracleStateData,
@@ -152,7 +152,7 @@ export {
   type GetOracleStateQueryKey,
   getOracleStateQueryKey,
   getOracleStateQueryOptions,
-} from './getOracleState.js'
+} from './getOracleState'
 
 export {
   type GetOracleQueriesData,
@@ -162,7 +162,7 @@ export {
   type GetOracleQueriesQueryKey,
   getOracleQueriesQueryKey,
   getOracleQueriesQueryOptions,
-} from './getOracleQueries.js'
+} from './getOracleQueries'
 
 export {
   type WaitForTransactionData,
@@ -172,7 +172,27 @@ export {
   type WaitForTransactionQueryKey,
   waitForTransactionQueryKey,
   waitForTransactionQueryOptions,
-} from './waitForTransaction.js'
+} from './waitForTransaction'
+
+export {
+  type WaitForTransactionConfirmData,
+  type WaitForTransactionConfirmErrorType,
+  type WaitForTransactionConfirmOptions,
+  type WaitForTransactionConfirmQueryFnData,
+  type WaitForTransactionConfirmQueryKey,
+  waitForTransactionConfirmQueryKey,
+  waitForTransactionConfirmQueryOptions,
+} from './waitForTransactionConfirm'
+
+export {
+  type EstimateGasData,
+  type EstimateGasErrorType,
+  type EstimateGasOptions,
+  type EstimateGasQueryFnData,
+  type EstimateGasQueryKey,
+  estimateGasQueryKey,
+  estimateGasQueryOptions,
+} from './estimateGas'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Write Action Mutation Options
@@ -184,7 +204,7 @@ export {
   type ConnectMutationOptions,
   type ConnectVariables,
   connectMutationOptions,
-} from './connect.js'
+} from './connect'
 
 export {
   type DisconnectData,
@@ -192,7 +212,7 @@ export {
   type DisconnectMutationOptions,
   type DisconnectVariables,
   disconnectMutationOptions,
-} from './disconnect.js'
+} from './disconnect'
 
 export {
   type ReconnectData,
@@ -200,7 +220,7 @@ export {
   type ReconnectMutationOptions,
   type ReconnectVariables,
   reconnectMutationOptions,
-} from './reconnect.js'
+} from './reconnect'
 
 export {
   type SwitchNetworkData,
@@ -208,7 +228,7 @@ export {
   type SwitchNetworkMutationOptions,
   type SwitchNetworkVariables,
   switchNetworkMutationOptions,
-} from './switchNetwork.js'
+} from './switchNetwork'
 
 export {
   type SendTransactionData,
@@ -216,7 +236,7 @@ export {
   type SendTransactionMutationOptions,
   type SendTransactionVariables,
   sendTransactionMutationOptions,
-} from './sendTransaction.js'
+} from './sendTransaction'
 
 export {
   type SpendData,
@@ -224,7 +244,7 @@ export {
   type SpendMutationOptions,
   type SpendVariables,
   spendMutationOptions,
-} from './spend.js'
+} from './spend'
 
 export {
   type SignMessageData,
@@ -232,7 +252,7 @@ export {
   type SignMessageMutationOptions,
   type SignMessageVariables,
   signMessageMutationOptions,
-} from './signMessage.js'
+} from './signMessage'
 
 export {
   type SignTypedDataData,
@@ -240,7 +260,7 @@ export {
   type SignTypedDataMutationOptions,
   type SignTypedDataVariables,
   signTypedDataMutationOptions,
-} from './signTypedData.js'
+} from './signTypedData'
 
 export {
   type DeployContractData,
@@ -248,7 +268,7 @@ export {
   type DeployContractMutationOptions,
   type DeployContractVariables,
   deployContractMutationOptions,
-} from './deployContract.js'
+} from './deployContract'
 
 export {
   type CallContractData,
@@ -256,7 +276,7 @@ export {
   type CallContractMutationOptions,
   type CallContractVariables,
   callContractMutationOptions,
-} from './callContract.js'
+} from './callContract'
 
 export {
   type CompileContractData,
@@ -264,7 +284,7 @@ export {
   type CompileContractMutationOptions,
   type CompileContractVariables,
   compileContractMutationOptions,
-} from './compileContract.js'
+} from './compileContract'
 
 export {
   type PreclaimNameData,
@@ -272,7 +292,7 @@ export {
   type PreclaimNameMutationOptions,
   type PreclaimNameVariables,
   preclaimNameMutationOptions,
-} from './preclaimName.js'
+} from './preclaimName'
 
 export {
   type ClaimNameData,
@@ -280,7 +300,7 @@ export {
   type ClaimNameMutationOptions,
   type ClaimNameVariables,
   claimNameMutationOptions,
-} from './claimName.js'
+} from './claimName'
 
 export {
   type UpdateNameData,
@@ -288,4 +308,190 @@ export {
   type UpdateNameMutationOptions,
   type UpdateNameVariables,
   updateNameMutationOptions,
-} from './updateName.js'
+} from './updateName'
+
+export {
+  type TransferFundsData,
+  type TransferFundsErrorType,
+  type TransferFundsMutationOptions,
+  type TransferFundsVariables,
+  transferFundsMutationOptions,
+} from './transferFunds'
+
+export {
+  type PayForTransactionData,
+  type PayForTransactionErrorType,
+  type PayForTransactionMutationOptions,
+  type PayForTransactionVariables,
+  payForTransactionMutationOptions,
+} from './payForTransaction'
+
+export {
+  type SignTransactionData,
+  type SignTransactionErrorType,
+  type SignTransactionMutationOptions,
+  type SignTransactionVariables,
+  signTransactionMutationOptions,
+} from './signTransaction'
+
+export {
+  type VerifyMessageData,
+  type VerifyMessageErrorType,
+  type VerifyMessageMutationOptions,
+  type VerifyMessageVariables,
+  verifyMessageMutationOptions,
+} from './verifyMessage'
+
+export {
+  type VerifyTypedDataData,
+  type VerifyTypedDataErrorType,
+  type VerifyTypedDataMutationOptions,
+  type VerifyTypedDataVariables,
+  verifyTypedDataMutationOptions,
+} from './verifyTypedData'
+
+export {
+  type SignDelegationData,
+  type SignDelegationErrorType,
+  type SignDelegationMutationOptions,
+  type SignDelegationVariables,
+  signDelegationMutationOptions,
+} from './signDelegation'
+
+export {
+  type BuildTransactionData,
+  type BuildTransactionErrorType,
+  type BuildTransactionMutationOptions,
+  type BuildTransactionVariables,
+  buildTransactionMutationOptions,
+} from './buildTransaction'
+
+export {
+  type TransferNameData,
+  type TransferNameErrorType,
+  type TransferNameMutationOptions,
+  type TransferNameVariables,
+  transferNameMutationOptions,
+} from './transferName'
+
+export {
+  type RevokeNameData,
+  type RevokeNameErrorType,
+  type RevokeNameMutationOptions,
+  type RevokeNameVariables,
+  revokeNameMutationOptions,
+} from './revokeName'
+
+export {
+  type BidNameData,
+  type BidNameErrorType,
+  type BidNameMutationOptions,
+  type BidNameVariables,
+  bidNameMutationOptions,
+} from './bidName'
+
+export {
+  type RegisterOracleData,
+  type RegisterOracleErrorType,
+  type RegisterOracleMutationOptions,
+  type RegisterOracleVariables,
+  registerOracleMutationOptions,
+} from './registerOracle'
+
+export {
+  type ExtendOracleData,
+  type ExtendOracleErrorType,
+  type ExtendOracleMutationOptions,
+  type ExtendOracleVariables,
+  extendOracleMutationOptions,
+} from './extendOracle'
+
+export {
+  type QueryOracleData,
+  type QueryOracleErrorType,
+  type QueryOracleMutationOptions,
+  type QueryOracleVariables,
+  queryOracleMutationOptions,
+} from './queryOracle'
+
+export {
+  type RespondToQueryData,
+  type RespondToQueryErrorType,
+  type RespondToQueryMutationOptions,
+  type RespondToQueryVariables,
+  respondToQueryMutationOptions,
+} from './respondToQuery'
+
+export {
+  type OpenChannelData,
+  type OpenChannelErrorType,
+  type OpenChannelMutationOptions,
+  type OpenChannelVariables,
+  openChannelMutationOptions,
+} from './openChannel'
+
+export {
+  type CloseChannelData,
+  type CloseChannelErrorType,
+  type CloseChannelMutationOptions,
+  type CloseChannelVariables,
+  closeChannelMutationOptions,
+} from './closeChannel'
+
+export {
+  type ChannelDepositData,
+  type ChannelDepositErrorType,
+  type ChannelDepositMutationOptions,
+  type ChannelDepositVariables,
+  channelDepositMutationOptions,
+} from './channelDeposit'
+
+export {
+  type ChannelWithdrawData,
+  type ChannelWithdrawErrorType,
+  type ChannelWithdrawMutationOptions,
+  type ChannelWithdrawVariables,
+  channelWithdrawMutationOptions,
+} from './channelWithdraw'
+
+export {
+  type ChannelTransferData,
+  type ChannelTransferErrorType,
+  type ChannelTransferMutationOptions,
+  type ChannelTransferVariables,
+  channelTransferMutationOptions,
+} from './channelTransfer'
+
+export {
+  type ChannelContractCreateData,
+  type ChannelContractCreateErrorType,
+  type ChannelContractCreateMutationOptions,
+  type ChannelContractCreateVariables,
+  channelContractCreateMutationOptions,
+  type ChannelContractCallData,
+  type ChannelContractCallErrorType,
+  type ChannelContractCallMutationOptions,
+  type ChannelContractCallVariables,
+  channelContractCallMutationOptions,
+  type ChannelContractCallStaticData,
+  type ChannelContractCallStaticErrorType,
+  type ChannelContractCallStaticMutationOptions,
+  type ChannelContractCallStaticVariables,
+  channelContractCallStaticMutationOptions,
+} from './channelContract'
+
+export {
+  type CreateGeneralizedAccountData,
+  type CreateGeneralizedAccountErrorType,
+  type CreateGeneralizedAccountMutationOptions,
+  type CreateGeneralizedAccountVariables,
+  createGeneralizedAccountMutationOptions,
+} from './createGeneralizedAccount'
+
+export {
+  type BuildAuthTxHashData,
+  type BuildAuthTxHashErrorType,
+  type BuildAuthTxHashMutationOptions,
+  type BuildAuthTxHashVariables,
+  buildAuthTxHashMutationOptions,
+} from './buildAuthTxHash'

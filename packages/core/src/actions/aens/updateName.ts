@@ -1,5 +1,7 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type NamePointer = {
   key: string
@@ -10,6 +12,8 @@ export type UpdateNameParameters = {
   name: string
   pointers: NamePointer[]
   extendPointers?: boolean
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -30,27 +34,30 @@ export async function updateName(
   config: Config,
   parameters: UpdateNameParameters,
 ): Promise<UpdateNameReturnType> {
-  const { name, pointers, extendPointers, networkId } = parameters
+  const { name, pointers, extendPointers, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new UpdateNameNoAccountError()
   }
 
-  const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
   })
 
   const pointersMap = Object.fromEntries(
     pointers.map(({ key, id }) => [key, id]),
   )
 
-  const result = await nameInstance.update(pointersMap as any, {
-    extendPointers,
-  })
+  const result = await nameInstance.update(
+    pointersMap as any,
+    {
+      extendPointers,
+      ttl: ttl ?? DEFAULT_TTL,
+    } as any,
+  )
 
   return {
     txHash: result.hash,

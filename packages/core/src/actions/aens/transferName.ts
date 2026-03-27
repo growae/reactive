@@ -1,9 +1,13 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type TransferNameParameters = {
   name: string
   recipient: string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -24,21 +28,25 @@ export async function transferName(
   config: Config,
   parameters: TransferNameParameters,
 ): Promise<TransferNameReturnType> {
-  const { name, recipient, networkId } = parameters
+  const { name, recipient, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new TransferNameNoAccountError()
   }
 
-  const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
   })
 
-  const result = await nameInstance.transfer(recipient as any)
+  const result = await nameInstance.transfer(
+    recipient as any,
+    {
+      ttl: ttl ?? DEFAULT_TTL,
+    } as any,
+  )
 
   return {
     txHash: result.hash,

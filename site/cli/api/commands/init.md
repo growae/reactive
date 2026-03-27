@@ -17,7 +17,7 @@ npx reactive init
 ## Generated Config
 
 ```typescript
-import { defineConfig } from '@reactive/cli'
+import { defineConfig } from '@growae/reactive-cli'
 
 export default defineConfig({
   out: 'src/generated.ts',

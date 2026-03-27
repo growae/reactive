@@ -2,9 +2,9 @@ export {
   createGeneralizedAccount,
   type CreateGeneralizedAccountParameters,
   type CreateGeneralizedAccountReturnType,
-} from './createGeneralizedAccount.js'
+} from './createGeneralizedAccount'
 export {
   buildAuthTxHash,
   type BuildAuthTxHashParameters,
   type BuildAuthTxHashReturnType,
-} from './buildAuthTxHash.js'
+} from './buildAuthTxHash'

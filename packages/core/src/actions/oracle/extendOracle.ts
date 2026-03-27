@@ -1,9 +1,13 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Oracle } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type ExtendOracleParameters = {
   oracleId: string
   oracleTtl: { type: 'delta' | 'block'; value: number }
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -24,21 +28,26 @@ export async function extendOracle(
   config: Config,
   parameters: ExtendOracleParameters,
 ): Promise<ExtendOracleReturnType> {
-  const { oracleTtl, networkId } = parameters
+  const { oracleTtl, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new ExtendOracleNoAccountError()
   }
 
-  const { Oracle } = await import('@aeternity/aepp-sdk')
-  const oracle = new Oracle(connection.account, {
-    onNode: node,
-    oracleTtl,
-  })
+  const oracle = new Oracle(
+    connection.accounts[0] as any,
+    {
+      onNode: node,
+      oracleTtl,
+    } as any,
+  )
 
-  const result = await oracle.extendTtl({ oracleTtl })
+  const result = await oracle.extendTtl({
+    oracleTtl,
+    ttl: ttl ?? DEFAULT_TTL,
+  } as any)
 
   return {
     txHash: result.hash,

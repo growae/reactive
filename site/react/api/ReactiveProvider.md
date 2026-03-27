@@ -5,16 +5,16 @@ React context provider that makes the Reactive `Config` available to all hooks i
 ## Import
 
 ```typescript
-import { ReactiveProvider } from '@reactive/react'
+import { ReactiveProvider } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
-import { ReactiveProvider } from '@reactive/react'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
+import { ReactiveProvider } from '@growae/reactive-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const config = createConfig({
@@ -63,7 +63,7 @@ Automatically reconnect to previously connected wallets on mount.
 Access the config from any child component:
 
 ```typescript
-import { useConfig } from '@reactive/react'
+import { useConfig } from '@growae/reactive-react'
 
 function MyComponent() {
   const config = useConfig()

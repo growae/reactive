@@ -1,5 +1,5 @@
-import type { Config, Connector } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config, Connector } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SignTransactionParameters = {
   tx: string
@@ -30,7 +30,12 @@ export async function signTransaction(
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  return connector.signTransaction(tx, {
+  if (!connector.signTransaction) {
+    throw new Error('Connector does not support transaction signing.')
+  }
+
+  return connector.signTransaction({
+    tx,
     networkId,
     innerTx,
   })

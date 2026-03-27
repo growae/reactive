@@ -2,15 +2,13 @@ import {
   type SimulateContractParameters,
   type SimulateContractReturnType,
   simulateContract,
-} from '../actions/simulateContract.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/simulateContract'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type SimulateContractOptions = ExactPartial<SimulateContractParameters>
 
-export function simulateContractQueryKey(
-  params: SimulateContractOptions = {},
-) {
+export function simulateContractQueryKey(params: SimulateContractOptions = {}) {
   return ['simulateContract', params] as const
 }
 

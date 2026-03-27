@@ -1,7 +1,7 @@
 'use client'
 
-import { hydrate } from '@reactive/core'
-import type { Config, State } from '@reactive/core'
+import { hydrate } from '@growae/reactive'
+import type { Config, State } from '@growae/reactive'
 import { type ReactElement, useEffect, useRef } from 'react'
 
 export type HydrateProps = {
@@ -21,6 +21,7 @@ export function Hydrate(parameters: React.PropsWithChildren<HydrateProps>) {
   if (!config._internal.ssr) onMount()
 
   const active = useRef(true)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional mount-only effect
   useEffect(() => {
     if (!active.current) return
     if (!config._internal.ssr) return

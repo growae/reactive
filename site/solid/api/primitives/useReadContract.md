@@ -5,13 +5,13 @@ Primitive for reading Sophia contract state via dry-run.
 ## Import
 
 ```typescript
-import { useReadContract } from '@reactive/solid'
+import { useReadContract } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useReadContract } from '@reactive/solid'
+import { useReadContract } from '@growae/reactive-solid'
 
 function TokenBalance() {
   const result = useReadContract({

@@ -1,24 +1,24 @@
 'use client'
 
 import {
-  type GetConnectorClientParameters,
-  type GetConnectorClientReturnType,
-  getConnectorClient,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { useQuery } from '../utils/query.js'
-import type { UseQueryReturnType } from '../utils/query.js'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useConnection } from './useConnection.js'
-import { useNetworkId } from './useNetworkId.js'
+  type GetConnectionReturnType,
+  type GetNodeClientParameters,
+  getConnection,
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { useQuery } from '../utils/query'
+import type { UseQueryReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnection } from './useConnection'
+import { useNetworkId } from './useNetworkId'
 
 export type UseConnectorClientParameters = Compute<
-  GetConnectorClientParameters & ConfigParameter
+  GetNodeClientParameters & ConfigParameter
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<
-  GetConnectorClientReturnType,
+  GetConnectionReturnType,
   Error
 >
 
@@ -30,15 +30,14 @@ export function useConnectorClient(
   const connection = useConnection({ config })
 
   return useQuery({
-    queryKey: ['connectorClient', {
-      networkId: parameters.networkId ?? networkId,
-      connector: connection?.connector?.uid,
-    }],
-    queryFn: () => getConnectorClient(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-      connector: parameters.connector ?? connection?.connector,
-    }),
+    queryKey: [
+      'connectorClient',
+      {
+        networkId: parameters.networkId ?? networkId,
+        connector: connection?.connector?.uid,
+      },
+    ],
+    queryFn: () => getConnection(config),
     enabled: !!connection?.connector,
   }) as UseConnectorClientReturnType
 }

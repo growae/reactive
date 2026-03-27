@@ -1,12 +1,18 @@
-import { describe, it, expect, vi } from 'vitest'
-import { createApp, inject } from 'vue'
-import { ReactivePlugin, configKey } from './plugin.js'
+// @vitest-environment jsdom
+import { describe, expect, it, vi } from 'vitest'
+import { createApp, defineComponent, inject } from 'vue'
+import { ReactivePlugin, configKey } from './plugin'
 
 function createMockConfig() {
   return {
     networks: [{ id: 'ae_uat', nodeUrl: 'https://testnet.aeternity.io' }],
     connectors: [],
-    state: { networkId: 'ae_uat', connections: new Map(), status: 'disconnected', current: undefined },
+    state: {
+      networkId: 'ae_uat',
+      connections: new Map(),
+      status: 'disconnected',
+      current: undefined,
+    },
     setState: vi.fn(),
     subscribe: vi.fn(() => vi.fn()),
     _internal: {
@@ -25,24 +31,26 @@ describe('ReactivePlugin', () => {
 
   it('should provide config via configKey when installed', () => {
     const mockConfig = createMockConfig()
-    const app = createApp({ setup() { return () => null } })
-
-    let injectedConfig: unknown
-    app.component('TestChild', {
+    const el = document.createElement('div')
+    const TestRoot = defineComponent({
       setup() {
-        injectedConfig = inject(configKey)
+        expect(inject(configKey)).toBe(mockConfig)
         return () => null
       },
     })
-
+    const app = createApp(TestRoot)
     app.use(ReactivePlugin, { config: mockConfig as any })
-
-    expect(app).toBeDefined()
+    app.mount(el)
+    app.unmount()
   })
 
   it('should default reconnectOnMount to true', () => {
     const mockConfig = createMockConfig()
-    const app = createApp({ setup() { return () => null } })
+    const app = createApp({
+      setup() {
+        return () => null
+      },
+    })
 
     app.use(ReactivePlugin, { config: mockConfig as any })
     expect(app).toBeDefined()
@@ -52,7 +60,11 @@ describe('ReactivePlugin', () => {
     const mockConfig = createMockConfig()
     mockConfig._internal.store.persist.hasHydrated = () => false
 
-    const app = createApp({ setup() { return () => null } })
+    const app = createApp({
+      setup() {
+        return () => null
+      },
+    })
     const initialState = {
       networkId: 'ae_uat',
       connections: new Map(),

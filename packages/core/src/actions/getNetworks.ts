@@ -1,4 +1,5 @@
-import type { Config, Network } from '../createConfig.js'
+import type { Config } from '../createConfig'
+import type { Network } from '../types/network'
 
 export type GetNetworksReturnType = readonly Network[]
 

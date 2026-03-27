@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-console.log('create-reactive — placeholder')
+import { createReactive } from './index'
+
+createReactive().catch((_e: unknown) => {})

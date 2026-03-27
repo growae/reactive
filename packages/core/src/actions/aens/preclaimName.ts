@@ -1,8 +1,12 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type PreclaimNameParameters = {
   name: string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -24,21 +28,22 @@ export async function preclaimName(
   config: Config,
   parameters: PreclaimNameParameters,
 ): Promise<PreclaimNameReturnType> {
-  const { name, networkId } = parameters
+  const { name, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new PreclaimNameNoAccountError()
   }
 
-  const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
   })
 
-  const result = await nameInstance.preclaim()
+  const result = await nameInstance.preclaim({
+    ttl: ttl ?? DEFAULT_TTL,
+  } as any)
 
   return {
     txHash: result.hash,

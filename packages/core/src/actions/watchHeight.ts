@@ -1,4 +1,4 @@
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 
 export type WatchHeightParameters = {
   onChange: (height: number, prevHeight: number) => void
@@ -20,7 +20,7 @@ export function watchHeight(
   const poll = async () => {
     while (active) {
       try {
-        const node = config.getNode({ networkId })
+        const node = config.getNodeClient({ networkId })
         const status = await node.getStatus()
         const newHeight = status.topBlockHeight ?? 0
         if (newHeight !== currentHeight) {

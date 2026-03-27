@@ -2,14 +2,14 @@
 
 ## Overview
 
-`@reactive/cli` is a CLI tool for generating type-safe code from Sophia contract source files. It reads your contracts and produces TypeScript ACI definitions, typed actions, and hooks that integrate with Reactive.
+`@growae/reactive-cli` is a CLI tool for generating type-safe code from Sophia contract source files. It reads your contracts and produces TypeScript ACI definitions, typed actions, and hooks that integrate with Reactive.
 
 ## Quick Start
 
 ### 1. Install
 
 ```bash
-pnpm add -D @reactive/cli
+pnpm add -D @growae/reactive-cli
 ```
 
 ### 2. Initialize Config
@@ -21,7 +21,7 @@ npx reactive init
 This creates a `reactive.config.ts` file:
 
 ```typescript
-import { defineConfig } from '@reactive/cli'
+import { defineConfig } from '@growae/reactive-cli'
 
 export default defineConfig({
   out: 'src/generated.ts',
@@ -46,7 +46,7 @@ This compiles your Sophia contracts and generates typed ACI, actions, and hooks.
 
 ```typescript
 import { tokenAci, tokenBytecode } from './generated'
-import { readContract } from '@reactive/core/actions'
+import { readContract } from '@growae/reactive/actions'
 
 const balance = await readContract(config, {
   address: 'ct_token...',

@@ -1,11 +1,15 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Oracle } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type RespondToQueryParameters = {
   oracleId: string
   queryId: string
   response: string
   responseTtl?: { type: 'delta' | 'block'; value: number }
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -26,21 +30,22 @@ export async function respondToQuery(
   config: Config,
   parameters: RespondToQueryParameters,
 ): Promise<RespondToQueryReturnType> {
-  const { queryId, response, responseTtl, networkId } = parameters
+  const { queryId, response, responseTtl, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new RespondToQueryNoAccountError()
   }
 
-  const { Oracle } = await import('@aeternity/aepp-sdk')
-  const oracle = new Oracle(connection.account, {
+  const oracle = new Oracle(connection.accounts[0] as any, {
     onNode: node,
     ...(responseTtl ? { responseTtl } : {}),
   })
 
-  const result = await oracle.respondToQuery(queryId as any, response)
+  const result = await oracle.respondToQuery(queryId as any, response, {
+    ttl: ttl ?? DEFAULT_TTL,
+  } as any)
 
   return {
     txHash: result.hash,

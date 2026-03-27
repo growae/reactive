@@ -7,7 +7,7 @@ Reactive uses **networks** instead of chains. Aeternity identifies networks by s
 Reactive ships with two pre-defined networks:
 
 ```typescript
-import { mainnet, testnet } from '@reactive/core/networks'
+import { mainnet, testnet } from '@growae/reactive/networks'
 ```
 
 ### Mainnet
@@ -33,7 +33,7 @@ import { mainnet, testnet } from '@reactive/core/networks'
 Define a custom network for local development or private chains:
 
 ```typescript
-import { defineNetwork } from '@reactive/core'
+import { defineNetwork } from '@growae/reactive'
 
 const localnet = defineNetwork({
   id: 'ae_dev',
@@ -58,8 +58,8 @@ type Network = {
 ## Using Multiple Networks
 
 ```typescript
-import { createConfig } from '@reactive/core'
-import { mainnet, testnet } from '@reactive/core/networks'
+import { createConfig } from '@growae/reactive'
+import { mainnet, testnet } from '@growae/reactive/networks'
 
 const config = createConfig({
   networks: [mainnet, testnet],

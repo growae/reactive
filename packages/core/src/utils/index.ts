@@ -1,6 +1,6 @@
-export { deepEqual } from './deepEqual.js'
+export { deepEqual } from './deepEqual'
 
-export { deserialize } from './deserialize.js'
+export { deserialize } from './deserialize'
 
 export {
   type EncodingPrefix,
@@ -8,14 +8,14 @@ export {
   isValidContractAddress,
   isValidTxHash,
   isValidName,
-} from './encoding.js'
+} from './encoding'
 
-export { toAe, toAettos, formatAmount } from './formatAmount.js'
+export { toAe, toAettos, formatAmount } from './formatAmount'
 
-export { getAction } from './getAction.js'
+export { getAction } from './getAction'
 
-export { getVersion } from './getVersion.js'
+export { getVersion } from './getVersion'
 
-export { serialize } from './serialize.js'
+export { serialize } from './serialize'
 
-export { uid } from './uid.js'
+export { uid } from './uid'

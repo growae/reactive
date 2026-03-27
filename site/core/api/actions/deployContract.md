@@ -5,13 +5,13 @@ Deploys a Sophia smart contract to the Aeternity blockchain.
 ## Import
 
 ```typescript
-import { deployContract } from '@reactive/core/actions'
+import { deployContract } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { deployContract } from '@reactive/core/actions'
+import { deployContract } from '@growae/reactive/actions'
 
 const result = await deployContract(config, {
   aci: contractAci,
@@ -73,7 +73,7 @@ console.log('Deployed at:', result.address)
 ## Error Types
 
 ```typescript
-import type { DeployContractErrorType } from '@reactive/core'
+import type { DeployContractErrorType } from '@growae/reactive'
 ```
 
 - `ConnectorNotConnectedError` — no wallet connected

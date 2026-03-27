@@ -1,14 +1,13 @@
-import { watchHeight } from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { onScopeDispose, watch, ref, toValue, type MaybeRef } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import { watchHeight } from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { type MaybeRef, onScopeDispose, ref, toValue, watch } from 'vue'
+import type { ConfigParameter } from '../types/properties'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseWatchHeightParameters = Compute<
   ConfigParameter & {
     onHeight: (height: number) => void
-    onError?: (error: Error) => void
     enabled?: MaybeRef<boolean>
     interval?: number
     networkId?: string
@@ -39,8 +38,7 @@ export function useWatchHeight(
 
       cleanup.value = watchHeight(config, {
         onChange: (height) => parameters.onHeight(height),
-        onError: (error) => parameters.onError?.(error),
-        interval: opts.interval,
+        pollingInterval: opts.interval,
         networkId: opts.networkId,
       })
     },

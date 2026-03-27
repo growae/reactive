@@ -1,12 +1,12 @@
-import type { Config } from '@reactive/core'
+import type { Config } from '@growae/reactive'
 import { hasInjectionContext, inject, unref } from 'vue'
 import {
   ReactiveInjectionContextError,
   ReactivePluginNotFoundError,
-} from '../errors/plugin.js'
-import { configKey } from '../plugin.js'
-import type { ConfigParameter } from '../types/properties.js'
-import type { DeepMaybeRef } from '../types/ref.js'
+} from '../errors/plugin'
+import { configKey } from '../plugin'
+import type { ConfigParameter } from '../types/properties'
+import type { DeepMaybeRef } from '../types/ref'
 
 export type UseConfigParameters<config extends Config = Config> = DeepMaybeRef<
   ConfigParameter<config>

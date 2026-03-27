@@ -1,5 +1,5 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type GetContractBytecodeParameters = {
   address: string
@@ -19,9 +19,9 @@ export async function getContractBytecode(
   const { address } = parameters
   const node = config.getNodeClient({ networkId: parameters.networkId })
 
-  const contract = await node.getContractByPubkey(address)
+  const contract = await node.getContractCode(address as `ct_${string}`)
 
   return {
-    bytecode: contract.bytecode ?? '',
+    bytecode: (contract.bytecode as string) ?? '',
   }
 }

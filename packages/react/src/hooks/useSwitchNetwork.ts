@@ -1,23 +1,31 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type SwitchNetworkErrorType,
   type SwitchNetworkParameters,
   type SwitchNetworkReturnType,
-  type SwitchNetworkErrorType,
   switchNetwork,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworks } from './useNetworks.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworks } from './useNetworks'
 
 export type UseSwitchNetworkParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SwitchNetworkReturnType, variables: SwitchNetworkParameters, context: context) => void
-      onError?: (error: SwitchNetworkErrorType, variables: SwitchNetworkParameters, context: context) => void
+      onSuccess?: (
+        data: SwitchNetworkReturnType,
+        variables: SwitchNetworkParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SwitchNetworkErrorType,
+        variables: SwitchNetworkParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -30,7 +38,9 @@ export type UseSwitchNetworkReturnType<context = unknown> = Compute<
     context
   > & {
     switchNetwork: (variables: SwitchNetworkParameters) => void
-    switchNetworkAsync: (variables: SwitchNetworkParameters) => Promise<SwitchNetworkReturnType>
+    switchNetworkAsync: (
+      variables: SwitchNetworkParameters,
+    ) => Promise<SwitchNetworkReturnType>
     networks: ReturnType<typeof useNetworks>
   }
 >
@@ -45,13 +55,14 @@ export function useSwitchNetwork<context = unknown>(
     mutationFn: (variables: SwitchNetworkParameters) =>
       switchNetwork(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSwitchNetworkReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    switchNetwork: mutation.mutate as Return['switchNetwork'],
-    switchNetworkAsync: mutation.mutateAsync as Return['switchNetworkAsync'],
+    switchNetwork: mutation.mutate as unknown as Return['switchNetwork'],
+    switchNetworkAsync:
+      mutation.mutateAsync as unknown as Return['switchNetworkAsync'],
     networks: useNetworks({ config }),
   }
 }

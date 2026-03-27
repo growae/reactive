@@ -1,4 +1,4 @@
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 
 export type WatchConnectorsParameters = {
   onChange: (connectors: any[], prevConnectors: any[]) => void
@@ -11,8 +11,5 @@ export function watchConnectors(
   parameters: WatchConnectorsParameters,
 ): WatchConnectorsReturnType {
   const { onChange } = parameters
-  return config.subscribe(
-    (state) => state.connectors ?? [],
-    onChange,
-  )
+  return config._internal.connectors.subscribe(onChange)
 }

@@ -1,4 +1,4 @@
-import type { Config } from '../../createConfig.js'
+import type { Config } from '../../createConfig'
 
 export type ChannelContractCreateParameters = {
   channel: any
@@ -48,7 +48,8 @@ export async function channelContractCreate(
   _config: Config,
   parameters: ChannelContractCreateParameters,
 ): Promise<ChannelContractCreateReturnType> {
-  const { channel, code, callData, deposit, vmVersion, abiVersion, sign } = parameters
+  const { channel, code, callData, deposit, vmVersion, abiVersion, sign } =
+    parameters
 
   const result = await channel.createContract(
     {

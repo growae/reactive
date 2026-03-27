@@ -1,26 +1,35 @@
 {
   "name": "reactive",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "build": "pnpm -r --filter='./packages/**' run build",
-    "build:core": "pnpm --filter @reactive/core run build",
-    "build:react": "pnpm --filter @reactive/react run build",
-    "build:vue": "pnpm --filter @reactive/vue run build",
-    "build:solid": "pnpm --filter @reactive/solid run build",
+    "build:core": "pnpm --filter @growae/reactive run build",
+    "build:react": "pnpm --filter @growae/reactive-react run build",
+    "build:vue": "pnpm --filter @growae/reactive-vue run build",
+    "build:solid": "pnpm --filter @growae/reactive-solid run build",
     "clean": "pnpm -r --filter='./packages/**' run clean",
     "dev": "pnpm -r --filter='./packages/**' run dev",
     "test": "vitest",
+    "test:integration": "INTEGRATION=true vitest run test/integration/",
     "test:cov": "vitest --coverage",
     "check": "biome check --write .",
+    "check:ci": "biome ci .",
     "check:types": "pnpm -r --filter='./packages/**' run check:types",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",
+    "@changesets/cli": "^2.27.0",
+    "lint-staged": "^16.4.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
+  },
+  "lint-staged": {
+    "*": "biome check --write --no-errors-on-unmatched"
   },
   "engines": {
     "node": ">=18.19"

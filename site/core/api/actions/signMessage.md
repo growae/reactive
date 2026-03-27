@@ -5,13 +5,13 @@ Signs an arbitrary message with the connected account's private key.
 ## Import
 
 ```typescript
-import { signMessage } from '@reactive/core/actions'
+import { signMessage } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { signMessage } from '@reactive/core/actions'
+import { signMessage } from '@growae/reactive/actions'
 
 const signature = await signMessage(config, {
   message: 'Hello, Aeternity!',
@@ -58,7 +58,7 @@ Specific account to sign with. Defaults to the currently active account.
 ## Error Types
 
 ```typescript
-import type { SignMessageErrorType } from '@reactive/core'
+import type { SignMessageErrorType } from '@growae/reactive'
 ```
 
 - `ConnectorNotConnectedError` — no wallet connected

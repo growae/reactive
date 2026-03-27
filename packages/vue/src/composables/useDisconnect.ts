@@ -1,20 +1,35 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
+  DisconnectErrorType,
   DisconnectParameters,
   DisconnectReturnType,
-  DisconnectErrorType,
-  Compute,
-} from '@reactive/core'
-import { disconnect } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { disconnect } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseDisconnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: DisconnectReturnType, variables: DisconnectParameters, context: context) => void
-      onError?: (error: DisconnectErrorType, variables: DisconnectParameters, context: context) => void
+      onSuccess?: (
+        data: DisconnectReturnType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: DisconnectErrorType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: DisconnectReturnType | undefined,
+        error: DisconnectErrorType | null,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -27,7 +42,9 @@ export type UseDisconnectReturnType<context = unknown> = Compute<
     context
   > & {
     disconnect: (variables?: DisconnectParameters) => void
-    disconnectAsync: (variables?: DisconnectParameters) => Promise<DisconnectReturnType>
+    disconnectAsync: (
+      variables?: DisconnectParameters,
+    ) => Promise<DisconnectReturnType>
   }
 >
 
@@ -36,11 +53,21 @@ export function useDisconnect<context = unknown>(
 ): UseDisconnectReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['disconnect'],
     mutationFn: (variables: DisconnectParameters = {}) =>
       disconnect(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseDisconnectReturnType<context>

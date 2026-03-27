@@ -4,8 +4,8 @@ import {
   type SendTransactionParameters,
   type SendTransactionReturnType,
   sendTransaction,
-} from '../actions/sendTransaction.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/sendTransaction'
+import type { Config } from '../createConfig'
 
 export function sendTransactionMutationOptions(config: Config) {
   return {
@@ -13,7 +13,11 @@ export function sendTransactionMutationOptions(config: Config) {
       return sendTransaction(config, variables)
     },
     mutationKey: ['sendTransaction'],
-  } satisfies MutationOptions<SendTransactionReturnType, SendTransactionErrorType, SendTransactionParameters>
+  } satisfies MutationOptions<
+    SendTransactionReturnType,
+    SendTransactionErrorType,
+    SendTransactionParameters
+  >
 }
 
 export type SendTransactionMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type SendTransactionMutationOptions = ReturnType<
 >
 export type SendTransactionData = SendTransactionReturnType
 export type SendTransactionVariables = SendTransactionParameters
-export { type SendTransactionErrorType }
+export type { SendTransactionErrorType }

@@ -5,13 +5,13 @@ Primitive for disconnecting the current wallet.
 ## Import
 
 ```typescript
-import { useDisconnect } from '@reactive/solid'
+import { useDisconnect } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useDisconnect } from '@reactive/solid'
+import { useDisconnect } from '@growae/reactive-solid'
 
 function DisconnectButton() {
   const { disconnect } = useDisconnect()

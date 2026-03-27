@@ -1,5 +1,5 @@
 import type { Node } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 
 export type GetNodeClientParameters = {
   networkId?: string | undefined

@@ -5,14 +5,14 @@ Composable for calling a Sophia contract function as an on-chain transaction.
 ## Import
 
 ```typescript
-import { useCallContract } from '@reactive/vue'
+import { useCallContract } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useCallContract } from '@reactive/vue'
+import { useCallContract } from '@growae/reactive-vue'
 
 const { mutate: call, isPending } = useCallContract()
 </script>

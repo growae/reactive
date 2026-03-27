@@ -3,9 +3,9 @@ import {
   type WaitForTransactionParameters,
   type WaitForTransactionReturnType,
   waitForTransaction,
-} from '../actions/waitForTransaction.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/waitForTransaction'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type WaitForTransactionOptions =
   ExactPartial<WaitForTransactionParameters>
@@ -36,4 +36,4 @@ export function waitForTransactionQueryOptions(
 
 export type WaitForTransactionQueryFnData = WaitForTransactionReturnType
 export type WaitForTransactionData = WaitForTransactionQueryFnData
-export { type WaitForTransactionErrorType }
+export type { WaitForTransactionErrorType }

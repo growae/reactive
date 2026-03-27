@@ -1,18 +1,13 @@
+import { type ConnectParameters, connect } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type ConnectParameters,
-  type ConnectReturnType,
-  type ConnectErrorType,
-  connect,
-} from '@reactive/core'
 import { type Accessor, createEffect, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseConnectParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseConnectParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
-export function useConnect(
-  parameters: UseConnectParameters = () => ({}),
-) {
+export function useConnect(parameters: UseConnectParameters = () => ({})) {
   const config = useConfig(parameters)
   const mutation = createMutation(() => ({
     mutationKey: ['connect'],
@@ -33,3 +28,5 @@ export function useConnect(
 
   return mutation
 }
+
+export type UseConnectReturnType = ReturnType<typeof useConnect>

@@ -6,17 +6,17 @@ export {
   ReactiveContext,
   ReactiveProvider,
   type ReactiveProviderProps,
-} from '../context.js'
+} from '../context'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors
 ////////////////////////////////////////////////////////////////////////////////
 
-export { BaseError, type BaseErrorType } from '../errors/base.js'
+export { BaseError, type BaseErrorType } from '../errors/base'
 export {
   ReactiveProviderNotFoundError,
   type ReactiveProviderNotFoundErrorType,
-} from '../errors/context.js'
+} from '../errors/context'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hydrate
@@ -25,7 +25,7 @@ export {
 export {
   Hydrate,
   type HydrateProps,
-} from '../hydrate.js'
+} from '../hydrate'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Primitives
@@ -38,10 +38,13 @@ export {
   type UseConfigReturnType,
   useConnect,
   type UseConnectParameters,
+  type UseConnectReturnType,
   useDisconnect,
   type UseDisconnectParameters,
+  type UseDisconnectReturnType,
   useReconnect,
   type UseReconnectParameters,
+  type UseReconnectReturnType,
   useConnection,
   type UseConnectionParameters,
   type UseConnectionReturnType,
@@ -59,13 +62,13 @@ export {
   type UseNetworksReturnType,
   useSwitchNetwork,
   type UseSwitchNetworkParameters,
+  type UseSwitchNetworkReturnType,
   useNodeClient,
   type UseNodeClientParameters,
   type UseNodeClientReturnType,
   useConnectorClient,
   type UseConnectorClientParameters,
   type UseConnectorClientReturnType,
-
   // Chain reads
   useBalance,
   type UseBalanceParameters,
@@ -94,34 +97,39 @@ export {
   useEstimateGas,
   type UseEstimateGasParameters,
   type UseEstimateGasReturnType,
-
   // Transactions
   useSendTransaction,
   type UseSendTransactionParameters,
+  type UseSendTransactionReturnType,
   useSpend,
   type UseSpendParameters,
+  type UseSpendReturnType,
   usePayForTransaction,
   type UsePayForTransactionParameters,
-
+  type UsePayForTransactionReturnType,
   // Signing
   useSignMessage,
   type UseSignMessageParameters,
+  type UseSignMessageReturnType,
   useSignTypedData,
   type UseSignTypedDataParameters,
+  type UseSignTypedDataReturnType,
   useSignTransaction,
   type UseSignTransactionParameters,
+  type UseSignTransactionReturnType,
   useVerifyMessage,
   type UseVerifyMessageParameters,
   type UseVerifyMessageReturnType,
   useVerifyTypedData,
   type UseVerifyTypedDataParameters,
   type UseVerifyTypedDataReturnType,
-
   // Contracts
   useDeployContract,
   type UseDeployContractParameters,
+  type UseDeployContractReturnType,
   useCallContract,
   type UseCallContractParameters,
+  type UseCallContractReturnType,
   useReadContract,
   type UseReadContractParameters,
   type UseReadContractReturnType,
@@ -134,44 +142,51 @@ export {
   useContractEvents,
   type UseContractEventsParameters,
   type UseContractEventsReturnType,
-
   // AENS
   usePreclaimName,
   type UsePreclaimNameParameters,
+  type UsePreclaimNameReturnType,
   useClaimName,
   type UseClaimNameParameters,
+  type UseClaimNameReturnType,
   useUpdateName,
   type UseUpdateNameParameters,
+  type UseUpdateNameReturnType,
   useTransferName,
   type UseTransferNameParameters,
+  type UseTransferNameReturnType,
   useRevokeName,
   type UseRevokeNameParameters,
+  type UseRevokeNameReturnType,
   useResolveName,
   type UseResolveNameParameters,
   type UseResolveNameReturnType,
-
   // Oracles
   useRegisterOracle,
   type UseRegisterOracleParameters,
+  type UseRegisterOracleReturnType,
   useQueryOracle,
   type UseQueryOracleParameters,
+  type UseQueryOracleReturnType,
   useRespondToQuery,
   type UseRespondToQueryParameters,
+  type UseRespondToQueryReturnType,
   useOracleState,
   type UseOracleStateParameters,
   type UseOracleStateReturnType,
   useOracleQueries,
   type UseOracleQueriesParameters,
   type UseOracleQueriesReturnType,
-
   // Channels
   useOpenChannel,
   type UseOpenChannelParameters,
+  type UseOpenChannelReturnType,
   useCloseChannel,
   type UseCloseChannelParameters,
+  type UseCloseChannelReturnType,
   useChannelDeposit,
   type UseChannelDepositParameters,
-
+  type UseChannelDepositReturnType,
   // Watchers
   useWatchHeight,
   type UseWatchHeightParameters,
@@ -182,10 +197,10 @@ export {
   useWatchConnectors,
   type UseWatchConnectorsParameters,
   type UseWatchConnectorsReturnType,
-} from '../primitives/index.js'
+} from '../primitives/index'
 
 ////////////////////////////////////////////////////////////////////////////////
-// @reactive/core re-exports
+// @growae/reactive re-exports
 ////////////////////////////////////////////////////////////////////////////////
 
 export {
@@ -196,7 +211,7 @@ export {
   toAe,
   toAettos,
   formatAmount,
-} from '@reactive/core'
+} from '@growae/reactive'
 
 export type {
   Config,
@@ -204,4 +219,4 @@ export type {
   State,
   Connection,
   Connector,
-} from '@reactive/core'
+} from '@growae/reactive'

@@ -2,14 +2,14 @@ export {
   BaseError,
   type BaseErrorType,
   type ErrorType,
-} from './base.js'
+} from './base'
 
 export {
   AccountNotFoundError,
   type AccountNotFoundErrorType,
   AccountNotConnectedError,
   type AccountNotConnectedErrorType,
-} from './account.js'
+} from './account'
 
 export {
   NetworkNotConfiguredError,
@@ -22,18 +22,18 @@ export {
   type ConnectorNotFoundErrorType,
   ConnectorUnavailableReconnectingError,
   type ConnectorUnavailableReconnectingErrorType,
-} from './config.js'
+} from './config'
 
 export {
   ProviderNotFoundError,
   type ProviderNotFoundErrorType,
   SwitchNetworkNotSupportedError,
   type SwitchNetworkNotSupportedErrorType,
-} from './connector.js'
+} from './connector'
 
 export {
   NodeNotFoundError,
   type NodeNotFoundErrorType,
   NodeConnectionError,
   type NodeConnectionErrorType,
-} from './node.js'
+} from './node'

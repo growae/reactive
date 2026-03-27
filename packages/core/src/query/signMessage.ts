@@ -4,8 +4,8 @@ import {
   type SignMessageParameters,
   type SignMessageReturnType,
   signMessage,
-} from '../actions/signMessage.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/signMessage'
+import type { Config } from '../createConfig'
 
 export function signMessageMutationOptions(config: Config) {
   return {
@@ -13,7 +13,11 @@ export function signMessageMutationOptions(config: Config) {
       return signMessage(config, variables)
     },
     mutationKey: ['signMessage'],
-  } satisfies MutationOptions<SignMessageReturnType, SignMessageErrorType, SignMessageParameters>
+  } satisfies MutationOptions<
+    SignMessageReturnType,
+    SignMessageErrorType,
+    SignMessageParameters
+  >
 }
 
 export type SignMessageMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type SignMessageMutationOptions = ReturnType<
 >
 export type SignMessageData = SignMessageReturnType
 export type SignMessageVariables = SignMessageParameters
-export { type SignMessageErrorType }
+export type { SignMessageErrorType }

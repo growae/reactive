@@ -1,16 +1,16 @@
 'use client'
 
 import {
+  type WaitForTransactionErrorType,
   type WaitForTransactionParameters,
   type WaitForTransactionReturnType,
-  type WaitForTransactionErrorType,
   waitForTransaction,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseWaitForTransactionParameters = Compute<
   WaitForTransactionParameters & ConfigParameter & { enabled?: boolean }
@@ -28,14 +28,18 @@ export function useWaitForTransaction(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['waitForTransaction', {
-      hash: parameters.hash,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => waitForTransaction(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'waitForTransaction',
+      {
+        hash: parameters.hash,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      waitForTransaction(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.hash) && (parameters.enabled ?? true),
   }) as UseWaitForTransactionReturnType
 }

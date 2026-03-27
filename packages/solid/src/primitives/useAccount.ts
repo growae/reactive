@@ -1,18 +1,18 @@
 import {
+  type GetAccountErrorType,
   type GetAccountParameters,
   type GetAccountReturnType,
-  type GetAccountErrorType,
   getAccount,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseAccountParameters = Accessor<
   GetAccountParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >
@@ -23,22 +23,26 @@ export type UseAccountReturnType = UseQueryReturnType<
 >
 
 export function useAccount(
-  parameters: UseAccountParameters = () => ({} as GetAccountParameters),
+  parameters: UseAccountParameters = () => ({}) as GetAccountParameters,
 ): UseAccountReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['account', {
-      address: parameters().address,
-      networkId: parameters().networkId ?? networkId(),
-      height: parameters().height,
-      hash: parameters().hash,
-    }] as const,
-    queryFn: () => getAccount(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'account',
+      {
+        address: parameters().address,
+        networkId: parameters().networkId ?? networkId(),
+        height: parameters().height,
+        hash: parameters().hash,
+      },
+    ] as const,
+    queryFn: () =>
+      getAccount(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
   }))
 

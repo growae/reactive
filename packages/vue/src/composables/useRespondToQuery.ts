@@ -1,19 +1,34 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   RespondToQueryParameters,
   RespondToQueryReturnType,
-  Compute,
-} from '@reactive/core'
-import { respondToQuery } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { respondToQuery } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseRespondToQueryParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RespondToQueryReturnType, variables: RespondToQueryParameters, context: context) => void
-      onError?: (error: Error, variables: RespondToQueryParameters, context: context) => void
+      onSuccess?: (
+        data: RespondToQueryReturnType,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: RespondToQueryReturnType | undefined,
+        error: Error | null,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +41,9 @@ export type UseRespondToQueryReturnType<context = unknown> = Compute<
     context
   > & {
     respondToQuery: (variables: RespondToQueryParameters) => void
-    respondToQueryAsync: (variables: RespondToQueryParameters) => Promise<RespondToQueryReturnType>
+    respondToQueryAsync: (
+      variables: RespondToQueryParameters,
+    ) => Promise<RespondToQueryReturnType>
   }
 >
 
@@ -35,11 +52,21 @@ export function useRespondToQuery<context = unknown>(
 ): UseRespondToQueryReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['respondToQuery'],
     mutationFn: (variables: RespondToQueryParameters) =>
       respondToQuery(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseRespondToQueryReturnType<context>

@@ -5,13 +5,13 @@ Primitive for signing an arbitrary message with the connected account.
 ## Import
 
 ```typescript
-import { useSignMessage } from '@reactive/solid'
+import { useSignMessage } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useSignMessage } from '@reactive/solid'
+import { useSignMessage } from '@growae/reactive-solid'
 
 function SignMessage() {
   const signMessage = useSignMessage()

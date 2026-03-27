@@ -1,26 +1,38 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
-  type Config,
+  type ConnectErrorType,
   type ConnectParameters,
   type ConnectReturnType,
-  type ConnectErrorType,
   connect,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnectors } from './useConnectors.js'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnectors } from './useConnectors'
 
 export type UseConnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ConnectReturnType, variables: ConnectParameters, context: context) => void
-      onError?: (error: ConnectErrorType, variables: ConnectParameters, context: context) => void
-      onSettled?: (data: ConnectReturnType | undefined, error: ConnectErrorType | null, variables: ConnectParameters, context: context) => void
+      onSuccess?: (
+        data: ConnectReturnType,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: ConnectErrorType,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: ConnectReturnType | undefined,
+        error: ConnectErrorType | null,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -47,7 +59,7 @@ export function useConnect<context = unknown>(
     mutationKey: ['connect'],
     mutationFn: (variables: ConnectParameters) => connect(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   useEffect(() => {
     return config.subscribe(
@@ -62,8 +74,8 @@ export function useConnect<context = unknown>(
   type Return = UseConnectReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    connect: mutation.mutate as Return['connect'],
-    connectAsync: mutation.mutateAsync as Return['connectAsync'],
+    connect: mutation.mutate as unknown as Return['connect'],
+    connectAsync: mutation.mutateAsync as unknown as Return['connectAsync'],
     connectors: useConnectors({ config }),
   }
 }

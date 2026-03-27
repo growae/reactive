@@ -1,14 +1,14 @@
 import type {
+  Compute,
+  VerifyMessageErrorType,
   VerifyMessageParameters,
   VerifyMessageReturnType,
-  VerifyMessageErrorType,
-  Compute,
-} from '@reactive/core'
-import { verifyMessage } from '@reactive/core'
+} from '@growae/reactive'
+import { verifyMessage } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseVerifyMessageParameters = Compute<
   VerifyMessageParameters & ConfigParameter & { enabled?: boolean }
@@ -25,15 +25,20 @@ export function useVerifyMessage(
   const config = useConfig(parameters)
 
   const options = computed(() => ({
-    queryKey: ['verifyMessage', {
-      message: parameters.message,
-      signature: parameters.signature,
-      address: parameters.address,
-    }] as const,
+    queryKey: [
+      'verifyMessage',
+      {
+        message: parameters.message,
+        signature: parameters.signature,
+        address: parameters.address,
+      },
+    ] as const,
     queryFn: () => verifyMessage(config, parameters),
-    enabled: Boolean(
-      parameters.message && parameters.signature && parameters.address,
-    ) && (parameters.enabled ?? true),
+    enabled:
+      Boolean(
+        parameters.message && parameters.signature && parameters.address,
+      ) &&
+      (parameters.enabled ?? true),
   }))
 
   return useQuery(options) as UseVerifyMessageReturnType

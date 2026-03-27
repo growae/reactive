@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type RespondToQueryParameters,
   type RespondToQueryReturnType,
   respondToQuery,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseRespondToQueryParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RespondToQueryReturnType, variables: RespondToQueryParameters, context: context) => void
-      onError?: (error: Error, variables: RespondToQueryParameters, context: context) => void
+      onSuccess?: (
+        data: RespondToQueryReturnType,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RespondToQueryParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseRespondToQueryReturnType<context = unknown> = Compute<
     context
   > & {
     respondToQuery: (variables: RespondToQueryParameters) => void
-    respondToQueryAsync: (variables: RespondToQueryParameters) => Promise<RespondToQueryReturnType>
+    respondToQueryAsync: (
+      variables: RespondToQueryParameters,
+    ) => Promise<RespondToQueryReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useRespondToQuery<context = unknown>(
     mutationFn: (variables: RespondToQueryParameters) =>
       respondToQuery(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseRespondToQueryReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    respondToQuery: mutation.mutate as Return['respondToQuery'],
-    respondToQueryAsync: mutation.mutateAsync as Return['respondToQueryAsync'],
+    respondToQuery: mutation.mutate as unknown as Return['respondToQuery'],
+    respondToQueryAsync:
+      mutation.mutateAsync as unknown as Return['respondToQueryAsync'],
   }
 }

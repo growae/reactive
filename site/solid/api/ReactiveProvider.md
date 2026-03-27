@@ -5,16 +5,16 @@ Solid context provider that makes the Reactive `Config` available to all primiti
 ## Import
 
 ```typescript
-import { ReactiveProvider } from '@reactive/solid'
+import { ReactiveProvider } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
-import { ReactiveProvider } from '@reactive/solid'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
+import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 
 const config = createConfig({
@@ -56,7 +56,7 @@ Automatically reconnect to previously connected wallets on mount.
 Access the config from any child component:
 
 ```typescript
-import { useConfig } from '@reactive/solid'
+import { useConfig } from '@growae/reactive-solid'
 
 function MyComponent() {
   const config = useConfig()

@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { useBalance } from './useBalance.js'
+import { describe, expect, it, vi } from 'vitest'
+import { useBalance } from './useBalance'
 
-const mockUseQuery = vi.fn(() => ({
+const mockUseQuery = vi.fn((_options?: unknown) => ({
   data: { value: undefined },
   error: { value: null },
   isError: { value: false },
@@ -12,14 +12,19 @@ const mockUseQuery = vi.fn(() => ({
 }))
 
 vi.mock('../utils/query.js', () => ({
-  useQuery: (...args: unknown[]) => mockUseQuery(...args),
+  useQuery: (options: unknown) => mockUseQuery(options),
 }))
 
 vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({
     subscribe: vi.fn(() => vi.fn()),
     networks: [{ id: 'ae_uat' }],
-    state: { networkId: 'ae_uat', connections: new Map(), status: 'disconnected', current: undefined },
+    state: {
+      networkId: 'ae_uat',
+      connections: new Map(),
+      status: 'disconnected',
+      current: undefined,
+    },
   })),
 }))
 

@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
   registerOracle,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseRegisterOracleParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RegisterOracleReturnType, variables: RegisterOracleParameters, context: context) => void
-      onError?: (error: Error, variables: RegisterOracleParameters, context: context) => void
+      onSuccess?: (
+        data: RegisterOracleReturnType,
+        variables: RegisterOracleParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RegisterOracleParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseRegisterOracleReturnType<context = unknown> = Compute<
     context
   > & {
     registerOracle: (variables: RegisterOracleParameters) => void
-    registerOracleAsync: (variables: RegisterOracleParameters) => Promise<RegisterOracleReturnType>
+    registerOracleAsync: (
+      variables: RegisterOracleParameters,
+    ) => Promise<RegisterOracleReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useRegisterOracle<context = unknown>(
     mutationFn: (variables: RegisterOracleParameters) =>
       registerOracle(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseRegisterOracleReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    registerOracle: mutation.mutate as Return['registerOracle'],
-    registerOracleAsync: mutation.mutateAsync as Return['registerOracleAsync'],
+    registerOracle: mutation.mutate as unknown as Return['registerOracle'],
+    registerOracleAsync:
+      mutation.mutateAsync as unknown as Return['registerOracleAsync'],
   }
 }

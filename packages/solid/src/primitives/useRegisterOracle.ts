@@ -1,13 +1,11 @@
+import { type RegisterOracleParameters, registerOracle } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type RegisterOracleParameters,
-  type RegisterOracleReturnType,
-  registerOracle,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseRegisterOracleParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseRegisterOracleParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useRegisterOracle(
   parameters: UseRegisterOracleParameters = () => ({}),
@@ -19,3 +17,5 @@ export function useRegisterOracle(
       registerOracle(config(), variables),
   }))
 }
+
+export type UseRegisterOracleReturnType = ReturnType<typeof useRegisterOracle>

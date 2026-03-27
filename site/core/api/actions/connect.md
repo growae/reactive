@@ -5,14 +5,14 @@ Connects to a wallet via a connector. Returns the connected accounts and network
 ## Import
 
 ```typescript
-import { connect } from '@reactive/core/actions'
+import { connect } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { connect } from '@reactive/core/actions'
-import { superhero } from '@reactive/core/connectors'
+import { connect } from '@growae/reactive/actions'
+import { superhero } from '@growae/reactive/connectors'
 
 const result = await connect(config, {
   connector: superhero(),
@@ -52,7 +52,7 @@ The connector instance to use for connecting.
 ## Error Types
 
 ```typescript
-import type { ConnectErrorType } from '@reactive/core'
+import type { ConnectErrorType } from '@growae/reactive'
 ```
 
 - `ConnectorAlreadyConnectedError` — already connected

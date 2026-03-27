@@ -1,6 +1,6 @@
 import type { Node } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type WaitForTransactionParameters = {
   hash: string
@@ -35,7 +35,9 @@ export async function waitForTransaction(
 
   while (true) {
     if (timeout != null && Date.now() - startTime > timeout) {
-      throw new Error(`Waiting for transaction ${hash} timed out after ${timeout}ms`)
+      throw new Error(
+        `Waiting for transaction ${hash} timed out after ${timeout}ms`,
+      )
     }
 
     const tx = await node.getTransactionByHash(hash)

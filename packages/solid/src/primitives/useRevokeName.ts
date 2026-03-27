@@ -1,13 +1,11 @@
+import { type RevokeNameParameters, revokeName } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type RevokeNameParameters,
-  type RevokeNameReturnType,
-  revokeName,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseRevokeNameParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseRevokeNameParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useRevokeName(
   parameters: UseRevokeNameParameters = () => ({}),
@@ -19,3 +17,5 @@ export function useRevokeName(
       revokeName(config(), variables),
   }))
 }
+
+export type UseRevokeNameReturnType = ReturnType<typeof useRevokeName>

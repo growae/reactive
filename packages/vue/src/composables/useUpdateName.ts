@@ -1,19 +1,34 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   UpdateNameParameters,
   UpdateNameReturnType,
-  Compute,
-} from '@reactive/core'
-import { updateName } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { updateName } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseUpdateNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: UpdateNameReturnType, variables: UpdateNameParameters, context: context) => void
-      onError?: (error: Error, variables: UpdateNameParameters, context: context) => void
+      onSuccess?: (
+        data: UpdateNameReturnType,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: UpdateNameReturnType | undefined,
+        error: Error | null,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +41,9 @@ export type UseUpdateNameReturnType<context = unknown> = Compute<
     context
   > & {
     updateName: (variables: UpdateNameParameters) => void
-    updateNameAsync: (variables: UpdateNameParameters) => Promise<UpdateNameReturnType>
+    updateNameAsync: (
+      variables: UpdateNameParameters,
+    ) => Promise<UpdateNameReturnType>
   }
 >
 
@@ -35,11 +52,21 @@ export function useUpdateName<context = unknown>(
 ): UseUpdateNameReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['updateName'],
     mutationFn: (variables: UpdateNameParameters) =>
       updateName(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseUpdateNameReturnType<context>

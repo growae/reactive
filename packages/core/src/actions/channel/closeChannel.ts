@@ -1,5 +1,5 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type CloseChannelParameters = {
   channel: any

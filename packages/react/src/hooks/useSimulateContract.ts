@@ -4,12 +4,12 @@ import {
   type SimulateContractParameters,
   type SimulateContractReturnType,
   simulateContract,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseSimulateContractParameters = Compute<
   SimulateContractParameters & ConfigParameter & { enabled?: boolean }
@@ -27,17 +27,22 @@ export function useSimulateContract(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['simulateContract', {
-      address: parameters.address,
-      method: parameters.method,
-      args: parameters.args,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => simulateContract(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
-    enabled: Boolean(parameters.address && parameters.aci && parameters.method) &&
+    queryKey: [
+      'simulateContract',
+      {
+        address: parameters.address,
+        method: parameters.method,
+        args: parameters.args,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      simulateContract(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
+    enabled:
+      Boolean(parameters.address && parameters.aci && parameters.method) &&
       (parameters.enabled ?? true),
   }) as UseSimulateContractReturnType
 }

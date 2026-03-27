@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [pnpm]
-pnpm add @reactive/vue @tanstack/vue-query
+pnpm add @growae/reactive-vue @tanstack/vue-query
 ```
 
 ```bash [npm]
-npm install @reactive/vue @tanstack/vue-query
+npm install @growae/reactive-vue @tanstack/vue-query
 ```
 
 ```bash [yarn]
-yarn add @reactive/vue @tanstack/vue-query
+yarn add @growae/reactive-vue @tanstack/vue-query
 ```
 
 :::
@@ -38,7 +38,7 @@ For Nuxt 3, use the Reactive Nuxt module:
 ```typescript
 // nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['@reactive/vue/nuxt'],
+  modules: ['@growae/reactive-vue/nuxt'],
   reactive: {
     config: {
       // config options are auto-imported

@@ -1,11 +1,11 @@
-import { watchConnectors } from '@reactive/core'
-import type { Connector } from '@reactive/core'
+import { watchConnectors } from '@growae/reactive'
+import type { Connector } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createEffect, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
 export type UseWatchConnectorsParameters = Accessor<{
-  config?: import('@reactive/core').Config | undefined
+  config?: import('@growae/reactive').Config | undefined
   onChange: (connectors: readonly Connector[]) => void
   enabled?: boolean
 }>

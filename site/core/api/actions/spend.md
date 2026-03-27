@@ -5,13 +5,13 @@ Sends AE tokens to a recipient address.
 ## Import
 
 ```typescript
-import { spend } from '@reactive/core/actions'
+import { spend } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { spend } from '@reactive/core/actions'
+import { spend } from '@growae/reactive/actions'
 
 const result = await spend(config, {
   recipient: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
@@ -76,7 +76,7 @@ const result = await spend(config, {
 ## Error Types
 
 ```typescript
-import type { SpendErrorType } from '@reactive/core'
+import type { SpendErrorType } from '@growae/reactive'
 ```
 
 - `ConnectorNotConnectedError` — no wallet connected

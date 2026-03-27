@@ -1,5 +1,5 @@
 // Re-export core query utilities
-export { hashFn } from '@reactive/core/query'
+export { hashFn } from '@growae/reactive/query'
 
 // Re-export Vue query wrappers
 export {
@@ -9,4 +9,4 @@ export {
   type UseQueryReturnType,
   type UseMutationParameters,
   type UseMutationReturnType,
-} from '../utils/query.js'
+} from '../utils/query'

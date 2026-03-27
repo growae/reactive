@@ -1,18 +1,18 @@
+import { hashFn } from '@growae/reactive/query'
 import {
   type DefaultError,
   type MutateFunction,
   type MutationObserverOptions,
   type QueryKey,
+  type UseQueryOptions,
   type UseMutationReturnType as tanstack_UseMutationReturnType,
   type UseQueryReturnType as tanstack_UseQueryReturnType,
   useQuery as tanstack_useQuery,
-  type UseQueryOptions,
   useMutation,
 } from '@tanstack/vue-query'
-import { hashFn } from '@reactive/core/query'
-import { computed, type MaybeRef, unref } from 'vue'
+import { type MaybeRef, computed, unref } from 'vue'
 
-import type { DeepMaybeRef, DeepUnwrapRef } from '../types/ref.js'
+import type { DeepMaybeRef, DeepUnwrapRef } from '../types/ref'
 
 export { useMutation }
 
@@ -23,9 +23,7 @@ export type UseMutationParameters<
   context = unknown,
 > = DeepMaybeRef<
   Omit<
-    DeepUnwrapRef<
-      MutationObserverOptions<data, error, variables, context>
-    >,
+    DeepUnwrapRef<MutationObserverOptions<data, error, variables, context>>,
     'mutationFn' | 'mutationKey' | 'throwOnError'
   >
 >
@@ -83,7 +81,9 @@ export type UseQueryParameters<
   }
 >
 
-export type UseQueryReturnType<data = unknown, error = DefaultError> =
-  tanstack_UseQueryReturnType<data, error> & {
-    queryKey: QueryKey
-  }
+export type UseQueryReturnType<
+  data = unknown,
+  error = DefaultError,
+> = tanstack_UseQueryReturnType<data, error> & {
+  queryKey: QueryKey
+}

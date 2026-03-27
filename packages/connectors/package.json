@@ -1,5 +1,5 @@
 {
-  "name": "@reactive/connectors",
+  "name": "@growae/reactive-connectors",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/esm/exports/index.js",
@@ -19,7 +19,7 @@
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
   },
   "dependencies": {
-    "@reactive/core": "workspace:*"
+    "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
     "@aeternity/aepp-sdk": ">=14.0.0",
@@ -27,7 +27,14 @@
     "typescript": ">=5.7.0"
   },
   "peerDependenciesMeta": {
-    "@ledgerhq/hw-transport": { "optional": true },
-    "typescript": { "optional": true }
+    "@ledgerhq/hw-transport": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

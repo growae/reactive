@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [pnpm]
-pnpm add @reactive/core
+pnpm add @growae/reactive
 ```
 
 ```bash [npm]
-npm install @reactive/core
+npm install @growae/reactive
 ```
 
 ```bash [yarn]
-yarn add @reactive/core
+yarn add @growae/reactive
 ```
 
 :::
@@ -25,17 +25,17 @@ yarn add @reactive/core
 
 ## Peer Dependencies
 
-`@reactive/core` depends on the Aeternity SDK under the hood. It is bundled with the package — you do not need to install `@aeternity/aepp-sdk` separately.
+`@growae/reactive` depends on the Aeternity SDK under the hood. It is bundled with the package — you do not need to install `@aeternity/aepp-sdk` separately.
 
 ## Framework Packages
 
-If you are using a framework, install the corresponding package instead. Each framework package re-exports everything from `@reactive/core`:
+If you are using a framework, install the corresponding package instead. Each framework package re-exports everything from `@growae/reactive`:
 
 | Framework | Package | Extra Dependencies |
 |-----------|---------|-------------------|
-| React | `@reactive/react` | `@tanstack/react-query` |
-| Vue | `@reactive/vue` | `@tanstack/vue-query` |
-| Solid | `@reactive/solid` | `@tanstack/solid-query` |
+| React | `@growae/reactive-react` | `@tanstack/react-query` |
+| Vue | `@growae/reactive-vue` | `@tanstack/vue-query` |
+| Solid | `@growae/reactive-solid` | `@tanstack/solid-query` |
 
 ## TypeScript Configuration
 

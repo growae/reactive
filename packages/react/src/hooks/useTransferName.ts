@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type TransferNameParameters,
   type TransferNameReturnType,
   transferName,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseTransferNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: TransferNameReturnType, variables: TransferNameParameters, context: context) => void
-      onError?: (error: Error, variables: TransferNameParameters, context: context) => void
+      onSuccess?: (
+        data: TransferNameReturnType,
+        variables: TransferNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: TransferNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseTransferNameReturnType<context = unknown> = Compute<
     context
   > & {
     transferName: (variables: TransferNameParameters) => void
-    transferNameAsync: (variables: TransferNameParameters) => Promise<TransferNameReturnType>
+    transferNameAsync: (
+      variables: TransferNameParameters,
+    ) => Promise<TransferNameReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useTransferName<context = unknown>(
     mutationFn: (variables: TransferNameParameters) =>
       transferName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseTransferNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    transferName: mutation.mutate as Return['transferName'],
-    transferNameAsync: mutation.mutateAsync as Return['transferNameAsync'],
+    transferName: mutation.mutate as unknown as Return['transferName'],
+    transferNameAsync:
+      mutation.mutateAsync as unknown as Return['transferNameAsync'],
   }
 }

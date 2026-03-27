@@ -1,7 +1,11 @@
-import type { Config } from '../createConfig.js'
-import type { CallContractParameters } from './callContract.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
+import type { CallContractParameters } from './callContract'
 
-export type SimulateContractParameters = Omit<CallContractParameters, 'options'> & {
+export type SimulateContractParameters = Omit<
+  CallContractParameters,
+  'options'
+> & {
   options?: Omit<NonNullable<CallContractParameters['options']>, 'callStatic'>
 }
 
@@ -18,26 +22,35 @@ export async function simulateContract(
   config: Config,
   parameters: SimulateContractParameters,
 ): Promise<SimulateContractReturnType> {
-  const { address, aci, method, args = [], options: txOptions = {}, networkId } = parameters
+  const {
+    address,
+    aci,
+    method,
+    args = [],
+    options: txOptions = {},
+    networkId,
+  } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
 
-  const { Contract } = await import('@aeternity/aepp-sdk')
   const contractInstance = await Contract.initialize({
     onNode: node,
-    ...(connection ? { onAccount: connection.account } : {}),
+    ...(connection
+      ? { onAccount: connection.accounts[0] as `ak_${string}` }
+      : {}),
     aci,
-    address,
-  })
+    address: address as `ct_${string}`,
+  } as any)
 
   const result = await contractInstance.$call(method, args, {
     callStatic: true,
     amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
     gasLimit: txOptions.gasLimit,
-    gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
+    gasPrice:
+      txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
     fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
-  })
+  } as any)
 
   return {
     decodedResult: result.decodedResult,

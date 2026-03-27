@@ -1,5 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { hashTypedData } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SignTypedDataParameters = {
   domain: Record<string, unknown>
@@ -18,7 +19,7 @@ export async function signTypedData(
   config: Config,
   parameters: SignTypedDataParameters,
 ): Promise<SignTypedDataReturnType> {
-  const { domain, aci, data, networkId } = parameters
+  const { domain, aci, data } = parameters
 
   const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
@@ -26,9 +27,8 @@ export async function signTypedData(
   }
 
   const connector = connection.connector
-  const { hashTypedData } = await import('@aeternity/aepp-sdk')
 
-  const hash = hashTypedData(data, aci, domain)
+  const hash = hashTypedData(data as `cb_${string}`, aci, domain)
   const hashHex = Buffer.from(hash).toString('hex')
 
   if (!connector.signMessage) {

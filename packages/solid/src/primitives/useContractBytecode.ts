@@ -1,18 +1,18 @@
 import {
+  type GetContractBytecodeErrorType,
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
-  type GetContractBytecodeErrorType,
   getContractBytecode,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseContractBytecodeParameters = Accessor<
   GetContractBytecodeParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >
@@ -23,21 +23,26 @@ export type UseContractBytecodeReturnType = UseQueryReturnType<
 >
 
 export function useContractBytecode(
-  parameters: UseContractBytecodeParameters = () => ({} as GetContractBytecodeParameters),
+  parameters: UseContractBytecodeParameters = () =>
+    ({}) as GetContractBytecodeParameters,
 ): UseContractBytecodeReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['contractBytecode', {
-      contractId: parameters().contractId,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getContractBytecode(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
-    enabled: Boolean(parameters().contractId) && (parameters().enabled ?? true),
+    queryKey: [
+      'contractBytecode',
+      {
+        address: parameters().address,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getContractBytecode(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
+    enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
   }))
 
   return useQuery(options) as UseContractBytecodeReturnType

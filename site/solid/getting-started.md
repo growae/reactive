@@ -2,23 +2,23 @@
 
 ## Overview
 
-`@reactive/solid` provides Solid primitives for interacting with the Aeternity blockchain. Built on top of `@reactive/core` and [TanStack Solid Query](https://tanstack.com/query/v5/docs/framework/solid), it offers reactive signals, automatic caching, and loading states.
+`@growae/reactive-solid` provides Solid primitives for interacting with the Aeternity blockchain. Built on top of `@growae/reactive` and [TanStack Solid Query](https://tanstack.com/query/v5/docs/framework/solid), it offers reactive signals, automatic caching, and loading states.
 
 ## Quick Start
 
 ### 1. Install
 
 ```bash
-pnpm add @reactive/solid @tanstack/solid-query
+pnpm add @growae/reactive-solid @tanstack/solid-query
 ```
 
 ### 2. Set Up Provider
 
 ```tsx
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
-import { ReactiveProvider } from '@reactive/solid'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
+import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 
 const config = createConfig({
@@ -42,7 +42,7 @@ function App() {
 ### 3. Use Primitives
 
 ```tsx
-import { useConnect, useBalance } from '@reactive/solid'
+import { useConnect, useBalance } from '@growae/reactive-solid'
 
 function Wallet() {
   const { connect, connectors } = useConnect()

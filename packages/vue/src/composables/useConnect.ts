@@ -1,24 +1,37 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
-  Config,
+  Compute,
+  ConnectErrorType,
   ConnectParameters,
   ConnectReturnType,
-  ConnectErrorType,
-  Compute,
-} from '@reactive/core'
-import { connect } from '@reactive/core'
+} from '@growae/reactive'
+import { connect } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
 import { onScopeDispose } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnectors } from './useConnectors.js'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnectors } from './useConnectors'
 
 export type UseConnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ConnectReturnType, variables: ConnectParameters, context: context) => void
-      onError?: (error: ConnectErrorType, variables: ConnectParameters, context: context) => void
-      onSettled?: (data: ConnectReturnType | undefined, error: ConnectErrorType | null, variables: ConnectParameters, context: context) => void
+      onSuccess?: (
+        data: ConnectReturnType,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: ConnectErrorType,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: ConnectReturnType | undefined,
+        error: ConnectErrorType | null,
+        variables: ConnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -41,10 +54,20 @@ export function useConnect<context = unknown>(
 ): UseConnectReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['connect'],
     mutationFn: (variables: ConnectParameters) => connect(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   const unsubscribe = config.subscribe(

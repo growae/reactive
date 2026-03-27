@@ -1,17 +1,22 @@
-import type { Config } from '../createConfig.js'
-import { BaseError } from '../errors/base.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants'
+import type { Config } from '../createConfig'
+import { BaseError } from '../errors/base'
 
 export type DeployContractParameters = {
   sourceCode?: string
   bytecode?: string
-  aci?: any
-  initArgs?: any[]
+  aci?: unknown
+  initArgs?: unknown[]
+  onCompiler?: unknown
   options?: {
     amount?: bigint
     gasLimit?: number
     gasPrice?: bigint
     fee?: bigint
     deposit?: bigint
+    /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+    ttl?: number
   }
   networkId?: string
 }
@@ -50,6 +55,7 @@ export async function deployContract(
     sourceCode,
     bytecode,
     aci,
+    onCompiler,
     initArgs = [],
     options: txOptions = {},
     networkId,
@@ -59,36 +65,42 @@ export async function deployContract(
     throw new DeployContractNoCodeError()
   }
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new DeployContractNoAccountError()
   }
 
-  const { Contract } = await import('@aeternity/aepp-sdk')
+  const node = config.getNodeClient({ networkId })
+
   const contractInstance = await Contract.initialize({
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as `ak_${string}`,
     ...(sourceCode ? { sourceCode } : {}),
-    ...(bytecode ? { bytecode } : {}),
+    ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),
     ...(aci ? { aci } : {}),
-    ...(config.state.compilerUrl
-      ? { onCompiler: config.getCompiler() }
+    ...(onCompiler
+      ? { onCompiler: onCompiler as import('@aeternity/aepp-sdk').CompilerBase }
       : {}),
-  })
+  } as any)
 
-  const deployResult = await contractInstance.$deploy(initArgs, {
-    amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
-    gasLimit: txOptions.gasLimit,
-    gasPrice: txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
-    fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
-    deposit: txOptions.deposit != null ? Number(txOptions.deposit) : undefined,
-  })
+  const deployResult = await contractInstance.$deploy(
+    initArgs as any,
+    {
+      amount: txOptions.amount != null ? Number(txOptions.amount) : undefined,
+      gasLimit: txOptions.gasLimit,
+      gasPrice:
+        txOptions.gasPrice != null ? Number(txOptions.gasPrice) : undefined,
+      fee: txOptions.fee != null ? Number(txOptions.fee) : undefined,
+      deposit:
+        txOptions.deposit != null ? Number(txOptions.deposit) : undefined,
+      ttl: txOptions.ttl ?? DEFAULT_TTL,
+    } as Parameters<typeof contractInstance.$deploy>[1],
+  )
 
   return {
-    address: deployResult.address ?? '',
-    txHash: deployResult.transaction ?? '',
-    rawTx: deployResult.rawTx,
+    address: (deployResult.address as string) ?? '',
+    txHash: (deployResult.transaction as string) ?? '',
+    rawTx: deployResult.rawTx as string,
     result: deployResult.result,
   }
 }

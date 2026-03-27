@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { walletDetect } from './walletDetect.js'
-import type { DetectedWallet } from './walletDetect.js'
+import { BrowserWindowMessageConnection } from '@aeternity/aepp-sdk'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { walletDetect } from './walletDetect'
+import type { DetectedWallet } from './walletDetect'
 
 const mockDisconnect = vi.fn()
 
@@ -85,9 +86,6 @@ describe('walletDetect', () => {
   })
 
   it('should pass debug option to BrowserWindowMessageConnection', async () => {
-    const { BrowserWindowMessageConnection } =
-      await import('@aeternity/aepp-sdk')
-
     await walletDetect({ debug: true })
 
     expect(BrowserWindowMessageConnection).toHaveBeenCalledWith(

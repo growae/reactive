@@ -5,13 +5,13 @@ Returns the AE balance for an address.
 ## Import
 
 ```typescript
-import { getBalance } from '@reactive/core/actions'
+import { getBalance } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { getBalance } from '@reactive/core/actions'
+import { getBalance } from '@growae/reactive/actions'
 
 const balance = await getBalance(config, {
   address: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
@@ -58,7 +58,7 @@ Target network. Defaults to the currently active network.
 ## Error Types
 
 ```typescript
-import type { GetBalanceErrorType } from '@reactive/core'
+import type { GetBalanceErrorType } from '@growae/reactive'
 ```
 
 - `NetworkNotConfiguredError` — target network is not in the config

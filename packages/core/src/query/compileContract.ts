@@ -4,8 +4,8 @@ import {
   type CompileContractParameters,
   type CompileContractReturnType,
   compileContract,
-} from '../actions/compileContract.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/compileContract'
+import type { Config } from '../createConfig'
 
 export function compileContractMutationOptions(config: Config) {
   return {
@@ -13,7 +13,11 @@ export function compileContractMutationOptions(config: Config) {
       return compileContract(config, variables)
     },
     mutationKey: ['compileContract'],
-  } satisfies MutationOptions<CompileContractReturnType, CompileContractErrorType, CompileContractParameters>
+  } satisfies MutationOptions<
+    CompileContractReturnType,
+    CompileContractErrorType,
+    CompileContractParameters
+  >
 }
 
 export type CompileContractMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type CompileContractMutationOptions = ReturnType<
 >
 export type CompileContractData = CompileContractReturnType
 export type CompileContractVariables = CompileContractParameters
-export { type CompileContractErrorType }
+export type { CompileContractErrorType }

@@ -57,6 +57,6 @@ export function deepEqual(a: any, b: any): boolean {
     return true
   }
 
-  // true if both NaN, false otherwise
+  // biome-ignore lint/suspicious/noSelfCompare: intentional NaN detection
   return a !== a && b !== b
 }

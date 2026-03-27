@@ -1,7 +1,10 @@
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 
 export type WatchConnectionsParameters = {
-  onChange: (connections: any[], prevConnections: any[]) => void
+  onChange: (
+    connections: Map<string, import('../createConfig').Connection>,
+    prevConnections: Map<string, import('../createConfig').Connection>,
+  ) => void
 }
 
 export type WatchConnectionsReturnType = () => void
@@ -11,8 +14,5 @@ export function watchConnections(
   parameters: WatchConnectionsParameters,
 ): WatchConnectionsReturnType {
   const { onChange } = parameters
-  return config.subscribe(
-    (state) => state.connections ?? [],
-    onChange,
-  )
+  return config.subscribe((state) => state.connections, onChange)
 }

@@ -1,14 +1,14 @@
 import type {
+  Compute,
   ResolveNameParameters,
   ResolveNameReturnType,
-  Compute,
-} from '@reactive/core'
-import { resolveName } from '@reactive/core'
+} from '@growae/reactive'
+import { resolveName } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseResolveNameParameters = Compute<
   ResolveNameParameters & ConfigParameter & { enabled?: boolean }
@@ -26,15 +26,19 @@ export function useResolveName(
   const networkId = useNetworkId({ config })
 
   const options = computed(() => ({
-    queryKey: ['resolveName', {
-      name: parameters.name,
-      key: parameters.key,
-      networkId: parameters.networkId ?? networkId.value,
-    }] as const,
-    queryFn: () => resolveName(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-    }),
+    queryKey: [
+      'resolveName',
+      {
+        name: parameters.name,
+        key: parameters.key,
+        networkId: parameters.networkId ?? networkId.value,
+      },
+    ] as const,
+    queryFn: () =>
+      resolveName(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId.value,
+      }),
     enabled: Boolean(parameters.name) && (parameters.enabled ?? true),
   }))
 

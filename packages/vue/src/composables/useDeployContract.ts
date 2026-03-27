@@ -1,20 +1,35 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
+  DeployContractErrorType,
   DeployContractParameters,
   DeployContractReturnType,
-  DeployContractErrorType,
-  Compute,
-} from '@reactive/core'
-import { deployContract } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { deployContract } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseDeployContractParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: DeployContractReturnType, variables: DeployContractParameters, context: context) => void
-      onError?: (error: DeployContractErrorType, variables: DeployContractParameters, context: context) => void
+      onSuccess?: (
+        data: DeployContractReturnType,
+        variables: DeployContractParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: DeployContractErrorType,
+        variables: DeployContractParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: DeployContractReturnType | undefined,
+        error: DeployContractErrorType | null,
+        variables: DeployContractParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -27,7 +42,9 @@ export type UseDeployContractReturnType<context = unknown> = Compute<
     context
   > & {
     deployContract: (variables: DeployContractParameters) => void
-    deployContractAsync: (variables: DeployContractParameters) => Promise<DeployContractReturnType>
+    deployContractAsync: (
+      variables: DeployContractParameters,
+    ) => Promise<DeployContractReturnType>
   }
 >
 
@@ -36,11 +53,21 @@ export function useDeployContract<context = unknown>(
 ): UseDeployContractReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['deployContract'],
     mutationFn: (variables: DeployContractParameters) =>
       deployContract(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseDeployContractReturnType<context>

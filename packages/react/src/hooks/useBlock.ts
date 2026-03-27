@@ -1,16 +1,16 @@
 'use client'
 
 import {
+  type GetBlockErrorType,
   type GetBlockParameters,
   type GetBlockReturnType,
-  type GetBlockErrorType,
   getBlock,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseBlockParameters = Compute<
   GetBlockParameters & ConfigParameter & { enabled?: boolean }
@@ -28,15 +28,19 @@ export function useBlock(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['block', {
-      height: parameters.height,
-      hash: parameters.hash,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getBlock(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'block',
+      {
+        height: parameters.height,
+        hash: parameters.hash,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getBlock(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: parameters.enabled ?? true,
   }) as UseBlockReturnType
 }

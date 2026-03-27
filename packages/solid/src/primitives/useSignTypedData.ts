@@ -1,14 +1,11 @@
+import { type SignTypedDataParameters, signTypedData } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type SignTypedDataParameters,
-  type SignTypedDataReturnType,
-  type SignTypedDataErrorType,
-  signTypedData,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseSignTypedDataParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseSignTypedDataParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useSignTypedData(
   parameters: UseSignTypedDataParameters = () => ({}),
@@ -20,3 +17,5 @@ export function useSignTypedData(
       signTypedData(config(), variables),
   }))
 }
+
+export type UseSignTypedDataReturnType = ReturnType<typeof useSignTypedData>

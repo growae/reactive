@@ -6,19 +6,19 @@ export {
   ReactivePlugin,
   configKey,
   type ReactivePluginOptions,
-} from '../plugin.js'
+} from '../plugin'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors
 ////////////////////////////////////////////////////////////////////////////////
 
-export { BaseError, type BaseErrorType } from '../errors/base.js'
+export { BaseError, type BaseErrorType } from '../errors/base'
 export {
   ReactivePluginNotFoundError,
   type ReactivePluginNotFoundErrorType,
   ReactiveInjectionContextError,
   type ReactiveInjectionContextErrorType,
-} from '../errors/plugin.js'
+} from '../errors/plugin'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Composables
@@ -62,7 +62,6 @@ export {
   useConnectorClient,
   type UseConnectorClientParameters,
   type UseConnectorClientReturnType,
-
   // Chain reads
   useBalance,
   type UseBalanceParameters,
@@ -91,7 +90,6 @@ export {
   useEstimateGas,
   type UseEstimateGasParameters,
   type UseEstimateGasReturnType,
-
   // Transactions
   useSendTransaction,
   type UseSendTransactionParameters,
@@ -102,7 +100,6 @@ export {
   usePayForTransaction,
   type UsePayForTransactionParameters,
   type UsePayForTransactionReturnType,
-
   // Signing
   useSignMessage,
   type UseSignMessageParameters,
@@ -119,7 +116,6 @@ export {
   useVerifyTypedData,
   type UseVerifyTypedDataParameters,
   type UseVerifyTypedDataReturnType,
-
   // Contracts
   useDeployContract,
   type UseDeployContractParameters,
@@ -139,7 +135,6 @@ export {
   useContractEvents,
   type UseContractEventsParameters,
   type UseContractEventsReturnType,
-
   // AENS
   usePreclaimName,
   type UsePreclaimNameParameters,
@@ -159,7 +154,6 @@ export {
   useResolveName,
   type UseResolveNameParameters,
   type UseResolveNameReturnType,
-
   // Oracles
   useRegisterOracle,
   type UseRegisterOracleParameters,
@@ -176,7 +170,6 @@ export {
   useOracleQueries,
   type UseOracleQueriesParameters,
   type UseOracleQueriesReturnType,
-
   // Channels
   useOpenChannel,
   type UseOpenChannelParameters,
@@ -187,7 +180,6 @@ export {
   useChannelDeposit,
   type UseChannelDepositParameters,
   type UseChannelDepositReturnType,
-
   // Watchers
   useWatchHeight,
   type UseWatchHeightParameters,
@@ -198,10 +190,16 @@ export {
   useWatchConnectors,
   type UseWatchConnectorsParameters,
   type UseWatchConnectorsReturnType,
-} from '../composables/index.js'
+} from '../composables/index'
 
 ////////////////////////////////////////////////////////////////////////////////
-// @reactive/core re-exports
+// Nuxt Module
+////////////////////////////////////////////////////////////////////////////////
+
+export type { ReactiveNuxtOptions } from '../nuxt/module'
+
+////////////////////////////////////////////////////////////////////////////////
+// @growae/reactive re-exports
 ////////////////////////////////////////////////////////////////////////////////
 
 export {
@@ -212,7 +210,7 @@ export {
   toAe,
   toAettos,
   formatAmount,
-} from '@reactive/core'
+} from '@growae/reactive'
 
 export type {
   Config,
@@ -220,4 +218,4 @@ export type {
   State,
   Connection,
   Connector,
-} from '@reactive/core'
+} from '@growae/reactive'

@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type RevokeNameParameters,
   type RevokeNameReturnType,
   revokeName,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseRevokeNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RevokeNameReturnType, variables: RevokeNameParameters, context: context) => void
-      onError?: (error: Error, variables: RevokeNameParameters, context: context) => void
+      onSuccess?: (
+        data: RevokeNameReturnType,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseRevokeNameReturnType<context = unknown> = Compute<
     context
   > & {
     revokeName: (variables: RevokeNameParameters) => void
-    revokeNameAsync: (variables: RevokeNameParameters) => Promise<RevokeNameReturnType>
+    revokeNameAsync: (
+      variables: RevokeNameParameters,
+    ) => Promise<RevokeNameReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useRevokeName<context = unknown>(
     mutationFn: (variables: RevokeNameParameters) =>
       revokeName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseRevokeNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    revokeName: mutation.mutate as Return['revokeName'],
-    revokeNameAsync: mutation.mutateAsync as Return['revokeNameAsync'],
+    revokeName: mutation.mutate as unknown as Return['revokeName'],
+    revokeNameAsync:
+      mutation.mutateAsync as unknown as Return['revokeNameAsync'],
   }
 }

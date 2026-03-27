@@ -4,8 +4,8 @@ import {
   type SpendParameters,
   type SpendReturnType,
   spend,
-} from '../actions/spend.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/spend'
+import type { Config } from '../createConfig'
 
 export function spendMutationOptions(config: Config) {
   return {
@@ -19,4 +19,4 @@ export function spendMutationOptions(config: Config) {
 export type SpendMutationOptions = ReturnType<typeof spendMutationOptions>
 export type SpendData = SpendReturnType
 export type SpendVariables = SpendParameters
-export { type SpendErrorType }
+export type { SpendErrorType }

@@ -1,6 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import type { NamePointer } from './updateName.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
+import type { NamePointer } from './updateName'
 
 export type GetNameEntryParameters = {
   name: string
@@ -27,7 +27,7 @@ export async function getNameEntry(
 
   return {
     id: entry.id,
-    owner: entry.owner,
+    owner: entry.owner ?? '',
     pointers: (entry.pointers ?? []).map((p: any) => ({
       key: p.key,
       id: p.id,

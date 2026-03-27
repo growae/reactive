@@ -1,13 +1,11 @@
+import { type OpenChannelParameters, openChannel } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type OpenChannelParameters,
-  type OpenChannelReturnType,
-  openChannel,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseOpenChannelParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseOpenChannelParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useOpenChannel(
   parameters: UseOpenChannelParameters = () => ({}),
@@ -19,3 +17,5 @@ export function useOpenChannel(
       openChannel(config(), variables),
   }))
 }
+
+export type UseOpenChannelReturnType = ReturnType<typeof useOpenChannel>

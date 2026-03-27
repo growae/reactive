@@ -1,22 +1,22 @@
 import type {
-  GetConnectorClientParameters,
-  GetConnectorClientReturnType,
   Compute,
-} from '@reactive/core'
-import { getConnectorClient } from '@reactive/core'
+  GetConnectionReturnType,
+  GetNodeClientParameters,
+} from '@growae/reactive'
+import { getConnection } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnection } from './useConnection.js'
-import { useNetworkId } from './useNetworkId.js'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnection } from './useConnection'
+import { useNetworkId } from './useNetworkId'
 
 export type UseConnectorClientParameters = Compute<
-  GetConnectorClientParameters & ConfigParameter
+  GetNodeClientParameters & ConfigParameter
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<
-  GetConnectorClientReturnType,
+  GetConnectionReturnType,
   Error
 >
 
@@ -28,15 +28,14 @@ export function useConnectorClient(
   const connection = useConnection({ config })
 
   const options = computed(() => ({
-    queryKey: ['connectorClient', {
-      networkId: parameters.networkId ?? networkId.value,
-      connector: connection.value?.connector?.uid,
-    }] as const,
-    queryFn: () => getConnectorClient(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId.value,
-      connector: parameters.connector ?? connection.value?.connector,
-    }),
+    queryKey: [
+      'connectorClient',
+      {
+        networkId: parameters.networkId ?? networkId.value,
+        connector: connection.value?.connector?.uid,
+      },
+    ] as const,
+    queryFn: () => getConnection(config),
     enabled: !!connection.value?.connector,
   }))
 

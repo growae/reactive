@@ -1,19 +1,34 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   TransferNameParameters,
   TransferNameReturnType,
-  Compute,
-} from '@reactive/core'
-import { transferName } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { transferName } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseTransferNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: TransferNameReturnType, variables: TransferNameParameters, context: context) => void
-      onError?: (error: Error, variables: TransferNameParameters, context: context) => void
+      onSuccess?: (
+        data: TransferNameReturnType,
+        variables: TransferNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: TransferNameParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: TransferNameReturnType | undefined,
+        error: Error | null,
+        variables: TransferNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +41,9 @@ export type UseTransferNameReturnType<context = unknown> = Compute<
     context
   > & {
     transferName: (variables: TransferNameParameters) => void
-    transferNameAsync: (variables: TransferNameParameters) => Promise<TransferNameReturnType>
+    transferNameAsync: (
+      variables: TransferNameParameters,
+    ) => Promise<TransferNameReturnType>
   }
 >
 
@@ -35,11 +52,21 @@ export function useTransferName<context = unknown>(
 ): UseTransferNameReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['transferName'],
     mutationFn: (variables: TransferNameParameters) =>
       transferName(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseTransferNameReturnType<context>

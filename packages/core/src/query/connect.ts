@@ -4,8 +4,8 @@ import {
   type ConnectParameters,
   type ConnectReturnType,
   connect,
-} from '../actions/connect.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/connect'
+import type { Config } from '../createConfig'
 
 export function connectMutationOptions(config: Config) {
   return {
@@ -13,10 +13,14 @@ export function connectMutationOptions(config: Config) {
       return connect(config, variables)
     },
     mutationKey: ['connect'],
-  } satisfies MutationOptions<ConnectReturnType, ConnectErrorType, ConnectParameters>
+  } satisfies MutationOptions<
+    ConnectReturnType,
+    ConnectErrorType,
+    ConnectParameters
+  >
 }
 
 export type ConnectMutationOptions = ReturnType<typeof connectMutationOptions>
 export type ConnectData = ConnectReturnType
 export type ConnectVariables = ConnectParameters
-export { type ConnectErrorType }
+export type { ConnectErrorType }

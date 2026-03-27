@@ -1,5 +1,5 @@
-import type { Config, Connector } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config, Connector } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SignDelegationParameters = {
   delegation: any
@@ -30,13 +30,14 @@ export async function signDelegation(
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  if (!connector.signDelegation) {
+  const signDelegationFn = (connector as any).signDelegation
+  if (!signDelegationFn) {
     throw new Error(
       `Connector "${connector.name}" does not support delegation signing.`,
     )
   }
 
-  return connector.signDelegation(delegation, {
+  return signDelegationFn(delegation, {
     networkId,
     onAccount: account,
   })

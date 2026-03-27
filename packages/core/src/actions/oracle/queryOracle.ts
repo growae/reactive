@@ -1,5 +1,7 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { OracleClient } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type QueryOracleParameters = {
   oracleId: string
@@ -7,6 +9,8 @@ export type QueryOracleParameters = {
   queryFee?: bigint
   queryTtl?: { type: 'delta' | 'block'; value: number }
   responseTtl?: { type: 'delta' | 'block'; value: number }
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -28,24 +32,26 @@ export async function queryOracle(
   config: Config,
   parameters: QueryOracleParameters,
 ): Promise<QueryOracleReturnType> {
-  const { oracleId, query, queryFee, queryTtl, responseTtl, networkId } = parameters
+  const { oracleId, query, queryFee, queryTtl, responseTtl, ttl, networkId } =
+    parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new QueryOracleNoAccountError()
   }
 
-  const { OracleClient } = await import('@aeternity/aepp-sdk')
   const oracleClient = new OracleClient(oracleId as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
     ...(queryFee != null ? { queryFee: Number(queryFee) } : {}),
     ...(queryTtl ? { queryTtl } : {}),
     ...(responseTtl ? { responseTtl } : {}),
   })
 
-  const result = await oracleClient.postQuery(query)
+  const result = await oracleClient.postQuery(query, {
+    ttl: ttl ?? DEFAULT_TTL,
+  } as any)
 
   return {
     queryId: result.queryId,

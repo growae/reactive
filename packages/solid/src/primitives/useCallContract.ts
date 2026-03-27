@@ -1,14 +1,11 @@
+import { type CallContractParameters, callContract } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type CallContractParameters,
-  type CallContractReturnType,
-  type CallContractErrorType,
-  callContract,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseCallContractParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseCallContractParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useCallContract(
   parameters: UseCallContractParameters = () => ({}),
@@ -20,3 +17,5 @@ export function useCallContract(
       callContract(config(), variables),
   }))
 }
+
+export type UseCallContractReturnType = ReturnType<typeof useCallContract>

@@ -5,13 +5,13 @@ Calls a Sophia contract function as a dry-run (no transaction, no fees). Used fo
 ## Import
 
 ```typescript
-import { readContract } from '@reactive/core/actions'
+import { readContract } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { readContract } from '@reactive/core/actions'
+import { readContract } from '@growae/reactive/actions'
 
 const result = await readContract(config, {
   address: 'ct_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
@@ -51,7 +51,7 @@ const balance = await readContract(config, {
 ## Error Types
 
 ```typescript
-import type { ReadContractErrorType } from '@reactive/core'
+import type { ReadContractErrorType } from '@growae/reactive'
 ```
 
 - `ContractNotFoundError` — contract not deployed at address

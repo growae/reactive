@@ -5,13 +5,13 @@ Primitive for connecting to a wallet.
 ## Import
 
 ```typescript
-import { useConnect } from '@reactive/solid'
+import { useConnect } from '@growae/reactive-solid'
 ```
 
 ## Usage
 
 ```tsx
-import { useConnect } from '@reactive/solid'
+import { useConnect } from '@growae/reactive-solid'
 import { For } from 'solid-js'
 
 function ConnectButton() {

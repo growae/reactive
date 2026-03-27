@@ -3,9 +3,9 @@ import {
   type ResolveNameParameters,
   type ResolveNameReturnType,
   resolveName,
-} from '../actions/resolveName.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/resolveName'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type ResolveNameOptions = ExactPartial<ResolveNameParameters>
 
@@ -31,4 +31,4 @@ export function resolveNameQueryOptions(
 
 export type ResolveNameQueryFnData = ResolveNameReturnType
 export type ResolveNameData = ResolveNameQueryFnData
-export { type ResolveNameErrorType }
+export type { ResolveNameErrorType }

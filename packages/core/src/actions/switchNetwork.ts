@@ -1,6 +1,6 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import { NetworkNotConfiguredError } from '../errors/config.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
+import { NetworkNotConfiguredError } from '../errors/config'
 
 export type SwitchNetworkParameters = {
   networkId: string
@@ -15,7 +15,7 @@ export async function switchNetwork(
   parameters: SwitchNetworkParameters,
 ): Promise<SwitchNetworkReturnType> {
   const { networkId } = parameters
-  const network = config.networks.find((n) => n.networkId === networkId)
+  const network = config.networks.find((n) => n.id === networkId)
   if (!network) {
     throw new NetworkNotConfiguredError()
   }

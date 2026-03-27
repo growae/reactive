@@ -1,5 +1,5 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type ResolveNameParameters = {
   name: string
@@ -24,7 +24,7 @@ export async function resolveName(
 ): Promise<ResolveNameReturnType> {
   const { name, key = 'account_pubkey', networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
 
   try {
     const entry = await node.getNameEntryByName(name)

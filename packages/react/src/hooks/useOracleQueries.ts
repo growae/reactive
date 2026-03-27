@@ -4,12 +4,12 @@ import {
   type GetOracleQueriesParameters,
   type GetOracleQueriesReturnType,
   getOracleQueries,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseOracleQueriesParameters = Compute<
   GetOracleQueriesParameters & ConfigParameter & { enabled?: boolean }
@@ -27,14 +27,18 @@ export function useOracleQueries(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['oracleQueries', {
-      oracleId: parameters.oracleId,
-      networkId: parameters.networkId ?? networkId,
-    }],
-    queryFn: () => getOracleQueries(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'oracleQueries',
+      {
+        oracleId: parameters.oracleId,
+        networkId: parameters.networkId ?? networkId,
+      },
+    ],
+    queryFn: () =>
+      getOracleQueries(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.oracleId) && (parameters.enabled ?? true),
   }) as UseOracleQueriesReturnType
 }

@@ -7,7 +7,7 @@ Reactive uses a structured error hierarchy rooted in `BaseError`. Every error in
 All Reactive errors extend `BaseError`:
 
 ```typescript
-import { BaseError } from '@reactive/core'
+import { BaseError } from '@growae/reactive'
 
 try {
   await spend(config, { recipient: 'ak_...', amount: '10' })
@@ -67,7 +67,7 @@ try {
 import {
   InsufficientBalanceError,
   ConnectorNotConnectedError,
-} from '@reactive/core'
+} from '@growae/reactive'
 
 try {
   await spend(config, { recipient: 'ak_...', amount: '10' })
@@ -91,7 +91,7 @@ import type {
   SpendErrorType,
   GetBalanceErrorType,
   CallContractErrorType,
-} from '@reactive/core'
+} from '@growae/reactive'
 ```
 
 Use these types for exhaustive error handling in TypeScript.

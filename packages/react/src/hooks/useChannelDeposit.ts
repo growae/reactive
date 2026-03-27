@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type ChannelDepositParameters,
   type ChannelDepositReturnType,
   channelDeposit,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseChannelDepositParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ChannelDepositReturnType, variables: ChannelDepositParameters, context: context) => void
-      onError?: (error: Error, variables: ChannelDepositParameters, context: context) => void
+      onSuccess?: (
+        data: ChannelDepositReturnType,
+        variables: ChannelDepositParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: ChannelDepositParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseChannelDepositReturnType<context = unknown> = Compute<
     context
   > & {
     channelDeposit: (variables: ChannelDepositParameters) => void
-    channelDepositAsync: (variables: ChannelDepositParameters) => Promise<ChannelDepositReturnType>
+    channelDepositAsync: (
+      variables: ChannelDepositParameters,
+    ) => Promise<ChannelDepositReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useChannelDeposit<context = unknown>(
     mutationFn: (variables: ChannelDepositParameters) =>
       channelDeposit(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseChannelDepositReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    channelDeposit: mutation.mutate as Return['channelDeposit'],
-    channelDepositAsync: mutation.mutateAsync as Return['channelDepositAsync'],
+    channelDeposit: mutation.mutate as unknown as Return['channelDeposit'],
+    channelDepositAsync:
+      mutation.mutateAsync as unknown as Return['channelDepositAsync'],
   }
 }

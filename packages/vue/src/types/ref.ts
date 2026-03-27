@@ -1,4 +1,4 @@
-import type { Config, Connector } from '@reactive/core'
+import type { Config, Connector } from '@growae/reactive'
 import type { MaybeRef, Ref, UnwrapRef } from 'vue'
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null

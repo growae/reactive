@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type OpenChannelParameters,
   type OpenChannelReturnType,
   openChannel,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseOpenChannelParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: OpenChannelReturnType, variables: OpenChannelParameters, context: context) => void
-      onError?: (error: Error, variables: OpenChannelParameters, context: context) => void
+      onSuccess?: (
+        data: OpenChannelReturnType,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseOpenChannelReturnType<context = unknown> = Compute<
     context
   > & {
     openChannel: (variables: OpenChannelParameters) => void
-    openChannelAsync: (variables: OpenChannelParameters) => Promise<OpenChannelReturnType>
+    openChannelAsync: (
+      variables: OpenChannelParameters,
+    ) => Promise<OpenChannelReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useOpenChannel<context = unknown>(
     mutationFn: (variables: OpenChannelParameters) =>
       openChannel(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseOpenChannelReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    openChannel: mutation.mutate as Return['openChannel'],
-    openChannelAsync: mutation.mutateAsync as Return['openChannelAsync'],
+    openChannel: mutation.mutate as unknown as Return['openChannel'],
+    openChannelAsync:
+      mutation.mutateAsync as unknown as Return['openChannelAsync'],
   }
 }

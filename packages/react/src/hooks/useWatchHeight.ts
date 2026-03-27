@@ -1,16 +1,15 @@
 'use client'
 
-import { watchHeight } from '@reactive/core'
-import type { Compute } from '@reactive/core'
+import { watchHeight } from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
 import { useEffect, useRef } from 'react'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import type { ConfigParameter } from '../types/properties'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseWatchHeightParameters = Compute<
   ConfigParameter & {
     onHeight: (height: number) => void
-    onError?: (error: Error) => void
     enabled?: boolean
     interval?: number
     networkId?: string
@@ -28,17 +27,14 @@ export function useWatchHeight(
   const networkId = paramNetworkId ?? configNetworkId
 
   const onHeightRef = useRef(parameters.onHeight)
-  const onErrorRef = useRef(parameters.onError)
   onHeightRef.current = parameters.onHeight
-  onErrorRef.current = parameters.onError
 
   useEffect(() => {
     if (!enabled) return
     if (!onHeightRef.current) return
     return watchHeight(config, {
       onChange: (height) => onHeightRef.current?.(height),
-      onError: (error) => onErrorRef.current?.(error),
-      interval,
+      pollingInterval: interval,
       networkId,
     })
   }, [config, enabled, interval, networkId])

@@ -1,19 +1,34 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   QueryOracleParameters,
   QueryOracleReturnType,
-  Compute,
-} from '@reactive/core'
-import { queryOracle } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { queryOracle } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseQueryOracleParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: QueryOracleReturnType, variables: QueryOracleParameters, context: context) => void
-      onError?: (error: Error, variables: QueryOracleParameters, context: context) => void
+      onSuccess?: (
+        data: QueryOracleReturnType,
+        variables: QueryOracleParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: QueryOracleParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: QueryOracleReturnType | undefined,
+        error: Error | null,
+        variables: QueryOracleParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +41,9 @@ export type UseQueryOracleReturnType<context = unknown> = Compute<
     context
   > & {
     queryOracle: (variables: QueryOracleParameters) => void
-    queryOracleAsync: (variables: QueryOracleParameters) => Promise<QueryOracleReturnType>
+    queryOracleAsync: (
+      variables: QueryOracleParameters,
+    ) => Promise<QueryOracleReturnType>
   }
 >
 
@@ -35,11 +52,21 @@ export function useQueryOracle<context = unknown>(
 ): UseQueryOracleReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['queryOracle'],
     mutationFn: (variables: QueryOracleParameters) =>
       queryOracle(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseQueryOracleReturnType<context>

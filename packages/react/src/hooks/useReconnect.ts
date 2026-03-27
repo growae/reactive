@@ -1,22 +1,30 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type ReconnectErrorType,
   type ReconnectParameters,
   type ReconnectReturnType,
-  type ReconnectErrorType,
   reconnect,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseReconnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: ReconnectReturnType, variables: ReconnectParameters, context: context) => void
-      onError?: (error: ReconnectErrorType, variables: ReconnectParameters, context: context) => void
+      onSuccess?: (
+        data: ReconnectReturnType,
+        variables: ReconnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: ReconnectErrorType,
+        variables: ReconnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseReconnectReturnType<context = unknown> = Compute<
     context
   > & {
     reconnect: (variables?: ReconnectParameters) => void
-    reconnectAsync: (variables?: ReconnectParameters) => Promise<ReconnectReturnType>
+    reconnectAsync: (
+      variables?: ReconnectParameters,
+    ) => Promise<ReconnectReturnType>
   }
 >
 
@@ -43,12 +53,12 @@ export function useReconnect<context = unknown>(
     mutationFn: (variables: ReconnectParameters = {}) =>
       reconnect(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseReconnectReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    reconnect: mutation.mutate as Return['reconnect'],
-    reconnectAsync: mutation.mutateAsync as Return['reconnectAsync'],
+    reconnect: mutation.mutate as unknown as Return['reconnect'],
+    reconnectAsync: mutation.mutateAsync as unknown as Return['reconnectAsync'],
   }
 }

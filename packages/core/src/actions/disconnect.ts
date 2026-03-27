@@ -1,5 +1,5 @@
-import type { Config, Connection, Connector } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config, Connection, Connector } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type DisconnectParameters = {
   connector?: Connector | undefined

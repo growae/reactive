@@ -1,4 +1,5 @@
-import type { Config } from '../createConfig.js'
+import { Contract } from '@aeternity/aepp-sdk'
+import type { Config } from '../createConfig'
 
 export type GetContractEventsParameters = {
   address: string
@@ -24,18 +25,17 @@ export async function getContractEvents(
 ): Promise<GetContractEventsReturnType> {
   const { address, aci, fromHeight, toHeight, networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
 
-  const txs = await node.getTransactionInfoByHash
+  const txs = (await node.getTransactionInfoByHash)
     ? await fetchContractEventsFromNode(node, address, fromHeight, toHeight)
     : []
 
   if (aci) {
-    const { Contract } = await import('@aeternity/aepp-sdk')
     const contractInstance = await Contract.initialize({
       onNode: node,
       aci,
-      address,
+      address: address as `ct_${string}`,
     })
 
     return txs.map((event) => {

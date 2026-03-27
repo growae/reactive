@@ -1,4 +1,4 @@
-import type { Config } from '../../createConfig.js'
+import type { Config } from '../../createConfig'
 
 export type GetOracleStateParameters = {
   oracleId: string
@@ -20,7 +20,7 @@ export async function getOracleState(
 ): Promise<GetOracleStateReturnType> {
   const { oracleId, networkId } = parameters
 
-  const node = config.getNode({ networkId })
+  const node = config.getNodeClient({ networkId })
   const result = await node.getOracleByPubkey(oracleId)
 
   return {

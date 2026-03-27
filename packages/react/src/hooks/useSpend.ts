@@ -1,22 +1,30 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type SpendErrorType,
   type SpendParameters,
   type SpendReturnType,
-  type SpendErrorType,
   spend,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseSpendParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SpendReturnType, variables: SpendParameters, context: context) => void
-      onError?: (error: SpendErrorType, variables: SpendParameters, context: context) => void
+      onSuccess?: (
+        data: SpendReturnType,
+        variables: SpendParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SpendErrorType,
+        variables: SpendParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -42,12 +50,12 @@ export function useSpend<context = unknown>(
     mutationKey: ['spend'],
     mutationFn: (variables: SpendParameters) => spend(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSpendReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    spend: mutation.mutate as Return['spend'],
-    spendAsync: mutation.mutateAsync as Return['spendAsync'],
+    spend: mutation.mutate as unknown as Return['spend'],
+    spendAsync: mutation.mutateAsync as unknown as Return['spendAsync'],
   }
 }

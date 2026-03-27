@@ -2,11 +2,13 @@ import {
   type GetConnectorsReturnType,
   getConnectors,
   watchConnectors,
-} from '@reactive/core'
+} from '@growae/reactive'
 import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseConnectorsParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseConnectorsParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export type UseConnectorsReturnType = Accessor<GetConnectorsReturnType>
 

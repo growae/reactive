@@ -2,16 +2,16 @@ import {
   type ReadContractParameters,
   type ReadContractReturnType,
   readContract,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseReadContractParameters = Accessor<
   ReadContractParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >
@@ -22,23 +22,30 @@ export type UseReadContractReturnType = UseQueryReturnType<
 >
 
 export function useReadContract(
-  parameters: UseReadContractParameters = () => ({} as ReadContractParameters),
+  parameters: UseReadContractParameters = () => ({}) as ReadContractParameters,
 ): UseReadContractReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['readContract', {
-      address: parameters().address,
-      method: parameters().method,
-      args: parameters().args,
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => readContract(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-    }),
-    enabled: Boolean(parameters().address && parameters().aci && parameters().method) &&
+    queryKey: [
+      'readContract',
+      {
+        address: parameters().address,
+        method: parameters().method,
+        args: parameters().args,
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      readContract(config(), {
+        ...parameters(),
+        networkId: parameters().networkId ?? networkId(),
+      }),
+    enabled:
+      Boolean(
+        parameters().address && parameters().aci && parameters().method,
+      ) &&
       (parameters().enabled ?? true),
   }))
 

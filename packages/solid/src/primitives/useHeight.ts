@@ -1,18 +1,18 @@
 import {
+  type GetHeightErrorType,
   type GetHeightParameters,
   type GetHeightReturnType,
-  type GetHeightErrorType,
   getHeight,
-} from '@reactive/core'
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseHeightParameters = Accessor<
   GetHeightParameters & {
-    config?: import('@reactive/core').Config | undefined
+    config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
 >
@@ -29,12 +29,16 @@ export function useHeight(
   const networkId = useNetworkId(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['height', {
-      networkId: parameters().networkId ?? networkId(),
-    }] as const,
-    queryFn: () => getHeight(config(), {
-      networkId: parameters().networkId ?? networkId(),
-    }),
+    queryKey: [
+      'height',
+      {
+        networkId: parameters().networkId ?? networkId(),
+      },
+    ] as const,
+    queryFn: () =>
+      getHeight(config(), {
+        networkId: parameters().networkId ?? networkId(),
+      }),
     enabled: parameters().enabled ?? true,
   }))
 

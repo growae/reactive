@@ -1,22 +1,30 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type SignTransactionErrorType,
   type SignTransactionParameters,
   type SignTransactionReturnType,
-  type SignTransactionErrorType,
   signTransaction,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseSignTransactionParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SignTransactionReturnType, variables: SignTransactionParameters, context: context) => void
-      onError?: (error: SignTransactionErrorType, variables: SignTransactionParameters, context: context) => void
+      onSuccess?: (
+        data: SignTransactionReturnType,
+        variables: SignTransactionParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SignTransactionErrorType,
+        variables: SignTransactionParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseSignTransactionReturnType<context = unknown> = Compute<
     context
   > & {
     signTransaction: (variables: SignTransactionParameters) => void
-    signTransactionAsync: (variables: SignTransactionParameters) => Promise<SignTransactionReturnType>
+    signTransactionAsync: (
+      variables: SignTransactionParameters,
+    ) => Promise<SignTransactionReturnType>
   }
 >
 
@@ -43,12 +53,13 @@ export function useSignTransaction<context = unknown>(
     mutationFn: (variables: SignTransactionParameters) =>
       signTransaction(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseSignTransactionReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    signTransaction: mutation.mutate as Return['signTransaction'],
-    signTransactionAsync: mutation.mutateAsync as Return['signTransactionAsync'],
+    signTransaction: mutation.mutate as unknown as Return['signTransaction'],
+    signTransactionAsync:
+      mutation.mutateAsync as unknown as Return['signTransactionAsync'],
   }
 }

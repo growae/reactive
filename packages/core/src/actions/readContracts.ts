@@ -1,9 +1,9 @@
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 import {
   type ReadContractParameters,
   type ReadContractReturnType,
   readContract,
-} from './readContract.js'
+} from './readContract'
 
 export type ReadContractsParameters = {
   contracts: ReadContractParameters[]

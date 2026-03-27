@@ -5,13 +5,13 @@ Sends an arbitrary signed transaction to the network. This is the low-level prim
 ## Import
 
 ```typescript
-import { sendTransaction } from '@reactive/core/actions'
+import { sendTransaction } from '@growae/reactive/actions'
 ```
 
 ## Usage
 
 ```typescript
-import { sendTransaction } from '@reactive/core/actions'
+import { sendTransaction } from '@growae/reactive/actions'
 
 const result = await sendTransaction(config, {
   tx: signedTx,
@@ -55,7 +55,7 @@ const result = await sendTransaction(config, {
 ## Error Types
 
 ```typescript
-import type { SendTransactionErrorType } from '@reactive/core'
+import type { SendTransactionErrorType } from '@growae/reactive'
 ```
 
 - `ConnectorNotConnectedError` — no wallet connected

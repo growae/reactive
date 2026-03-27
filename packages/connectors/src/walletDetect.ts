@@ -1,3 +1,8 @@
+import {
+  BrowserWindowMessageConnection,
+  walletDetector,
+} from '@aeternity/aepp-sdk'
+
 export type DetectedWallet = {
   id: string
   name: string
@@ -28,11 +33,6 @@ export async function walletDetect(
     onDetected?: (wallet: DetectedWallet) => void
   } = {},
 ): Promise<WalletDetectResult> {
-  const {
-    walletDetector,
-    BrowserWindowMessageConnection,
-  } = await import('@aeternity/aepp-sdk')
-
   const connection = new BrowserWindowMessageConnection({
     debug: options.debug,
   })

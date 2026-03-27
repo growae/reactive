@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type UpdateNameParameters,
   type UpdateNameReturnType,
   updateName,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseUpdateNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: UpdateNameReturnType, variables: UpdateNameParameters, context: context) => void
-      onError?: (error: Error, variables: UpdateNameParameters, context: context) => void
+      onSuccess?: (
+        data: UpdateNameReturnType,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: UpdateNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseUpdateNameReturnType<context = unknown> = Compute<
     context
   > & {
     updateName: (variables: UpdateNameParameters) => void
-    updateNameAsync: (variables: UpdateNameParameters) => Promise<UpdateNameReturnType>
+    updateNameAsync: (
+      variables: UpdateNameParameters,
+    ) => Promise<UpdateNameReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useUpdateName<context = unknown>(
     mutationFn: (variables: UpdateNameParameters) =>
       updateName(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseUpdateNameReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    updateName: mutation.mutate as Return['updateName'],
-    updateNameAsync: mutation.mutateAsync as Return['updateNameAsync'],
+    updateName: mutation.mutate as unknown as Return['updateName'],
+    updateNameAsync:
+      mutation.mutateAsync as unknown as Return['updateNameAsync'],
   }
 }

@@ -5,13 +5,13 @@ Hook for preclaiming an AENS name (commit step of commit-reveal scheme).
 ## Import
 
 ```typescript
-import { usePreclaimName } from '@reactive/react'
+import { usePreclaimName } from '@growae/reactive-react'
 ```
 
 ## Usage
 
 ```tsx
-import { usePreclaimName } from '@reactive/react'
+import { usePreclaimName } from '@growae/reactive-react'
 
 function PreclaimName() {
   const { mutate: preclaim, data, isPending } = usePreclaimName()

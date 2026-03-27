@@ -2,11 +2,13 @@ import {
   type GetNetworkIdReturnType,
   getNetworkId,
   watchNetworkId,
-} from '@reactive/core'
+} from '@growae/reactive'
 import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseNetworkIdParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseNetworkIdParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export type UseNetworkIdReturnType = Accessor<GetNetworkIdReturnType>
 

@@ -1,13 +1,10 @@
-import {
-  MemoryAccount,
-  type AccountBase,
-} from '@aeternity/aepp-sdk'
+import { type AccountBase, MemoryAccount } from '@aeternity/aepp-sdk'
 
 import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
-} from '../errors/config.js'
-import { createConnector } from './createConnector.js'
+} from '../errors/config'
+import { createConnector } from './createConnector'
 
 export type MemoryParameters = {
   secretKey: string
@@ -28,16 +25,13 @@ export function memory(parameters: MemoryParameters) {
     type: memory.type,
 
     async setup() {
-      account = new MemoryAccount(parameters.secretKey)
+      account = new MemoryAccount(parameters.secretKey as `sk_${string}`)
     },
 
     async connect({ networkId } = {}) {
-      const targetNetworkId =
-        networkId ?? config.networks[0].id
+      const targetNetworkId = networkId ?? config.networks[0].id
 
-      const isConfigured = config.networks.some(
-        (n) => n.id === targetNetworkId,
-      )
+      const isConfigured = config.networks.some((n) => n.id === targetNetworkId)
       if (!isConfigured) throw new NetworkNotConfiguredError()
 
       connected = true
@@ -77,7 +71,7 @@ export function memory(parameters: MemoryParameters) {
 
     async signTransaction({ tx }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return account.signTransaction(tx)
+      return account.signTransaction(tx as `tx_${string}`)
     },
 
     async signMessage({ message }) {

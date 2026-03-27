@@ -1,5 +1,7 @@
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { Tag, buildTx } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../constants'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SpendParameters = {
   recipientId: string
@@ -24,8 +26,13 @@ export async function spend(
   config: Config,
   parameters: SpendParameters,
 ): Promise<SpendReturnType> {
-  const { recipientId, amount, payload, networkId, options: txOptions = {} } =
-    parameters
+  const {
+    recipientId,
+    amount,
+    payload,
+    networkId,
+    options: txOptions = {},
+  } = parameters
 
   const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
@@ -34,21 +41,20 @@ export async function spend(
 
   const node = config.getNodeClient({ networkId })
 
-  const { TxBuilder, Tag } = await import('@aeternity/aepp-sdk')
   const senderId = connection.accounts[0]
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)
   const nonce = txOptions.nonce ?? accountInfo.nonce + 1
 
-  const spendTx = TxBuilder.buildTx({
+  const spendTx = buildTx({
     tag: Tag.SpendTx,
     senderId,
     recipientId,
     amount: BigInt(amount),
     payload: payload ?? '',
     fee: txOptions.fee ? BigInt(txOptions.fee) : undefined,
-    ttl: txOptions.ttl,
+    ttl: txOptions.ttl ?? DEFAULT_TTL,
     nonce,
   })
 

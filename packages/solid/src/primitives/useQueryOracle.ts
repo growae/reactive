@@ -1,13 +1,11 @@
+import { type QueryOracleParameters, queryOracle } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type QueryOracleParameters,
-  type QueryOracleReturnType,
-  queryOracle,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseQueryOracleParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseQueryOracleParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useQueryOracle(
   parameters: UseQueryOracleParameters = () => ({}),
@@ -19,3 +17,5 @@ export function useQueryOracle(
       queryOracle(config(), variables),
   }))
 }
+
+export type UseQueryOracleReturnType = ReturnType<typeof useQueryOracle>

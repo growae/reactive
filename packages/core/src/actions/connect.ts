@@ -1,10 +1,10 @@
-import type { CreateConnectorFn } from '../connectors/createConnector.js'
-import type { Config, Connector } from '../createConfig.js'
+import type { CreateConnectorFn } from '../connectors/createConnector'
+import type { Config, Connector } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 import {
   ConnectorAlreadyConnectedError,
   type ConnectorAlreadyConnectedErrorType,
-} from '../errors/config.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+} from '../errors/config'
 
 export type ConnectParameters = {
   connector: Connector | CreateConnectorFn
@@ -53,7 +53,8 @@ export async function connect(
     config.setState((x) => ({
       ...x,
       connections: new Map(x.connections).set(connector.uid, {
-        accounts: data.accounts,
+        accounts: data.accounts as readonly [string, ...string[]],
+        networkId: data.networkId,
         connector,
       }),
       current: connector.uid,

@@ -1,21 +1,29 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
   type CloseChannelParameters,
   type CloseChannelReturnType,
   closeChannel,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseCloseChannelParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: CloseChannelReturnType, variables: CloseChannelParameters, context: context) => void
-      onError?: (error: Error, variables: CloseChannelParameters, context: context) => void
+      onSuccess?: (
+        data: CloseChannelReturnType,
+        variables: CloseChannelParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: CloseChannelParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -28,7 +36,9 @@ export type UseCloseChannelReturnType<context = unknown> = Compute<
     context
   > & {
     closeChannel: (variables: CloseChannelParameters) => void
-    closeChannelAsync: (variables: CloseChannelParameters) => Promise<CloseChannelReturnType>
+    closeChannelAsync: (
+      variables: CloseChannelParameters,
+    ) => Promise<CloseChannelReturnType>
   }
 >
 
@@ -42,12 +52,13 @@ export function useCloseChannel<context = unknown>(
     mutationFn: (variables: CloseChannelParameters) =>
       closeChannel(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseCloseChannelReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    closeChannel: mutation.mutate as Return['closeChannel'],
-    closeChannelAsync: mutation.mutateAsync as Return['closeChannelAsync'],
+    closeChannel: mutation.mutate as unknown as Return['closeChannel'],
+    closeChannelAsync:
+      mutation.mutateAsync as unknown as Return['closeChannelAsync'],
   }
 }

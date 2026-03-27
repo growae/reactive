@@ -1,14 +1,14 @@
-import { createMutation } from '@tanstack/solid-query'
 import {
   type SendTransactionParameters,
-  type SendTransactionReturnType,
-  type SendTransactionErrorType,
   sendTransaction,
-} from '@reactive/core'
+} from '@growae/reactive'
+import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseSendTransactionParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseSendTransactionParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useSendTransaction(
   parameters: UseSendTransactionParameters = () => ({}),
@@ -20,3 +20,5 @@ export function useSendTransaction(
       sendTransaction(config(), variables),
   }))
 }
+
+export type UseSendTransactionReturnType = ReturnType<typeof useSendTransaction>

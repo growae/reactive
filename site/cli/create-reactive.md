@@ -64,21 +64,21 @@ Done. Now run:
 ### Vite + React
 
 - React 18+ with Vite
-- `@reactive/react` + `@tanstack/react-query`
+- `@growae/reactive-react` + `@tanstack/react-query`
 - Example connect wallet + balance component
 - TypeScript configured
 
 ### Next.js
 
 - Next.js App Router
-- `@reactive/react` + `@tanstack/react-query`
+- `@growae/reactive-react` + `@tanstack/react-query`
 - SSR-safe provider setup
 - Server/client component examples
 
 ### Vite + Vue
 
 - Vue 3 with Vite
-- `@reactive/vue` + `@tanstack/vue-query`
+- `@growae/reactive-vue` + `@tanstack/vue-query`
 - Example composable usage
 - TypeScript configured
 
@@ -91,7 +91,7 @@ Done. Now run:
 ### Vite + Solid
 
 - SolidJS with Vite
-- `@reactive/solid` + `@tanstack/solid-query`
+- `@growae/reactive-solid` + `@tanstack/solid-query`
 - Example primitive usage
 - TypeScript configured
 

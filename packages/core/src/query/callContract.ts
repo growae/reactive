@@ -4,8 +4,8 @@ import {
   type CallContractParameters,
   type CallContractReturnType,
   callContract,
-} from '../actions/callContract.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/callContract'
+import type { Config } from '../createConfig'
 
 export function callContractMutationOptions(config: Config) {
   return {
@@ -13,7 +13,11 @@ export function callContractMutationOptions(config: Config) {
       return callContract(config, variables)
     },
     mutationKey: ['callContract'],
-  } satisfies MutationOptions<CallContractReturnType, CallContractErrorType, CallContractParameters>
+  } satisfies MutationOptions<
+    CallContractReturnType,
+    CallContractErrorType,
+    CallContractParameters
+  >
 }
 
 export type CallContractMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type CallContractMutationOptions = ReturnType<
 >
 export type CallContractData = CallContractReturnType
 export type CallContractVariables = CallContractParameters
-export { type CallContractErrorType }
+export type { CallContractErrorType }

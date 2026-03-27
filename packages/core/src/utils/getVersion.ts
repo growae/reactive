@@ -1,3 +1,3 @@
-import { version } from '../version.js'
+import { version } from '../version'
 
-export const getVersion = () => `@reactive/core@${version}`
+export const getVersion = () => `@growae/reactive@${version}`

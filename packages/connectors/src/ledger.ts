@@ -1,10 +1,10 @@
+import { AccountLedgerFactory } from '@aeternity/aepp-sdk'
 import {
-  createConnector,
   ConnectorNotConnectedError,
-  ProviderNotFoundError,
   NetworkNotConfiguredError,
-} from '@reactive/core'
-import type { AccountLedgerFactory } from '@aeternity/aepp-sdk'
+  ProviderNotFoundError,
+  createConnector,
+} from '@growae/reactive'
 
 export type LedgerParameters = {
   /**
@@ -46,10 +46,7 @@ export function ledger(parameters: LedgerParameters) {
     },
 
     async connect({ networkId } = {}) {
-      const { AccountLedgerFactory: Factory } =
-        await import('@aeternity/aepp-sdk')
-
-      factory = new Factory(parameters.transport as never)
+      factory = new AccountLedgerFactory(parameters.transport as never)
       await factory.ensureReady()
 
       const address = await factory.getAddress(accountIndex)
@@ -57,9 +54,7 @@ export function ledger(parameters: LedgerParameters) {
       connected = true
 
       const targetNetworkId = networkId ?? connectedNetworkId
-      const isConfigured = config.networks.some(
-        (n) => n.id === targetNetworkId,
-      )
+      const isConfigured = config.networks.some((n) => n.id === targetNetworkId)
       if (!isConfigured) throw new NetworkNotConfiguredError()
       connectedNetworkId = targetNetworkId
 
@@ -104,7 +99,7 @@ export function ledger(parameters: LedgerParameters) {
     async signTransaction({ tx, networkId, innerTx }) {
       if (!factory || !connected) throw new ConnectorNotConnectedError()
       const account = await factory.initialize(accountIndex)
-      return account.signTransaction(tx, {
+      return account.signTransaction(tx as `tx_${string}`, {
         networkId,
         innerTx,
       })

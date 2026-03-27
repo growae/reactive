@@ -1,19 +1,34 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   RevokeNameParameters,
   RevokeNameReturnType,
-  Compute,
-} from '@reactive/core'
-import { revokeName } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { revokeName } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseRevokeNameParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: RevokeNameReturnType, variables: RevokeNameParameters, context: context) => void
-      onError?: (error: Error, variables: RevokeNameParameters, context: context) => void
+      onSuccess?: (
+        data: RevokeNameReturnType,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: RevokeNameReturnType | undefined,
+        error: Error | null,
+        variables: RevokeNameParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +41,9 @@ export type UseRevokeNameReturnType<context = unknown> = Compute<
     context
   > & {
     revokeName: (variables: RevokeNameParameters) => void
-    revokeNameAsync: (variables: RevokeNameParameters) => Promise<RevokeNameReturnType>
+    revokeNameAsync: (
+      variables: RevokeNameParameters,
+    ) => Promise<RevokeNameReturnType>
   }
 >
 
@@ -35,11 +52,21 @@ export function useRevokeName<context = unknown>(
 ): UseRevokeNameReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['revokeName'],
     mutationFn: (variables: RevokeNameParameters) =>
       revokeName(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseRevokeNameReturnType<context>

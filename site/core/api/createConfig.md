@@ -5,15 +5,15 @@ Creates a Reactive `Config` object that manages network connections, wallet stat
 ## Import
 
 ```typescript
-import { createConfig } from '@reactive/core'
+import { createConfig } from '@growae/reactive'
 ```
 
 ## Usage
 
 ```typescript
-import { createConfig } from '@reactive/core'
-import { mainnet, testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
+import { createConfig } from '@growae/reactive'
+import { mainnet, testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [mainnet, testnet],
@@ -79,10 +79,10 @@ Use the `Register` type to get type-safe network IDs across your app:
 
 ```typescript
 // reactive.d.ts
-import type { Config } from '@reactive/core'
-import { mainnet, testnet } from '@reactive/core/networks'
+import type { Config } from '@growae/reactive'
+import { mainnet, testnet } from '@growae/reactive/networks'
 
-declare module '@reactive/core' {
+declare module '@growae/reactive' {
   interface Register {
     config: typeof config
   }

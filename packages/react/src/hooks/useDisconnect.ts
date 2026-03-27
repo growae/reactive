@@ -1,22 +1,30 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
 import {
+  type DisconnectErrorType,
   type DisconnectParameters,
   type DisconnectReturnType,
-  type DisconnectErrorType,
   disconnect,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import { useMutation } from '@tanstack/react-query'
+import type { ConfigParameter } from '../types/properties'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseDisconnectParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: DisconnectReturnType, variables: DisconnectParameters, context: context) => void
-      onError?: (error: DisconnectErrorType, variables: DisconnectParameters, context: context) => void
+      onSuccess?: (
+        data: DisconnectReturnType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: DisconnectErrorType,
+        variables: DisconnectParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -29,7 +37,9 @@ export type UseDisconnectReturnType<context = unknown> = Compute<
     context
   > & {
     disconnect: (variables?: DisconnectParameters) => void
-    disconnectAsync: (variables?: DisconnectParameters) => Promise<DisconnectReturnType>
+    disconnectAsync: (
+      variables?: DisconnectParameters,
+    ) => Promise<DisconnectReturnType>
   }
 >
 
@@ -43,12 +53,13 @@ export function useDisconnect<context = unknown>(
     mutationFn: (variables: DisconnectParameters = {}) =>
       disconnect(config, variables),
     ...parameters.mutation,
-  })
+  } as any)
 
   type Return = UseDisconnectReturnType<context>
   return {
     ...(mutation as unknown as Return),
-    disconnect: mutation.mutate as Return['disconnect'],
-    disconnectAsync: mutation.mutateAsync as Return['disconnectAsync'],
+    disconnect: mutation.mutate as unknown as Return['disconnect'],
+    disconnectAsync:
+      mutation.mutateAsync as unknown as Return['disconnectAsync'],
   }
 }

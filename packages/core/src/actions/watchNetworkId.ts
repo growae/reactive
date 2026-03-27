@@ -1,4 +1,4 @@
-import type { Config } from '../createConfig.js'
+import type { Config } from '../createConfig'
 
 export type WatchNetworkIdParameters = {
   onChange: (networkId: string, prevNetworkId: string) => void
@@ -11,8 +11,5 @@ export function watchNetworkId(
   parameters: WatchNetworkIdParameters,
 ): WatchNetworkIdReturnType {
   const { onChange } = parameters
-  return config.subscribe(
-    (state) => state.networkId,
-    onChange,
-  )
+  return config.subscribe((state) => state.networkId, onChange)
 }

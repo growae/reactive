@@ -5,4 +5,4 @@ export {
   type SolidMutationParameters,
   type UseQueryReturnType,
   type UseMutationReturnType,
-} from './query.js'
+} from './query'

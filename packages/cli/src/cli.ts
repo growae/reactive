@@ -1,2 +1,50 @@
 #!/usr/bin/env node
-console.log('@reactive/cli — placeholder')
+import { cac } from 'cac'
+
+import { generate } from './commands/generate'
+import type { GenerateOptions } from './commands/generate'
+import { init } from './commands/init'
+import type { InitOptions } from './commands/init'
+import { version } from './version'
+
+const cli = cac('reactive')
+
+cli
+  .command('init', 'Create reactive config file')
+  .option('-c, --config <path>', '[string] path to config file')
+  .option('-r, --root <path>', '[string] root path to resolve config from')
+  .action(async (options: InitOptions) => {
+    await init(options)
+    process.exit(0)
+  })
+
+cli
+  .command('generate', 'Generate typed code from contract ACI')
+  .option('-c, --config <path>', '[string] path to config file')
+  .option('-r, --root <path>', '[string] root path to resolve config from')
+  .option('-w, --watch', '[boolean] watch for changes')
+  .action(async (options: GenerateOptions) => {
+    await generate(options)
+    if (!options.watch) process.exit(0)
+  })
+
+cli.help()
+cli.version(version)
+
+void (async () => {
+  try {
+    process.title = 'node (reactive)'
+  } catch {}
+
+  try {
+    cli.parse(process.argv, { run: false })
+    if (!cli.matchedCommand) {
+      if (cli.args.length === 0) {
+        if (!cli.options.help && !cli.options.version) cli.outputHelp()
+      } else throw new Error(`Unknown command: ${cli.args.join(' ')}`)
+    }
+    await cli.runMatchedCommand()
+  } catch (_error) {
+    process.exit(1)
+  }
+})()

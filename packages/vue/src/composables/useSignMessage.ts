@@ -1,20 +1,35 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
+  SignMessageErrorType,
   SignMessageParameters,
   SignMessageReturnType,
-  SignMessageErrorType,
-  Compute,
-} from '@reactive/core'
-import { signMessage } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { signMessage } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseSignMessageParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: SignMessageReturnType, variables: SignMessageParameters, context: context) => void
-      onError?: (error: SignMessageErrorType, variables: SignMessageParameters, context: context) => void
+      onSuccess?: (
+        data: SignMessageReturnType,
+        variables: SignMessageParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: SignMessageErrorType,
+        variables: SignMessageParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: SignMessageReturnType | undefined,
+        error: SignMessageErrorType | null,
+        variables: SignMessageParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -27,7 +42,9 @@ export type UseSignMessageReturnType<context = unknown> = Compute<
     context
   > & {
     signMessage: (variables: SignMessageParameters) => void
-    signMessageAsync: (variables: SignMessageParameters) => Promise<SignMessageReturnType>
+    signMessageAsync: (
+      variables: SignMessageParameters,
+    ) => Promise<SignMessageReturnType>
   }
 >
 
@@ -36,11 +53,21 @@ export function useSignMessage<context = unknown>(
 ): UseSignMessageReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['signMessage'],
     mutationFn: (variables: SignMessageParameters) =>
       signMessage(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseSignMessageReturnType<context>

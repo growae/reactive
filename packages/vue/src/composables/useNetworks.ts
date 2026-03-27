@@ -1,7 +1,7 @@
-import type { GetNetworksReturnType } from '@reactive/core'
-import { getNetworks } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
+import type { GetNetworksReturnType } from '@growae/reactive'
+import { getNetworks } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { useConfig } from './useConfig'
 
 export type UseNetworksParameters = ConfigParameter
 

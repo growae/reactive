@@ -22,7 +22,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm check
+      - run: pnpm check:ci
       - run: pnpm check:types
 
   build:
@@ -54,3 +54,32 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main'
+    needs: build
+    timeout-minutes: 15
+    services:
+      aeternity-node:
+        image: aeternity/aeternity:v7.2.0
+        ports:
+          - 3013:3013
+          - 3113:3113
+          - 3014:3014
+        options: >-
+          --health-cmd "curl -f http://localhost:3013/v3/status || exit 1"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test:integration

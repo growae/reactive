@@ -1,14 +1,11 @@
+import { type SwitchNetworkParameters, switchNetwork } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type SwitchNetworkParameters,
-  type SwitchNetworkReturnType,
-  type SwitchNetworkErrorType,
-  switchNetwork,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseSwitchNetworkParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseSwitchNetworkParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useSwitchNetwork(
   parameters: UseSwitchNetworkParameters = () => ({}),
@@ -20,3 +17,5 @@ export function useSwitchNetwork(
       switchNetwork(config(), variables),
   }))
 }
+
+export type UseSwitchNetworkReturnType = ReturnType<typeof useSwitchNetwork>

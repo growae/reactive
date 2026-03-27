@@ -1,10 +1,10 @@
 'use client'
 
-import { watchConnectors } from '@reactive/core'
-import type { Connector, Compute } from '@reactive/core'
+import { watchConnectors } from '@growae/reactive'
+import type { Compute, Connector } from '@growae/reactive'
 import { useEffect, useRef } from 'react'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
+import type { ConfigParameter } from '../types/properties'
+import { useConfig } from './useConfig'
 
 export type UseWatchConnectorsParameters = Compute<
   ConfigParameter & {

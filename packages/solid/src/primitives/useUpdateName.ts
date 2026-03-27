@@ -1,13 +1,11 @@
+import { type UpdateNameParameters, updateName } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type UpdateNameParameters,
-  type UpdateNameReturnType,
-  updateName,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseUpdateNameParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseUpdateNameParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useUpdateName(
   parameters: UseUpdateNameParameters = () => ({}),
@@ -19,3 +17,5 @@ export function useUpdateName(
       updateName(config(), variables),
   }))
 }
+
+export type UseUpdateNameReturnType = ReturnType<typeof useUpdateName>

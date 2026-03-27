@@ -1,7 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src"
+    "paths": {
+      "@growae/reactive": ["../core/src/exports/index.ts"],
+      "@growae/reactive/*": ["../core/src/exports/*.ts"],
+      "@growae/reactive-vue": ["./src/exports/index.ts"],
+      "@growae/reactive-vue/*": ["./src/exports/*.ts"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.test.ts", "src/**/*.test-d.ts"]
 }

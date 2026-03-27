@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { ReactiveContext, ReactiveProvider } from './context.js'
+import { describe, expect, it, vi } from 'vitest'
+import { ReactiveContext, ReactiveProvider } from './context'
 
 describe('ReactiveContext', () => {
   it('should be defined', () => {
@@ -15,7 +15,12 @@ describe('ReactiveProvider', () => {
 
   it('should accept config prop', () => {
     const mockConfig = {
-      _internal: { ssr: false },
+      _internal: {
+        ssr: false,
+        store: { persist: { hasHydrated: () => true, rehydrate: vi.fn() } },
+        revalidate: vi.fn(),
+      },
+      networks: [{ id: 'ae_uat' }],
       subscribe: vi.fn(() => vi.fn()),
       setState: vi.fn(),
       getState: vi.fn(() => ({

@@ -5,14 +5,14 @@ Composable for connecting to a wallet.
 ## Import
 
 ```typescript
-import { useConnect } from '@reactive/vue'
+import { useConnect } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useConnect } from '@reactive/vue'
+import { useConnect } from '@growae/reactive-vue'
 
 const { connect, connectors, isPending } = useConnect()
 </script>

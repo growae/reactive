@@ -1,7 +1,7 @@
-import type { PartializedState } from './createConfig.js'
-import type { Compute } from './types/utils.js'
-import { deserialize as deserialize_ } from './utils/deserialize.js'
-import { serialize as serialize_ } from './utils/serialize.js'
+import type { PartializedState } from './createConfig'
+import type { Compute } from './types/utils'
+import { deserialize as deserialize_ } from './utils/deserialize'
+import { serialize as serialize_ } from './utils/serialize'
 
 export type StorageItemMap = {
   recentConnectorId: string
@@ -81,11 +81,11 @@ export function createStorage<
   }
 }
 
-export const noopStorage = {
-  getItem: () => null,
-  setItem: () => {},
-  removeItem: () => {},
-} satisfies BaseStorage
+export const noopStorage: BaseStorage = {
+  getItem: (_key: string) => null,
+  setItem: (_key: string, _value: string) => {},
+  removeItem: (_key: string) => {},
+}
 
 export function getDefaultStorage() {
   const storage = (() => {

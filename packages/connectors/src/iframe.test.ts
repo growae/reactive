@@ -1,12 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { iframe } from './iframe.js'
-import { createEmitter } from '@reactive/core'
-import type { ConnectorEventMap } from '@reactive/core'
-import type { Network } from '@reactive/core'
+import { BrowserWindowMessageConnection } from '@aeternity/aepp-sdk'
+import { createEmitter } from '@growae/reactive'
+import type { ConnectorEventMap } from '@growae/reactive'
+import type { Network } from '@growae/reactive'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { iframe } from './iframe'
 
-const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
-
-function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' }]) {
+function makeConfig(
+  networks: Network[] = [
+    { id: 'ae_uat', name: 'Testnet', nodeUrl: 'https://testnet.aeternity.io' },
+  ],
+) {
   const emitter = createEmitter<ConnectorEventMap>('test-uid')
   return {
     networks: networks as [Network, ...Network[]],
@@ -15,15 +18,21 @@ function makeConfig(networks: Network[] = [{ id: 'ae_uat', name: 'Testnet', node
   }
 }
 
-const mockFrame = {
-  networkId: 'ae_uat',
-  isConnected: true,
-  accounts: [{ address: TEST_ADDRESS }],
-  subscribeAccounts: vi.fn().mockResolvedValue([{ address: TEST_ADDRESS }]),
-  askToSelectNetwork: vi.fn().mockResolvedValue(undefined),
-  disconnect: vi.fn(),
-  on: vi.fn(),
-}
+const { TEST_ADDRESS, mockFrame } = vi.hoisted(() => {
+  const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
+  return {
+    TEST_ADDRESS,
+    mockFrame: {
+      networkId: 'ae_uat',
+      isConnected: true,
+      accounts: [{ address: TEST_ADDRESS }],
+      subscribeAccounts: vi.fn().mockResolvedValue([{ address: TEST_ADDRESS }]),
+      askToSelectNetwork: vi.fn().mockResolvedValue(undefined),
+      disconnect: vi.fn(),
+      on: vi.fn(),
+    },
+  }
+})
 
 vi.mock('@aeternity/aepp-sdk', () => ({
   WalletConnectorFrame: {
@@ -60,9 +69,6 @@ describe('iframe', () => {
   })
 
   it('should use parent window as default target', async () => {
-    const { BrowserWindowMessageConnection } =
-      await import('@aeternity/aepp-sdk')
-
     const connector = iframe()
     const instance = connector(makeConfig())
     await instance.connect()
@@ -76,9 +82,6 @@ describe('iframe', () => {
   })
 
   it('should pass custom origin to connection', async () => {
-    const { BrowserWindowMessageConnection } =
-      await import('@aeternity/aepp-sdk')
-
     const connector = iframe({ origin: 'https://wallet.example.com' })
     const instance = connector(makeConfig())
     await instance.connect()
@@ -95,7 +98,9 @@ describe('iframe', () => {
     await instance.connect()
     await instance.disconnect()
 
-    await expect(instance.getAccounts()).rejects.toThrow('Connector not connected.')
+    await expect(instance.getAccounts()).rejects.toThrow(
+      'Connector not connected.',
+    )
   })
 
   it('should report isAuthorized correctly', async () => {

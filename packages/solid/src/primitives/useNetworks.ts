@@ -1,12 +1,11 @@
-import {
-  type GetNetworksReturnType,
-  getNetworks,
-} from '@reactive/core'
+import { type GetNetworksReturnType, getNetworks } from '@growae/reactive'
 import { createMemo } from 'solid-js'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseNetworksParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseNetworksParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export type UseNetworksReturnType = Accessor<GetNetworksReturnType>
 

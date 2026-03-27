@@ -1,14 +1,14 @@
 import type {
+  Compute,
+  VerifyTypedDataErrorType,
   VerifyTypedDataParameters,
   VerifyTypedDataReturnType,
-  VerifyTypedDataErrorType,
-  Compute,
-} from '@reactive/core'
-import { verifyTypedData } from '@reactive/core'
+} from '@growae/reactive'
+import { verifyTypedData } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties.js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseVerifyTypedDataParameters = Compute<
   VerifyTypedDataParameters & ConfigParameter & { enabled?: boolean }
@@ -25,15 +25,18 @@ export function useVerifyTypedData(
   const config = useConfig(parameters)
 
   const options = computed(() => ({
-    queryKey: ['verifyTypedData', {
-      data: parameters.data,
-      signature: parameters.signature,
-      address: parameters.address,
-    }] as const,
+    queryKey: [
+      'verifyTypedData',
+      {
+        data: parameters.data,
+        signature: parameters.signature,
+        address: parameters.address,
+      },
+    ] as const,
     queryFn: () => verifyTypedData(config, parameters),
-    enabled: Boolean(
-      parameters.data && parameters.signature && parameters.address,
-    ) && (parameters.enabled ?? true),
+    enabled:
+      Boolean(parameters.data && parameters.signature && parameters.address) &&
+      (parameters.enabled ?? true),
   }))
 
   return useQuery(options) as UseVerifyTypedDataReturnType

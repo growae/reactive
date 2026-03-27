@@ -1,9 +1,13 @@
-import type { Config } from '../../createConfig.js'
-import { BaseError } from '../../errors/base.js'
+import { Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants'
+import type { Config } from '../../createConfig'
+import { BaseError } from '../../errors/base'
 
 export type BidNameParameters = {
   name: string
   nameFee: bigint | string
+  /** Transaction TTL in blocks relative to current height. Defaults to 300. */
+  ttl?: number
   networkId?: string
 }
 
@@ -24,21 +28,22 @@ export async function bidName(
   config: Config,
   parameters: BidNameParameters,
 ): Promise<BidNameReturnType> {
-  const { name, nameFee, networkId } = parameters
+  const { name, nameFee, ttl, networkId } = parameters
 
-  const node = config.getNode({ networkId })
-  const connection = config.state.current
+  const node = config.getNodeClient({ networkId })
+  const connection = config.state.connections.get(config.state.current!)
   if (!connection) {
     throw new BidNameNoAccountError()
   }
 
-  const { Name } = await import('@aeternity/aepp-sdk')
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.account,
+    onAccount: connection.accounts[0] as any,
   })
 
-  const result = await nameInstance.bid(nameFee.toString())
+  const result = await nameInstance.bid(nameFee.toString(), {
+    ttl: ttl ?? DEFAULT_TTL,
+  } as any)
 
   return {
     txHash: result.hash,

@@ -5,14 +5,14 @@ Composable for reading Sophia contract state via dry-run.
 ## Import
 
 ```typescript
-import { useReadContract } from '@reactive/vue'
+import { useReadContract } from '@growae/reactive-vue'
 ```
 
 ## Usage
 
 ```vue
 <script setup lang="ts">
-import { useReadContract } from '@reactive/vue'
+import { useReadContract } from '@growae/reactive-vue'
 
 const { data: balance } = useReadContract({
   address: 'ct_token...',

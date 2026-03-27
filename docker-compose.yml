@@ -1,0 +1,18 @@
+version: '3'
+services:
+  aeternity-node:
+    image: aeternity/aeternity:v7.2.0
+    hostname: node
+    ports:
+      - '3013:3013'
+      - '3113:3113'
+      - '3014:3014'
+    environment:
+      AETERNITY_CONFIG: /home/aeternity/aeternity.yaml
+    volumes:
+      - ./test/config/aeternity.yaml:/home/aeternity/aeternity.yaml
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3013/v3/status']
+      interval: 5s
+      timeout: 3s
+      retries: 20

@@ -1,14 +1,11 @@
+import { type SignMessageParameters, signMessage } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type SignMessageParameters,
-  type SignMessageReturnType,
-  type SignMessageErrorType,
-  signMessage,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseSignMessageParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseSignMessageParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useSignMessage(
   parameters: UseSignMessageParameters = () => ({}),
@@ -20,3 +17,5 @@ export function useSignMessage(
       signMessage(config(), variables),
   }))
 }
+
+export type UseSignMessageReturnType = ReturnType<typeof useSignMessage>

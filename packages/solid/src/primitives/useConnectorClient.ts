@@ -1,21 +1,23 @@
 import {
-  type GetConnectorClientParameters,
-  type GetConnectorClientReturnType,
-  getConnectorClient,
-} from '@reactive/core'
+  type GetConnectionReturnType,
+  type GetNodeClientParameters,
+  getConnection,
+} from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useConnection } from './useConnection.js'
-import { useNetworkId } from './useNetworkId.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useConnection } from './useConnection'
+import { useNetworkId } from './useNetworkId'
 
 export type UseConnectorClientParameters = Accessor<
-  GetConnectorClientParameters & { config?: import('@reactive/core').Config | undefined }
+  GetNodeClientParameters & {
+    config?: import('@growae/reactive').Config | undefined
+  }
 >
 
 export type UseConnectorClientReturnType = UseQueryReturnType<
-  GetConnectorClientReturnType,
+  GetConnectionReturnType,
   Error
 >
 
@@ -27,15 +29,14 @@ export function useConnectorClient(
   const connection = useConnection(() => ({ config: config() }))
 
   const options = createMemo(() => ({
-    queryKey: ['connectorClient', {
-      networkId: parameters().networkId ?? networkId(),
-      connector: connection()?.connector?.uid,
-    }] as const,
-    queryFn: () => getConnectorClient(config(), {
-      ...parameters(),
-      networkId: parameters().networkId ?? networkId(),
-      connector: parameters().connector ?? connection()?.connector,
-    }),
+    queryKey: [
+      'connectorClient',
+      {
+        networkId: parameters().networkId ?? networkId(),
+        connector: connection()?.connector?.uid,
+      },
+    ] as const,
+    queryFn: () => getConnection(config()),
     enabled: !!connection()?.connector,
   }))
 

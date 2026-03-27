@@ -5,15 +5,15 @@
 ::: code-group
 
 ```bash [pnpm]
-pnpm add @reactive/react @tanstack/react-query
+pnpm add @growae/reactive-react @tanstack/react-query
 ```
 
 ```bash [npm]
-npm install @reactive/react @tanstack/react-query
+npm install @growae/reactive-react @tanstack/react-query
 ```
 
 ```bash [yarn]
-yarn add @reactive/react @tanstack/react-query
+yarn add @growae/reactive-react @tanstack/react-query
 ```
 
 :::
@@ -26,7 +26,7 @@ yarn add @reactive/react @tanstack/react-query
 
 ## Peer Dependencies
 
-`@reactive/react` has the following peer dependencies:
+`@growae/reactive-react` has the following peer dependencies:
 
 | Package | Version |
 |---------|---------|
@@ -41,10 +41,10 @@ For Next.js (App Router), ensure the provider is in a client component:
 // app/providers.tsx
 'use client'
 
-import { createConfig } from '@reactive/core'
-import { testnet } from '@reactive/core/networks'
-import { superhero } from '@reactive/core/connectors'
-import { ReactiveProvider } from '@reactive/react'
+import { createConfig } from '@growae/reactive'
+import { testnet } from '@growae/reactive/networks'
+import { superhero } from '@growae/reactive/connectors'
+import { ReactiveProvider } from '@growae/reactive-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const config = createConfig({

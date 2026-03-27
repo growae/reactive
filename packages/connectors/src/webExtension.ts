@@ -1,9 +1,14 @@
+import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
 import {
-  createConnector,
+  BrowserWindowMessageConnection,
+  WalletConnectorFrame as WCF,
+  walletDetector,
+} from '@aeternity/aepp-sdk'
+import {
   ConnectorNotConnectedError,
   ProviderNotFoundError,
-} from '@reactive/core'
-import type { WalletConnectorFrame } from '@aeternity/aepp-sdk'
+  createConnector,
+} from '@growae/reactive'
 
 export type WebExtensionParameters = {
   /** Name advertised to the wallet during connection handshake. */
@@ -35,13 +40,6 @@ export function webExtension(parameters: WebExtensionParameters = {}) {
     type: webExtension.type,
 
     async connect({ networkId } = {}) {
-      const {
-        WalletConnectorFrame: WCF,
-        BrowserWindowMessageConnection,
-        walletDetector,
-        MESSAGE_DIRECTION,
-      } = await import('@aeternity/aepp-sdk')
-
       const scanConnection = new BrowserWindowMessageConnection({
         debug: parameters.debug,
       })
@@ -72,12 +70,12 @@ export function webExtension(parameters: WebExtensionParameters = {}) {
       )
       currentAccounts = accounts.map((a) => a.address)
 
-      frame.on('accountsChange', (accs) => {
-        currentAccounts = accs.map((a) => a.address)
+      frame.on('accountsChange', (accs: readonly { address: string }[]) => {
+        currentAccounts = accs.map((a: { address: string }) => a.address)
         this.onAccountsChanged([...currentAccounts])
       })
 
-      frame.on('networkIdChange', (nId) => {
+      frame.on('networkIdChange', (nId: string) => {
         currentNetworkId = nId
         this.onNetworkChanged(nId)
       })
@@ -132,14 +130,17 @@ export function webExtension(parameters: WebExtensionParameters = {}) {
       if (!provider) throw new ConnectorNotConnectedError()
       const account = provider.accounts[0]
       if (!account) throw new ConnectorNotConnectedError()
-      return account.signTransaction(tx, { networkId, innerTx })
+      return account.signTransaction(tx as `tx_${string}`, {
+        networkId,
+        innerTx,
+      })
     },
 
     async signMessage({ message, onAccount }) {
       if (!provider) throw new ConnectorNotConnectedError()
       const account = onAccount
-        ? provider.accounts.find((a) => a.address === onAccount) ??
-          provider.accounts[0]
+        ? (provider.accounts.find((a) => a.address === onAccount) ??
+          provider.accounts[0])
         : provider.accounts[0]
       if (!account) throw new ConnectorNotConnectedError()
       const signature = await account.signMessage(message)

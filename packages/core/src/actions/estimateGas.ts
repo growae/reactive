@@ -1,6 +1,6 @@
 import type { Node } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type EstimateGasParameters = {
   tx: string
@@ -37,7 +37,9 @@ export async function estimateGas(
   const dryRunResult = await node.protectedDryRunTxs({
     top,
     txs: [{ tx }],
-    accounts: [{ pubKey: accountAddress, amount: DRY_RUN_ACCOUNT_AMOUNT }],
+    accounts: [
+      { pubKey: accountAddress, amount: BigInt(DRY_RUN_ACCOUNT_AMOUNT) },
+    ],
   })
 
   const result = dryRunResult.results[0]

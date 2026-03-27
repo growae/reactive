@@ -1,6 +1,6 @@
 import { verifyMessageSignature } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type VerifyMessageParameters = {
   message: string
@@ -19,13 +19,7 @@ export function verifyMessage(
   const { message, signature, address } = parameters
 
   const signatureBytes =
-    typeof signature === 'string'
-      ? Buffer.from(signature, 'hex')
-      : signature
+    typeof signature === 'string' ? Buffer.from(signature, 'hex') : signature
 
-  return verifyMessageSignature(
-    message,
-    signatureBytes,
-    address as any,
-  )
+  return verifyMessageSignature(message, signatureBytes, address as any)
 }

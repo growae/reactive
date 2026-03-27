@@ -1,13 +1,11 @@
+import { type PreclaimNameParameters, preclaimName } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type PreclaimNameParameters,
-  type PreclaimNameReturnType,
-  preclaimName,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UsePreclaimNameParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UsePreclaimNameParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function usePreclaimName(
   parameters: UsePreclaimNameParameters = () => ({}),
@@ -19,3 +17,5 @@ export function usePreclaimName(
       preclaimName(config(), variables),
   }))
 }
+
+export type UsePreclaimNameReturnType = ReturnType<typeof usePreclaimName>

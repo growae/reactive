@@ -1,6 +1,6 @@
 import type { Node } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig.js'
-import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { Config } from '../createConfig'
+import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type GetMicroBlockParameters = {
   hash: string
@@ -41,7 +41,10 @@ export async function getMicroBlock(
     prevHash: header.prevHash,
     prevKeyHash: header.prevKeyHash,
     stateHash: header.stateHash,
-    time: header.time,
+    time:
+      typeof header.time === 'number'
+        ? header.time
+        : new Date(header.time).getTime(),
     txsHash: header.txsHash,
     version: header.version,
     transactions: txs.transactions,

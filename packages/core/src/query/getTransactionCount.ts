@@ -3,9 +3,9 @@ import {
   type GetTransactionCountParameters,
   type GetTransactionCountReturnType,
   getTransactionCount,
-} from '../actions/getTransactionCount.js'
-import type { Config } from '../createConfig.js'
-import type { ExactPartial } from '../types/utils.js'
+} from '../actions/getTransactionCount'
+import type { Config } from '../createConfig'
+import type { ExactPartial } from '../types/utils'
 
 export type GetTransactionCountOptions =
   ExactPartial<GetTransactionCountParameters>
@@ -39,4 +39,4 @@ export function getTransactionCountQueryOptions(
 
 export type GetTransactionCountQueryFnData = GetTransactionCountReturnType
 export type GetTransactionCountData = GetTransactionCountQueryFnData
-export { type GetTransactionCountErrorType }
+export type { GetTransactionCountErrorType }

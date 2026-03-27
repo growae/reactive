@@ -1,6 +1,6 @@
-import type { CreateConnectorFn } from '../connectors/createConnector.js'
-import type { Config, Connection, Connector } from '../createConfig.js'
-import type { ErrorType } from '../errors/base.js'
+import type { CreateConnectorFn } from '../connectors/createConnector'
+import type { Config, Connection, Connector } from '../createConfig'
+import type { ErrorType } from '../errors/base'
 
 export type ReconnectParameters = {
   connectors?: readonly (CreateConnectorFn | Connector)[] | undefined
@@ -82,7 +82,8 @@ export async function reconnect(
       const updatedConnections = new Map(
         connected ? x.connections : new Map(),
       ).set(connector.uid, {
-        accounts: data.accounts,
+        accounts: data.accounts as readonly [string, ...string[]],
+        networkId: data.networkId,
         connector,
       })
       return {
@@ -93,7 +94,8 @@ export async function reconnect(
     })
 
     connections.push({
-      accounts: data.accounts,
+      accounts: data.accounts as readonly [string, ...string[]],
+      networkId: data.networkId,
       connector,
     })
     providers.push(provider)

@@ -1,16 +1,16 @@
 'use client'
 
 import {
+  type GetAccountErrorType,
   type GetAccountParameters,
   type GetAccountReturnType,
-  type GetAccountErrorType,
   getAccount,
-} from '@reactive/core'
-import type { Compute } from '@reactive/core'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import type { ConfigParameter } from '../types/properties.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
+} from '@growae/reactive'
+import type { Compute } from '@growae/reactive'
+import type { ConfigParameter } from '../types/properties'
+import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useConfig } from './useConfig'
+import { useNetworkId } from './useNetworkId'
 
 export type UseAccountParameters = Compute<
   GetAccountParameters & ConfigParameter & { enabled?: boolean }
@@ -28,16 +28,20 @@ export function useAccount(
   const networkId = useNetworkId({ config })
 
   return useQuery({
-    queryKey: ['account', {
-      address: parameters.address,
-      networkId: parameters.networkId ?? networkId,
-      height: parameters.height,
-      hash: parameters.hash,
-    }],
-    queryFn: () => getAccount(config, {
-      ...parameters,
-      networkId: parameters.networkId ?? networkId,
-    }),
+    queryKey: [
+      'account',
+      {
+        address: parameters.address,
+        networkId: parameters.networkId ?? networkId,
+        height: parameters.height,
+        hash: parameters.hash,
+      },
+    ],
+    queryFn: () =>
+      getAccount(config, {
+        ...parameters,
+        networkId: parameters.networkId ?? networkId,
+      }),
     enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
   }) as UseAccountReturnType
 }

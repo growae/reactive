@@ -1,14 +1,11 @@
+import { type DisconnectParameters, disconnect } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
-import {
-  type DisconnectParameters,
-  type DisconnectReturnType,
-  type DisconnectErrorType,
-  disconnect,
-} from '@reactive/core'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig.js'
+import { useConfig } from './useConfig'
 
-export type UseDisconnectParameters = Accessor<{ config?: import('@reactive/core').Config | undefined }>
+export type UseDisconnectParameters = Accessor<{
+  config?: import('@growae/reactive').Config | undefined
+}>
 
 export function useDisconnect(
   parameters: UseDisconnectParameters = () => ({}),
@@ -20,3 +17,5 @@ export function useDisconnect(
       disconnect(config(), variables),
   }))
 }
+
+export type UseDisconnectReturnType = ReturnType<typeof useDisconnect>

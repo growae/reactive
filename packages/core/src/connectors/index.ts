@@ -2,8 +2,8 @@ export {
   createConnector,
   type ConnectorEventMap,
   type CreateConnectorFn,
-} from './createConnector.js'
+} from './createConnector'
 
-export { memory, type MemoryParameters } from './memory.js'
+export { memory, type MemoryParameters } from './memory'
 
-export { mock, type MockParameters } from './mock.js'
+export { mock, type MockParameters } from './mock'

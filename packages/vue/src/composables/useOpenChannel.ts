@@ -1,19 +1,34 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  Compute,
   OpenChannelParameters,
   OpenChannelReturnType,
-  Compute,
-} from '@reactive/core'
-import { openChannel } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { openChannel } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseOpenChannelParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: OpenChannelReturnType, variables: OpenChannelParameters, context: context) => void
-      onError?: (error: Error, variables: OpenChannelParameters, context: context) => void
+      onSuccess?: (
+        data: OpenChannelReturnType,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: Error,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: OpenChannelReturnType | undefined,
+        error: Error | null,
+        variables: OpenChannelParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -26,7 +41,9 @@ export type UseOpenChannelReturnType<context = unknown> = Compute<
     context
   > & {
     openChannel: (variables: OpenChannelParameters) => void
-    openChannelAsync: (variables: OpenChannelParameters) => Promise<OpenChannelReturnType>
+    openChannelAsync: (
+      variables: OpenChannelParameters,
+    ) => Promise<OpenChannelReturnType>
   }
 >
 
@@ -35,11 +52,21 @@ export function useOpenChannel<context = unknown>(
 ): UseOpenChannelReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['openChannel'],
     mutationFn: (variables: OpenChannelParameters) =>
       openChannel(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseOpenChannelReturnType<context>

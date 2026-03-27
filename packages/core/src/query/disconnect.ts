@@ -4,8 +4,8 @@ import {
   type DisconnectParameters,
   type DisconnectReturnType,
   disconnect,
-} from '../actions/disconnect.js'
-import type { Config } from '../createConfig.js'
+} from '../actions/disconnect'
+import type { Config } from '../createConfig'
 
 export function disconnectMutationOptions(config: Config) {
   return {
@@ -13,7 +13,11 @@ export function disconnectMutationOptions(config: Config) {
       return disconnect(config, variables)
     },
     mutationKey: ['disconnect'],
-  } satisfies MutationOptions<DisconnectReturnType, DisconnectErrorType, DisconnectParameters>
+  } satisfies MutationOptions<
+    DisconnectReturnType,
+    DisconnectErrorType,
+    DisconnectParameters
+  >
 }
 
 export type DisconnectMutationOptions = ReturnType<
@@ -21,4 +25,4 @@ export type DisconnectMutationOptions = ReturnType<
 >
 export type DisconnectData = DisconnectReturnType
 export type DisconnectVariables = DisconnectParameters
-export { type DisconnectErrorType }
+export type { DisconnectErrorType }

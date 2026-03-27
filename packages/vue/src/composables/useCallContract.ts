@@ -1,20 +1,35 @@
-import { useMutation } from '@tanstack/vue-query'
 import type {
+  CallContractErrorType,
   CallContractParameters,
   CallContractReturnType,
-  CallContractErrorType,
   Compute,
-} from '@reactive/core'
-import { callContract } from '@reactive/core'
-import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
+} from '@growae/reactive'
+import { callContract } from '@growae/reactive'
+import { useMutation } from '@tanstack/vue-query'
+import type { ConfigParameter } from '../types/properties'
+import { adaptLegacyMutationCallbacks } from '../utils/adaptLegacyMutationCallbacks'
+import type { UseMutationReturnType } from '../utils/query'
+import { useConfig } from './useConfig'
 
 export type UseCallContractParameters<context = unknown> = Compute<
   ConfigParameter & {
     mutation?: {
-      onSuccess?: (data: CallContractReturnType, variables: CallContractParameters, context: context) => void
-      onError?: (error: CallContractErrorType, variables: CallContractParameters, context: context) => void
+      onSuccess?: (
+        data: CallContractReturnType,
+        variables: CallContractParameters,
+        context: context,
+      ) => void
+      onError?: (
+        error: CallContractErrorType,
+        variables: CallContractParameters,
+        context: context,
+      ) => void
+      onSettled?: (
+        data: CallContractReturnType | undefined,
+        error: CallContractErrorType | null,
+        variables: CallContractParameters,
+        context: context,
+      ) => void
     }
   }
 >
@@ -27,7 +42,9 @@ export type UseCallContractReturnType<context = unknown> = Compute<
     context
   > & {
     callContract: (variables: CallContractParameters) => void
-    callContractAsync: (variables: CallContractParameters) => Promise<CallContractReturnType>
+    callContractAsync: (
+      variables: CallContractParameters,
+    ) => Promise<CallContractReturnType>
   }
 >
 
@@ -36,11 +53,21 @@ export function useCallContract<context = unknown>(
 ): UseCallContractReturnType<context> {
   const config = useConfig(parameters)
 
+  const {
+    onSuccess: mutationOnSuccess,
+    onError: mutationOnError,
+    onSettled: mutationOnSettled,
+  } = parameters.mutation ?? {}
+
   const mutation = useMutation({
     mutationKey: ['callContract'],
     mutationFn: (variables: CallContractParameters) =>
       callContract(config, variables),
-    ...parameters.mutation,
+    ...adaptLegacyMutationCallbacks<context>({
+      onSuccess: mutationOnSuccess,
+      onError: mutationOnError,
+      onSettled: mutationOnSettled,
+    }),
   })
 
   type Return = UseCallContractReturnType<context>

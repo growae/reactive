@@ -1,5 +1,5 @@
 {
-  "name": "@reactive/solid",
+  "name": "@growae/reactive-solid",
   "version": "0.0.1",
   "type": "module",
   "main": "dist/esm/exports/index.js",
@@ -23,7 +23,7 @@
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
   },
   "dependencies": {
-    "@reactive/core": "workspace:*"
+    "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
     "solid-js": ">=1.0.0",
@@ -31,7 +31,14 @@
     "typescript": ">=5.7.0"
   },
   "peerDependenciesMeta": {
-    "@tanstack/solid-query": { "optional": true },
-    "typescript": { "optional": true }
+    "@tanstack/solid-query": {
+      "optional": true
+    },
+    "typescript": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

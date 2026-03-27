@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { useConnect } from './useConnect.js'
+import { describe, expect, it, vi } from 'vitest'
+import { useConnect } from './useConnect'
 
 vi.mock('@tanstack/vue-query', () => ({
   useMutation: vi.fn(() => ({
@@ -22,7 +22,12 @@ vi.mock('./useConfig.js', () => ({
     subscribe: vi.fn(() => vi.fn()),
     networks: [{ id: 'ae_uat' }],
     connectors: [],
-    state: { networkId: 'ae_uat', connections: new Map(), status: 'disconnected', current: undefined },
+    state: {
+      networkId: 'ae_uat',
+      connections: new Map(),
+      status: 'disconnected',
+      current: undefined,
+    },
   })),
 }))
 
