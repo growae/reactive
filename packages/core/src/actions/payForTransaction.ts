@@ -30,18 +30,21 @@ export async function payForTransaction(
   const { innerTx, ttl, networkId, connector, waitMined = true } = parameters
 
   let payerConnector: Connector | undefined = connector
+  let payerId: string | undefined
   if (!payerConnector) {
     const { connections, current } = config.state
     const connection = current ? connections.get(current) : undefined
     payerConnector = connection?.connector
+    payerId = connection?.activeAccount
   }
 
   if (!payerConnector) {
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  const accounts = await payerConnector.getAccounts()
-  const payerId = accounts[0]
+  if (!payerId) {
+    payerId = (await payerConnector.getAccounts())[0]
+  }
   if (!payerId) {
     throw new Error('No account available on the current connector.')
   }

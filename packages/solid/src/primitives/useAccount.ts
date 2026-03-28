@@ -7,11 +7,13 @@ import {
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
 import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useActiveAccount } from './useActiveAccount'
 import { useConfig } from './useConfig'
 import { useNetworkId } from './useNetworkId'
 
 export type UseAccountParameters = Accessor<
-  GetAccountParameters & {
+  Omit<GetAccountParameters, 'address'> & {
+    address?: string | undefined
     config?: import('@growae/reactive').Config | undefined
     enabled?: boolean
   }
@@ -23,28 +25,33 @@ export type UseAccountReturnType = UseQueryReturnType<
 >
 
 export function useAccount(
-  parameters: UseAccountParameters = () => ({}) as GetAccountParameters,
+  parameters: UseAccountParameters = () => ({}),
 ): UseAccountReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId(() => ({ config: config() }))
+  const activeAccount = useActiveAccount(parameters)
 
-  const options = createMemo(() => ({
-    queryKey: [
-      'account',
-      {
-        address: parameters().address,
-        networkId: parameters().networkId ?? networkId(),
-        height: parameters().height,
-        hash: parameters().hash,
-      },
-    ] as const,
-    queryFn: () =>
-      getAccount(config(), {
-        ...parameters(),
-        networkId: parameters().networkId ?? networkId(),
-      }),
-    enabled: Boolean(parameters().address) && (parameters().enabled ?? true),
-  }))
+  const options = createMemo(() => {
+    const address = parameters().address ?? activeAccount().address
+    return {
+      queryKey: [
+        'account',
+        {
+          address,
+          networkId: parameters().networkId ?? networkId(),
+          height: parameters().height,
+          hash: parameters().hash,
+        },
+      ] as const,
+      queryFn: () =>
+        getAccount(config(), {
+          ...parameters(),
+          address: address as string,
+          networkId: parameters().networkId ?? networkId(),
+        }),
+      enabled: Boolean(address) && (parameters().enabled ?? true),
+    }
+  })
 
   return useQuery(options) as UseAccountReturnType
 }

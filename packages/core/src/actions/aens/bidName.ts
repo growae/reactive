@@ -38,7 +38,7 @@ export async function bidName(
 
   const nameInstance = new Name(name as any, {
     onNode: node,
-    onAccount: connection.accounts[0] as any,
+    onAccount: connection.activeAccount as any,
   })
 
   const result = await nameInstance.bid(nameFee.toString(), {

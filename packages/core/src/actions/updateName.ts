@@ -33,7 +33,7 @@ export async function updateName(
   }
 
   const node = config.getNodeClient({ networkId })
-  const senderId = connection.accounts[0]
+  const senderId = connection.activeAccount
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)

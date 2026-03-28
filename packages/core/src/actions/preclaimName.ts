@@ -30,7 +30,7 @@ export async function preclaimName(
   const salt = genSalt()
   const commitmentId = commitmentHash(name as `${string}.chain`, salt)
 
-  const senderId = connection.accounts[0]
+  const senderId = connection.activeAccount
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)
