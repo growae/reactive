@@ -3,22 +3,24 @@
   "version": "0.0.2",
   "type": "module",
   "bin": {
-    "reactive": "./dist/esm/cli.js"
+    "reactive": "./dist/cli.js",
+    "@growae/reactive-cli": "./dist/cli.js"
   },
-  "main": "dist/esm/cli.js",
-  "types": "dist/types/cli.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/cli.d.ts",
-      "default": "./dist/esm/cli.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
+  "files": ["dist"],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "build": "tsup",
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
-    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "@growae/reactive": "workspace:*",
@@ -37,6 +39,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0"
+    "@types/node": "^25.5.0",
+    "tsup": "^8.5.0"
   }
 }
