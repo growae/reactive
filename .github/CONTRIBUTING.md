@@ -144,6 +144,106 @@ We use [changesets](https://github.com/changesets/changesets) for versioning and
 pnpm changeset
 ```
 
+## Testing CLI packages locally
+
+Before pushing changes to `@growae/reactive-cli` or `@growae/create-reactive`, test them locally to catch issues before they hit npm.
+
+### reactive-cli
+
+1. **Build the package**
+
+   ```bash
+   pnpm --filter @growae/reactive-cli build
+   ```
+
+2. **Test commands directly**
+
+   ```bash
+   # Version
+   node packages/cli/dist/cli.js --version
+
+   # Help
+   node packages/cli/dist/cli.js --help
+
+   # Init (creates reactive.config.ts in cwd)
+   cd /tmp && mkdir test-cli && cd test-cli
+   node /path/to/reactive/packages/cli/dist/cli.js init
+
+   # Generate (requires a reactive.config.ts)
+   node /path/to/reactive/packages/cli/dist/cli.js generate
+   ```
+
+3. **Test as if installed from npm** (using pnpm link)
+
+   ```bash
+   # From the reactive root
+   cd packages/cli
+   pnpm link --global
+
+   # Now use it anywhere
+   reactive --version
+   reactive init
+   reactive generate
+
+   # Unlink when done
+   pnpm unlink --global
+   ```
+
+4. **Verify library exports work**
+
+   ```bash
+   node -e "import('@growae/reactive-cli').then(m => console.log(Object.keys(m)))"
+   ```
+
+### create-reactive
+
+1. **Build the package**
+
+   ```bash
+   pnpm --filter @growae/create-reactive build
+   ```
+
+2. **Test the scaffolder directly**
+
+   ```bash
+   cd /tmp && mkdir test-scaffold && cd test-scaffold
+   node /path/to/reactive/packages/create-reactive/dist/cli.js
+   ```
+
+   This starts the interactive prompt. Walk through the framework selection and verify the scaffolded project structure.
+
+3. **Test as if installed from npm** (using pnpm link)
+
+   ```bash
+   cd packages/create-reactive
+   pnpm link --global
+
+   # Now use it anywhere
+   create-reactive
+
+   # Unlink when done
+   pnpm unlink --global
+   ```
+
+### Pre-push checklist
+
+Run all checks before pushing CLI changes:
+
+```bash
+# Build both CLI packages
+pnpm --filter @growae/reactive-cli build
+pnpm --filter @growae/create-reactive build
+
+# Run all tests
+pnpm test
+
+# Type check
+pnpm check:types
+
+# Lint + format
+pnpm check
+```
+
 ## Integration tests
 
 Integration tests run against a local Aeternity node via Docker:
