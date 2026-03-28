@@ -37,7 +37,7 @@ export async function simulateContract(
   const contractInstance = await Contract.initialize({
     onNode: node,
     ...(connection
-      ? { onAccount: connection.accounts[0] as `ak_${string}` }
+      ? { onAccount: connection.activeAccount as `ak_${string}` }
       : {}),
     aci,
     address: address as `ct_${string}`,

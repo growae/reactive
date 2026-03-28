@@ -74,7 +74,7 @@ export async function deployContract(
 
   const contractInstance = await Contract.initialize({
     onNode: node,
-    onAccount: connection.accounts[0] as `ak_${string}`,
+    onAccount: connection.activeAccount as `ak_${string}`,
     ...(sourceCode ? { sourceCode } : {}),
     ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),
     ...(aci ? { aci } : {}),

@@ -43,7 +43,7 @@ export async function queryOracle(
 
   const oracleClient = new OracleClient(oracleId as any, {
     onNode: node,
-    onAccount: connection.accounts[0] as any,
+    onAccount: connection.activeAccount as any,
     ...(queryFee != null ? { queryFee: Number(queryFee) } : {}),
     ...(queryTtl ? { queryTtl } : {}),
     ...(responseTtl ? { responseTtl } : {}),

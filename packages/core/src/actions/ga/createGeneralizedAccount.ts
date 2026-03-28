@@ -58,7 +58,7 @@ export async function createGeneralizedAccount(
     args as any[],
     {
       onNode: node,
-      onAccount: connection.accounts[0] as `ak_${string}`,
+      onAccount: connection.activeAccount as `ak_${string}`,
       onCompiler: onCompiler as import('@aeternity/aepp-sdk').CompilerBase,
       ...(sourceCode ? { sourceCode } : {}),
       ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),

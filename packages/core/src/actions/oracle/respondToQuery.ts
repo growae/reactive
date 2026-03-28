@@ -38,7 +38,7 @@ export async function respondToQuery(
     throw new RespondToQueryNoAccountError()
   }
 
-  const oracle = new Oracle(connection.accounts[0] as any, {
+  const oracle = new Oracle(connection.activeAccount as any, {
     onNode: node,
     ...(responseTtl ? { responseTtl } : {}),
   })

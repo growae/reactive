@@ -37,7 +37,7 @@ export async function extendOracle(
   }
 
   const oracle = new Oracle(
-    connection.accounts[0] as any,
+    connection.activeAccount as any,
     {
       onNode: node,
       oracleTtl,
