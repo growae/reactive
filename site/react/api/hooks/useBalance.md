@@ -14,19 +14,25 @@ import { useBalance } from '@growae/reactive-react'
 import { useBalance } from '@growae/reactive-react'
 
 function Balance() {
-  const { data, isLoading, error } = useBalance({
-    address: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
-  })
+  // Uses the connected active account automatically when address is omitted
+  const { data, isLoading, error } = useBalance()
 
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {error.shortMessage}</div>
 
   return (
     <div>
-      <p>{data.ae} AE</p>
-      <p>{data.aettos.toString()} aettos</p>
+      <p>{data} AE</p>
     </div>
   )
+}
+
+// Or query a specific address
+function SpecificBalance() {
+  const { data } = useBalance({
+    address: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
+  })
+  return <div>{data}</div>
 }
 ```
 
@@ -43,9 +49,9 @@ See [`getBalance` Return Type](/core/api/actions/getBalance#return-type).
 ### address
 
 - **Type:** `string`
-- **Required**
+- **Optional**
 
-The account address (`ak_...`) to query.
+The account address (`ak_...`) to query. Defaults to the connected active account from [`useActiveAccount`](/react/api/hooks/useActiveAccount). The query is disabled when no address is available.
 
 ### networkId
 
