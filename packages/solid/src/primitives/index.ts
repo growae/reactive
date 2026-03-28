@@ -21,6 +21,16 @@ export type {
   UseConnectionParameters,
   UseConnectionReturnType,
 } from './useConnection'
+export { useActiveAccount } from './useActiveAccount'
+export type {
+  UseActiveAccountParameters,
+  UseActiveAccountReturnType,
+} from './useActiveAccount'
+export { useSwitchActiveAccount } from './useSwitchActiveAccount'
+export type {
+  UseSwitchActiveAccountParameters,
+  UseSwitchActiveAccountReturnType,
+} from './useSwitchActiveAccount'
 export { useConnections } from './useConnections'
 export type {
   UseConnectionsParameters,
@@ -97,6 +107,16 @@ export type {
   UseEstimateGasParameters,
   UseEstimateGasReturnType,
 } from './useEstimateGas'
+export { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm'
+export type {
+  UseWaitForTransactionConfirmParameters,
+  UseWaitForTransactionConfirmReturnType,
+} from './useWaitForTransactionConfirm'
+export { useMicroBlock } from './useMicroBlock'
+export type {
+  UseMicroBlockParameters,
+  UseMicroBlockReturnType,
+} from './useMicroBlock'
 
 // Transaction primitives
 export { useSendTransaction } from './useSendTransaction'
@@ -111,6 +131,16 @@ export type {
   UsePayForTransactionParameters,
   UsePayForTransactionReturnType,
 } from './usePayForTransaction'
+export { useBuildTransaction } from './useBuildTransaction'
+export type {
+  UseBuildTransactionParameters,
+  UseBuildTransactionReturnType,
+} from './useBuildTransaction'
+export { useTransferFunds } from './useTransferFunds'
+export type {
+  UseTransferFundsParameters,
+  UseTransferFundsReturnType,
+} from './useTransferFunds'
 
 // Signing primitives
 export { useSignMessage } from './useSignMessage'
@@ -138,6 +168,11 @@ export type {
   UseVerifyTypedDataParameters,
   UseVerifyTypedDataReturnType,
 } from './useVerifyTypedData'
+export { useSignDelegation } from './useSignDelegation'
+export type {
+  UseSignDelegationParameters,
+  UseSignDelegationReturnType,
+} from './useSignDelegation'
 
 // Contract primitives
 export { useDeployContract } from './useDeployContract'
@@ -170,6 +205,11 @@ export type {
   UseContractEventsParameters,
   UseContractEventsReturnType,
 } from './useContractEvents'
+export { useCompileContract } from './useCompileContract'
+export type {
+  UseCompileContractParameters,
+  UseCompileContractReturnType,
+} from './useCompileContract'
 
 // AENS primitives
 export { usePreclaimName } from './usePreclaimName'
@@ -202,6 +242,11 @@ export type {
   UseResolveNameParameters,
   UseResolveNameReturnType,
 } from './useResolveName'
+export { useNameEntry } from './useNameEntry'
+export type {
+  UseNameEntryParameters,
+  UseNameEntryReturnType,
+} from './useNameEntry'
 
 // Oracle primitives
 export { useRegisterOracle } from './useRegisterOracle'

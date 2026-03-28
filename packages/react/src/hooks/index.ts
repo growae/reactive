@@ -25,6 +25,16 @@ export {
   type UseConnectionReturnType,
 } from './useConnection'
 export {
+  useActiveAccount,
+  type UseActiveAccountParameters,
+  type UseActiveAccountReturnType,
+} from './useActiveAccount'
+export {
+  useSwitchActiveAccount,
+  type UseSwitchActiveAccountParameters,
+  type UseSwitchActiveAccountReturnType,
+} from './useSwitchActiveAccount'
+export {
   useConnections,
   type UseConnectionsParameters,
   type UseConnectionsReturnType,
@@ -97,6 +107,16 @@ export {
   type UseWaitForTransactionReturnType,
 } from './useWaitForTransaction'
 export {
+  useWaitForTransactionConfirm,
+  type UseWaitForTransactionConfirmParameters,
+  type UseWaitForTransactionConfirmReturnType,
+} from './useWaitForTransactionConfirm'
+export {
+  useMicroBlock,
+  type UseMicroBlockParameters,
+  type UseMicroBlockReturnType,
+} from './useMicroBlock'
+export {
   useContractBytecode,
   type UseContractBytecodeParameters,
   type UseContractBytecodeReturnType,
@@ -123,6 +143,16 @@ export {
   type UsePayForTransactionParameters,
   type UsePayForTransactionReturnType,
 } from './usePayForTransaction'
+export {
+  useBuildTransaction,
+  type UseBuildTransactionParameters,
+  type UseBuildTransactionReturnType,
+} from './useBuildTransaction'
+export {
+  useTransferFunds,
+  type UseTransferFundsParameters,
+  type UseTransferFundsReturnType,
+} from './useTransferFunds'
 
 // Signing hooks
 export {
@@ -150,6 +180,11 @@ export {
   type UseVerifyTypedDataParameters,
   type UseVerifyTypedDataReturnType,
 } from './useVerifyTypedData'
+export {
+  useSignDelegation,
+  type UseSignDelegationParameters,
+  type UseSignDelegationReturnType,
+} from './useSignDelegation'
 
 // Contract hooks
 export {
@@ -182,6 +217,11 @@ export {
   type UseContractEventsParameters,
   type UseContractEventsReturnType,
 } from './useContractEvents'
+export {
+  useCompileContract,
+  type UseCompileContractParameters,
+  type UseCompileContractReturnType,
+} from './useCompileContract'
 
 // AENS hooks
 export {
@@ -214,6 +254,11 @@ export {
   type UseResolveNameParameters,
   type UseResolveNameReturnType,
 } from './useResolveName'
+export {
+  useNameEntry,
+  type UseNameEntryParameters,
+  type UseNameEntryReturnType,
+} from './useNameEntry'
 
 // Oracle hooks
 export {

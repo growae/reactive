@@ -9,11 +9,13 @@ import {
 import type { Compute } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties'
 import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useActiveAccount } from './useActiveAccount'
 import { useConfig } from './useConfig'
 import { useNetworkId } from './useNetworkId'
 
 export type UseAccountParameters = Compute<
-  GetAccountParameters & ConfigParameter & { enabled?: boolean }
+  Omit<GetAccountParameters, 'address'> &
+    ConfigParameter & { address?: string | undefined; enabled?: boolean }
 >
 
 export type UseAccountReturnType = UseQueryReturnType<
@@ -26,12 +28,15 @@ export function useAccount(
 ): UseAccountReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId({ config })
+  const activeAccount = useActiveAccount({ config })
+
+  const address = parameters.address ?? activeAccount.address
 
   return useQuery({
     queryKey: [
       'account',
       {
-        address: parameters.address,
+        address,
         networkId: parameters.networkId ?? networkId,
         height: parameters.height,
         hash: parameters.hash,
@@ -40,8 +45,9 @@ export function useAccount(
     queryFn: () =>
       getAccount(config, {
         ...parameters,
+        address: address as string,
         networkId: parameters.networkId ?? networkId,
       }),
-    enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
+    enabled: Boolean(address) && (parameters.enabled ?? true),
   }) as UseAccountReturnType
 }

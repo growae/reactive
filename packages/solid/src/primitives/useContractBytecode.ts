@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetContractBytecodeErrorType,
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseContractBytecodeParameters = Accessor<
   GetContractBytecodeParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

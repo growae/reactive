@@ -15,7 +15,7 @@ import type { ConnectorEventMap } from './createConnector'
 import { memory } from './memory'
 
 function setupConnector(secretKey = 'test_secret_key', name?: string) {
-  const connectorFn = memory({ secretKey, name })
+  const connectorFn = memory({ accounts: [{ secretKey }], name })
   const emitter = createEmitter<ConnectorEventMap>('mem-uid')
   const connector = connectorFn({
     emitter,

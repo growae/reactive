@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { connect } from '../../packages/core/src/actions/connect.js'
-import { spend } from '../../packages/core/src/actions/spend.js'
-import { createTestConfig, waitForNode } from '../setup/integration.js'
+import { connect } from '../../packages/core/src/actions/connect'
+import { spend } from '../../packages/core/src/actions/spend'
+import { createTestConfig, waitForNode } from '../setup/integration'
 
 describe.skipIf(!process.env.INTEGRATION)('spend (integration)', () => {
   beforeAll(async () => {

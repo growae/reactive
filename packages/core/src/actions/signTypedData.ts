@@ -37,7 +37,7 @@ export async function signTypedData(
 
   const signature = await connector.signMessage({
     message: hashHex,
-    onAccount: connection.accounts[0],
+    onAccount: connection.activeAccount,
   })
 
   return { signature }

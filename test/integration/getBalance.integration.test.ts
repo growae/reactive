@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest'
-import { getBalance } from '../../packages/core/src/actions/getBalance.js'
+import { getBalance } from '../../packages/core/src/actions/getBalance'
 import {
   FAUCET_PUBLIC_KEY,
   createTestConfig,
   waitForNode,
-} from '../setup/integration.js'
+} from '../setup/integration'
 
 describe.skipIf(!process.env.INTEGRATION)('getBalance (integration)', () => {
   beforeAll(async () => {
@@ -13,11 +13,11 @@ describe.skipIf(!process.env.INTEGRATION)('getBalance (integration)', () => {
 
   it('should return the faucet balance', async () => {
     const config = createTestConfig()
-    const result = await getBalance(config, {
+    const balance = await getBalance(config, {
       address: FAUCET_PUBLIC_KEY,
     })
-    expect(result).toBeDefined()
-    expect(typeof result.balance).toBe('string')
-    expect(BigInt(result.balance)).toBeGreaterThan(0n)
+    expect(balance).toBeDefined()
+    expect(typeof balance).toBe('string')
+    expect(BigInt(balance)).toBeGreaterThan(0n)
   })
 })

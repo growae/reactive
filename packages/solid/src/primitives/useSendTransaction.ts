@@ -1,4 +1,5 @@
 import {
+  type Config,
   type SendTransactionParameters,
   sendTransaction,
 } from '@growae/reactive'
@@ -7,7 +8,7 @@ import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig'
 
 export type UseSendTransactionParameters = Accessor<{
-  config?: import('@growae/reactive').Config | undefined
+  config?: Config | undefined
 }>
 
 export function useSendTransaction(

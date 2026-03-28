@@ -40,7 +40,7 @@ export async function registerOracle(
     throw new RegisterOracleNoAccountError()
   }
 
-  const senderId = connection.accounts[0] as `ak_${string}`
+  const senderId = connection.activeAccount as `ak_${string}`
   if (!senderId) throw new Error('No account available')
 
   const accountInfo = await node.getAccountByPubkey(senderId)

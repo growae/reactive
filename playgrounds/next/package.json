@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@aeternity/aepp-sdk": "^14.0.0",
     "@growae/reactive-react": "workspace:*",
     "@growae/reactive": "workspace:*",
     "@growae/reactive-connectors": "workspace:*",

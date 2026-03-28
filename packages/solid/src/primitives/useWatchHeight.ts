@@ -1,11 +1,11 @@
-import { watchHeight } from '@growae/reactive'
+import { type Config, watchHeight } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createEffect, onCleanup } from 'solid-js'
 import { useConfig } from './useConfig'
 import { useNetworkId } from './useNetworkId'
 
 export type UseWatchHeightParameters = Accessor<{
-  config?: import('@growae/reactive').Config | undefined
+  config?: Config | undefined
   onHeight: (height: number) => void
   enabled?: boolean
   interval?: number

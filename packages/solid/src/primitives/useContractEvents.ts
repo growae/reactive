@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetContractEventsParameters,
   type GetContractEventsReturnType,
   getContractEvents,
@@ -11,7 +12,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseContractEventsParameters = Accessor<
   GetContractEventsParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

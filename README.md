@@ -8,6 +8,7 @@
   <a href="https://www.npmjs.com/package/@growae/reactive"><img src="https://img.shields.io/npm/v/@growae/reactive?colorA=21262d&colorB=3b82f6&style=flat" alt="Version"></a>
   <a href="https://www.npmjs.com/package/@growae/reactive"><img src="https://img.shields.io/npm/dm/@growae/reactive?colorA=21262d&colorB=3b82f6&style=flat" alt="Downloads"></a>
   <a href="https://github.com/growae/reactive/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@growae/reactive?colorA=21262d&colorB=3b82f6&style=flat" alt="MIT License"></a>
+  <a href="https://github.com/growae/reactive/actions/workflows/ci.yml"><img src="https://growae.github.io/reactive/coverage/badge.svg" alt="Coverage"></a>
 </p>
 
 <br>
