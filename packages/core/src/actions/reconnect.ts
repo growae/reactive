@@ -83,6 +83,7 @@ export async function reconnect(
         connected ? x.connections : new Map(),
       ).set(connector.uid, {
         accounts: data.accounts as readonly [string, ...string[]],
+        activeAccount: data.accounts[0]! as string,
         networkId: data.networkId,
         connector,
       })
@@ -95,6 +96,7 @@ export async function reconnect(
 
     connections.push({
       accounts: data.accounts as readonly [string, ...string[]],
+      activeAccount: data.accounts[0]! as string,
       networkId: data.networkId,
       connector,
     })

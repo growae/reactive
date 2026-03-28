@@ -200,12 +200,16 @@ export function createConfig<
     store.setState((x) => {
       const connection = x.connections.get(data.uid)
       if (!connection) return x
+      const newAccounts =
+        (data.accounts as readonly [string, ...string[]]) ?? connection.accounts
+      const activeStillValid = newAccounts.includes(connection.activeAccount)
       return {
         ...x,
         connections: new Map(x.connections).set(data.uid, {
-          accounts:
-            (data.accounts as readonly [string, ...string[]]) ??
-            connection.accounts,
+          accounts: newAccounts,
+          activeAccount: activeStillValid
+            ? connection.activeAccount
+            : newAccounts[0]!,
           networkId: data.networkId ?? connection.networkId,
           connector: connection.connector,
         }),
@@ -235,6 +239,7 @@ export function createConfig<
         ...x,
         connections: new Map(x.connections).set(data.uid, {
           accounts: data.accounts as readonly [string, ...string[]],
+          activeAccount: (data.accounts as readonly [string, ...string[]])[0]!,
           networkId: data.networkId,
           connector,
         }),
@@ -475,6 +480,7 @@ export type PartializedState = Compute<
 
 export type Connection = {
   accounts: readonly [string, ...string[]]
+  activeAccount: string
   networkId: string
   connector: Connector
 }
