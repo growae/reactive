@@ -4,24 +4,18 @@ Scaffolding tool that creates a new Reactive project with your choice of framewo
 
 ## Usage
 
-```bash
-pnpm create reactive
-```
-
-Or with other package managers:
-
 ::: code-group
 
-```bash [pnpm]
-pnpm create reactive
-```
-
 ```bash [npm]
-npm create reactive@latest
+npm create @growae/reactive
 ```
 
 ```bash [yarn]
-yarn create reactive
+yarn create @growae/reactive
+```
+
+```bash [pnpm]
+pnpm create @growae/reactive
 ```
 
 :::
@@ -43,7 +37,7 @@ The scaffolder prompts you for:
 ## Example
 
 ```bash
-$ pnpm create reactive
+$ pnpm create @growae/reactive
 
 ✔ Project name: my-aepp
 ✔ Framework: React
@@ -117,5 +111,5 @@ my-aepp/
 Pass flags to skip prompts:
 
 ```bash
-pnpm create reactive my-aepp --template vite-react --features basic,contracts
+pnpm create @growae/reactive my-aepp --template vite-react --features basic,contracts
 ```
