@@ -3,6 +3,15 @@ name: Create Release
 on:
   workflow_dispatch:
     inputs:
+      bump:
+        description: Release type (auto = use changeset declarations)
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+        default: auto
       dry_run:
         description: Preview version bumps without creating the branch
         type: boolean
@@ -41,6 +50,22 @@ jobs:
           fi
           echo "Found changesets:"
           echo "$CHANGESETS"
+
+      - name: Override bump level
+        if: inputs.bump != 'auto'
+        run: |
+          BUMP="${{ inputs.bump }}"
+          echo "Overriding all changesets to **$BUMP**"
+          for file in .changeset/*.md; do
+            [ "$(basename "$file")" = "README.md" ] && continue
+            sed -i -E "s/: (patch|minor|major)/: $BUMP/g" "$file"
+          done
+          echo "Updated changesets:"
+          for file in .changeset/*.md; do
+            [ "$(basename "$file")" = "README.md" ] && continue
+            echo "--- $file ---"
+            cat "$file"
+          done
 
       - name: Version packages
         run: pnpm changeset version
