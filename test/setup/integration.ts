@@ -1,6 +1,6 @@
-import { memory } from '../../packages/core/src/connectors/memory.js'
-import { createConfig } from '../../packages/core/src/createConfig.js'
-import type { Network } from '../../packages/core/src/types/network.js'
+import { memory } from '../../packages/core/src/connectors/memory'
+import { createConfig } from '../../packages/core/src/createConfig'
+import type { Network } from '../../packages/core/src/types/network'
 
 export const devnet: Network = {
   id: 'ae_devnet',
