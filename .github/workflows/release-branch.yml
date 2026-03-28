@@ -134,6 +134,12 @@ jobs:
           git commit -m "chore: version packages for v${{ steps.version.outputs.version }}"
           git push origin "$BRANCH"
 
+      - name: Ensure release label exists
+        if: ${{ !inputs.dry_run }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh label create "release" --color "0e8a16" --description "Automated release PR" 2>/dev/null || true
+
       - name: Create pull request
         if: ${{ !inputs.dry_run }}
         env:
