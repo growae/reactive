@@ -18,6 +18,7 @@ export default defineConfig({
       },
     ],
     ['meta', { property: 'og:type', content: 'website' }],
+    ['link', { rel: 'stylesheet', href: '/styles/custom.css' }],
   ],
 
   themeConfig: {
