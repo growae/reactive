@@ -1,4 +1,5 @@
 import {
+  type Config,
   type SimulateContractParameters,
   type SimulateContractReturnType,
   simulateContract,
@@ -11,7 +12,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseSimulateContractParameters = Accessor<
   SimulateContractParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

@@ -1,4 +1,7 @@
-import { createGeneralizedAccount as sdkCreateGeneralizedAccount } from '@aeternity/aepp-sdk'
+import {
+  type CompilerBase,
+  createGeneralizedAccount as sdkCreateGeneralizedAccount,
+} from '@aeternity/aepp-sdk'
 import type { Config } from '../../createConfig'
 import { BaseError } from '../../errors/base'
 
@@ -59,7 +62,7 @@ export async function createGeneralizedAccount(
     {
       onNode: node,
       onAccount: connection.activeAccount as `ak_${string}`,
-      onCompiler: onCompiler as import('@aeternity/aepp-sdk').CompilerBase,
+      onCompiler: onCompiler as CompilerBase,
       ...(sourceCode ? { sourceCode } : {}),
       ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),
       ...(aci ? { aci } : {}),

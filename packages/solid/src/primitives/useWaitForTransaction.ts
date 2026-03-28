@@ -1,4 +1,5 @@
 import {
+  type Config,
   type WaitForTransactionErrorType,
   type WaitForTransactionParameters,
   type WaitForTransactionReturnType,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseWaitForTransactionParameters = Accessor<
   WaitForTransactionParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

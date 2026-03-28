@@ -1,4 +1,5 @@
 import {
+  type Config,
   type ReadContractParameters,
   type ReadContractReturnType,
   readContract,
@@ -11,7 +12,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseReadContractParameters = Accessor<
   ReadContractParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

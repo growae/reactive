@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetBalanceErrorType,
   type GetBalanceParameters,
   type GetBalanceReturnType,
@@ -14,7 +15,7 @@ import { useNetworkId } from './useNetworkId'
 export type UseBalanceParameters = Accessor<
   Omit<GetBalanceParameters, 'address'> & {
     address?: string | undefined
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

@@ -1,4 +1,4 @@
-import { Contract } from '@aeternity/aepp-sdk'
+import { type CompilerBase, Contract } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants'
 import type { Config } from '../createConfig'
 import { BaseError } from '../errors/base'
@@ -78,9 +78,7 @@ export async function deployContract(
     ...(sourceCode ? { sourceCode } : {}),
     ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),
     ...(aci ? { aci } : {}),
-    ...(onCompiler
-      ? { onCompiler: onCompiler as import('@aeternity/aepp-sdk').CompilerBase }
-      : {}),
+    ...(onCompiler ? { onCompiler: onCompiler as CompilerBase } : {}),
   } as any)
 
   const deployResult = await contractInstance.$deploy(

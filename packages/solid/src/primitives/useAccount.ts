@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetAccountErrorType,
   type GetAccountParameters,
   type GetAccountReturnType,
@@ -14,7 +15,7 @@ import { useNetworkId } from './useNetworkId'
 export type UseAccountParameters = Accessor<
   Omit<GetAccountParameters, 'address'> & {
     address?: string | undefined
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >
