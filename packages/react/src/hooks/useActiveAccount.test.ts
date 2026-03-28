@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { createConfig } from '@growae/reactive'
 import { mainnet } from '@growae/reactive'
 import { mock } from '@growae/reactive'
