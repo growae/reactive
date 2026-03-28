@@ -27,9 +27,21 @@ yarn add -D @growae/reactive-cli
 
 You can also install globally:
 
-```bash
+::: code-group
+
+```bash [npm]
+npm install -g @growae/reactive-cli
+```
+
+```bash [yarn]
+yarn global add @growae/reactive-cli
+```
+
+```bash [pnpm]
 pnpm add -g @growae/reactive-cli
 ```
+
+:::
 
 Then use without `npx`:
 

@@ -8,9 +8,21 @@
 
 ### 1. Install
 
-```bash
+::: code-group
+
+```bash [npm]
+npm install @growae/reactive-vue @tanstack/vue-query
+```
+
+```bash [yarn]
+yarn add @growae/reactive-vue @tanstack/vue-query
+```
+
+```bash [pnpm]
 pnpm add @growae/reactive-vue @tanstack/vue-query
 ```
+
+:::
 
 ### 2. Set Up Plugin
 
