@@ -3,29 +3,32 @@
   "version": "0.0.3",
   "type": "module",
   "bin": {
-    "create-reactive": "./dist/esm/cli.js"
+    "create-reactive": "./dist/cli.js",
+    "@growae/create-reactive": "./dist/cli.js"
   },
-  "main": "dist/esm/cli.js",
-  "types": "dist/types/cli.d.ts",
+  "main": "dist/cli.js",
+  "types": "dist/cli.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/cli.d.ts",
-      "default": "./dist/esm/cli.js"
+      "types": "./dist/cli.d.ts",
+      "default": "./dist/cli.js"
     },
     "./package.json": "./package.json"
   },
+  "files": ["dist", "templates"],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "build": "tsup",
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
-    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+    "dev": "tsup --watch"
   },
   "dependencies": {
     "kolorist": "^1.8.0",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
-    "@types/prompts": "^2.4.9"
+    "@types/prompts": "^2.4.9",
+    "tsup": "^8.5.0"
   },
   "publishConfig": {
     "access": "public"
