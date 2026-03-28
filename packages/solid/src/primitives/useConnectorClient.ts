@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetConnectionReturnType,
   type GetNodeClientParameters,
   getConnection,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseConnectorClientParameters = Accessor<
   GetNodeClientParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
   }
 >
 

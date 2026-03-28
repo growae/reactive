@@ -1,4 +1,5 @@
 import {
+  type Config,
   type ResolveNameParameters,
   type ResolveNameReturnType,
   resolveName,
@@ -11,7 +12,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseResolveNameParameters = Accessor<
   ResolveNameParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

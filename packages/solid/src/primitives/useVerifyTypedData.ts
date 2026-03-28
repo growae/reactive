@@ -1,4 +1,5 @@
 import {
+  type Config,
   type VerifyTypedDataErrorType,
   type VerifyTypedDataParameters,
   type VerifyTypedDataReturnType,
@@ -11,7 +12,7 @@ import { useConfig } from './useConfig'
 
 export type UseVerifyTypedDataParameters = Accessor<
   VerifyTypedDataParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

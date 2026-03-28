@@ -1,10 +1,14 @@
-import { type CloseChannelParameters, closeChannel } from '@growae/reactive'
+import {
+  type CloseChannelParameters,
+  type Config,
+  closeChannel,
+} from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig'
 
 export type UseCloseChannelParameters = Accessor<{
-  config?: import('@growae/reactive').Config | undefined
+  config?: Config | undefined
 }>
 
 export function useCloseChannel(

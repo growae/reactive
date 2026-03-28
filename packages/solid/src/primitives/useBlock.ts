@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetBlockErrorType,
   type GetBlockParameters,
   type GetBlockReturnType,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseBlockParameters = Accessor<
   GetBlockParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

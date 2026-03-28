@@ -1,9 +1,9 @@
-import type { Config } from '../createConfig'
+import type { Config, Connection } from '../createConfig'
 
 export type WatchConnectionsParameters = {
   onChange: (
-    connections: Map<string, import('../createConfig').Connection>,
-    prevConnections: Map<string, import('../createConfig').Connection>,
+    connections: Map<string, Connection>,
+    prevConnections: Map<string, Connection>,
   ) => void
 }
 

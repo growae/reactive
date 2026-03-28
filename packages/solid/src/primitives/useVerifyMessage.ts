@@ -1,4 +1,5 @@
 import {
+  type Config,
   type VerifyMessageErrorType,
   type VerifyMessageParameters,
   type VerifyMessageReturnType,
@@ -11,7 +12,7 @@ import { useConfig } from './useConfig'
 
 export type UseVerifyMessageParameters = Accessor<
   VerifyMessageParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

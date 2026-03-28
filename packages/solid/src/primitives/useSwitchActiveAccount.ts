@@ -1,4 +1,5 @@
 import {
+  type Config,
   type SwitchActiveAccountParameters,
   switchActiveAccount,
 } from '@growae/reactive'
@@ -7,7 +8,7 @@ import type { Accessor } from 'solid-js'
 import { useConfig } from './useConfig'
 
 export type UseSwitchActiveAccountParameters = Accessor<{
-  config?: import('@growae/reactive').Config | undefined
+  config?: Config | undefined
 }>
 
 export function useSwitchActiveAccount(

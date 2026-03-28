@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetHeightErrorType,
   type GetHeightParameters,
   type GetHeightReturnType,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseHeightParameters = Accessor<
   GetHeightParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >
