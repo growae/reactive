@@ -7,7 +7,7 @@ import {
 import { createConnector } from './createConnector'
 
 export type MemoryParameters = {
-  secretKey: string
+  accounts: Array<{ secretKey: string }>
   name?: string | undefined
 }
 
@@ -17,7 +17,7 @@ export function memory(parameters: MemoryParameters) {
   type Provider = AccountBase
 
   let connected = false
-  let account: MemoryAccount
+  let accounts: MemoryAccount[] = []
 
   return createConnector<Provider>((config) => ({
     id: 'memory',
@@ -25,7 +25,9 @@ export function memory(parameters: MemoryParameters) {
     type: memory.type,
 
     async setup() {
-      account = new MemoryAccount(parameters.secretKey as `sk_${string}`)
+      accounts = parameters.accounts.map(
+        (a) => new MemoryAccount(a.secretKey as `sk_${string}`),
+      )
     },
 
     async connect({ networkId } = {}) {
@@ -36,7 +38,7 @@ export function memory(parameters: MemoryParameters) {
 
       connected = true
       return {
-        accounts: [account.address],
+        accounts: accounts.map((a) => a.address),
         networkId: targetNetworkId,
       }
     },
@@ -47,7 +49,7 @@ export function memory(parameters: MemoryParameters) {
 
     async getAccounts() {
       if (!connected) throw new ConnectorNotConnectedError()
-      return [account.address]
+      return accounts.map((a) => a.address)
     },
 
     async getNetworkId() {
@@ -55,7 +57,7 @@ export function memory(parameters: MemoryParameters) {
     },
 
     async getProvider() {
-      return account
+      return accounts[0]!
     },
 
     async isAuthorized() {
@@ -71,13 +73,13 @@ export function memory(parameters: MemoryParameters) {
 
     async signTransaction({ tx }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return account.signTransaction(tx as `tx_${string}`)
+      return accounts[0]!.signTransaction(tx as `tx_${string}`)
     },
 
     async signMessage({ message }) {
       if (!connected) throw new ConnectorNotConnectedError()
       const encoded = new TextEncoder().encode(message)
-      const signature = await account.sign(encoded)
+      const signature = await accounts[0]!.sign(encoded)
       return Buffer.from(signature).toString('hex')
     },
 
