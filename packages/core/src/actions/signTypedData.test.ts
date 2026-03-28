@@ -36,7 +36,14 @@ describe('signTypedData', () => {
     const mockConfig = {
       state: {
         connections: new Map([
-          ['uid1', { connector: mockConnector, accounts: ['ak_test'] }],
+          [
+            'uid1',
+            {
+              connector: mockConnector,
+              accounts: ['ak_test'],
+              activeAccount: 'ak_test',
+            },
+          ],
         ]),
         current: 'uid1',
       },
@@ -58,7 +65,14 @@ describe('signTypedData', () => {
     const mockConfig = {
       state: {
         connections: new Map([
-          ['uid1', { connector: mockConnector, accounts: ['ak_test'] }],
+          [
+            'uid1',
+            {
+              connector: mockConnector,
+              accounts: ['ak_test'],
+              activeAccount: 'ak_test',
+            },
+          ],
         ]),
         current: 'uid1',
       },
