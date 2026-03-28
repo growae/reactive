@@ -8,9 +8,21 @@
 
 ### 1. Install
 
-```bash
+::: code-group
+
+```bash [npm]
+npm install @growae/reactive-solid @tanstack/solid-query
+```
+
+```bash [yarn]
+yarn add @growae/reactive-solid @tanstack/solid-query
+```
+
+```bash [pnpm]
 pnpm add @growae/reactive-solid @tanstack/solid-query
 ```
+
+:::
 
 ### 2. Set Up Provider
 

@@ -8,9 +8,21 @@
 
 ### 1. Install
 
-```bash
+::: code-group
+
+```bash [npm]
+npm install @growae/reactive-react @tanstack/react-query
+```
+
+```bash [yarn]
+yarn add @growae/reactive-react @tanstack/react-query
+```
+
+```bash [pnpm]
 pnpm add @growae/reactive-react @tanstack/react-query
 ```
+
+:::
 
 ### 2. Set Up Providers
 
