@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-const mockUseMutation = vi.fn(() => ({
+const mockUseMutation = vi.fn((_options?: any) => ({
   mutate: vi.fn(),
   mutateAsync: vi.fn(),
   data: { value: undefined },

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-const mockUseQuery = vi.fn(() => ({
+const mockUseQuery = vi.fn((_options?: unknown) => ({
   data: { value: undefined },
   error: { value: null },
   isError: { value: false },
