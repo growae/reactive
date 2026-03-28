@@ -8,9 +8,21 @@
 
 ### 1. Install
 
-```bash
+::: code-group
+
+```bash [npm]
+npm install @growae/reactive
+```
+
+```bash [yarn]
+yarn add @growae/reactive
+```
+
+```bash [pnpm]
 pnpm add @growae/reactive
 ```
+
+:::
 
 ### 2. Create a Config
 
