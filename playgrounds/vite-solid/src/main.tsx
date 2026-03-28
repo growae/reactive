@@ -1,11 +1,11 @@
-import { createConfig, memory, testnet } from '@growae/reactive'
+import { createConfig, mainnet, memory, testnet } from '@growae/reactive'
 import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { render } from 'solid-js/web'
 import { App } from './App.js'
 
 const config = createConfig({
-  networks: [testnet],
+  networks: [testnet, mainnet],
   connectors: [
     memory({
       accounts: [
