@@ -116,6 +116,16 @@ export {
   type UseEstimateGasParameters,
   type UseEstimateGasReturnType,
 } from './useEstimateGas'
+export {
+  useWaitForTransactionConfirm,
+  type UseWaitForTransactionConfirmParameters,
+  type UseWaitForTransactionConfirmReturnType,
+} from './useWaitForTransactionConfirm'
+export {
+  useMicroBlock,
+  type UseMicroBlockParameters,
+  type UseMicroBlockReturnType,
+} from './useMicroBlock'
 
 // Transaction composables
 export {
@@ -133,6 +143,16 @@ export {
   type UsePayForTransactionParameters,
   type UsePayForTransactionReturnType,
 } from './usePayForTransaction'
+export {
+  useBuildTransaction,
+  type UseBuildTransactionParameters,
+  type UseBuildTransactionReturnType,
+} from './useBuildTransaction'
+export {
+  useTransferFunds,
+  type UseTransferFundsParameters,
+  type UseTransferFundsReturnType,
+} from './useTransferFunds'
 
 // Signing composables
 export {
@@ -160,6 +180,11 @@ export {
   type UseVerifyTypedDataParameters,
   type UseVerifyTypedDataReturnType,
 } from './useVerifyTypedData'
+export {
+  useSignDelegation,
+  type UseSignDelegationParameters,
+  type UseSignDelegationReturnType,
+} from './useSignDelegation'
 
 // Contract composables
 export {
@@ -192,6 +217,11 @@ export {
   type UseContractEventsParameters,
   type UseContractEventsReturnType,
 } from './useContractEvents'
+export {
+  useCompileContract,
+  type UseCompileContractParameters,
+  type UseCompileContractReturnType,
+} from './useCompileContract'
 
 // AENS composables
 export {
@@ -224,6 +254,11 @@ export {
   type UseResolveNameParameters,
   type UseResolveNameReturnType,
 } from './useResolveName'
+export {
+  useNameEntry,
+  type UseNameEntryParameters,
+  type UseNameEntryReturnType,
+} from './useNameEntry'
 
 // Oracle composables
 export {

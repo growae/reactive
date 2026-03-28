@@ -32,5 +32,20 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'json'],
+      reporterOptions: {
+        'json-summary': { file: 'coverage-summary.json' },
+      },
+      include: ['packages/*/src/**/*.ts'],
+      exclude: [
+        '**/*.test.ts',
+        '**/*.spec.ts',
+        '**/index.ts',
+        '**/exports/**',
+        '**/*.d.ts',
+      ],
+    },
   },
 })

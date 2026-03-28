@@ -1,12 +1,12 @@
 'use client'
 
-import { createConfig, memory, testnet } from '@growae/reactive'
+import { createConfig, mainnet, memory, testnet } from '@growae/reactive'
 import { ReactiveProvider } from '@growae/reactive-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode, useState } from 'react'
 
 const config = createConfig({
-  networks: [testnet],
+  networks: [testnet, mainnet],
   connectors: [
     memory({
       accounts: [

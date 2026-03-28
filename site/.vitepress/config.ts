@@ -91,22 +91,9 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
       ],
     },
     {
-      text: 'Actions',
+      text: 'Account & Wallet',
       items: [
-        { text: 'getBalance', link: '/core/api/actions/getBalance' },
-        { text: 'spend', link: '/core/api/actions/spend' },
-        {
-          text: 'sendTransaction',
-          link: '/core/api/actions/sendTransaction',
-        },
         { text: 'connect', link: '/core/api/actions/connect' },
-        { text: 'signMessage', link: '/core/api/actions/signMessage' },
-        { text: 'readContract', link: '/core/api/actions/readContract' },
-        { text: 'callContract', link: '/core/api/actions/callContract' },
-        {
-          text: 'deployContract',
-          link: '/core/api/actions/deployContract',
-        },
         {
           text: 'getActiveAccount',
           link: '/core/api/actions/getActiveAccount',
@@ -119,7 +106,50 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
           text: 'watchActiveAccount',
           link: '/core/api/actions/watchActiveAccount',
         },
+        { text: 'getBalance', link: '/core/api/actions/getBalance' },
       ],
+    },
+    {
+      text: 'Network & Chain',
+      items: [
+        { text: 'getMicroBlock', link: '/core/api/actions/getMicroBlock' },
+      ],
+    },
+    {
+      text: 'Transactions',
+      items: [
+        { text: 'spend', link: '/core/api/actions/spend' },
+        { text: 'transferFunds', link: '/core/api/actions/transferFunds' },
+        { text: 'sendTransaction', link: '/core/api/actions/sendTransaction' },
+        {
+          text: 'buildTransaction',
+          link: '/core/api/actions/buildTransaction',
+        },
+        {
+          text: 'waitForTransactionConfirm',
+          link: '/core/api/actions/waitForTransactionConfirm',
+        },
+      ],
+    },
+    {
+      text: 'Contracts',
+      items: [
+        { text: 'readContract', link: '/core/api/actions/readContract' },
+        { text: 'callContract', link: '/core/api/actions/callContract' },
+        { text: 'deployContract', link: '/core/api/actions/deployContract' },
+        { text: 'compileContract', link: '/core/api/actions/compileContract' },
+      ],
+    },
+    {
+      text: 'Signing',
+      items: [
+        { text: 'signMessage', link: '/core/api/actions/signMessage' },
+        { text: 'signDelegation', link: '/core/api/actions/signDelegation' },
+      ],
+    },
+    {
+      text: 'AENS',
+      items: [{ text: 'getNameEntry', link: '/core/api/actions/getNameEntry' }],
     },
   ]
 }
@@ -136,63 +166,80 @@ function reactSidebar(): DefaultTheme.SidebarItem[] {
     {
       text: 'Configuration',
       items: [
-        {
-          text: 'ReactiveProvider',
-          link: '/react/api/ReactiveProvider',
-        },
+        { text: 'ReactiveProvider', link: '/react/api/ReactiveProvider' },
       ],
     },
     {
-      text: 'Hooks',
+      text: 'Account & Wallet',
       items: [
         { text: 'useConnect', link: '/react/api/hooks/useConnect' },
-        {
-          text: 'useDisconnect',
-          link: '/react/api/hooks/useDisconnect',
-        },
-        {
-          text: 'useActiveAccount',
-          link: '/react/api/hooks/useActiveAccount',
-        },
+        { text: 'useDisconnect', link: '/react/api/hooks/useDisconnect' },
+        { text: 'useActiveAccount', link: '/react/api/hooks/useActiveAccount' },
         {
           text: 'useSwitchActiveAccount',
           link: '/react/api/hooks/useSwitchActiveAccount',
         },
         { text: 'useBalance', link: '/react/api/hooks/useBalance' },
+      ],
+    },
+    {
+      text: 'Network & Chain',
+      items: [
         { text: 'useHeight', link: '/react/api/hooks/useHeight' },
+        { text: 'useMicroBlock', link: '/react/api/hooks/useMicroBlock' },
+      ],
+    },
+    {
+      text: 'Transactions',
+      items: [
+        { text: 'useSpend', link: '/react/api/hooks/useSpend' },
+        { text: 'useTransferFunds', link: '/react/api/hooks/useTransferFunds' },
         {
           text: 'useSendTransaction',
           link: '/react/api/hooks/useSendTransaction',
         },
-        { text: 'useSpend', link: '/react/api/hooks/useSpend' },
         {
-          text: 'useReadContract',
-          link: '/react/api/hooks/useReadContract',
+          text: 'useBuildTransaction',
+          link: '/react/api/hooks/useBuildTransaction',
         },
         {
-          text: 'useCallContract',
-          link: '/react/api/hooks/useCallContract',
+          text: 'useWaitForTransactionConfirm',
+          link: '/react/api/hooks/useWaitForTransactionConfirm',
         },
+      ],
+    },
+    {
+      text: 'Contracts',
+      items: [
+        { text: 'useReadContract', link: '/react/api/hooks/useReadContract' },
+        { text: 'useCallContract', link: '/react/api/hooks/useCallContract' },
         {
           text: 'useDeployContract',
           link: '/react/api/hooks/useDeployContract',
         },
         {
-          text: 'useSignMessage',
-          link: '/react/api/hooks/useSignMessage',
+          text: 'useCompileContract',
+          link: '/react/api/hooks/useCompileContract',
         },
+      ],
+    },
+    {
+      text: 'Signing',
+      items: [
+        { text: 'useSignMessage', link: '/react/api/hooks/useSignMessage' },
+        { text: 'useSignTypedData', link: '/react/api/hooks/useSignTypedData' },
         {
-          text: 'useSignTypedData',
-          link: '/react/api/hooks/useSignTypedData',
+          text: 'useSignDelegation',
+          link: '/react/api/hooks/useSignDelegation',
         },
-        {
-          text: 'useResolveName',
-          link: '/react/api/hooks/useResolveName',
-        },
-        {
-          text: 'usePreclaimName',
-          link: '/react/api/hooks/usePreclaimName',
-        },
+      ],
+    },
+    {
+      text: 'AENS',
+      items: [
+        { text: 'useResolveName', link: '/react/api/hooks/useResolveName' },
+        { text: 'useNameEntry', link: '/react/api/hooks/useNameEntry' },
+        { text: 'usePreclaimName', link: '/react/api/hooks/usePreclaimName' },
         { text: 'useClaimName', link: '/react/api/hooks/useClaimName' },
       ],
     },
@@ -213,13 +260,10 @@ function vueSidebar(): DefaultTheme.SidebarItem[] {
       items: [{ text: 'ReactivePlugin', link: '/vue/api/ReactivePlugin' }],
     },
     {
-      text: 'Composables',
+      text: 'Account & Wallet',
       items: [
         { text: 'useConnect', link: '/vue/api/composables/useConnect' },
-        {
-          text: 'useDisconnect',
-          link: '/vue/api/composables/useDisconnect',
-        },
+        { text: 'useDisconnect', link: '/vue/api/composables/useDisconnect' },
         {
           text: 'useActiveAccount',
           link: '/vue/api/composables/useActiveAccount',
@@ -229,12 +273,40 @@ function vueSidebar(): DefaultTheme.SidebarItem[] {
           link: '/vue/api/composables/useSwitchActiveAccount',
         },
         { text: 'useBalance', link: '/vue/api/composables/useBalance' },
+      ],
+    },
+    {
+      text: 'Network & Chain',
+      items: [
         { text: 'useHeight', link: '/vue/api/composables/useHeight' },
+        { text: 'useMicroBlock', link: '/vue/api/composables/useMicroBlock' },
+      ],
+    },
+    {
+      text: 'Transactions',
+      items: [
+        { text: 'useSpend', link: '/vue/api/composables/useSpend' },
+        {
+          text: 'useTransferFunds',
+          link: '/vue/api/composables/useTransferFunds',
+        },
         {
           text: 'useSendTransaction',
           link: '/vue/api/composables/useSendTransaction',
         },
-        { text: 'useSpend', link: '/vue/api/composables/useSpend' },
+        {
+          text: 'useBuildTransaction',
+          link: '/vue/api/composables/useBuildTransaction',
+        },
+        {
+          text: 'useWaitForTransactionConfirm',
+          link: '/vue/api/composables/useWaitForTransactionConfirm',
+        },
+      ],
+    },
+    {
+      text: 'Contracts',
+      items: [
         {
           text: 'useReadContract',
           link: '/vue/api/composables/useReadContract',
@@ -244,9 +316,25 @@ function vueSidebar(): DefaultTheme.SidebarItem[] {
           link: '/vue/api/composables/useCallContract',
         },
         {
-          text: 'useSignMessage',
-          link: '/vue/api/composables/useSignMessage',
+          text: 'useCompileContract',
+          link: '/vue/api/composables/useCompileContract',
         },
+      ],
+    },
+    {
+      text: 'Signing',
+      items: [
+        { text: 'useSignMessage', link: '/vue/api/composables/useSignMessage' },
+        {
+          text: 'useSignDelegation',
+          link: '/vue/api/composables/useSignDelegation',
+        },
+      ],
+    },
+    {
+      text: 'AENS',
+      items: [
+        { text: 'useNameEntry', link: '/vue/api/composables/useNameEntry' },
       ],
     },
   ]
@@ -264,23 +352,14 @@ function solidSidebar(): DefaultTheme.SidebarItem[] {
     {
       text: 'Configuration',
       items: [
-        {
-          text: 'ReactiveProvider',
-          link: '/solid/api/ReactiveProvider',
-        },
+        { text: 'ReactiveProvider', link: '/solid/api/ReactiveProvider' },
       ],
     },
     {
-      text: 'Primitives',
+      text: 'Account & Wallet',
       items: [
-        {
-          text: 'useConnect',
-          link: '/solid/api/primitives/useConnect',
-        },
-        {
-          text: 'useDisconnect',
-          link: '/solid/api/primitives/useDisconnect',
-        },
+        { text: 'useConnect', link: '/solid/api/primitives/useConnect' },
+        { text: 'useDisconnect', link: '/solid/api/primitives/useDisconnect' },
         {
           text: 'useActiveAccount',
           link: '/solid/api/primitives/useActiveAccount',
@@ -289,22 +368,41 @@ function solidSidebar(): DefaultTheme.SidebarItem[] {
           text: 'useSwitchActiveAccount',
           link: '/solid/api/primitives/useSwitchActiveAccount',
         },
+        { text: 'useBalance', link: '/solid/api/primitives/useBalance' },
+      ],
+    },
+    {
+      text: 'Network & Chain',
+      items: [
+        { text: 'useHeight', link: '/solid/api/primitives/useHeight' },
+        { text: 'useMicroBlock', link: '/solid/api/primitives/useMicroBlock' },
+      ],
+    },
+    {
+      text: 'Transactions',
+      items: [
+        { text: 'useSpend', link: '/solid/api/primitives/useSpend' },
         {
-          text: 'useBalance',
-          link: '/solid/api/primitives/useBalance',
-        },
-        {
-          text: 'useHeight',
-          link: '/solid/api/primitives/useHeight',
+          text: 'useTransferFunds',
+          link: '/solid/api/primitives/useTransferFunds',
         },
         {
           text: 'useSendTransaction',
           link: '/solid/api/primitives/useSendTransaction',
         },
         {
-          text: 'useSpend',
-          link: '/solid/api/primitives/useSpend',
+          text: 'useBuildTransaction',
+          link: '/solid/api/primitives/useBuildTransaction',
         },
+        {
+          text: 'useWaitForTransactionConfirm',
+          link: '/solid/api/primitives/useWaitForTransactionConfirm',
+        },
+      ],
+    },
+    {
+      text: 'Contracts',
+      items: [
         {
           text: 'useReadContract',
           link: '/solid/api/primitives/useReadContract',
@@ -314,9 +412,28 @@ function solidSidebar(): DefaultTheme.SidebarItem[] {
           link: '/solid/api/primitives/useCallContract',
         },
         {
+          text: 'useCompileContract',
+          link: '/solid/api/primitives/useCompileContract',
+        },
+      ],
+    },
+    {
+      text: 'Signing',
+      items: [
+        {
           text: 'useSignMessage',
           link: '/solid/api/primitives/useSignMessage',
         },
+        {
+          text: 'useSignDelegation',
+          link: '/solid/api/primitives/useSignDelegation',
+        },
+      ],
+    },
+    {
+      text: 'AENS',
+      items: [
+        { text: 'useNameEntry', link: '/solid/api/primitives/useNameEntry' },
       ],
     },
   ]
