@@ -41,31 +41,50 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Check for changesets
-        run: |
-          CHANGESETS=$(ls .changeset/*.md 2>/dev/null | grep -v README.md || true)
-          if [ -z "$CHANGESETS" ]; then
-            echo "::error::No changesets found on develop. Add changesets before creating a release."
-            exit 1
-          fi
-          echo "Found changesets:"
-          echo "$CHANGESETS"
-
-      - name: Override bump level
-        if: inputs.bump != 'auto'
+      - name: Prepare changesets
         run: |
           BUMP="${{ inputs.bump }}"
-          echo "Overriding all changesets to **$BUMP**"
-          for file in .changeset/*.md; do
-            [ "$(basename "$file")" = "README.md" ] && continue
-            sed -i -E "s/: (patch|minor|major)/: $BUMP/g" "$file"
-          done
-          echo "Updated changesets:"
-          for file in .changeset/*.md; do
-            [ "$(basename "$file")" = "README.md" ] && continue
-            echo "--- $file ---"
-            cat "$file"
-          done
+          CHANGESETS=$(ls .changeset/*.md 2>/dev/null | grep -v README.md || true)
+
+          if [ -z "$CHANGESETS" ] && [ "$BUMP" = "auto" ]; then
+            echo "::error::No changesets found on develop and bump is set to 'auto'. Either add changesets or select a specific bump level (patch/minor/major)."
+            exit 1
+          fi
+
+          if [ -z "$CHANGESETS" ]; then
+            echo "No changesets found — generating a $BUMP release changeset for all public packages"
+            HEADER="---"
+            for pkg in packages/*/; do
+              PRIVATE=$(node -p "require('./${pkg}package.json').private || false")
+              if [ "$PRIVATE" = "false" ]; then
+                NAME=$(node -p "require('./${pkg}package.json').name")
+                HEADER="$HEADER
+          \"$NAME\": $BUMP"
+              fi
+            done
+            HEADER="$HEADER
+          ---
+
+          Release $BUMP bump"
+            echo "$HEADER" > .changeset/release-bump.md
+            echo "Generated .changeset/release-bump.md:"
+            cat .changeset/release-bump.md
+          elif [ "$BUMP" != "auto" ]; then
+            echo "Overriding existing changesets to **$BUMP**"
+            for file in .changeset/*.md; do
+              [ "$(basename "$file")" = "README.md" ] && continue
+              sed -i -E "s/: (patch|minor|major)/: $BUMP/g" "$file"
+            done
+            echo "Updated changesets:"
+            for file in .changeset/*.md; do
+              [ "$(basename "$file")" = "README.md" ] && continue
+              echo "--- $file ---"
+              cat "$file"
+            done
+          else
+            echo "Using existing changesets as-is:"
+            echo "$CHANGESETS"
+          fi
 
       - name: Version packages
         run: pnpm changeset version
