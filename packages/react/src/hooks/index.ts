@@ -25,6 +25,16 @@ export {
   type UseConnectionReturnType,
 } from './useConnection'
 export {
+  useActiveAccount,
+  type UseActiveAccountParameters,
+  type UseActiveAccountReturnType,
+} from './useActiveAccount'
+export {
+  useSwitchActiveAccount,
+  type UseSwitchActiveAccountParameters,
+  type UseSwitchActiveAccountReturnType,
+} from './useSwitchActiveAccount'
+export {
   useConnections,
   type UseConnectionsParameters,
   type UseConnectionsReturnType,

@@ -8,11 +8,14 @@ import { getAccount } from '@growae/reactive'
 import { computed } from 'vue'
 import type { ConfigParameter } from '../types/properties'
 import { type UseQueryReturnType, useQuery } from '../utils/query'
+import { useActiveAccount } from './useActiveAccount'
 import { useConfig } from './useConfig'
 import { useNetworkId } from './useNetworkId'
 
 export type UseAccountParameters = Compute<
-  GetAccountParameters & ConfigParameter & { enabled?: boolean }
+  Omit<GetAccountParameters, 'address'> & {
+    address?: string | undefined
+  } & ConfigParameter & { enabled?: boolean }
 >
 
 export type UseAccountReturnType = UseQueryReturnType<
@@ -21,16 +24,20 @@ export type UseAccountReturnType = UseQueryReturnType<
 >
 
 export function useAccount(
-  parameters: UseAccountParameters = {} as UseAccountParameters,
+  parameters: UseAccountParameters = {},
 ): UseAccountReturnType {
   const config = useConfig(parameters)
   const networkId = useNetworkId({ config })
+  const activeAccount = useActiveAccount({ config })
+  const address = computed(
+    () => parameters.address ?? activeAccount.value.address,
+  )
 
   const options = computed(() => ({
     queryKey: [
       'account',
       {
-        address: parameters.address,
+        address: address.value,
         networkId: parameters.networkId ?? networkId.value,
         height: parameters.height,
         hash: parameters.hash,
@@ -39,9 +46,10 @@ export function useAccount(
     queryFn: () =>
       getAccount(config, {
         ...parameters,
+        address: address.value as string,
         networkId: parameters.networkId ?? networkId.value,
       }),
-    enabled: Boolean(parameters.address) && (parameters.enabled ?? true),
+    enabled: Boolean(address.value) && (parameters.enabled ?? true),
   }))
 
   return useQuery(options) as UseAccountReturnType

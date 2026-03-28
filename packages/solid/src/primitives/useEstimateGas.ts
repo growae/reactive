@@ -1,4 +1,5 @@
 import {
+  type Config,
   type EstimateGasErrorType,
   type EstimateGasParameters,
   type EstimateGasReturnType,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseEstimateGasParameters = Accessor<
   EstimateGasParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

@@ -18,6 +18,7 @@ export default defineConfig({
       },
     ],
     ['meta', { property: 'og:type', content: 'website' }],
+    ['link', { rel: 'stylesheet', href: '/styles/custom.css' }],
   ],
 
   themeConfig: {
@@ -73,6 +74,7 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
       items: [
         { text: 'Configuration', link: '/core/configuration' },
         { text: 'Networks', link: '/core/networks' },
+        { text: 'Multi-Account', link: '/core/guides/multi-account' },
         { text: 'AENS Names', link: '/core/guides/aens' },
         { text: 'Sophia Contracts', link: '/core/guides/contracts' },
         { text: 'Oracles', link: '/core/guides/oracles' },
@@ -105,6 +107,18 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
           text: 'deployContract',
           link: '/core/api/actions/deployContract',
         },
+        {
+          text: 'getActiveAccount',
+          link: '/core/api/actions/getActiveAccount',
+        },
+        {
+          text: 'switchActiveAccount',
+          link: '/core/api/actions/switchActiveAccount',
+        },
+        {
+          text: 'watchActiveAccount',
+          link: '/core/api/actions/watchActiveAccount',
+        },
       ],
     },
   ]
@@ -135,6 +149,14 @@ function reactSidebar(): DefaultTheme.SidebarItem[] {
         {
           text: 'useDisconnect',
           link: '/react/api/hooks/useDisconnect',
+        },
+        {
+          text: 'useActiveAccount',
+          link: '/react/api/hooks/useActiveAccount',
+        },
+        {
+          text: 'useSwitchActiveAccount',
+          link: '/react/api/hooks/useSwitchActiveAccount',
         },
         { text: 'useBalance', link: '/react/api/hooks/useBalance' },
         { text: 'useHeight', link: '/react/api/hooks/useHeight' },
@@ -198,6 +220,14 @@ function vueSidebar(): DefaultTheme.SidebarItem[] {
           text: 'useDisconnect',
           link: '/vue/api/composables/useDisconnect',
         },
+        {
+          text: 'useActiveAccount',
+          link: '/vue/api/composables/useActiveAccount',
+        },
+        {
+          text: 'useSwitchActiveAccount',
+          link: '/vue/api/composables/useSwitchActiveAccount',
+        },
         { text: 'useBalance', link: '/vue/api/composables/useBalance' },
         { text: 'useHeight', link: '/vue/api/composables/useHeight' },
         {
@@ -250,6 +280,14 @@ function solidSidebar(): DefaultTheme.SidebarItem[] {
         {
           text: 'useDisconnect',
           link: '/solid/api/primitives/useDisconnect',
+        },
+        {
+          text: 'useActiveAccount',
+          link: '/solid/api/primitives/useActiveAccount',
+        },
+        {
+          text: 'useSwitchActiveAccount',
+          link: '/solid/api/primitives/useSwitchActiveAccount',
         },
         {
           text: 'useBalance',

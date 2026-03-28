@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetOracleQueriesParameters,
   type GetOracleQueriesReturnType,
   getOracleQueries,
@@ -11,7 +12,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseOracleQueriesParameters = Accessor<
   GetOracleQueriesParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

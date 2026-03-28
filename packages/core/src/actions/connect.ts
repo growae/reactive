@@ -54,6 +54,7 @@ export async function connect(
       ...x,
       connections: new Map(x.connections).set(connector.uid, {
         accounts: data.accounts as readonly [string, ...string[]],
+        activeAccount: (data.accounts as readonly [string, ...string[]])[0]!,
         networkId: data.networkId,
         connector,
       }),

@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetTransactionErrorType,
   type GetTransactionParameters,
   type GetTransactionReturnType,
@@ -12,7 +13,7 @@ import { useNetworkId } from './useNetworkId'
 
 export type UseTransactionParameters = Accessor<
   GetTransactionParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
     enabled?: boolean
   }
 >

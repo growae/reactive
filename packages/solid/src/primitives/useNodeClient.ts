@@ -1,4 +1,5 @@
 import {
+  type Config,
   type GetNodeClientParameters,
   type GetNodeClientReturnType,
   getNodeClient,
@@ -9,7 +10,7 @@ import { useConfig } from './useConfig'
 
 export type UseNodeClientParameters = Accessor<
   GetNodeClientParameters & {
-    config?: import('@growae/reactive').Config | undefined
+    config?: Config | undefined
   }
 >
 

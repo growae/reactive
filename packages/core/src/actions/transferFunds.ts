@@ -43,18 +43,21 @@ export async function transferFunds(
   }
 
   let senderConnector: Connector | undefined = connector
+  let senderId: string | undefined
   if (!senderConnector) {
     const { connections, current } = config.state
     const connection = current ? connections.get(current) : undefined
     senderConnector = connection?.connector
+    senderId = connection?.activeAccount
   }
 
   if (!senderConnector) {
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  const accounts = await senderConnector.getAccounts()
-  const senderId = accounts[0]
+  if (!senderId) {
+    senderId = (await senderConnector.getAccounts())[0]
+  }
   if (!senderId) {
     throw new Error('No account available on the current connector.')
   }
