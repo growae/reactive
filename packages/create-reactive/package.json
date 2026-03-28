@@ -1,6 +1,6 @@
 {
   "name": "@growae/create-reactive",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "bin": {
     "create-reactive": "./dist/esm/cli.js"
