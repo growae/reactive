@@ -1,6 +1,6 @@
 {
   "name": "@growae/create-reactive",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "bin": {
     "create-reactive": "./dist/cli.js",
