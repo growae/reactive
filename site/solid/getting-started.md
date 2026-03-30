@@ -95,5 +95,6 @@ spend.mutate({
 
 - [Installation](/solid/installation) — detailed install guide
 - [ReactiveProvider](/solid/api/ReactiveProvider) — provider setup
+- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
 - [useConnect](/solid/api/primitives/useConnect) — wallet connection
 - [useBalance](/solid/api/primitives/useBalance) — balance queries
