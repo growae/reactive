@@ -74,6 +74,7 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
       items: [
         { text: 'Configuration', link: '/core/configuration' },
         { text: 'Networks', link: '/core/networks' },
+        { text: 'Connectors', link: '/core/guides/connectors' },
         { text: 'Multi-Account', link: '/core/guides/multi-account' },
         { text: 'AENS Names', link: '/core/guides/aens' },
         { text: 'Sophia Contracts', link: '/core/guides/contracts' },
@@ -88,6 +89,18 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
         { text: 'createConfig', link: '/core/api/createConfig' },
         { text: 'createStorage', link: '/core/api/createStorage' },
         { text: 'createConnector', link: '/core/api/createConnector' },
+      ],
+    },
+    {
+      text: 'Connectors',
+      items: [
+        { text: 'superhero', link: '/core/api/connectors/superhero' },
+        { text: 'iframe', link: '/core/api/connectors/iframe' },
+        { text: 'webExtension', link: '/core/api/connectors/webExtension' },
+        { text: 'ledger', link: '/core/api/connectors/ledger' },
+        { text: 'metamaskSnap', link: '/core/api/connectors/metamaskSnap' },
+        { text: 'memory', link: '/core/api/connectors/memory' },
+        { text: 'walletDetect', link: '/core/api/connectors/walletDetect' },
       ],
     },
     {

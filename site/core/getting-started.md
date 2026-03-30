@@ -83,6 +83,7 @@ await spend(config, {
 
 - [Installation](/core/installation) — detailed install guide
 - [Configuration](/core/configuration) — learn about `createConfig` options
+- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
 - [Networks](/core/networks) — configure mainnet, testnet, or custom networks
 - [AENS Guide](/core/guides/aens) — register and manage `.chain` names
 - [Contracts Guide](/core/guides/contracts) — deploy and call Sophia contracts

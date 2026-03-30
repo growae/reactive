@@ -89,5 +89,6 @@ send({
 
 - [Installation](/react/installation) — detailed install guide
 - [ReactiveProvider](/react/api/ReactiveProvider) — provider setup
+- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
 - [useConnect](/react/api/hooks/useConnect) — wallet connection
 - [useBalance](/react/api/hooks/useBalance) — balance queries
