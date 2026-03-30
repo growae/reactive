@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.build.json",
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test-d.ts",
+    "src/exports/connectors.ts"
+  ]
+}

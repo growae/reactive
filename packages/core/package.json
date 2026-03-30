@@ -34,7 +34,8 @@
   },
   "scripts": {
     "build": "pnpm run build:esm+types",
-    "build:esm+types": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "build:esm+types": "tsc --project tsconfig.bootstrap.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
+    "build:connectors": "pnpm --filter @growae/reactive-connectors run build && tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
     "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
