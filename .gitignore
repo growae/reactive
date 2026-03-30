@@ -2,10 +2,15 @@ node_modules
 dist
 .turbo
 *.tsbuildinfo
-*.d.ts.map
 .DS_Store
 coverage
 .env
 .env.local
 pnpm-debug.log*
 site/.vitepress/cache/
+
+# Build artifacts that may leak into src/ from bad tsc emit
+packages/*/src/**/*.js
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.d.ts.map
