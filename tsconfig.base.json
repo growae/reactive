@@ -39,7 +39,10 @@
 
     "paths": {
       "@growae/reactive": ["./packages/core/src/exports/index.ts"],
-      "@growae/reactive/*": ["./packages/core/src/exports/*.ts"]
+      "@growae/reactive/*": ["./packages/core/src/exports/*.ts"],
+      "@growae/reactive-connectors": [
+        "./packages/connectors/src/exports/index.ts"
+      ]
     }
   }
 }
