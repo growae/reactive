@@ -89,5 +89,6 @@ send({
 
 - [Installation](/vue/installation) — detailed install guide
 - [ReactivePlugin](/vue/api/ReactivePlugin) — plugin setup
+- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
 - [useConnect](/vue/api/composables/useConnect) — wallet connection
 - [useBalance](/vue/api/composables/useBalance) — balance queries
