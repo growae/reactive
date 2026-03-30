@@ -22,6 +22,10 @@
       "types": "./dist/types/exports/networks.d.ts",
       "default": "./dist/esm/exports/networks.js"
     },
+    "./connectors": {
+      "types": "./dist/types/exports/connectors.d.ts",
+      "default": "./dist/esm/exports/connectors.js"
+    },
     "./internal": {
       "types": "./dist/types/exports/internal.d.ts",
       "default": "./dist/esm/exports/internal.js"
@@ -41,10 +45,14 @@
     "zustand": "^5.0.0"
   },
   "peerDependencies": {
+    "@growae/reactive-connectors": "workspace:*",
     "@tanstack/query-core": ">=5.0.0",
     "typescript": ">=5.7.0"
   },
   "peerDependenciesMeta": {
+    "@growae/reactive-connectors": {
+      "optional": true
+    },
     "@tanstack/query-core": {
       "optional": true
     },

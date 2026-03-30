@@ -6,7 +6,11 @@
     "declarationDir": "dist/types",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@growae/reactive": ["./src/exports/index.ts"],
+      "@growae/reactive/*": ["./src/exports/*.ts"]
+    }
   },
   "include": ["src/**/*.ts"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test-d.ts"]

@@ -72,6 +72,9 @@ importers:
       '@aeternity/aepp-sdk':
         specifier: ^14.0.0
         version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@growae/reactive-connectors':
+        specifier: workspace:*
+        version: link:../connectors
       eventemitter3:
         specifier: ^5.0.0
         version: 5.0.4
@@ -99,7 +102,7 @@ importers:
         specifier: ^2.4.9
         version: 2.4.9
       tsup:
-        specifier: ^8.5.1
+        specifier: ^8.5.0
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.8)(typescript@5.9.3)(yaml@2.8.3)
 
   packages/react:
