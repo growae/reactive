@@ -5,11 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-<<<<<<< HEAD
     "build": "pnpm --filter @growae/reactive run build && pnpm -r --filter='./packages/**' --filter='!@growae/reactive' run build && pnpm --filter @growae/reactive run build:connectors",
-=======
-    "build": "pnpm --filter @growae/reactive run build && pnpm -r --filter='./packages/**' --filter='!@growae/reactive' run build",
->>>>>>> 8c1cc74 (feat: export missing hooks and add connectors subpath)
     "build:core": "pnpm --filter @growae/reactive run build",
     "build:react": "pnpm --filter @growae/reactive-react run build",
     "build:vue": "pnpm --filter @growae/reactive-vue run build",
