@@ -91,7 +91,7 @@ jobs:
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main'
+    if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.base_ref == 'develop')
     needs: build
     timeout-minutes: 15
     services:
