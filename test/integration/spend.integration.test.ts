@@ -3,7 +3,7 @@ import { connect } from '../../packages/core/src/actions/connect'
 import { spend } from '../../packages/core/src/actions/spend'
 import { createTestConfig, waitForNode } from '../setup/integration'
 
-// Second well-known devmode account — receives the spend tx
+// Second genesis-funded account from test/config/aeternity.yaml — receives the spend tx
 const RECIPIENT = 'ak_tWZrf8ehmY7CyB1JAoBmWJEeThwWnDpU4NadUdzxVSbzDgKjP'
 
 describe.skipIf(!process.env.INTEGRATION)('spend (integration)', () => {

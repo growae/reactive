@@ -6,6 +6,9 @@ chain:
   persist: false
   hard_forks:
     "1": 0
+  genesis_accounts:
+    ak_2CuofqWZHrABCrM7GY95YSQn8PyFvKQadnvFnpwhjUnDCFAWmf: 100000000000000000000000000000
+    ak_tWZrf8ehmY7CyB1JAoBmWJEeThwWnDpU4NadUdzxVSbzDgKjP: 100000000000000000000000000000
 
 mining:
   autostart: true

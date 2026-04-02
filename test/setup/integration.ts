@@ -8,12 +8,12 @@ export const devnet: Network = {
   nodeUrl: 'http://localhost:3013',
 }
 
-// Well-known genesis-funded devmode account (sk_base58 format, 100M AE pre-funded).
-// Source: aeproject default accounts / aeternity-playground devmode accounts.
+// Genesis-funded account — pre-funded in test/config/aeternity.yaml genesis_accounts.
+// Same account used by aepp-sdk-js integration tests.
 export const FAUCET_SECRET_KEY =
-  'sk_woRkv1SfE49sCNbmkHGLUdzPsH82kVGhTPTWebH8Ysk2MqQSh'
+  'sk_2CuofqWZHrABCrM7GY95YSQn8PyFvKQadnvFnpwhjUnDCFAWmf'
 export const FAUCET_PUBLIC_KEY =
-  'ak_fUq2NesPXcYZ1CcqBcGC3StpdnQw3iVxMA3YSeCNAwfN4myQk'
+  'ak_2CuofqWZHrABCrM7GY95YSQn8PyFvKQadnvFnpwhjUnDCFAWmf'
 
 export function createTestConfig() {
   return createConfig({
