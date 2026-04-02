@@ -11,23 +11,33 @@ import { deployContract } from '@growae/reactive/actions'
 ## Usage
 
 ```typescript
-import { deployContract } from '@growae/reactive/actions'
+import { compileContract, deployContract } from '@growae/reactive/actions'
+
+// Compile first — use rawAci (the full array) for deployment
+const compiled = await compileContract(config, { sourceCode, onCompiler: compiler })
 
 const result = await deployContract(config, {
-  aci: contractAci,
-  bytecode: compiledBytecode,
+  aci: compiled.rawAci,   // full ACI array — required by aepp-sdk
+  bytecode: compiled.bytecode,
   args: ['initial_value', 42n],
 })
+
+console.log('Deployed at:', result.address)
+console.log('Tx:', result.txHash)
 ```
+
+::: tip ACI from compileContract
+When deploying a freshly compiled contract, pass `compiled.rawAci` (not `compiled.aci`) as the `aci` parameter. The `rawAci` is the full array expected by the SDK. The `aci` field is the normalized single-contract entry useful for UI rendering (function names, argument types).
+:::
 
 ## Return Type
 
 ```typescript
 type DeployContractReturnType = {
   address: string
-  hash: string
+  txHash: string
   rawTx: string
-  result: unknown
+  result?: unknown
 }
 ```
 
@@ -36,6 +46,12 @@ type DeployContractReturnType = {
 - **Type:** `string`
 
 The deployed contract address (`ct_...`).
+
+### txHash
+
+- **Type:** `string`
+
+The transaction hash (`th_...`).
 
 ## Parameters
 

@@ -5,9 +5,9 @@ test('spend returns Promise<SpendReturnType>', () => {
   expectTypeOf(spend).returns.toEqualTypeOf<Promise<SpendReturnType>>()
 })
 
-test('SpendParameters has recipientId field', () => {
-  expectTypeOf<SpendParameters>().toHaveProperty('recipientId')
-  expectTypeOf<SpendParameters['recipientId']>().toBeString()
+test('SpendParameters has recipient field', () => {
+  expectTypeOf<SpendParameters>().toHaveProperty('recipient')
+  expectTypeOf<SpendParameters['recipient']>().toBeString()
 })
 
 test('SpendParameters has amount field', () => {

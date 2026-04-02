@@ -57,6 +57,22 @@ export function createConfig<
     return connector
   }
 
+  // Resolve relative URLs against window.location.origin in browser environments.
+  // aepp-sdk's Node constructor calls `new URL(nodeUrl)` which requires an absolute URL.
+  function resolveNodeUrl(url: string): string {
+    try {
+      new URL(url)
+      return url
+    } catch {
+      if (typeof globalThis.window !== 'undefined') {
+        return new URL(url, globalThis.window.location.origin).href
+      }
+      throw new Error(
+        `Invalid nodeUrl "${url}". Provide an absolute URL or use a relative path in a browser environment.`,
+      )
+    }
+  }
+
   // Node client pool, memoized by networkId
   const nodeClients = new Map<string, Node>()
   function getNodeClient(
@@ -78,7 +94,7 @@ export function createConfig<
       if (client) return client
     }
 
-    const client = new Node(network.nodeUrl)
+    const client = new Node(resolveNodeUrl(network.nodeUrl))
     nodeClients.set(networkId, client)
     return client
   }
