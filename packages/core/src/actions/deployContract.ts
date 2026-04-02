@@ -71,10 +71,11 @@ export async function deployContract(
   }
 
   const node = config.getNodeClient({ networkId })
+  const signingAccount = await connection.connector.getProvider()
 
   const contractInstance = await Contract.initialize({
     onNode: node,
-    onAccount: connection.activeAccount as `ak_${string}`,
+    onAccount: signingAccount,
     ...(sourceCode ? { sourceCode } : {}),
     ...(bytecode ? { bytecode: bytecode as `cb_${string}` } : {}),
     ...(aci ? { aci } : {}),
