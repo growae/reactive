@@ -10,7 +10,10 @@ export type CompileContractParameters = {
 
 export type CompileContractReturnType = {
   bytecode: string
+  /** Normalized single contract_main ACI entry — use this for UI (name, functions). */
   aci: unknown
+  /** Full ACI array from the compiler — pass this to Contract.initialize or deployContract. */
+  rawAci: unknown[]
 }
 
 export type CompileContractErrorType =
@@ -36,8 +39,15 @@ export async function compileContract(
 
   const result = await onCompiler.compileBySourceCode(sourceCode, fileSystem)
 
+  const rawAci: unknown[] = Array.isArray(result.aci)
+    ? result.aci
+    : [result.aci]
+  const aci =
+    rawAci.find((e: any) => e?.contract?.kind === 'contract_main') ?? rawAci[0]
+
   return {
     bytecode: result.bytecode,
-    aci: result.aci,
+    aci,
+    rawAci,
   }
 }

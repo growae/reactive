@@ -4,7 +4,7 @@ import type { Config } from '../createConfig'
 import type { BaseErrorType, ErrorType } from '../errors/base'
 
 export type SpendParameters = {
-  recipientId: string
+  recipient: string
   amount: bigint | string
   payload?: string | undefined
   networkId?: string | undefined
@@ -27,7 +27,7 @@ export async function spend(
   parameters: SpendParameters,
 ): Promise<SpendReturnType> {
   const {
-    recipientId,
+    recipient,
     amount,
     payload,
     networkId,
@@ -50,7 +50,7 @@ export async function spend(
   const spendTx = buildTx({
     tag: Tag.SpendTx,
     senderId,
-    recipientId,
+    recipientId: recipient,
     amount: BigInt(amount),
     payload: payload ?? '',
     fee: txOptions.fee ? BigInt(txOptions.fee) : undefined,

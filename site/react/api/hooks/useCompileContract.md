@@ -26,7 +26,12 @@ function CompileForm() {
       >
         Compile
       </button>
-      {data && <p>Bytecode: {data.bytecode}</p>}
+      {data && (
+        <>
+          <p>Bytecode: {data.bytecode}</p>
+          <p>Contract: {(data.aci as any)?.contract?.name}</p>
+        </>
+      )}
     </div>
   )
 }
@@ -39,6 +44,11 @@ See [TanStack Query mutation docs](https://tanstack.com/query/v5/docs/framework/
 ### data
 
 See [`compileContract` Return Type](/core/api/actions/compileContract#return-type).
+
+::: tip `aci` vs `rawAci`
+- Use `data.aci` to read the contract name and function list for UI rendering.
+- Use `data.rawAci` as the `aci` parameter when calling `useDeployContract` — it is the full array expected by the SDK.
+:::
 
 ## Parameters
 
