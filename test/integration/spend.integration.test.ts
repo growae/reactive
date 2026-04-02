@@ -14,7 +14,7 @@ describe.skipIf(!process.env.INTEGRATION)('spend (integration)', () => {
     await connect(config, { connector })
 
     const result = await spend(config, {
-      recipientId: 'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU',
+      recipient: 'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU',
       amount: '1000000000000000000',
     })
 

@@ -50,7 +50,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     const result = await spend(config, {
-      recipientId: 'ak_recipientAddress',
+      recipient: 'ak_recipientAddress',
       amount: 1000000000000000000n,
     })
 
@@ -61,7 +61,7 @@ describe('spend', () => {
   it('should throw when no account is connected', async () => {
     const config = createTestConfig()
     await expect(
-      spend(config, { recipientId: 'ak_test', amount: 100n }),
+      spend(config, { recipient: 'ak_test', amount: 100n }),
     ).rejects.toThrow('No connected account')
   })
 
@@ -71,7 +71,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipientId: 'ak_recipient',
+      recipient: 'ak_recipient',
       amount: 100n,
     })
 
@@ -84,7 +84,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipientId: 'ak_recipient',
+      recipient: 'ak_recipient',
       amount: 100n,
     })
 
@@ -99,7 +99,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipientId: 'ak_recipient',
+      recipient: 'ak_recipient',
       amount: 100n,
       options: { nonce: 42 },
     })
@@ -118,7 +118,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipientId: 'ak_recipient',
+      recipient: 'ak_recipient',
       amount: 100n,
     })
 

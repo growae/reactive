@@ -56,11 +56,13 @@ export async function callContract(
     throw new CallContractNoAccountError()
   }
 
+  const signingAccount = connection
+    ? await connection.connector.getProvider()
+    : undefined
+
   const contractInstance = await Contract.initialize({
     onNode: node,
-    ...(connection
-      ? { onAccount: connection.activeAccount as `ak_${string}` }
-      : {}),
+    ...(signingAccount ? { onAccount: signingAccount } : {}),
     aci,
     address: address as `ct_${string}`,
   } as any)
