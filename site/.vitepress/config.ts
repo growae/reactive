@@ -1,5 +1,45 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { defineConfig } from 'vitepress'
 import type { DefaultTheme } from 'vitepress'
+
+function loadEnvVar(name: string): string {
+  const fromEnv = process.env[name]
+  if (fromEnv) return fromEnv
+  try {
+    const envFile = readFileSync(resolve(__dirname, '../.env'), 'utf-8')
+    const match = envFile.match(new RegExp(`^${name}=(.+)$`, 'm'))
+    return match?.[1]?.trim() || ''
+  } catch {
+    return ''
+  }
+}
+
+const plausibleDomain =
+  loadEnvVar('VITE_PLAUSIBLE_DOMAIN') || 'reactive.growae.io'
+const plausibleHost =
+  loadEnvVar('VITE_PLAUSIBLE_ENDPOINT') || 'https://plausible.growae.io'
+
+const headEntries: ReturnType<typeof defineConfig>['head'] = [
+  ['meta', { property: 'og:title', content: 'Reactive' }],
+  [
+    'meta',
+    {
+      property: 'og:description',
+      content: 'Type-safe Aeternity blockchain interactions',
+    },
+  ],
+  ['meta', { property: 'og:type', content: 'website' }],
+  ['link', { rel: 'stylesheet', href: '/styles/custom.css' }],
+  [
+    'script',
+    {
+      defer: '',
+      'data-domain': plausibleDomain,
+      src: `${plausibleHost.replace(/\/+$/, '')}/js/script.js`,
+    },
+  ],
+]
 
 export default defineConfig({
   title: 'Reactive',
@@ -8,18 +48,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
 
-  head: [
-    ['meta', { property: 'og:title', content: 'Reactive' }],
-    [
-      'meta',
-      {
-        property: 'og:description',
-        content: 'Type-safe Aeternity blockchain interactions',
-      },
-    ],
-    ['meta', { property: 'og:type', content: 'website' }],
-    ['link', { rel: 'stylesheet', href: '/styles/custom.css' }],
-  ],
+  head: headEntries as any,
 
   themeConfig: {
     nav: [
