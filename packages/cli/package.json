@@ -1,6 +1,7 @@
 {
   "name": "@growae/reactive-cli",
   "version": "0.0.5",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "reactive": "./dist/cli.js",
