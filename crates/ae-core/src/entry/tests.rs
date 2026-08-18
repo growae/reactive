@@ -180,7 +180,10 @@ fn a_plain_call_serialises_as_version_2_and_a_named_call_as_version_3() {
     // v3 is exactly v2 plus one field, in the fifth position.
     let plain_fields = Item::decode(&plain.encode()).unwrap();
     let named_fields = Item::decode(&named.encode()).unwrap();
-    assert_eq!(plain_fields.as_list().unwrap().len() + 1, named_fields.as_list().unwrap().len());
+    assert_eq!(
+        plain_fields.as_list().unwrap().len() + 1,
+        named_fields.as_list().unwrap().len()
+    );
 }
 
 #[test]
@@ -201,7 +204,9 @@ fn every_call_return_type_round_trips() {
         Item::List(items) => items,
         Item::Bytes(_) => unreachable!(),
     };
-    fields[10] = int(3);
+    // tag, version, caller, nonce, height, contract, gas price, gas used,
+    // return value, return type — the tenth item.
+    fields[9] = int(3);
     let bytes = Item::List(fields).encode();
     assert!(matches!(
         Entry::decode(&bytes),
@@ -509,7 +514,15 @@ fn state_trees_reject_a_subtree_filed_under_the_wrong_tag() {
         tree: Mtree::default(),
     })
     .encode();
-    let right = |kind| Item::Bytes(Entry::SubTree(SubTree { kind, tree: Mtree::default() }).encode());
+    let right = |kind| {
+        Item::Bytes(
+            Entry::SubTree(SubTree {
+                kind,
+                tree: Mtree::default(),
+            })
+            .encode(),
+        )
+    };
     let bytes = join(
         EntryTag::StateTrees,
         0,
@@ -528,7 +541,7 @@ fn state_trees_reject_a_subtree_filed_under_the_wrong_tag() {
 #[test]
 fn a_proof_of_inclusion_round_trips_with_only_the_subtrees_it_proves() {
     // One leaf node, filed under its own hash, is the smallest real proof.
-    let items = vec![vec![0x20, 0xab, 0xcd], b"value".to_vec()];
+    let items = [vec![0x20, 0xab, 0xcd], b"value".to_vec()];
     let list = Item::List(items.iter().map(|i| Item::Bytes(i.clone())).collect());
     let hash = blake2b_256(&list.encode());
     let tree = MerklePatriciaTree::from_rlp(&Item::List(vec![
@@ -547,7 +560,10 @@ fn a_proof_of_inclusion_round_trips_with_only_the_subtrees_it_proves() {
         panic!("expected a poi");
     };
     let accounts = poi.accounts.expect("the accounts subtree was proved");
-    assert_eq!(accounts.get(&[0xab, 0xcd]).unwrap(), Some(b"value".to_vec()));
+    assert_eq!(
+        accounts.get(&[0xab, 0xcd]).unwrap(),
+        Some(b"value".to_vec())
+    );
     // An unproved subtree is absent, not empty-but-present.
     assert!(poi.oracles.is_none());
 }
@@ -568,7 +584,10 @@ fn an_empty_proof_of_inclusion_round_trips() {
 #[test]
 fn an_unknown_tag_is_refused() {
     let bytes = join_raw(999, 1, vec![int(1)]);
-    assert_eq!(Entry::decode(&bytes).unwrap_err(), Error::UnknownEntryTag(999));
+    assert_eq!(
+        Entry::decode(&bytes).unwrap_err(),
+        Error::UnknownEntryTag(999)
+    );
 }
 
 /// `join` for a tag this build does not have a variant for.
@@ -584,7 +603,10 @@ fn truncated_and_malformed_input_is_refused_rather_than_half_read() {
     for cut in 1..bytes.len() {
         // Every proper prefix is either invalid rlp or the wrong arity; none
         // may decode to an account.
-        assert!(Entry::decode(&bytes[..cut]).is_err(), "prefix of {cut} decoded");
+        assert!(
+            Entry::decode(&bytes[..cut]).is_err(),
+            "prefix of {cut} decoded"
+        );
     }
     assert!(Entry::decode(&[]).is_err());
     // A byte string where a list belongs.
@@ -618,10 +640,7 @@ fn a_non_minimal_integer_field_is_refused() {
         1,
         vec![Item::Bytes(vec![0x00, 0x09]), int(100)],
     );
-    assert!(matches!(
-        Entry::decode(&bytes),
-        Err(Error::IntegerRange(_))
-    ));
+    assert!(matches!(Entry::decode(&bytes), Err(Error::IntegerRange(_))));
 }
 
 #[test]

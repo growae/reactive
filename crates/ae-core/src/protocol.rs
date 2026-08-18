@@ -225,7 +225,10 @@ mod tests {
         assert_eq!(params.base_gas, 15_000);
         assert_eq!(params.gas_per_byte, 20);
         assert_eq!(params.min_gas_price, 1_000_000_000);
-        assert_eq!(ConsensusProtocolVersion::from_wire(6).unwrap(), ConsensusProtocolVersion::Ceres);
+        assert_eq!(
+            ConsensusProtocolVersion::from_wire(6).unwrap(),
+            ConsensusProtocolVersion::Ceres
+        );
         assert!(ConsensusProtocolVersion::from_wire(5).is_err());
     }
 }

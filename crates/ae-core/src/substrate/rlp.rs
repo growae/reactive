@@ -232,9 +232,10 @@ mod tests {
                 Item::List(vec![
                     Item::List(Vec::new()),
                     Item::List(vec![Item::List(Vec::new())]),
-                    Item::List(vec![Item::List(Vec::new()), Item::List(vec![Item::List(
-                        Vec::new(),
-                    )])]),
+                    Item::List(vec![
+                        Item::List(Vec::new()),
+                        Item::List(vec![Item::List(Vec::new())]),
+                    ]),
                 ]),
                 "c7c0c1c0c3c0c1c0",
             ),

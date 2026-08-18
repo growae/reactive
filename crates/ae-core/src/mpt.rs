@@ -126,9 +126,7 @@ impl MerklePatriciaTree {
                     .map(|(hash, items)| {
                         Item::List(vec![
                             Item::Bytes(hash.to_vec()),
-                            Item::List(
-                                items.iter().map(|i| Item::Bytes(i.clone())).collect(),
-                            ),
+                            Item::List(items.iter().map(|i| Item::Bytes(i.clone())).collect()),
                         ])
                     })
                     .collect(),
@@ -331,10 +329,7 @@ mod tests {
     fn node(items: Vec<Vec<u8>>) -> ([u8; 32], Item) {
         let list = Item::List(items.iter().map(|i| Item::Bytes(i.clone())).collect());
         let hash = blake2b_256(&list.encode());
-        (
-            hash,
-            Item::List(vec![Item::Bytes(hash.to_vec()), list]),
-        )
+        (hash, Item::List(vec![Item::Bytes(hash.to_vec()), list]))
     }
 
     /// A leaf whose path is the whole key: header nibble 2 (leaf, even) or 3 (odd).
@@ -365,11 +360,18 @@ mod tests {
         );
     }
 
+    /// A leaf whose path is three nibbles, spelled with the odd-length header.
+    ///
+    /// Sitting one nibble below a branch, that makes a whole four-nibble — two
+    /// byte — key.
+    fn odd_leaf(value: &[u8]) -> ([u8; 32], Item) {
+        node(vec![vec![0x3a, 0xbc], value.to_vec()])
+    }
+
     #[test]
     fn a_branch_routes_by_the_first_nibble() {
-        // Two leaves under nibbles 1 and 2, sharing no prefix.
-        let (a_hash, a) = leaf(&[0x23], b"a"); // key 0x1_23 → branch slot 1, path 23
-        let (b_hash, b) = leaf(&[0x23], b"b");
+        let (a_hash, a) = odd_leaf(b"a");
+        let (b_hash, b) = odd_leaf(b"b");
         let mut branch_items = vec![Vec::new(); 17];
         branch_items[1] = a_hash.to_vec();
         branch_items[2] = b_hash.to_vec();
@@ -377,20 +379,27 @@ mod tests {
 
         let tree = tree(root, vec![branch, a, b]);
         assert!(tree.is_complete());
-        // Key nibbles: 1 then 2,3 — but a whole key must be an even nibble count,
-        // so the leaf paths above make the full keys 0x12,0x3? unreachable as
-        // bytes. Walk them as nibble paths instead through `entries`.
-        assert_eq!(tree.entries().unwrap().len(), 2);
-        let values: Vec<Vec<u8>> = tree.entries().unwrap().into_iter().map(|(_, v)| v).collect();
-        assert!(values.contains(&b"a".to_vec()));
-        assert!(values.contains(&b"b".to_vec()));
+        // Nibbles 1 | a,b,c and 2 | a,b,c.
+        assert_eq!(tree.get(&[0x1a, 0xbc]).unwrap(), Some(b"a".to_vec()));
+        assert_eq!(tree.get(&[0x2a, 0xbc]).unwrap(), Some(b"b".to_vec()));
+        // An empty branch slot is a proved absence.
+        assert_eq!(tree.get(&[0x3a, 0xbc]).unwrap(), None);
+        // The right slot, the wrong tail.
+        assert_eq!(tree.get(&[0x1a, 0xbd]).unwrap(), None);
+        assert_eq!(
+            tree.entries().unwrap(),
+            vec![
+                (vec![0x1a, 0xbc], b"a".to_vec()),
+                (vec![0x2a, 0xbc], b"b".to_vec()),
+            ]
+        );
     }
 
     #[test]
     fn an_extension_shares_a_prefix_between_two_leaves() {
-        // Both keys start 0xaa; they diverge at the fifth nibble.
-        let (leaf_a_hash, leaf_a) = leaf(&[0xcc], b"a");
-        let (leaf_b_hash, leaf_b) = leaf(&[0xcc], b"b");
+        // Both keys start with the nibbles a,a and diverge at the third.
+        let (leaf_a_hash, leaf_a) = odd_leaf(b"a");
+        let (leaf_b_hash, leaf_b) = odd_leaf(b"b");
         let mut branch_items = vec![Vec::new(); 17];
         branch_items[0x1] = leaf_a_hash.to_vec();
         branch_items[0x2] = leaf_b_hash.to_vec();
@@ -400,11 +409,13 @@ mod tests {
 
         let tree = tree(root, vec![extension, branch, leaf_a, leaf_b]);
         assert!(tree.is_complete());
-        assert_eq!(tree.get(&[0xaa, 0x1c, 0xc0]).unwrap(), None);
-        // aa | 1 | cc → nibbles a,a,1,c,c: odd, so not a byte key; the pair is
-        // still reachable through entries as far as the tree is concerned.
-        assert_eq!(tree.entries().unwrap().len(), 0);
         assert_eq!(tree.node_count(), 4);
+        // a,a | 1 | a,b,c and a,a | 2 | a,b,c.
+        assert_eq!(tree.get(&[0xaa, 0x1a, 0xbc]).unwrap(), Some(b"a".to_vec()));
+        assert_eq!(tree.get(&[0xaa, 0x2a, 0xbc]).unwrap(), Some(b"b".to_vec()));
+        // A key that does not share the extension's prefix stops there.
+        assert_eq!(tree.get(&[0xab, 0x1a, 0xbc]).unwrap(), None);
+        assert_eq!(tree.entries().unwrap().len(), 2);
     }
 
     #[test]
@@ -449,7 +460,7 @@ mod tests {
 
     #[test]
     fn a_proof_missing_a_branch_is_partial_not_broken() {
-        let (present_hash, present) = leaf(&[0x23], b"here");
+        let (present_hash, present) = odd_leaf(b"here");
         let mut branch_items = vec![Vec::new(); 17];
         branch_items[1] = present_hash.to_vec();
         branch_items[2] = [0x99u8; 32].to_vec(); // referenced, not supplied
@@ -457,9 +468,14 @@ mod tests {
 
         let tree = tree(root, vec![branch, present]);
         assert!(!tree.is_complete());
-        // Walking into the missing branch says "unknown", not "absent by proof".
-        assert_eq!(tree.get(&[0x22, 0x30]).unwrap(), None);
-        assert_eq!(tree.entries().unwrap().len(), 1);
+        assert_eq!(tree.get(&[0x1a, 0xbc]).unwrap(), Some(b"here".to_vec()));
+        // Walking into the missing branch says "unknown", not "absent by proof" —
+        // the two are told apart by `is_complete`, not by the return value.
+        assert_eq!(tree.get(&[0x2a, 0xbc]).unwrap(), None);
+        assert_eq!(
+            tree.entries().unwrap(),
+            vec![(vec![0x1a, 0xbc], b"here".to_vec())]
+        );
     }
 
     #[test]

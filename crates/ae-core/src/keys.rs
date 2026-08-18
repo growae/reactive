@@ -349,7 +349,7 @@ mod tests {
         assert_eq!(payload.len(), 10 + 32);
 
         let inner = transaction_signing_payload(transaction, "ae_mainnet", true);
-        assert_eq!(&inner[..20], b"ae_mainnet-inner_tx");
+        assert_eq!(&inner[..19], b"ae_mainnet-inner_tx");
         assert_eq!(inner.len(), 19 + 32);
     }
 
@@ -363,7 +363,12 @@ mod tests {
         assert!(public.verify_transaction(transaction, "ae_mainnet", false, &mainnet));
         assert!(!public.verify_transaction(transaction, "ae_uat", false, &mainnet));
         assert!(!public.verify_transaction(transaction, "ae_mainnet", true, &mainnet));
-        assert!(!public.verify_transaction(b"a different transaction", "ae_mainnet", false, &mainnet));
+        assert!(!public.verify_transaction(
+            b"a different transaction",
+            "ae_mainnet",
+            false,
+            &mainnet
+        ));
     }
 
     #[test]

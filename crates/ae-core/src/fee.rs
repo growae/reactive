@@ -215,8 +215,14 @@ mod tests {
             30 * 15_000
         );
         assert_eq!(transaction_base_gas(CERES, Tag::ChannelOffChainTx), 0);
-        assert_eq!(transaction_base_gas(CERES, Tag::ContractCreateTx), 5 * 15_000);
-        assert_eq!(transaction_base_gas(CERES, Tag::ContractCallTx), 12 * 15_000);
+        assert_eq!(
+            transaction_base_gas(CERES, Tag::ContractCreateTx),
+            5 * 15_000
+        );
+        assert_eq!(
+            transaction_base_gas(CERES, Tag::ContractCallTx),
+            12 * 15_000
+        );
         assert_eq!(transaction_base_gas(CERES, Tag::GaAttachTx), 5 * 15_000);
         assert_eq!(transaction_base_gas(CERES, Tag::GaMetaTx), 5 * 15_000);
         // A fifth of the base gas, and it must not round to zero or to 15000.
@@ -295,9 +301,9 @@ mod tests {
         // The fee is stable: feeding it back in reproduces itself.
         let inputs = tx.rebuild_with_fee(fee).unwrap();
         assert_eq!(fee_for_gas(CERES, transaction_gas(CERES, inputs)), fee);
-        // Fee of 17_008 * 1e9 aettos needs 8 bytes, so the size settles at 108.
-        assert_eq!(inputs.size, 108);
-        assert_eq!(fee, (15_000 + 108 * 20) as u128 * 1_000_000_000);
+        // A fee near 1.7e13 aettos needs 6 bytes, so the size settles at 106.
+        assert_eq!(inputs.size, 106);
+        assert_eq!(fee, (15_000 + 106 * 20) as u128 * 1_000_000_000);
         // It converges in a few rounds, not dozens.
         assert!(tx.rounds <= 5, "took {} rounds", tx.rounds);
     }

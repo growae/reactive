@@ -88,11 +88,9 @@ impl fmt::Display for Error {
             Self::UnknownEntryVersion { tag, version } => {
                 write!(f, "entry {tag} has no version {version}")
             }
-            Self::EntryArity {
-                tag,
-                expected,
-                got,
-            } => write!(f, "entry {tag} takes {expected} fields, got {got}"),
+            Self::EntryArity { tag, expected, got } => {
+                write!(f, "entry {tag} takes {expected} fields, got {got}")
+            }
             Self::IntegerRange(why) => write!(f, "integer out of range: {why}"),
             Self::UnknownEnumValue { field, value } => {
                 write!(f, "field {field} has no variant {value}")

@@ -142,7 +142,10 @@ mod tests {
     fn rejects_an_unknown_tag_byte_and_a_short_payload() {
         let mut bytes = Id::new(IdTag::Account, [0u8; 32]).to_bytes();
         bytes[0] = 7;
-        assert!(matches!(Id::from_bytes(&bytes), Err(Error::UnknownIdTag(7))));
+        assert!(matches!(
+            Id::from_bytes(&bytes),
+            Err(Error::UnknownIdTag(7))
+        ));
         assert!(Id::from_bytes(&bytes[..32]).is_err());
     }
 

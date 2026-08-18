@@ -725,9 +725,7 @@ impl Entry {
                             .map(|entry| {
                                 Item::List(vec![
                                     bin(&entry.address),
-                                    Item::List(
-                                        entry.topics.iter().map(|t| bin(t)).collect(),
-                                    ),
+                                    Item::List(entry.topics.iter().map(|t| bin(t)).collect()),
                                     bin(&entry.data),
                                 ])
                             })
@@ -845,11 +843,9 @@ impl Entry {
                     .collect(),
             )],
             Self::MtreeValue(value) => vec![bin(&value.key), bin(&value.value)],
-            Self::GaMetaTxAuthData(auth) => vec![
-                int(auth.fee),
-                int(auth.gas_price),
-                bin(&auth.tx_hash),
-            ],
+            Self::GaMetaTxAuthData(auth) => {
+                vec![int(auth.fee), int(auth.gas_price), bin(&auth.tx_hash)]
+            }
         };
         join(self.tag(), self.version(), fields)
     }
