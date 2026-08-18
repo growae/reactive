@@ -101,6 +101,86 @@ pub fn decode_magnitude(input: &[u8]) -> Result<(Vec<u8>, &[u8])> {
 }
 
 #[cfg(test)]
+mod agreement {
+    //! Pins this crate's byte-string codec to `ae-core`'s general one.
+    //!
+    //! Two canonicality implementations in one workspace drift. This crate keeps
+    //! its own because being dependency-free is worth something to a WASM
+    //! binding; the price of keeping it is proving, on every run, that it still
+    //! spells the same bytes. `ae-core` is a dev-dependency only, so the
+    //! zero-runtime-dependency property survives.
+    //!
+    //! Lives here rather than in `tests/` because `rlp` is private, and the test
+    //! is not a reason to widen this crate's public surface.
+
+    use super::{decode_bytes, encode_bytes};
+    use ae_core::rlp::{decode, encode, Item};
+
+    /// Byte strings that between them hit every length branch RLP has.
+    fn corpus() -> Vec<Vec<u8>> {
+        let mut cases: Vec<Vec<u8>> = vec![
+            Vec::new(), // the empty string
+            vec![0x00], // the canonical zero
+            vec![0x01], // a single byte below 0x80, written bare
+            vec![0x7f], // the last bare byte
+            vec![0x80], // the first byte that needs a header
+            vec![0xff],
+            b"dog".to_vec(),
+        ];
+        // The short/long boundary at 55/56 bytes, and the two-byte length form.
+        for length in [54usize, 55, 56, 57, 255, 256, 1024] {
+            cases.push(vec![0x61; length]);
+        }
+        cases
+    }
+
+    #[test]
+    fn the_two_encoders_agree_byte_for_byte() {
+        for case in corpus() {
+            assert_eq!(
+                encode_bytes(&case),
+                encode(&Item::Bytes(case.clone())),
+                "encoders disagree on a {}-byte string",
+                case.len()
+            );
+        }
+    }
+
+    #[test]
+    fn each_decoder_reads_what_the_other_wrote() {
+        for case in corpus() {
+            let ours = encode_bytes(&case);
+            let theirs = encode(&Item::Bytes(case.clone()));
+
+            let (decoded, rest) = decode_bytes(&theirs).expect("ours reads theirs");
+            assert_eq!(decoded, case.as_slice());
+            assert!(rest.is_empty());
+
+            assert_eq!(decode(&ours).unwrap(), Item::Bytes(case.clone()));
+        }
+    }
+
+    #[test]
+    fn both_reject_the_same_non_canonical_encodings() {
+        // A single byte below 0x80 dressed up in a header, and the long form
+        // used for a payload that fits the short one.
+        for bad in [vec![0x81, 0x00], vec![0xb8, 0x01, 0x6f]] {
+            assert!(decode_bytes(&bad).is_err(), "ae-fate accepted {bad:?}");
+            assert!(decode(&bad).is_err(), "ae-core accepted {bad:?}");
+        }
+    }
+
+    #[test]
+    fn an_rlp_list_is_a_value_to_one_and_an_error_to_the_other() {
+        // The deliberate asymmetry: FATE never encodes a list, so this crate
+        // refuses one rather than growing a variant it would never use.
+        let list = encode(&Item::List(vec![Item::Bytes(b"dog".to_vec())]));
+        assert!(decode(&list).is_ok());
+        assert!(decode_bytes(&list).is_err());
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 

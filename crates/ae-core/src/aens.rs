@@ -3,24 +3,17 @@
 use crate::encoding::{decode, encode, Encoding};
 use crate::error::{Error, Result};
 use crate::hash::blake2b_256;
+use crate::protocol::{params, ConsensusProtocolVersion};
 use num_bigint::BigUint;
 
 /// The only AENS suffix the protocol accepts, including the dot.
 pub const AENS_SUFFIX: &str = ".chain";
 
 /// The name length at or above which the base name fee stops decreasing.
-pub const NAME_MAX_LENGTH_FEE: usize = 31;
-
-/// One AE, in aettos — the multiplier applied to the name bid range table.
-const NAME_FEE_MULTIPLIER: u64 = 100_000_000_000_000;
-
-/// Base name fee by name length, indexed by `length - 1`, before the multiplier.
-/// Lengths above [`NAME_MAX_LENGTH_FEE`] all use the last entry.
-const NAME_BID_RANGES: [u64; NAME_MAX_LENGTH_FEE] = [
-    5_702_887, 3_524_578, 2_178_309, 1_346_269, 832_040, 514_229, 317_811, 196_418, 121_393,
-    75_025, 46_368, 28_657, 17_711, 10_946, 6_765, 4_181, 2_584, 1_597, 987, 610, 377, 233, 144,
-    89, 55, 34, 21, 13, 8, 5, 3,
-];
+///
+/// Read from the protocol table rather than declared beside it, so a fork
+/// changes it in one place.
+pub const NAME_MAX_LENGTH_FEE: usize = params(ConsensusProtocolVersion::Ceres).name_max_length_fee;
 
 /// Normalise an AENS name to the form that gets hashed.
 ///
@@ -112,9 +105,20 @@ fn to_32_bytes_be(value: &BigUint, what: &str) -> Result<[u8; 32]> {
 
 /// The minimum fee, in aettos, that a `NameClaimTx` for this name must carry.
 pub fn minimum_name_fee(name: &str) -> Result<BigUint> {
-    let length = name_to_punycode(name)?.len() - AENS_SUFFIX.len();
-    let index = length.min(NAME_MAX_LENGTH_FEE) - 1;
-    Ok(BigUint::from(NAME_BID_RANGES[index]) * BigUint::from(NAME_FEE_MULTIPLIER))
+    minimum_name_fee_for(ConsensusProtocolVersion::default(), name)
+}
+
+/// The minimum name fee under a named protocol version.
+///
+/// The length table lives in [`crate::fee`], which owns the fee model and keys
+/// it by protocol version. What is here is the string handling — punycode, the
+/// `.chain` suffix — which the fee model has no business knowing about.
+pub fn minimum_name_fee_for(version: ConsensusProtocolVersion, name: &str) -> Result<BigUint> {
+    let label_length = name_to_punycode(name)?.len() - AENS_SUFFIX.len();
+    Ok(BigUint::from(crate::fee::minimum_name_fee(
+        version,
+        label_length,
+    )))
 }
 
 /// The `ct_` contract address a `ContractCreateTx` or `GaAttachTx` will produce.

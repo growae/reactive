@@ -1,15 +1,24 @@
 [package]
 name = "ae-fate"
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.75"
-license = "MIT"
 description = "FATE ABI encoding and decoding for the aeternity protocol"
-repository = "https://github.com/growae/reactive"
-publish = false
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
 
+# Deliberately none. This crate's RLP is a byte-strings-only strict subset with
+# no runtime dependencies, and that property is worth keeping.
 [dependencies]
 
-[lints.rust]
-missing_docs = "deny"
-unsafe_code = "forbid"
+[dev-dependencies]
+# Dev-only, so the zero-dependency property above survives. Two canonicality
+# implementations in one workspace drift; `tests/rlp-agreement.rs` pins them
+# to each other over a shared corpus.
+ae-core.workspace = true
+hex.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

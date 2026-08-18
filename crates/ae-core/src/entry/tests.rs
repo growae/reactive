@@ -1,13 +1,12 @@
 use super::*;
-use crate::substrate::hash::blake2b_256;
-use crate::substrate::id::IdTag;
+use crate::hash::blake2b_256;
 
 fn account_id(byte: u8) -> Id {
-    Id::new(IdTag::Account, [byte; 32])
+    Id::account([byte; 32])
 }
 
 fn contract_id(byte: u8) -> Id {
-    Id::new(IdTag::Contract, [byte; 32])
+    Id::contract([byte; 32])
 }
 
 /// Encode, decode, and check we got the same value and the same bytes back.
@@ -21,12 +20,12 @@ fn round_trip(entry: &Entry) -> Entry {
 
 /// The tag and version an entry's bytes actually carry, read back off the wire.
 fn tag_and_version(entry: &Entry) -> (u64, u64) {
-    let bytes = entry.encode();
-    let items = Item::decode(&bytes).unwrap();
-    let items = items.as_list().unwrap();
+    let encoded = entry.encode();
+    let decoded = rlp::decode(&encoded).unwrap();
+    let items = decoded.as_list().unwrap();
     (
-        rlp::read_u64(items[0].as_bytes().unwrap()).unwrap(),
-        rlp::read_u64(items[1].as_bytes().unwrap()).unwrap(),
+        bytes::bytes_to_u64(items[0].as_bytes().unwrap()).unwrap(),
+        bytes::bytes_to_u64(items[1].as_bytes().unwrap()).unwrap(),
     )
 }
 
@@ -112,9 +111,9 @@ fn an_unknown_account_version_is_refused_rather_than_guessed() {
     let bytes = join(EntryTag::Account, 4, vec![int(0), int(1), int(2)]);
     assert_eq!(
         Entry::decode(&bytes).unwrap_err(),
-        Error::UnknownEntryVersion {
+        Error::SchemaNotFound {
             tag: 10,
-            version: 4
+            version: Some(4)
         }
     );
 }
@@ -124,10 +123,9 @@ fn an_account_with_the_wrong_field_count_is_refused() {
     let bytes = join(EntryTag::Account, 1, vec![int(1)]);
     assert_eq!(
         Entry::decode(&bytes).unwrap_err(),
-        Error::EntryArity {
-            tag: 10,
+        Error::RecordLength {
             expected: 2,
-            got: 1
+            actual: 1
         }
     );
 }
@@ -135,9 +133,9 @@ fn an_account_with_the_wrong_field_count_is_refused() {
 #[test]
 fn a_zero_balance_account_spells_zero_as_one_byte() {
     let entry = Entry::Account(Account::default());
-    let bytes = entry.encode();
-    let items = Item::decode(&bytes).unwrap();
-    let items = items.as_list().unwrap();
+    let encoded = entry.encode();
+    let decoded = rlp::decode(&encoded).unwrap();
+    let items = decoded.as_list().unwrap();
     // tag 10, version 1, nonce 0, balance 0 — the last two are 0x00, not 0x80.
     assert_eq!(items[2].as_bytes().unwrap(), &[0x00]);
     assert_eq!(items[3].as_bytes().unwrap(), &[0x00]);
@@ -178,8 +176,8 @@ fn a_plain_call_serialises_as_version_2_and_a_named_call_as_version_3() {
     round_trip(&named);
 
     // v3 is exactly v2 plus one field, in the fifth position.
-    let plain_fields = Item::decode(&plain.encode()).unwrap();
-    let named_fields = Item::decode(&named.encode()).unwrap();
+    let plain_fields = rlp::decode(&plain.encode()).unwrap();
+    let named_fields = rlp::decode(&named.encode()).unwrap();
     assert_eq!(
         plain_fields.as_list().unwrap().len() + 1,
         named_fields.as_list().unwrap().len()
@@ -200,17 +198,20 @@ fn every_call_return_type_round_trips() {
         round_trip(&entry);
     }
     // Anything else is refused rather than mapped to Ok.
-    let mut fields = match Item::decode(&Entry::ContractCall(call(None)).encode()).unwrap() {
+    let mut fields = match rlp::decode(&Entry::ContractCall(call(None)).encode()).unwrap() {
         Item::List(items) => items,
         Item::Bytes(_) => unreachable!(),
     };
     // tag, version, caller, nonce, height, contract, gas price, gas used,
     // return value, return type — the tenth item.
     fields[9] = int(3);
-    let bytes = Item::List(fields).encode();
+    let encoded = rlp::encode(&Item::List(fields));
     assert!(matches!(
-        Entry::decode(&bytes),
-        Err(Error::UnknownEnumValue { .. })
+        Entry::decode(&encoded),
+        Err(Error::FieldValue {
+            field: "returnType",
+            ..
+        })
     ));
 }
 
@@ -245,7 +246,7 @@ fn a_name_round_trips_with_its_pointers() {
             },
             Pointer {
                 key: b"oracle_pubkey".to_vec(),
-                id: Id::new(IdTag::Oracle, [3; 32]),
+                id: Id::oracle([3; 32]),
             },
         ],
     });
@@ -279,7 +280,7 @@ fn a_contract_round_trips_and_packs_its_vm_and_abi_versions() {
 
     // Fate3 over the Fate abi packs to the three bytes [8, 0, 3].
     let packed = CtVersion { vm: 8, abi: 3 }.to_packed();
-    assert_eq!(rlp::encode_int_field(u128::from(packed)), vec![8, 0, 3]);
+    assert_eq!(bytes::u128_to_bytes(u128::from(packed)), vec![8, 0, 3]);
     assert_eq!(CtVersion::from_packed(packed), CtVersion { vm: 8, abi: 3 });
 }
 
@@ -543,7 +544,7 @@ fn a_proof_of_inclusion_round_trips_with_only_the_subtrees_it_proves() {
     // One leaf node, filed under its own hash, is the smallest real proof.
     let items = [vec![0x20, 0xab, 0xcd], b"value".to_vec()];
     let list = Item::List(items.iter().map(|i| Item::Bytes(i.clone())).collect());
-    let hash = blake2b_256(&list.encode());
+    let hash = blake2b_256(&rlp::encode(&list));
     let tree = MerklePatriciaTree::from_rlp(&Item::List(vec![
         Item::Bytes(hash.to_vec()),
         Item::List(vec![Item::List(vec![Item::Bytes(hash.to_vec()), list])]),
@@ -586,7 +587,10 @@ fn an_unknown_tag_is_refused() {
     let bytes = join_raw(999, 1, vec![int(1)]);
     assert_eq!(
         Entry::decode(&bytes).unwrap_err(),
-        Error::UnknownEntryTag(999)
+        Error::SchemaNotFound {
+            tag: 999,
+            version: None
+        }
     );
 }
 
@@ -594,7 +598,7 @@ fn an_unknown_tag_is_refused() {
 fn join_raw(tag: u32, version: u32, fields: Vec<Item>) -> Vec<u8> {
     let mut items = vec![int(u128::from(tag)), int(u128::from(version))];
     items.extend(fields);
-    Item::List(items).encode()
+    rlp::encode(&Item::List(items))
 }
 
 #[test]
@@ -610,7 +614,7 @@ fn truncated_and_malformed_input_is_refused_rather_than_half_read() {
     }
     assert!(Entry::decode(&[]).is_err());
     // A byte string where a list belongs.
-    assert!(Entry::decode(&Item::Bytes(vec![1, 2, 3]).encode()).is_err());
+    assert!(Entry::decode(&rlp::encode(&Item::Bytes(vec![1, 2, 3]))).is_err());
 }
 
 #[test]
@@ -629,7 +633,10 @@ fn an_id_field_with_an_unknown_tag_byte_is_refused() {
             int(3),
         ],
     );
-    assert_eq!(Entry::decode(&bytes).unwrap_err(), Error::UnknownIdTag(9));
+    assert!(matches!(
+        Entry::decode(&bytes).unwrap_err(),
+        Error::UnknownPrefix(_)
+    ));
 }
 
 #[test]
@@ -640,7 +647,10 @@ fn a_non_minimal_integer_field_is_refused() {
         1,
         vec![Item::Bytes(vec![0x00, 0x09]), int(100)],
     );
-    assert!(matches!(Entry::decode(&bytes), Err(Error::IntegerRange(_))));
+    assert!(matches!(
+        Entry::decode(&bytes),
+        Err(Error::FieldValue { field: "int", .. })
+    ));
 }
 
 #[test]

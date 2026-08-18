@@ -1,7 +1,7 @@
 //! The fee and gas model.
 //!
 //! Every function here takes a [`ConsensusProtocolVersion`] and reads its
-//! constants from [`ConsensusParams`]. None of them close over a hardcoded
+//! constants from [`ProtocolParams`]. None of them close over a hardcoded
 //! number, so a fork is a new row in `protocol.rs` rather than an edit here.
 //!
 //! # The fixed point
@@ -14,8 +14,9 @@
 //! re-serialisation as a [`RebuildTx`] callback rather than owning it, because
 //! transaction serialisation belongs to a different module.
 
-use crate::error::Result;
-use crate::protocol::{ConsensusParams, ConsensusProtocolVersion, Tag};
+use crate::error::{Error, Result};
+use crate::protocol::{params, ConsensusProtocolVersion, ProtocolParams};
+use crate::tx::Tag;
 
 /// What the gas formula needs to know about a serialised transaction.
 ///
@@ -77,14 +78,14 @@ const fn base_gas_factor(tag: Tag) -> (u64, u64) {
 
 /// The base gas a transaction of this tag is charged, before its size.
 pub fn transaction_base_gas(version: ConsensusProtocolVersion, tag: Tag) -> u64 {
-    let params: &ConsensusParams = version.params();
+    let params: ProtocolParams = params(version);
     let (numerator, denominator) = base_gas_factor(tag);
     params.base_gas * numerator / denominator
 }
 
 /// The size- and ttl-dependent part of a transaction's gas.
 pub fn transaction_size_gas(version: ConsensusProtocolVersion, inputs: TxGasInputs) -> u64 {
-    let params = version.params();
+    let params = params(version);
     let size = inputs.size as u64;
     match inputs.tag {
         Tag::OracleRegisterTx | Tag::OracleExtendTx | Tag::OracleQueryTx | Tag::OracleRespondTx => {
@@ -113,7 +114,7 @@ pub fn transaction_gas(version: ConsensusProtocolVersion, inputs: TxGasInputs) -
 
 /// The fee that gas costs at the protocol's minimum gas price, in aettos.
 pub fn fee_for_gas(version: ConsensusProtocolVersion, gas: u64) -> u128 {
-    version.params().min_gas_price * u128::from(gas)
+    u128::from(params(version).min_gas_price) * u128::from(gas)
 }
 
 /// The smallest fee a transaction may carry, in aettos.
@@ -137,9 +138,10 @@ pub fn calculate_min_fee<R: RebuildTx + ?Sized>(
         }
         fee = next;
     }
-    Err(crate::error::Error::IntegerRange(
-        "minimum fee did not converge",
-    ))
+    Err(Error::FieldValue {
+        field: "fee",
+        reason: format!("no fixed point after {MAX_ROUNDS} rounds"),
+    })
 }
 
 /// The minimum AENS fee for a name whose label is `label_length` characters.
@@ -148,14 +150,14 @@ pub fn calculate_min_fee<R: RebuildTx + ?Sized>(
 /// suffix. Turning a unicode name into that number is string handling and sits
 /// above this crate.
 pub fn minimum_name_fee(version: ConsensusProtocolVersion, label_length: usize) -> u128 {
-    let params = version.params();
+    let params = params(version);
     let index = label_length.clamp(1, params.name_max_length_fee);
     NAME_BID_RANGES[index - 1] * params.name_fee_multiplier
 }
 
 /// The smallest bid that raises an AENS auction currently standing at `current_fee`.
 pub fn minimum_bid_fee(version: ConsensusProtocolVersion, current_fee: u128) -> u128 {
-    let percent = u128::from(version.params().name_bid_increment_percent);
+    let percent = u128::from(params(version).name_bid_increment_percent);
     // Ceiling division: a bid one aetto short of the increment is not a bid.
     div_ceil_u128(current_fee * (100 + percent), 100)
 }
@@ -284,7 +286,7 @@ mod tests {
     impl RebuildTx for GrowingTx {
         fn rebuild_with_fee(&mut self, fee: u128) -> Result<TxGasInputs> {
             self.rounds += 1;
-            let fee_bytes = crate::substrate::rlp::minimal_be_u128(fee).len();
+            let fee_bytes = crate::bytes::u128_to_bytes(fee).len();
             Ok(TxGasInputs::new(self.tag, self.base_size + fee_bytes))
         }
     }

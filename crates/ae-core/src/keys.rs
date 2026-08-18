@@ -20,24 +20,60 @@
 //!
 //! # Key material
 //!
-//! [`SecretKey`] does not implement `Display`, and its `Debug` prints a
-//! placeholder. Nothing in this crate logs, formats or serialises a secret; the
-//! only way out is [`SecretKey::to_encoded`], which a caller has to ask for.
+//! [`SecretKey`] does not implement `Display`, and its `Debug` prints the
+//! address. Nothing here logs, formats or serialises a secret; the only way out
+//! is [`SecretKey::to_encoded`], which a caller has to ask for by name.
 
 use core::fmt;
 
 use ed25519_dalek::{Signer as _, SigningKey, Verifier as _, VerifyingKey};
 
+use crate::encoding::{decode_any, encode, Encoding};
 use crate::error::{Error, Result};
-use crate::substrate::encoding::{self, Encoding};
-use crate::substrate::hash::blake2b_256;
-use crate::substrate::id::{Id, IdTag};
+use crate::hash::blake2b_256;
+use crate::id::Id;
+
+/// The mainnet network id.
+pub const NETWORK_ID_MAINNET: &str = "ae_mainnet";
+/// The testnet network id.
+pub const NETWORK_ID_TESTNET: &str = "ae_uat";
 
 /// The suffix that distinguishes an inner transaction's signature from an outer one.
 const INNER_TX_SUFFIX: &str = "-inner_tx";
 
 /// The prefix that keeps a signed message from ever being a valid transaction.
 const MESSAGE_PREFIX: &[u8] = b"aeternity Signed Message:\n";
+
+/// Whether a transaction is being signed on its own or inside a wrapper.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum TxPosition {
+    /// Signed as itself.
+    #[default]
+    Outer,
+    /// Wrapped by a `GaMetaTx` or a `PayingForTx`.
+    Inner,
+}
+
+/// Read a payload of exactly the encoding asked for.
+fn decode_exact(input: &str, expected: Encoding) -> Result<Vec<u8>> {
+    let (encoding, payload) = decode_any(input)?;
+    if encoding != expected {
+        return Err(Error::UnknownPrefix(format!(
+            "expected {}, got {}",
+            expected.prefix(),
+            encoding.prefix()
+        )));
+    }
+    Ok(payload)
+}
+
+fn exactly<const N: usize>(payload: Vec<u8>) -> Result<[u8; N]> {
+    let actual = payload.len();
+    payload.try_into().map_err(|_| Error::PayloadLength {
+        expected: N,
+        actual,
+    })
+}
 
 /// An account's public key.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -55,23 +91,21 @@ impl PublicKey {
     }
 
     /// The `ak_…` address.
-    pub fn to_address(self) -> String {
-        encoding::encode(Encoding::AccountAddress, &self.0)
+    pub fn to_address(&self) -> Result<String> {
+        encode(&self.0, Encoding::AccountAddress)
     }
 
     /// Parse an `ak_…` address.
     pub fn from_address(address: &str) -> Result<Self> {
-        let payload = encoding::decode_as(Encoding::AccountAddress, address)?;
-        let bytes: [u8; 32] = payload.try_into().map_err(|_| Error::PayloadLength {
-            expected: 32,
-            got: 0,
-        })?;
-        Ok(Self(bytes))
+        Ok(Self(exactly(decode_exact(
+            address,
+            Encoding::AccountAddress,
+        )?)?))
     }
 
     /// This account as an `id()` field value.
-    pub const fn to_id(self) -> Id {
-        Id::new(IdTag::Account, self.0)
+    pub const fn to_id(&self) -> Id {
+        Id::account(self.0)
     }
 
     /// Verify a detached signature over `message`.
@@ -88,11 +122,11 @@ impl PublicKey {
         &self,
         transaction: &[u8],
         network_id: &str,
-        inner_tx: bool,
+        position: TxPosition,
         signature: &Signature,
     ) -> bool {
         self.verify(
-            &transaction_signing_payload(transaction, network_id, inner_tx),
+            &transaction_signing_payload(transaction, network_id, position),
             signature,
         )
     }
@@ -114,24 +148,22 @@ impl Signature {
     }
 
     /// The `sg_…` spelling.
-    pub fn to_encoded(&self) -> String {
-        encoding::encode(Encoding::Signature, &self.0)
+    pub fn to_encoded(&self) -> Result<String> {
+        encode(&self.0, Encoding::Signature)
     }
 
     /// Parse an `sg_…` spelling.
     pub fn from_encoded(input: &str) -> Result<Self> {
-        let payload = encoding::decode_as(Encoding::Signature, input)?;
-        let bytes: [u8; 64] = payload.try_into().map_err(|_| Error::PayloadLength {
-            expected: 64,
-            got: 0,
-        })?;
-        Ok(Self(bytes))
+        Ok(Self(exactly(decode_exact(input, Encoding::Signature)?)?))
     }
 }
 
 impl fmt::Debug for Signature {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Signature({})", self.to_encoded())
+        match self.to_encoded() {
+            Ok(encoded) => write!(f, "Signature({encoded})"),
+            Err(_) => write!(f, "Signature(<unencodable>)"),
+        }
     }
 }
 
@@ -160,19 +192,18 @@ impl SecretKey {
 
     /// Parse an `sk_…` spelling.
     pub fn from_encoded(input: &str) -> Result<Self> {
-        let payload = encoding::decode_as(Encoding::AccountSecretKey, input)?;
-        let seed: [u8; 32] = payload
-            .try_into()
-            .map_err(|_| Error::Crypto("secret key is not 32 bytes"))?;
-        Ok(Self::from_seed(seed))
+        Ok(Self::from_seed(exactly(decode_exact(
+            input,
+            Encoding::AccountSecretKey,
+        )?)?))
     }
 
     /// The `sk_…` spelling.
     ///
-    /// This is the one way key material leaves the type. Callers that only need
-    /// an identity want [`Self::public_key`] instead.
-    pub fn to_encoded(&self) -> String {
-        encoding::encode(Encoding::AccountSecretKey, &self.0.to_bytes())
+    /// The one way key material leaves this type. Callers that only need an
+    /// identity want [`Self::public_key`] instead.
+    pub fn to_encoded(&self) -> Result<String> {
+        encode(&self.0.to_bytes(), Encoding::AccountSecretKey)
     }
 
     /// The matching public key.
@@ -181,7 +212,7 @@ impl SecretKey {
     }
 
     /// The account's `ak_…` address.
-    pub fn to_address(&self) -> String {
+    pub fn to_address(&self) -> Result<String> {
         self.public_key().to_address()
     }
 
@@ -194,19 +225,16 @@ impl SecretKey {
     }
 
     /// Sign a serialised transaction for `network_id`.
-    ///
-    /// `inner_tx` is true when the transaction is wrapped by a `GaMetaTx` or a
-    /// `PayingForTx`.
     pub fn sign_transaction(
         &self,
         transaction: &[u8],
         network_id: &str,
-        inner_tx: bool,
+        position: TxPosition,
     ) -> Signature {
         self.sign_raw(&transaction_signing_payload(
             transaction,
             network_id,
-            inner_tx,
+            position,
         ))
     }
 
@@ -218,7 +246,10 @@ impl SecretKey {
 
 impl fmt::Debug for SecretKey {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "SecretKey({})", self.to_address())
+        match self.to_address() {
+            Ok(address) => write!(f, "SecretKey({address})"),
+            Err(_) => write!(f, "SecretKey(<unencodable>)"),
+        }
     }
 }
 
@@ -229,22 +260,26 @@ impl fmt::Debug for SecretKey {
 pub fn transaction_signing_payload(
     transaction: &[u8],
     network_id: &str,
-    inner_tx: bool,
+    position: TxPosition,
 ) -> Vec<u8> {
     let mut payload = Vec::with_capacity(network_id.len() + INNER_TX_SUFFIX.len() + 32);
     payload.extend_from_slice(network_id.as_bytes());
-    if inner_tx {
+    if position == TxPosition::Inner {
         payload.extend_from_slice(INNER_TX_SUFFIX.as_bytes());
     }
     payload.extend_from_slice(&blake2b_256(transaction));
     payload
 }
 
+/// The `th_…` hash of a signed transaction's rlp.
+pub fn transaction_hash(rlp_signed_tx: &[u8]) -> Result<String> {
+    encode(&blake2b_256(rlp_signed_tx), Encoding::TxHash)
+}
+
 /// The hash a signed message is taken over.
 pub fn message_hash(message: &str) -> [u8; 32] {
     let message = message.as_bytes();
-    let mut buffer = Vec::new();
-    buffer.extend_from_slice(&var_uint(MESSAGE_PREFIX.len() as u64));
+    let mut buffer = var_uint(MESSAGE_PREFIX.len() as u64);
     buffer.extend_from_slice(MESSAGE_PREFIX);
     buffer.extend_from_slice(&var_uint(message.len() as u64));
     buffer.extend_from_slice(message);
@@ -253,8 +288,7 @@ pub fn message_hash(message: &str) -> [u8; 32] {
 
 /// Verify a message signature against an address.
 pub fn verify_message(message: &str, signature: &Signature, address: &str) -> Result<bool> {
-    let key = PublicKey::from_address(address)?;
-    Ok(key.verify(&message_hash(message), signature))
+    Ok(PublicKey::from_address(address)?.verify(&message_hash(message), signature))
 }
 
 /// Bitcoin-style compact length prefix, little-endian above one byte.
@@ -316,11 +350,11 @@ mod tests {
     #[test]
     fn address_round_trips_through_its_encoding() {
         let key = rfc8032_key();
-        let address = key.to_address();
+        let address = key.to_address().unwrap();
         assert!(address.starts_with("ak_"));
         assert_eq!(PublicKey::from_address(&address).unwrap(), key.public_key());
         assert_eq!(
-            key.public_key().to_id().to_encoded(),
+            key.public_key().to_id().to_encoded().unwrap(),
             address,
             "an account id spells the same as its address"
         );
@@ -329,7 +363,7 @@ mod tests {
     #[test]
     fn secret_key_round_trips_and_never_prints_itself() {
         let key = rfc8032_key();
-        let encoded = key.to_encoded();
+        let encoded = key.to_encoded().unwrap();
         assert!(encoded.starts_with("sk_"));
         let reparsed = SecretKey::from_encoded(&encoded).unwrap();
         assert_eq!(reparsed.public_key(), key.public_key());
@@ -343,12 +377,13 @@ mod tests {
     #[test]
     fn the_signing_payload_is_the_network_id_and_the_transaction_hash() {
         let transaction = b"not really a transaction";
-        let payload = transaction_signing_payload(transaction, "ae_mainnet", false);
+        let payload =
+            transaction_signing_payload(transaction, NETWORK_ID_MAINNET, TxPosition::Outer);
         assert_eq!(&payload[..10], b"ae_mainnet");
         assert_eq!(&payload[10..], &blake2b_256(transaction));
         assert_eq!(payload.len(), 10 + 32);
 
-        let inner = transaction_signing_payload(transaction, "ae_mainnet", true);
+        let inner = transaction_signing_payload(transaction, NETWORK_ID_MAINNET, TxPosition::Inner);
         assert_eq!(&inner[..19], b"ae_mainnet-inner_tx");
         assert_eq!(inner.len(), 19 + 32);
     }
@@ -357,16 +392,31 @@ mod tests {
     fn a_signature_does_not_carry_across_networks_or_across_the_inner_boundary() {
         let key = rfc8032_key();
         let transaction = b"not really a transaction";
-        let mainnet = key.sign_transaction(transaction, "ae_mainnet", false);
+        let mainnet = key.sign_transaction(transaction, NETWORK_ID_MAINNET, TxPosition::Outer);
 
         let public = key.public_key();
-        assert!(public.verify_transaction(transaction, "ae_mainnet", false, &mainnet));
-        assert!(!public.verify_transaction(transaction, "ae_uat", false, &mainnet));
-        assert!(!public.verify_transaction(transaction, "ae_mainnet", true, &mainnet));
+        assert!(public.verify_transaction(
+            transaction,
+            NETWORK_ID_MAINNET,
+            TxPosition::Outer,
+            &mainnet
+        ));
+        assert!(!public.verify_transaction(
+            transaction,
+            NETWORK_ID_TESTNET,
+            TxPosition::Outer,
+            &mainnet
+        ));
+        assert!(!public.verify_transaction(
+            transaction,
+            NETWORK_ID_MAINNET,
+            TxPosition::Inner,
+            &mainnet
+        ));
         assert!(!public.verify_transaction(
             b"a different transaction",
-            "ae_mainnet",
-            false,
+            NETWORK_ID_MAINNET,
+            TxPosition::Outer,
             &mainnet
         ));
     }
@@ -375,7 +425,7 @@ mod tests {
     fn signature_round_trips_through_its_encoding() {
         let key = rfc8032_key();
         let signature = key.sign_raw(b"payload");
-        let encoded = signature.to_encoded();
+        let encoded = signature.to_encoded().unwrap();
         assert!(encoded.starts_with("sg_"));
         assert_eq!(Signature::from_encoded(&encoded).unwrap(), signature);
     }
@@ -384,8 +434,9 @@ mod tests {
     fn a_signed_message_cannot_be_replayed_as_a_transaction() {
         let key = rfc8032_key();
         let signature = key.sign_message("hello");
-        assert!(verify_message("hello", &signature, &key.to_address()).unwrap());
-        assert!(!verify_message("hello!", &signature, &key.to_address()).unwrap());
+        let address = key.to_address().unwrap();
+        assert!(verify_message("hello", &signature, &address).unwrap());
+        assert!(!verify_message("hello!", &signature, &address).unwrap());
         // The prefix means the hashed bytes are not the message's own bytes.
         assert_ne!(message_hash("hello"), blake2b_256(b"hello"));
     }
@@ -401,7 +452,17 @@ mod tests {
         let key = rfc8032_key();
         let long = "a".repeat(300);
         let signature = key.sign_message(&long);
-        assert!(verify_message(&long, &signature, &key.to_address()).unwrap());
+        assert!(verify_message(&long, &signature, &key.to_address().unwrap()).unwrap());
+    }
+
+    #[test]
+    fn a_transaction_hash_is_the_blake2b_of_its_rlp() {
+        let hash = transaction_hash(b"rlp bytes").unwrap();
+        assert!(hash.starts_with("th_"));
+        assert_eq!(
+            decode_exact(&hash, Encoding::TxHash).unwrap(),
+            blake2b_256(b"rlp bytes")
+        );
     }
 
     #[test]

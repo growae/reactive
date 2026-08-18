@@ -32,13 +32,14 @@
 //! entry's address as `id()`, while `aect_call.erl`'s template says `binary`.
 //! The node wins; the address is 32 raw bytes with no tag byte.
 
+use crate::bytes;
 use crate::error::{Error, Result};
+use crate::id::Id;
 use crate::mpt::MerklePatriciaTree;
-use crate::substrate::id::Id;
-use crate::substrate::rlp::{self, Item};
+use crate::rlp::{self, Item};
 
 mod tag;
-pub use tag::EntryTag;
+pub use tag::{sdk_coverage, EntryTag, SchemaEntry, SdkCoverage, SCHEMA_ENTRIES};
 
 /// A chain state entry.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -206,9 +207,9 @@ impl CallReturnType {
             1 => Self::Error,
             2 => Self::Revert,
             other => {
-                return Err(Error::UnknownEnumValue {
-                    field: "return type",
-                    value: other,
+                return Err(Error::FieldValue {
+                    field: "returnType",
+                    reason: format!("{other} is not one of ok, error, revert"),
                 })
             }
         })
@@ -518,7 +519,7 @@ pub struct GaMetaTxAuthData {
 // ---------------------------------------------------------------------------
 
 fn int(value: u128) -> Item {
-    Item::Bytes(rlp::encode_int_field(value))
+    Item::Bytes(bytes::u128_to_bytes(value))
 }
 
 fn bin(value: &[u8]) -> Item {
@@ -541,9 +542,9 @@ fn read_bool(item: &Item) -> Result<bool> {
     match item.as_bytes()? {
         [0] => Ok(false),
         [1] => Ok(true),
-        _ => Err(Error::UnknownEnumValue {
+        other => Err(Error::FieldValue {
             field: "bool",
-            value: u64::MAX,
+            reason: format!("{other:?} is neither <<0>> nor <<1>>"),
         }),
     }
 }
@@ -557,15 +558,18 @@ fn read_ids(item: &Item) -> Result<Vec<Id>> {
 }
 
 fn read_u64(item: &Item) -> Result<u64> {
-    rlp::read_u64(item.as_bytes()?)
+    bytes::bytes_to_u64(item.as_bytes()?)
 }
 
 fn read_u128(item: &Item) -> Result<u128> {
-    rlp::read_u128(item.as_bytes()?)
+    bytes::bytes_to_u128(item.as_bytes()?)
 }
 
 fn read_u16(item: &Item) -> Result<u16> {
-    u16::try_from(read_u64(item)?).map_err(|_| Error::IntegerRange("wider than 16 bits"))
+    u16::try_from(read_u64(item)?).map_err(|_| Error::FieldValue {
+        field: "int",
+        reason: "wider than 16 bits".into(),
+    })
 }
 
 fn read_bytes(item: &Item) -> Result<Vec<u8>> {
@@ -573,16 +577,19 @@ fn read_bytes(item: &Item) -> Result<Vec<u8>> {
 }
 
 /// Split an entry's rlp into its tag, version and fields.
-fn split(bytes: &[u8]) -> Result<(EntryTag, u32, Vec<Item>)> {
-    let items = Item::decode(bytes)?;
-    let items = items.as_list()?;
+fn split(input: &[u8]) -> Result<(EntryTag, u32, Vec<Item>)> {
+    let decoded = rlp::decode(input)?;
+    let items = decoded.as_list()?;
     let [tag, version, fields @ ..] = items else {
-        return Err(Error::Rlp("entry has no tag and version"));
+        return Err(Error::Rlp("entry has no tag and version".into()));
     };
-    let tag_value = rlp::read_u64(tag.as_bytes()?)?;
-    let tag = EntryTag::from_wire(tag_value)?;
-    let version = u32::try_from(rlp::read_u64(version.as_bytes()?)?)
-        .map_err(|_| Error::IntegerRange("version wider than 32 bits"))?;
+    let tag = EntryTag::from_wire(bytes::bytes_to_u64(tag.as_bytes()?)?)?;
+    let version = u32::try_from(bytes::bytes_to_u64(version.as_bytes()?)?).map_err(|_| {
+        Error::FieldValue {
+            field: "vsn",
+            reason: "wider than 32 bits".into(),
+        }
+    })?;
     Ok((tag, version, fields.to_vec()))
 }
 
@@ -592,25 +599,24 @@ fn join(tag: EntryTag, version: u32, fields: Vec<Item>) -> Vec<u8> {
     items.push(int(u128::from(tag as u32)));
     items.push(int(u128::from(version)));
     items.extend(fields);
-    Item::List(items).encode()
+    rlp::encode(&Item::List(items))
 }
 
-fn expect_arity(tag: EntryTag, fields: &[Item], expected: usize) -> Result<()> {
+fn expect_arity(_tag: EntryTag, fields: &[Item], expected: usize) -> Result<()> {
     if fields.len() == expected {
         Ok(())
     } else {
-        Err(Error::EntryArity {
-            tag: tag as u32,
+        Err(Error::RecordLength {
             expected,
-            got: fields.len(),
+            actual: fields.len(),
         })
     }
 }
 
 fn unknown_version(tag: EntryTag, version: u32) -> Error {
-    Error::UnknownEntryVersion {
+    Error::SchemaNotFound {
         tag: tag as u32,
-        version,
+        version: Some(version),
     }
 }
 
@@ -619,7 +625,10 @@ fn read_subtree(item: &Item, kind: SubTreeKind) -> Result<Mtree> {
     let bytes = item.as_bytes()?;
     match Entry::decode(bytes)? {
         Entry::SubTree(sub) if sub.kind == kind => Ok(sub.tree),
-        _ => Err(Error::UnknownEntryTag(kind.tag() as u32)),
+        other => Err(Error::UnexpectedTag {
+            expected: kind.tag() as u32,
+            actual: other.tag() as u32,
+        }),
     }
 }
 
@@ -903,10 +912,9 @@ impl Entry {
                         .map(|pointer| {
                             let pair = pointer.as_list()?;
                             let [key, id] = pair else {
-                                return Err(Error::EntryArity {
-                                    tag: tag as u32,
+                                return Err(Error::RecordLength {
                                     expected: 2,
-                                    got: pair.len(),
+                                    actual: pair.len(),
                                 });
                             };
                             Ok(Pointer {
@@ -925,8 +933,10 @@ impl Entry {
                 Self::Contract(Contract {
                     owner: read_id(&fields[0])?,
                     ct_version: CtVersion::from_packed(
-                        u32::try_from(read_u64(&fields[1])?)
-                            .map_err(|_| Error::IntegerRange("ct_version wider than 32 bits"))?,
+                        u32::try_from(read_u64(&fields[1])?).map_err(|_| Error::FieldValue {
+                            field: "ctVersion",
+                            reason: "wider than 32 bits".into(),
+                        })?,
                     ),
                     code: read_bytes(&fields[2])?,
                     log: read_bytes(&fields[3])?,
@@ -965,10 +975,9 @@ impl Entry {
                         .map(|line| {
                             let parts = line.as_list()?;
                             let [address, topics, data] = parts else {
-                                return Err(Error::EntryArity {
-                                    tag: tag as u32,
+                                return Err(Error::RecordLength {
                                     expected: 3,
-                                    got: parts.len(),
+                                    actual: parts.len(),
                                 });
                             };
                             Ok(CallLog {
@@ -1053,8 +1062,10 @@ impl Entry {
                 Self::ChannelOffChainUpdate(ChannelOffChainUpdate::CreateContract {
                     owner: read_id(&fields[0])?,
                     ct_version: CtVersion::from_packed(
-                        u32::try_from(read_u64(&fields[1])?)
-                            .map_err(|_| Error::IntegerRange("ct_version wider than 32 bits"))?,
+                        u32::try_from(read_u64(&fields[1])?).map_err(|_| Error::FieldValue {
+                            field: "ctVersion",
+                            reason: "wider than 32 bits".into(),
+                        })?,
                     ),
                     code: read_bytes(&fields[2])?,
                     deposit: read_u128(&fields[3])?,
@@ -1089,10 +1100,9 @@ impl Entry {
                         [] => None,
                         [tree] => Some(MerklePatriciaTree::from_rlp(tree)?),
                         other => {
-                            return Err(Error::EntryArity {
-                                tag: tag as u32,
+                            return Err(Error::RecordLength {
                                 expected: 1,
-                                got: other.len(),
+                                actual: other.len(),
                             })
                         }
                     });
@@ -1131,9 +1141,16 @@ impl Entry {
                     return Err(unknown_version(tag, version));
                 }
                 expect_arity(tag, &fields, 1)?;
-                let kind = SubTreeKind::from_tag(tag).ok_or(Error::UnknownEntryTag(tag as u32))?;
-                let Self::Mtree(tree) = Self::decode(fields[0].as_bytes()?)? else {
-                    return Err(Error::UnknownEntryTag(EntryTag::Mtree as u32));
+                let kind = SubTreeKind::from_tag(tag).ok_or(Error::SchemaNotFound {
+                    tag: tag as u32,
+                    version: None,
+                })?;
+                let inner = Self::decode(fields[0].as_bytes()?)?;
+                let Self::Mtree(tree) = inner else {
+                    return Err(Error::UnexpectedTag {
+                        expected: EntryTag::Mtree as u32,
+                        actual: inner.tag() as u32,
+                    });
                 };
                 Self::SubTree(SubTree { kind, tree })
             }
@@ -1144,8 +1161,12 @@ impl Entry {
                 expect_arity(tag, &fields, 1)?;
                 let mut values = Vec::new();
                 for item in fields[0].as_list()? {
-                    let Self::MtreeValue(value) = Self::decode(item.as_bytes()?)? else {
-                        return Err(Error::UnknownEntryTag(EntryTag::MtreeValue as u32));
+                    let inner = Self::decode(item.as_bytes()?)?;
+                    let Self::MtreeValue(value) = inner else {
+                        return Err(Error::UnexpectedTag {
+                            expected: EntryTag::MtreeValue as u32,
+                            actual: inner.tag() as u32,
+                        });
                     };
                     values.push(value);
                 }

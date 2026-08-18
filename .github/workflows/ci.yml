@@ -88,6 +88,28 @@ jobs:
           destination_dir: coverage
           publish_branch: gh-pages
 
+  rust:
+    name: Rust
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # No `needs:` — the Rust and pnpm toolchains are independent, so they run in
+    # parallel. No `paths:` filter either: a required check that sometimes does
+    # not run is worse than a short job that always does.
+    defaults:
+      run:
+        working-directory: crates
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest

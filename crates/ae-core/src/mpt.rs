@@ -15,8 +15,8 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::substrate::hash::blake2b_256;
-use crate::substrate::rlp::Item;
+use crate::hash::blake2b_256;
+use crate::rlp::{self, Item};
 
 /// What a two- or seventeen-item node turned out to be.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -52,7 +52,7 @@ impl MerklePatriciaTree {
                 .try_into()
                 .map_err(|_| Error::PayloadLength {
                     expected: 32,
-                    got: root.as_bytes().map(<[u8]>::len).unwrap_or(0),
+                    actual: root.as_bytes().map(<[u8]>::len).unwrap_or(0),
                 })?;
 
         let mut map: BTreeMap<[u8; 32], Vec<Vec<u8>>> = BTreeMap::new();
@@ -68,7 +68,7 @@ impl MerklePatriciaTree {
             let items = items.as_list()?;
             // A node's hash covers its rlp encoding, so re-encoding is how the
             // proof is checked.
-            if blake2b_256(&Item::List(items.to_vec()).encode()) != hash {
+            if blake2b_256(&rlp::encode(&Item::List(items.to_vec()))) != hash {
                 return Err(Error::MerkleHashMismatch);
             }
             let items = items
@@ -328,7 +328,7 @@ mod tests {
     /// Build a node's wire pair, filed under its own hash.
     fn node(items: Vec<Vec<u8>>) -> ([u8; 32], Item) {
         let list = Item::List(items.iter().map(|i| Item::Bytes(i.clone())).collect());
-        let hash = blake2b_256(&list.encode());
+        let hash = blake2b_256(&rlp::encode(&list));
         (hash, Item::List(vec![Item::Bytes(hash.to_vec()), list]))
     }
 
@@ -526,6 +526,9 @@ mod tests {
         let original = tree(hash, vec![item]);
         let reparsed = MerklePatriciaTree::from_rlp(&original.to_rlp()).unwrap();
         assert_eq!(reparsed, original);
-        assert_eq!(reparsed.to_rlp().encode(), original.to_rlp().encode());
+        assert_eq!(
+            rlp::encode(&reparsed.to_rlp()),
+            rlp::encode(&original.to_rlp())
+        );
     }
 }

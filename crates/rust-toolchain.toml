@@ -1,0 +1,7 @@
+# Pinned, not `stable`. A gate that goes red without a commit — because a new
+# stable release added a clippy lint — reports the weather rather than the code.
+# Bumping this is a one-line change with a diff to review.
+[toolchain]
+channel = "1.97.1"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

@@ -3,6 +3,31 @@
 version = 3
 
 [[package]]
+name = "ae-core"
+version = "0.0.0"
+dependencies = [
+ "base64",
+ "blake2",
+ "bs58",
+ "ed25519-dalek",
+ "hex",
+ "num-bigint",
+ "rand_core",
+ "serde_json",
+ "sha2",
+ "thiserror",
+]
+
+[[package]]
+name = "ae-fate"
+version = "0.0.0"
+dependencies = [
+ "ae-core",
+ "hex",
+ "serde_json",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -144,6 +169,7 @@ checksum = "70e796c081cee67dc755e1a36a0a172b897fab85fc3f6bc48307991f64e4eca9"
 dependencies = [
  "curve25519-dalek",
  "ed25519",
+ "rand_core",
  "serde",
  "sha2",
  "subtle",
@@ -264,21 +290,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c"
 dependencies = [
  "getrandom",
-]
-
-[[package]]
-name = "reactive-core"
-version = "0.0.0"
-dependencies = [
- "base64",
- "blake2",
- "bs58",
- "ed25519-dalek",
- "hex",
- "num-bigint",
- "serde_json",
- "sha2",
- "thiserror",
 ]
 
 [[package]]

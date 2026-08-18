@@ -1,57 +1,102 @@
-//! Consensus constants, keyed by protocol version.
+//! Protocol-version-keyed constants.
 //!
-//! `ConsensusProtocolVersion` has exactly one member today. Every constant here
-//! is still reached through [`ConsensusProtocolVersion::params`] rather than
-//! exported as a bare `const`, because the next fork adds a row to a table
-//! instead of rewriting every call site.
+//! Everything version-sensitive is a lookup keyed by [`ConsensusProtocolVersion`],
+//! never a bare constant. There is exactly one protocol live today — the
+//! reference SDK's enum has one member too, because it drops old protocols on
+//! major bumps — but a fork changes several of these numbers at once, and a
+//! hardcoded constant is the thing that costs a rewrite when it lands.
 
-use crate::error::{Error, Result};
+use crate::tx::Tag;
 
 /// A consensus protocol version.
-///
-/// Wire values are the protocol's own; `Ceres` is 6.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[non_exhaustive]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
 pub enum ConsensusProtocolVersion {
-    /// The Ceres protocol, live since 2024.
-    Ceres = 6,
+    /// Ceres, protocol 6 — the live protocol.
+    #[default]
+    Ceres,
 }
 
 impl ConsensusProtocolVersion {
-    /// The version currently on mainnet.
-    pub const LATEST: Self = Self::Ceres;
-
-    /// Read a version off the wire.
-    pub fn from_wire(version: u64) -> Result<Self> {
-        match version {
-            6 => Ok(Self::Ceres),
-            other => Err(Error::UnknownEnumValue {
-                field: "consensus protocol version",
-                value: other,
-            }),
-        }
-    }
-
-    /// The consensus parameters for this version.
-    pub const fn params(self) -> &'static ConsensusParams {
+    /// The on-chain protocol number.
+    pub const fn as_u32(self) -> u32 {
         match self {
-            Self::Ceres => &CERES,
+            ConsensusProtocolVersion::Ceres => 6,
         }
     }
 }
 
-/// The consensus constants the fee and gas model is built from.
-///
-/// One value of this struct per protocol version; see [`ConsensusProtocolVersion::params`].
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub struct ConsensusParams {
+/// The kind of call an abi version is being selected for.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CallKind {
+    /// `ContractCreateTx` and `GaAttachTx`.
+    ContractCreate,
+    /// `ContractCallTx` and `GaMetaTx`.
+    ContractCall,
+    /// Oracle transactions.
+    OracleCall,
+}
+
+impl CallKind {
+    /// Which call kind a tag's `abiVersion` field is selected for.
+    pub(crate) const fn for_tag(tag: Tag) -> CallKind {
+        match tag {
+            Tag::ContractCallTx | Tag::GaMetaTx => CallKind::ContractCall,
+            _ => CallKind::OracleCall,
+        }
+    }
+}
+
+/// The VM versions the protocol has shipped. The fork history, written down.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum VmVersion {
+    /// No VM.
+    NoVm = 0,
+    /// Sophia on the AEVM.
+    Sophia = 1,
+    /// Sophia, Minerva improvements.
+    SophiaImprovementsMinerva = 3,
+    /// Sophia, Fortuna improvements.
+    SophiaImprovementsFortuna = 4,
+    /// FATE.
+    Fate = 5,
+    /// Sophia, Lima improvements.
+    SophiaImprovementsLima = 6,
+    /// FATE 2.
+    Fate2 = 7,
+    /// FATE 3.
+    Fate3 = 8,
+}
+
+/// The ABI versions the protocol has shipped.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum AbiVersion {
+    /// No ABI — an oracle transaction that carries no contract call.
+    NoAbi = 0,
+    /// The AEVM Sophia ABI.
+    Sophia = 1,
+    /// The FATE ABI.
+    Fate = 3,
+}
+
+/// The defaults a protocol version supplies for fields the caller can omit.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProtocolParams {
+    /// The VM version a `ContractCreateTx`/`GaAttachTx` defaults to.
+    pub contract_create_vm: VmVersion,
+    /// The ABI version a `ContractCreateTx`/`GaAttachTx` defaults to.
+    pub contract_create_abi: AbiVersion,
+    /// The ABI version a `ContractCallTx`/`GaMetaTx` defaults to.
+    pub contract_call_abi: AbiVersion,
+    /// The ABI version an oracle transaction defaults to.
+    pub oracle_call_abi: AbiVersion,
+    /// The minimum gas price, in aettos.
+    pub min_gas_price: u64,
     /// Gas charged for every transaction before any per-tag multiplier.
     pub base_gas: u64,
     /// Gas charged per serialised byte.
     pub gas_per_byte: u64,
-    /// The lowest gas price a transaction may carry, in aettos.
-    pub min_gas_price: u128,
     /// Target key block interval, in minutes. Divides the oracle ttl gas.
     pub key_block_interval_minutes: u64,
     /// Numerator of the oracle state-holding gas charge.
@@ -64,117 +109,34 @@ pub struct ConsensusParams {
     pub name_max_length_fee: usize,
 }
 
-/// Ceres, protocol version 6.
-static CERES: ConsensusParams = ConsensusParams {
-    base_gas: 15_000,
-    gas_per_byte: 20,
-    min_gas_price: 1_000_000_000,
-    key_block_interval_minutes: 3,
-    oracle_state_gas_per_ttl: 32_000,
-    name_fee_multiplier: 100_000_000_000_000,
-    name_bid_increment_percent: 5,
-    name_max_length_fee: 31,
-};
-
-/// A transaction tag.
-///
-/// Wire values are fixed by the protocol. Defined here rather than in the
-/// transaction-serialisation module because the fee model is keyed by tag and
-/// the two must not disagree about the numbers.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[non_exhaustive]
-pub enum Tag {
-    /// A transaction wrapped in its signatures.
-    SignedTx = 11,
-    /// A coin transfer.
-    SpendTx = 12,
-    /// Register an oracle.
-    OracleRegisterTx = 22,
-    /// Ask an oracle a question.
-    OracleQueryTx = 23,
-    /// Answer an oracle query.
-    OracleRespondTx = 24,
-    /// Extend an oracle's ttl.
-    OracleExtendTx = 25,
-    /// Claim a preclaimed name.
-    NameClaimTx = 32,
-    /// Commit to a name claim.
-    NamePreclaimTx = 33,
-    /// Update a name's pointers or ttl.
-    NameUpdateTx = 34,
-    /// Revoke a name.
-    NameRevokeTx = 35,
-    /// Transfer a name to another account.
-    NameTransferTx = 36,
-    /// Deploy a contract.
-    ContractCreateTx = 42,
-    /// Call a contract.
-    ContractCallTx = 43,
-    /// Open a state channel.
-    ChannelCreateTx = 50,
-    /// Top a channel up.
-    ChannelDepositTx = 51,
-    /// Withdraw from a channel.
-    ChannelWithdrawTx = 52,
-    /// Force an off-chain contract call on chain.
-    ChannelForceProgressTx = 521,
-    /// Close a channel by agreement.
-    ChannelCloseMutualTx = 53,
-    /// Close a channel unilaterally.
-    ChannelCloseSoloTx = 54,
-    /// Punish a stale unilateral close.
-    ChannelSlashTx = 55,
-    /// Settle a closed channel.
-    ChannelSettleTx = 56,
-    /// An off-chain channel state.
-    ChannelOffChainTx = 57,
-    /// Anchor an off-chain state on chain.
-    ChannelSnapshotSoloTx = 59,
-    /// Attach a generalized-account authorisation contract.
-    GaAttachTx = 80,
-    /// Wrap a transaction in a generalized-account authorisation.
-    GaMetaTx = 81,
-    /// Pay another account's fee.
-    PayingForTx = 82,
+/// The parameters for a protocol version.
+pub const fn params(version: ConsensusProtocolVersion) -> ProtocolParams {
+    match version {
+        ConsensusProtocolVersion::Ceres => ProtocolParams {
+            contract_create_vm: VmVersion::Fate3,
+            contract_create_abi: AbiVersion::Fate,
+            contract_call_abi: AbiVersion::Fate,
+            oracle_call_abi: AbiVersion::NoAbi,
+            min_gas_price: 1_000_000_000,
+            base_gas: 15_000,
+            gas_per_byte: 20,
+            key_block_interval_minutes: 3,
+            oracle_state_gas_per_ttl: 32_000,
+            name_fee_multiplier: 100_000_000_000_000,
+            name_bid_increment_percent: 5,
+            name_max_length_fee: 31,
+        },
+    }
 }
 
-impl Tag {
-    /// Read a tag off the wire.
-    pub fn from_wire(tag: u64) -> Result<Self> {
-        Ok(match tag {
-            11 => Self::SignedTx,
-            12 => Self::SpendTx,
-            22 => Self::OracleRegisterTx,
-            23 => Self::OracleQueryTx,
-            24 => Self::OracleRespondTx,
-            25 => Self::OracleExtendTx,
-            32 => Self::NameClaimTx,
-            33 => Self::NamePreclaimTx,
-            34 => Self::NameUpdateTx,
-            35 => Self::NameRevokeTx,
-            36 => Self::NameTransferTx,
-            42 => Self::ContractCreateTx,
-            43 => Self::ContractCallTx,
-            50 => Self::ChannelCreateTx,
-            51 => Self::ChannelDepositTx,
-            52 => Self::ChannelWithdrawTx,
-            521 => Self::ChannelForceProgressTx,
-            53 => Self::ChannelCloseMutualTx,
-            54 => Self::ChannelCloseSoloTx,
-            55 => Self::ChannelSlashTx,
-            56 => Self::ChannelSettleTx,
-            57 => Self::ChannelOffChainTx,
-            59 => Self::ChannelSnapshotSoloTx,
-            80 => Self::GaAttachTx,
-            81 => Self::GaMetaTx,
-            82 => Self::PayingForTx,
-            other => {
-                return Err(Error::UnknownEnumValue {
-                    field: "transaction tag",
-                    value: other,
-                })
-            }
-        })
+impl ProtocolParams {
+    /// The default abi version for a call kind under this protocol.
+    pub const fn abi_version(&self, kind: CallKind) -> AbiVersion {
+        match kind {
+            CallKind::ContractCreate => self.contract_create_abi,
+            CallKind::ContractCall => self.contract_call_abi,
+            CallKind::OracleCall => self.oracle_call_abi,
+        }
     }
 }
 
@@ -183,52 +145,39 @@ mod tests {
     use super::*;
 
     #[test]
-    fn every_tag_round_trips_through_its_wire_value() {
-        let tags = [
-            Tag::SignedTx,
-            Tag::SpendTx,
-            Tag::OracleRegisterTx,
-            Tag::OracleQueryTx,
-            Tag::OracleRespondTx,
-            Tag::OracleExtendTx,
-            Tag::NameClaimTx,
-            Tag::NamePreclaimTx,
-            Tag::NameUpdateTx,
-            Tag::NameRevokeTx,
-            Tag::NameTransferTx,
-            Tag::ContractCreateTx,
-            Tag::ContractCallTx,
-            Tag::ChannelCreateTx,
-            Tag::ChannelDepositTx,
-            Tag::ChannelWithdrawTx,
-            Tag::ChannelForceProgressTx,
-            Tag::ChannelCloseMutualTx,
-            Tag::ChannelCloseSoloTx,
-            Tag::ChannelSlashTx,
-            Tag::ChannelSettleTx,
-            Tag::ChannelOffChainTx,
-            Tag::ChannelSnapshotSoloTx,
-            Tag::GaAttachTx,
-            Tag::GaMetaTx,
-            Tag::PayingForTx,
-        ];
-        assert_eq!(tags.len(), 26);
-        for tag in tags {
-            assert_eq!(Tag::from_wire(tag as u64).unwrap(), tag);
-        }
-        assert!(Tag::from_wire(58).is_err());
+    fn ceres_defaults_match_the_reference_table() {
+        let p = params(ConsensusProtocolVersion::Ceres);
+        assert_eq!(ConsensusProtocolVersion::Ceres.as_u32(), 6);
+        assert_eq!(p.contract_create_vm as u8, 8);
+        assert_eq!(p.contract_create_abi as u8, 3);
+        assert_eq!(p.contract_call_abi as u8, 3);
+        // An oracle register carries abi 0 unless the caller asks for a typed oracle.
+        assert_eq!(p.oracle_call_abi as u8, 0);
+        assert_eq!(p.min_gas_price, 1_000_000_000);
     }
 
     #[test]
-    fn ceres_carries_the_published_consensus_constants() {
-        let params = ConsensusProtocolVersion::Ceres.params();
-        assert_eq!(params.base_gas, 15_000);
-        assert_eq!(params.gas_per_byte, 20);
-        assert_eq!(params.min_gas_price, 1_000_000_000);
+    fn ceres_carries_the_published_fee_constants() {
+        let p = params(ConsensusProtocolVersion::Ceres);
+        assert_eq!(p.base_gas, 15_000);
+        assert_eq!(p.gas_per_byte, 20);
+        assert_eq!(p.key_block_interval_minutes, 3);
+        assert_eq!(p.oracle_state_gas_per_ttl, 32_000);
+        assert_eq!(p.name_fee_multiplier, 100_000_000_000_000);
+        assert_eq!(p.name_bid_increment_percent, 5);
+        assert_eq!(p.name_max_length_fee, 31);
+    }
+
+    #[test]
+    fn call_kind_follows_the_tag() {
         assert_eq!(
-            ConsensusProtocolVersion::from_wire(6).unwrap(),
-            ConsensusProtocolVersion::Ceres
+            CallKind::for_tag(Tag::ContractCallTx),
+            CallKind::ContractCall
         );
-        assert!(ConsensusProtocolVersion::from_wire(5).is_err());
+        assert_eq!(CallKind::for_tag(Tag::GaMetaTx), CallKind::ContractCall);
+        assert_eq!(
+            CallKind::for_tag(Tag::OracleRegisterTx),
+            CallKind::OracleCall
+        );
     }
 }

@@ -11,7 +11,7 @@
 //! where both implementations agree and are both wrong is visible. This is the
 //! floor it will sit on.
 
-use reactive_core::tx::{build_tx, unpack_tx, Pointer, Tag, TxParams, Value, TX_SCHEMA};
+use ae_core::tx::{build_tx, unpack_tx, Pointer, Tag, TxParams, Value, TX_SCHEMA};
 use serde_json::Value as Json;
 use std::collections::BTreeSet;
 

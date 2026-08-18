@@ -84,9 +84,10 @@ impl EntryTag {
             626 => Self::AccountsMtree,
             810 => Self::GaMetaTxAuthData,
             other => {
-                return Err(Error::UnknownEntryTag(
-                    u32::try_from(other).unwrap_or(u32::MAX),
-                ))
+                return Err(Error::SchemaNotFound {
+                    tag: u32::try_from(other).unwrap_or(u32::MAX),
+                    version: None,
+                })
             }
         })
     }
@@ -101,6 +102,87 @@ impl EntryTag {
             _ => &[1],
         }
     }
+}
+
+/// Whether the reference JavaScript sdk implements a given schema entry.
+///
+/// The harness reads this rather than keeping its own list. A second copy of
+/// this table living in the harness is a copy that goes stale the first time
+/// `@aeternity/aepp-sdk` ships a version.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SdkCoverage {
+    /// Both implementations encode this pair, so the harness may assert
+    /// byte-identical output in both directions.
+    Covered,
+    /// Only the node emits it. The sdk is **not** an oracle here — assert
+    /// against node-derived fixtures, and never score its absence as a core
+    /// failure.
+    NodeOnly,
+}
+
+/// One schema entry: a tag, a version, and who can speak for it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SchemaEntry {
+    /// The entry tag.
+    pub tag: EntryTag,
+    /// The wire version.
+    pub version: u32,
+    /// Whether `@aeternity/aepp-sdk` 14.1.1 implements this pair.
+    pub sdk: SdkCoverage,
+}
+
+/// Every schema entry this crate implements, with its sdk coverage.
+///
+/// 25 pairs: the reference sdk's 23, plus `Account` v3 and `ContractCall` v3,
+/// which the node emits and the sdk does not implement.
+pub const SCHEMA_ENTRIES: [SchemaEntry; 25] = {
+    use EntryTag as T;
+    use SdkCoverage::{Covered, NodeOnly};
+    const fn e(tag: EntryTag, version: u32, sdk: SdkCoverage) -> SchemaEntry {
+        SchemaEntry { tag, version, sdk }
+    }
+    [
+        e(T::Account, 1, Covered),
+        e(T::Account, 2, Covered),
+        // Emitted for any account with flags set and no authorisation contract.
+        e(T::Account, 3, NodeOnly),
+        e(T::Oracle, 1, Covered),
+        e(T::Name, 1, Covered),
+        e(T::Contract, 1, Covered),
+        e(T::ContractCall, 2, Covered),
+        // Emitted for a call made through a name rather than an address.
+        e(T::ContractCall, 3, NodeOnly),
+        e(T::Channel, 3, Covered),
+        e(T::TreesPoi, 1, Covered),
+        e(T::StateTrees, 0, Covered),
+        e(T::Mtree, 1, Covered),
+        e(T::MtreeValue, 1, Covered),
+        e(T::ChannelOffChainUpdateTransfer, 1, Covered),
+        e(T::ChannelOffChainUpdateDeposit, 1, Covered),
+        e(T::ChannelOffChainUpdateWithdraw, 1, Covered),
+        e(T::ChannelOffChainUpdateCreateContract, 1, Covered),
+        e(T::ChannelOffChainUpdateCallContract, 1, Covered),
+        e(T::ContractsMtree, 1, Covered),
+        e(T::CallsMtree, 1, Covered),
+        e(T::ChannelsMtree, 1, Covered),
+        e(T::NameserviceMtree, 1, Covered),
+        e(T::OraclesMtree, 1, Covered),
+        e(T::AccountsMtree, 1, Covered),
+        e(T::GaMetaTxAuthData, 1, Covered),
+    ]
+};
+
+/// The coverage of one pair, or `None` if this crate does not implement it.
+pub fn sdk_coverage(tag: EntryTag, version: u32) -> Option<SdkCoverage> {
+    let mut index = 0;
+    while index < SCHEMA_ENTRIES.len() {
+        let entry = SCHEMA_ENTRIES[index];
+        if entry.tag as u32 == tag as u32 && entry.version == version {
+            return Some(entry.sdk);
+        }
+        index += 1;
+    }
+    None
 }
 
 #[cfg(test)]
@@ -143,6 +225,50 @@ mod tests {
         assert_eq!(ALL.len(), 22);
         let schema_entries: usize = ALL.iter().map(|tag| tag.versions().len()).sum();
         assert_eq!(schema_entries, 25);
+    }
+
+    #[test]
+    fn the_coverage_table_and_the_version_lists_agree() {
+        // Neither can drift without the other noticing.
+        let from_versions: Vec<(EntryTag, u32)> = ALL
+            .iter()
+            .flat_map(|tag| tag.versions().iter().map(move |v| (*tag, *v)))
+            .collect();
+        let from_table: Vec<(EntryTag, u32)> = SCHEMA_ENTRIES
+            .iter()
+            .map(|entry| (entry.tag, entry.version))
+            .collect();
+        let mut a = from_versions.clone();
+        let mut b = from_table.clone();
+        a.sort();
+        b.sort();
+        assert_eq!(a, b);
+        assert_eq!(SCHEMA_ENTRIES.len(), 25);
+    }
+
+    #[test]
+    fn exactly_two_pairs_are_beyond_the_reference_sdk() {
+        let node_only: Vec<(EntryTag, u32)> = SCHEMA_ENTRIES
+            .iter()
+            .filter(|entry| entry.sdk == SdkCoverage::NodeOnly)
+            .map(|entry| (entry.tag, entry.version))
+            .collect();
+        assert_eq!(
+            node_only,
+            vec![(EntryTag::Account, 3), (EntryTag::ContractCall, 3)]
+        );
+        // 23 is the reference sdk's own schema count.
+        assert_eq!(SCHEMA_ENTRIES.len() - node_only.len(), 23);
+
+        assert_eq!(
+            sdk_coverage(EntryTag::Account, 1),
+            Some(SdkCoverage::Covered)
+        );
+        assert_eq!(
+            sdk_coverage(EntryTag::Account, 3),
+            Some(SdkCoverage::NodeOnly)
+        );
+        assert_eq!(sdk_coverage(EntryTag::Account, 4), None);
     }
 
     #[test]

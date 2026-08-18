@@ -1,14 +1,12 @@
 //! Behaviour the vector corpus cannot express: nested parameter records, the
 //! signing path end to end, and the seams this crate deliberately leaves open.
 
-use reactive_core::encoding::{decode, encode, Encoding};
-use reactive_core::signing::{
-    address_from_seed, sign_transaction, verify_transaction, TxPosition, NETWORK_ID_TESTNET,
-};
-use reactive_core::tx::{
+use ae_core::encoding::{decode, encode, Encoding};
+use ae_core::keys::{SecretKey, TxPosition, NETWORK_ID_TESTNET};
+use ae_core::tx::{
     build_tx, build_tx_rlp, unpack_tx, unpack_tx_as, BuildOptions, Tag, TxParams, Value,
 };
-use reactive_core::Error;
+use ae_core::Error;
 
 /// RFC 8032 §7.1 test 1. A published test vector, not key material.
 const TEST_SEED: [u8; 32] = [
@@ -92,24 +90,27 @@ fn unpack_as_rejects_the_wrong_tag() {
 fn a_signature_covers_the_transaction_and_the_network() {
     let options = BuildOptions::default();
     let rlp = build_tx_rlp(&spend(), &options).unwrap();
-    let address = address_from_seed(&TEST_SEED).unwrap();
+    let key = SecretKey::from_seed(TEST_SEED);
+    let address = key.to_address().unwrap();
 
-    let signature = sign_transaction(&rlp, &TEST_SEED, NETWORK_ID_TESTNET, TxPosition::Outer);
-    assert!(verify_transaction(
+    let signature = key.sign_transaction(&rlp, NETWORK_ID_TESTNET, TxPosition::Outer);
+    assert!(key.public_key().verify_transaction(
         &rlp,
-        &signature,
-        &address,
         NETWORK_ID_TESTNET,
-        TxPosition::Outer
-    )
-    .unwrap());
+        TxPosition::Outer,
+        &signature
+    ));
+    assert_eq!(
+        ae_core::keys::PublicKey::from_address(&address).unwrap(),
+        key.public_key()
+    );
 
     // The signed transaction is an ordinary SignedTx around the same bytes.
     let signed = build_tx(
         &TxParams::new(Tag::SignedTx)
             .with(
                 "signatures",
-                Value::List(vec![Value::Bytes(signature.to_vec())]),
+                Value::List(vec![Value::Bytes(signature.as_bytes().to_vec())]),
             )
             .with("encodedTx", Value::Bytes(rlp.clone())),
     )
@@ -117,7 +118,7 @@ fn a_signature_covers_the_transaction_and_the_network() {
     let unpacked = unpack_tx(&signed).unwrap();
     assert_eq!(
         unpacked.get("signatures").unwrap(),
-        &Value::List(vec![Value::Bytes(signature.to_vec())])
+        &Value::List(vec![Value::Bytes(signature.as_bytes().to_vec())])
     );
     assert_eq!(
         build_tx_rlp(
@@ -132,11 +133,11 @@ fn a_signature_covers_the_transaction_and_the_network() {
 #[test]
 fn a_transaction_hash_is_the_hash_of_the_rlp_not_of_the_string() {
     let tx = build_tx(&spend()).unwrap();
-    let hash = reactive_core::tx::transaction_hash(&tx).unwrap();
+    let hash = ae_core::tx::transaction_hash(&tx).unwrap();
     assert!(hash.starts_with("th_"));
     assert_eq!(
         decode(&hash).unwrap(),
-        reactive_core::hash::blake2b_256(&decode(&tx).unwrap())
+        ae_core::hash::blake2b_256(&decode(&tx).unwrap())
     );
 }
 
@@ -191,7 +192,7 @@ fn a_name_may_be_given_instead_of_a_name_id() {
             .with("nonce", 1u64)
             .with(
                 "nameId",
-                reactive_core::aens::produce_name_id("test.chain")
+                ae_core::aens::produce_name_id("test.chain")
                     .unwrap()
                     .as_str(),
             )
@@ -266,7 +267,7 @@ fn a_raw_pointer_needs_name_update_version_two() {
         .with("nameId", Value::Text("test.chain".into()))
         .with(
             "pointers",
-            Value::Pointers(vec![reactive_core::tx::Pointer {
+            Value::Pointers(vec![ae_core::tx::Pointer {
                 key: "raw".into(),
                 id: raw,
             }]),
@@ -316,14 +317,14 @@ fn a_gas_price_below_the_protocol_minimum_is_rejected() {
 fn a_record_with_the_wrong_number_of_fields_is_rejected() {
     // Drop a SpendTx's last field, keeping the RLP itself well-formed.
     let tx = build_tx(&spend()).unwrap();
-    let mut items = match reactive_core::rlp::decode(&decode(&tx).unwrap()).unwrap() {
-        reactive_core::rlp::Item::List(items) => items,
+    let mut items = match ae_core::rlp::decode(&decode(&tx).unwrap()).unwrap() {
+        ae_core::rlp::Item::List(items) => items,
         other => panic!("expected a list, got {other:?}"),
     };
     items.pop().expect("a spend has fields");
-    let truncated = reactive_core::rlp::encode(&reactive_core::rlp::Item::List(items));
+    let truncated = ae_core::rlp::encode(&ae_core::rlp::Item::List(items));
     assert!(matches!(
-        reactive_core::tx::unpack_tx_rlp(&truncated),
+        ae_core::tx::unpack_tx_rlp(&truncated),
         Err(Error::RecordLength { .. })
     ));
 }

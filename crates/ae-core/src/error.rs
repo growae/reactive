@@ -1,110 +1,143 @@
 //! The crate's single error type.
-//!
-//! The core is pure computation, so every failure is a malformed input or a
-//! value that does not fit the protocol. There is deliberately no I/O variant.
 
-use core::fmt;
+use thiserror::Error;
 
-/// Anything the core can refuse to do.
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[non_exhaustive]
-pub enum Error {
-    /// RLP input was truncated, over-long, or not minimally encoded.
-    Rlp(&'static str),
-    /// An RLP item was a list where a byte string was expected, or vice versa.
-    RlpShape {
-        /// What the caller needed.
-        expected: &'static str,
-        /// What the input actually held.
-        got: &'static str,
-    },
-    /// An api-encoded string had no `prefix_` separator, or an unknown prefix.
-    UnknownEncoding(String),
-    /// base58/base64 payload did not decode.
-    BadPayload(&'static str),
-    /// The trailing 4-byte double-sha256 checksum did not match.
-    InvalidChecksum,
-    /// A fixed-size payload had the wrong length.
-    PayloadLength {
-        /// Bytes the encoding requires.
-        expected: usize,
-        /// Bytes the input carried.
-        got: usize,
-    },
-    /// An `id()` field carried a tag byte outside 1..=6.
-    UnknownIdTag(u8),
-    /// An entry carried a tag this build does not implement.
-    UnknownEntryTag(u32),
-    /// An entry carried a version not defined for its tag by the protocol.
-    UnknownEntryVersion {
-        /// The entry tag.
-        tag: u32,
-        /// The version found on the wire.
-        version: u32,
-    },
-    /// An entry had the wrong number of RLP fields for its tag and version.
-    EntryArity {
-        /// The entry tag.
-        tag: u32,
-        /// Fields the template defines.
-        expected: usize,
-        /// Fields present on the wire.
-        got: usize,
-    },
-    /// An integer field was longer than the target type, or not minimally encoded.
-    IntegerRange(&'static str),
-    /// An enumeration field carried a value outside its defined set.
-    UnknownEnumValue {
-        /// Which field.
-        field: &'static str,
-        /// The value found.
-        value: u64,
-    },
-    /// A Merkle-Patricia node did not hash to the key it was filed under.
-    MerkleHashMismatch,
-    /// A Merkle-Patricia node referenced a hash that is not in the proof.
-    MerkleNodeMissing(&'static str),
-    /// A Merkle-Patricia node had a length that is not 2 or 17.
-    MerkleNodeArity(usize),
-    /// A Merkle-Patricia path prefix nibble was above 3.
-    MerklePathNibble(u8),
-    /// Ed25519 rejected the key or signature bytes.
-    Crypto(&'static str),
-}
-
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Rlp(why) => write!(f, "malformed RLP: {why}"),
-            Self::RlpShape { expected, got } => write!(f, "expected RLP {expected}, got {got}"),
-            Self::UnknownEncoding(prefix) => write!(f, "unknown encoding prefix: {prefix}"),
-            Self::BadPayload(why) => write!(f, "undecodable payload: {why}"),
-            Self::InvalidChecksum => write!(f, "checksum mismatch"),
-            Self::PayloadLength { expected, got } => {
-                write!(f, "payload should be {expected} bytes, got {got}")
-            }
-            Self::UnknownIdTag(tag) => write!(f, "unknown id tag: {tag}"),
-            Self::UnknownEntryTag(tag) => write!(f, "unknown entry tag: {tag}"),
-            Self::UnknownEntryVersion { tag, version } => {
-                write!(f, "entry {tag} has no version {version}")
-            }
-            Self::EntryArity { tag, expected, got } => {
-                write!(f, "entry {tag} takes {expected} fields, got {got}")
-            }
-            Self::IntegerRange(why) => write!(f, "integer out of range: {why}"),
-            Self::UnknownEnumValue { field, value } => {
-                write!(f, "field {field} has no variant {value}")
-            }
-            Self::MerkleHashMismatch => write!(f, "merkle tree node hash mismatch"),
-            Self::MerkleNodeMissing(where_) => write!(f, "missing node in tree: {where_}"),
-            Self::MerkleNodeArity(len) => write!(f, "merkle node of unknown length: {len}"),
-            Self::MerklePathNibble(nibble) => write!(f, "unknown path nibble: {nibble}"),
-            Self::Crypto(why) => write!(f, "crypto: {why}"),
-        }
-    }
-}
-
-impl std::error::Error for Error {}
-
-/// Shorthand for a core result.
+/// Result alias used across the crate.
 pub type Result<T> = core::result::Result<T, Error>;
+
+/// Everything that can go wrong encoding or decoding an aeternity artifact.
+#[derive(Debug, Error, PartialEq, Eq, Clone)]
+pub enum Error {
+    /// An `xx_...` string was not shaped like `prefix_payload`.
+    #[error("encoded string is malformed: {0}")]
+    Decode(String),
+
+    /// The prefix of an `xx_...` string is not one of the known encodings.
+    #[error("unknown encoding prefix: {0}")]
+    UnknownPrefix(String),
+
+    /// base58 or base64 payload could not be decoded.
+    #[error("invalid {kind} payload: {reason}")]
+    InvalidPayload {
+        /// `base58` or `base64`.
+        kind: &'static str,
+        /// Underlying reason.
+        reason: String,
+    },
+
+    /// The trailing 4-byte double-sha256 checksum did not match.
+    #[error("invalid checksum")]
+    InvalidChecksum,
+
+    /// A fixed-width encoding carried the wrong number of bytes.
+    #[error("payload should be {expected} bytes, got {actual} instead")]
+    PayloadLength {
+        /// Byte length the encoding requires.
+        expected: usize,
+        /// Byte length actually seen.
+        actual: usize,
+    },
+
+    /// RLP input was not canonical or ran out of bytes.
+    #[error("invalid rlp: {0}")]
+    Rlp(String),
+
+    /// An RLP item was a list where a byte string was expected, or vice versa.
+    #[error("expected an rlp {expected}")]
+    RlpShape {
+        /// `byte string` or `list`.
+        expected: &'static str,
+    },
+
+    /// No transaction schema exists for this tag, or for this tag at this version.
+    #[error("no schema for tag {tag} version {version:?}")]
+    SchemaNotFound {
+        /// The numeric transaction tag.
+        tag: u32,
+        /// The serialised version, when one was supplied.
+        version: Option<u32>,
+    },
+
+    /// A required field was absent from the parameters.
+    #[error("field `{0}` is required")]
+    MissingField(&'static str),
+
+    /// A field held a value of the wrong shape for its codec.
+    #[error("field `{field}`: expected {expected}")]
+    FieldType {
+        /// Field name from the schema.
+        field: &'static str,
+        /// What the codec wanted.
+        expected: &'static str,
+    },
+
+    /// A field held a syntactically valid but semantically rejected value.
+    #[error("field `{field}`: {reason}")]
+    FieldValue {
+        /// Field name from the schema.
+        field: &'static str,
+        /// Why it was rejected.
+        reason: String,
+    },
+
+    /// The decoded tag did not match the tag the caller asked for.
+    #[error("expected tag {expected}, got {actual} instead")]
+    UnexpectedTag {
+        /// Tag the caller asked for.
+        expected: u32,
+        /// Tag actually present.
+        actual: u32,
+    },
+
+    /// The RLP record had a different number of items than the schema.
+    #[error("rlp length: expected {expected}, got {actual}")]
+    RecordLength {
+        /// Field count from the schema.
+        expected: usize,
+        /// Item count in the RLP.
+        actual: usize,
+    },
+
+    /// An AENS name was rejected.
+    #[error("aens name: {0}")]
+    Name(String),
+
+    /// A field needs a model this crate deliberately does not own.
+    ///
+    /// The fee/gas model is a separate workstream; see [`crate::tx::FeeModel`].
+    #[error("field `{field}` was not provided and computing it needs the {model} model")]
+    ModelRequired {
+        /// Field name from the schema.
+        field: &'static str,
+        /// Which model would have supplied it.
+        model: &'static str,
+    },
+
+    /// A Merkle-Patricia node did not hash to the key it was filed under.
+    ///
+    /// The whole point of a proof of inclusion: a node that does not rehash to
+    /// its own key proves nothing, so it is rejected on parse rather than
+    /// answered from.
+    #[error("merkle tree node hash mismatch")]
+    MerkleHashMismatch,
+
+    /// A Merkle-Patricia node referenced a hash the proof does not carry.
+    ///
+    /// Only for references that make the proof unwalkable. A branch missing a
+    /// child is the normal shape of a partial proof and is reported by
+    /// `MerklePatriciaTree::is_complete` instead.
+    #[error("missing node in merkle tree: {0}")]
+    MerkleNodeMissing(&'static str),
+
+    /// A Merkle-Patricia node had a length other than 2 or 17.
+    #[error("merkle node of unknown length: {0}")]
+    MerkleNodeArity(usize),
+
+    /// A Merkle-Patricia path header carried a nibble above 3.
+    #[error("unknown merkle path nibble: {0}")]
+    MerklePathNibble(u8),
+
+    /// Signature verification input was not a valid Ed25519 key or signature.
+    #[error("crypto: {0}")]
+    Crypto(String),
+}
