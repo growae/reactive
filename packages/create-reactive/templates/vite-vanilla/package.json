@@ -11,7 +11,7 @@
     "@growae/reactive": "latest"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "vite": "latest"
+    "typescript": "^5.7.0",
+    "vite": "^8.2.1"
   }
 }
