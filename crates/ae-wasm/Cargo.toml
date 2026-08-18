@@ -1,0 +1,18 @@
+[package]
+name = "ae-wasm"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ae-core = { path = "../ae-core" }
+wit-bindgen = "0.60"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true

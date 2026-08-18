@@ -1,0 +1,8 @@
+target/
+node_modules/
+.dart_tool/
+.venv/
+js/gen/
+js/gen-nowasi/
+js/nowasi.component.wasm
+pubspec.lock

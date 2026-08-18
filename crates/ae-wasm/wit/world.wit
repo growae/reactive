@@ -1,0 +1,21 @@
+package growae:spike@0.1.0;
+
+interface core {
+    record frame {
+        len: u32,
+        checksum: u32,
+        payload: list<u8>,
+    }
+
+    enum decode-error {
+        too-short,
+        checksum-mismatch,
+    }
+
+    transform: func(input: list<u8>) -> list<u8>;
+    decode: func(input: list<u8>) -> result<frame, decode-error>;
+}
+
+world spike {
+    export core;
+}
