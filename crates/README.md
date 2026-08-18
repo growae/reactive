@@ -8,7 +8,9 @@ binding shares one implementation instead of five.
 | `reactive-core` | RLP, the `xx_` api encoding, the `id` type, blake2b-256, Ed25519 with the network-id prefix rule, and transaction serialisation for all 26 tags |
 | `ae-fate` | FATE ABI encode and decode: every value and type form in the tag space, the protocol's canonical map ordering, and calldata assembly. No dependencies |
 
-### Two RLP codecs, on purpose
+Nothing here is published. The workspace is `publish = false` and stays that way.
+
+## Two RLP codecs, on purpose
 
 `reactive-core/src/rlp.rs` is a general `Item` codec with lists. `ae-fate/src/rlp.rs`
 is byte strings and magnitudes only, and rejects an RLP list outright, because
@@ -18,8 +20,6 @@ encoding. Sharing the first would drag `bs58`, `blake2`, `ed25519-dalek` and
 
 **The standing condition:** the two must agree on length-prefix rules
 permanently. A change to that logic in either file is a change to both.
-
-Nothing here is published. The workspace is `publish = false` and stays that way.
 
 ## Where this sits
 
