@@ -1,0 +1,101 @@
+name: Triage
+
+# Confirms receipt on anything opened from outside the maintainer group and puts
+# it in the triage queue, so nobody waits on a human being awake to learn their
+# report landed. The human answer is still owed within 2 business days; this only
+# removes the silence before it.
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+# SECURITY — read before editing this file.
+#
+# `pull_request_target` runs in the context of the BASE repository with a
+# writable token, while the pull request itself may come from an untrusted fork.
+# Two rules keep that safe and both are load-bearing:
+#
+#   1. Nothing here checks out, installs, builds or executes the head ref. There
+#      is no `actions/checkout` step and there must never be one.
+#   2. No untrusted event field — title, body, branch name, author login — is
+#      interpolated into a shell command. The only event values used are numeric
+#      ids and booleans, and the comment body is a fixed heredoc.
+#
+# Adding a checkout or echoing `github.event.*.title` into a `run:` block hands
+# repository write access to whoever opened the pull request.
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  acknowledge:
+    name: Acknowledge and label
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Outside contributors only. Bots (Dependabot, release automation, the
+    # Cloudflare preview app) and the maintainers' own accounts get nothing —
+    # acknowledging ourselves is noise that trains everyone to ignore the label.
+    if: >-
+      github.event.sender.type != 'Bot'
+      && !contains(
+        fromJSON('["OWNER","MEMBER","COLLABORATOR"]'),
+        github.event.issue.author_association || github.event.pull_request.author_association
+      )
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+      IS_PR: ${{ github.event.pull_request != null }}
+    steps:
+      # The issues API serves both issues and pull requests, so one call covers
+      # each event.
+      - name: Apply the triage label
+        run: gh api "repos/$GH_REPO/issues/$NUMBER/labels" -f 'labels[]=triage' --silent
+
+      - name: Compose the acknowledgement
+        run: |
+          if [ "$IS_PR" = "true" ]; then
+            cat > body.md <<'EOF'
+          Thanks for the pull request — it is in the queue and a maintainer will review it.
+
+          This repository is maintained on a weekly cadence. Anything opened from outside gets
+          a human reply within **2 business days**; this comment is automation confirming your
+          pull request landed, and it is not that reply.
+
+          What happens next:
+
+          - CI runs on the pull request. `Check`, `Build` and `Test` need to be green before
+            review — you can push fixes straight to the same branch.
+          - A maintainer reviews it against [CONTRIBUTING.md](https://github.com/growae/reactive/blob/develop/.github/CONTRIBUTING.md).
+          - A change to a package's public API, or a new dependency, needs a maintainer
+            decision before it can merge. That is where the call gets made rather than a
+            delay, and we will tell you either way instead of leaving it open.
+
+          **If this is a security fix for an unreported vulnerability, please close it and use
+          the private channel first** — [SECURITY.md](https://github.com/growae/reactive/blob/develop/SECURITY.md).
+          A public pull request describes the flaw to everyone before the fix is released.
+          EOF
+          else
+            cat > body.md <<'EOF'
+          Thanks for opening this — it is in the queue and a maintainer will reply.
+
+          This repository is maintained on a weekly cadence. Anything opened from outside gets
+          a human reply within **2 business days**; this comment is automation confirming your
+          issue landed, and it is not that reply.
+
+          If this is a bug, the fastest thing you can add while you wait is a minimal
+          reproduction — which package and version, which framework binding (React, Solid or
+          Vue), and what you expected instead. A failing snippet beats a description.
+
+          **If this is a security vulnerability, please close this and report it privately
+          instead** — [SECURITY.md](https://github.com/growae/reactive/blob/develop/SECURITY.md).
+          A public issue is the wrong channel for anything exploitable.
+          EOF
+          fi
+
+      - name: Post the acknowledgement
+        run: gh api "repos/$GH_REPO/issues/$NUMBER/comments" -F body=@body.md --silent
