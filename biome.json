@@ -6,7 +6,9 @@
       "pnpm-lock.yaml",
       "tsconfig.base.json",
       "crates/target/**",
-      "crates/**/tests/vectors/**"
+      "crates/**/tests/vectors/**",
+      "bindings/wasm-js/generated/**",
+      "bindings/wasm-js/placeholder-core/target/**"
     ]
   },
   "formatter": {

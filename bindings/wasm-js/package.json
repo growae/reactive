@@ -1,0 +1,17 @@
+{
+  "name": "@growae/reactive-wasm-js-binding",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "WIT world and jco-transpiled JS glue for the differential harness. Not published.",
+  "scripts": {
+    "build:rust": "cd placeholder-core && cargo component build --release --target wasm32-unknown-unknown",
+    "build:js": "rm -rf generated && mkdir generated && jco transpile placeholder-core/target/wasm32-unknown-unknown/release/core_harness_placeholder.wasm -o generated --name core-harness --minify",
+    "build": "pnpm run build:rust && pnpm run build:js",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@bytecodealliance/jco": "1.29.0",
+    "vitest": "^3.2.7"
+  }
+}

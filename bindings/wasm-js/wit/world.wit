@@ -1,0 +1,10 @@
+package growae:core-harness;
+
+// Placeholder world. No Core surface has landed yet — this exists to keep
+// the wasm32-unknown-unknown + jco pipeline exercised end-to-end while
+// it's empty, and gets replaced interface-by-interface as Core freezes
+// real exports. Do not add protocol logic here; that belongs to the Core
+// rows.
+world harness {
+  export ping: func() -> string;
+}
