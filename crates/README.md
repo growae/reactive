@@ -6,6 +6,18 @@ binding shares one implementation instead of five.
 | Crate | What it owns |
 |---|---|
 | `reactive-core` | RLP, the `xx_` api encoding, the `id` type, blake2b-256, Ed25519 with the network-id prefix rule, and transaction serialisation for all 26 tags |
+| `ae-fate` | FATE ABI encode and decode: every value and type form in the tag space, the protocol's canonical map ordering, and calldata assembly. No dependencies |
+
+### Two RLP codecs, on purpose
+
+`reactive-core/src/rlp.rs` is a general `Item` codec with lists. `ae-fate/src/rlp.rs`
+is byte strings and magnitudes only, and rejects an RLP list outright, because
+FATE never writes one and a decoder that accepts one accepts a non-canonical
+encoding. Sharing the first would drag `bs58`, `blake2`, `ed25519-dalek` and
+`num-bigint` into the crate whose empty dependency list is the point.
+
+**The standing condition:** the two must agree on length-prefix rules
+permanently. A change to that logic in either file is a change to both.
 
 Nothing here is published. The workspace is `publish = false` and stays that way.
 
@@ -46,7 +58,7 @@ than guessing across it.
 |---|---|---|
 | Fee and gas model | `tx::FeeModel` — a trait with the fixed point spelled out. Without an implementation, `fee` and `gasLimit` must be explicit and are otherwise an error naming the model | fee/gas workstream |
 | State-tree entries | A `poi` field round-trips as opaque bytes, so the channel decode-and-re-encode path is byte-exact without owning the entry schema or the Merkle-Patricia tree | entry/state-trees workstream |
-| Sophia FATE ABI | Call data arrives already encoded, as a `cb_` string | FATE ABI workstream |
+| Sophia FATE ABI | `ae-fate` owns the bytes. `reactive-core` still takes call data already encoded, as a `cb_` string; the `cb_` envelope and the Blake2b function id are the encoding substrate's, not `ae-fate`'s | FATE ABI workstream |
 | Anything needing a node | Nonces, relative TTLs and oracle query fees are inputs, not lookups | each language's binding |
 
 ## Building and testing

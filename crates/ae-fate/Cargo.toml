@@ -1,0 +1,22 @@
+[package]
+name = "ae-fate"
+description = "FATE ABI encoding and decoding for the aeternity protocol"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+# Deliberately empty, and load-bearing rather than incidental: this crate is the
+# one compiled to WebAssembly for the browser, where every dependency is bytes in
+# the bundle. See `crates/README.md` on the RLP codec it therefore does not share
+# with `reactive-core`.
+[dependencies]
+
+[lints.rust]
+missing_docs = "deny"
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "warn"
