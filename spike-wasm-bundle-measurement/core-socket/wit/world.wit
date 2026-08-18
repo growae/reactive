@@ -1,0 +1,7 @@
+package growae:core-socket;
+
+world tx-client {
+  import wasi:http/outgoing-handler@0.2.12;
+  import wasi:http/types@0.2.12;
+  export submit-transfer: func(payload: list<u8>) -> result<list<u8>, string>;
+}

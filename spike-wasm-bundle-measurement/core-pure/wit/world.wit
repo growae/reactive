@@ -1,0 +1,5 @@
+package growae:core-pure;
+
+world tx-codec {
+  export encode-transfer: func(sender: list<u8>, recipient: list<u8>, amount: u64, nonce: u64) -> list<u8>;
+}

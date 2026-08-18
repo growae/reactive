@@ -1,0 +1,16 @@
+[package]
+name = "core-socket"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wit-bindgen-rt = { version = "0.41", features = ["bitflags"] }
+
+[package.metadata.component]
+package = "growae:core-socket"
+
+[package.metadata.component.target.dependencies]
+"wasi:http" = "0.2.3"
