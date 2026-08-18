@@ -1,0 +1,27 @@
+[package]
+name = "ae-core"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.82"
+license = "MIT"
+description = "Pure-computation æternity protocol core: entries, state trees, fee/gas model, keys and signing"
+publish = false
+
+[dependencies]
+# Ed25519 signing. BSD-3-Clause. The 2.x line is what the ecosystem is on today;
+# a 3.x bump is its own testable step, not a day-one choice.
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+rand_core = { version = "0.6", features = ["getrandom"] }
+# blake2b-256 (chain object hashing). MIT OR Apache-2.0.
+blake2 = "0.10"
+# double-sha256 checksum used by the api encoding. MIT OR Apache-2.0.
+sha2 = "0.10"
+# base58 / base64 for the api encoding. MIT OR Apache-2.0.
+bs58 = "0.5"
+base64 = "0.22"
+
+[dev-dependencies]
+hex = "0.4"
+
+[lints.rust]
+missing_docs = "warn"
