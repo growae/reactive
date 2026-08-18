@@ -1,0 +1,15 @@
+[package]
+name = "ae-fate"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+description = "FATE ABI encoding and decoding for the aeternity protocol"
+repository = "https://github.com/growae/reactive"
+publish = false
+
+[dependencies]
+
+[lints.rust]
+missing_docs = "deny"
+unsafe_code = "forbid"

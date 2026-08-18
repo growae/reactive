@@ -1,0 +1,347 @@
+{
+  "source": "@aeternity/aepp-calldata",
+  "version": "1.9.1",
+  "license": "ISC",
+  "vectors": [
+    {
+      "name": "int/zero",
+      "hex": "00"
+    },
+    {
+      "name": "int/one",
+      "hex": "02"
+    },
+    {
+      "name": "int/minus-one",
+      "hex": "82"
+    },
+    {
+      "name": "int/small-max",
+      "hex": "7e"
+    },
+    {
+      "name": "int/small-min",
+      "hex": "fe"
+    },
+    {
+      "name": "int/small-boundary",
+      "hex": "6f00"
+    },
+    {
+      "name": "int/small-boundary-negative",
+      "hex": "ef00"
+    },
+    {
+      "name": "int/byte-boundary",
+      "hex": "6f81bf"
+    },
+    {
+      "name": "int/two-bytes",
+      "hex": "6f81c0"
+    },
+    {
+      "name": "int/rlp-length-boundary",
+      "hex": "6fb8380100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "int/u64-overflow",
+      "hex": "6f88ffffffffffffffc0"
+    },
+    {
+      "name": "int/u256-max",
+      "hex": "6fa0ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbf"
+    },
+    {
+      "name": "int/negative-large",
+      "hex": "ef90ffffffffffffffffffffffffffffffc0"
+    },
+    {
+      "name": "bool/true",
+      "hex": "ff"
+    },
+    {
+      "name": "bool/false",
+      "hex": "7f"
+    },
+    {
+      "name": "bits/zero",
+      "hex": "4f00"
+    },
+    {
+      "name": "bits/positive",
+      "hex": "4f0b"
+    },
+    {
+      "name": "bits/negative",
+      "hex": "cf01"
+    },
+    {
+      "name": "bits/negative-large",
+      "hex": "cf81ff"
+    },
+    {
+      "name": "string/empty",
+      "hex": "5f"
+    },
+    {
+      "name": "string/one-char",
+      "hex": "0561"
+    },
+    {
+      "name": "string/short-max",
+      "hex": "fd616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161"
+    },
+    {
+      "name": "string/long-boundary",
+      "hex": "010061616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161"
+    },
+    {
+      "name": "string/long-127",
+      "hex": "017e61616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161"
+    },
+    {
+      "name": "string/long-boundary-plus-64",
+      "hex": "016f006161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161"
+    },
+    {
+      "name": "string/long-300",
+      "hex": "016f81ac626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262"
+    },
+    {
+      "name": "string/utf8",
+      "hex": "5dc3a67465726e69747920e2809420c3bc6ec3af636f6465"
+    },
+    {
+      "name": "string/embedded-nul",
+      "hex": "1100010002"
+    },
+    {
+      "name": "bytes/empty",
+      "hex": "9f015f"
+    },
+    {
+      "name": "bytes/one",
+      "hex": "9f0105ff"
+    },
+    {
+      "name": "bytes/thirty-two",
+      "hex": "9f01815a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a"
+    },
+    {
+      "name": "bytes/sixty-four",
+      "hex": "9f0101005a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a"
+    },
+    {
+      "name": "address/account",
+      "hex": "9f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "address/account-counting",
+      "hex": "9f00a0000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    },
+    {
+      "name": "address/contract",
+      "hex": "9f02a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "address/oracle",
+      "hex": "9f03a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "address/oracle-query",
+      "hex": "9f04a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "address/channel",
+      "hex": "9f05a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "tuple/unit",
+      "hex": "3f"
+    },
+    {
+      "name": "tuple/one",
+      "hex": "1b02"
+    },
+    {
+      "name": "tuple/mixed",
+      "hex": "3b8eff096f6b"
+    },
+    {
+      "name": "tuple/fifteen",
+      "hex": "fb00020406080a0c0e10121416181a1c"
+    },
+    {
+      "name": "tuple/sixteen",
+      "hex": "0b0000020406080a0c0e10121416181a1c1e"
+    },
+    {
+      "name": "tuple/seventeen",
+      "hex": "0b0100020406080a0c0e10121416181a1c1e20"
+    },
+    {
+      "name": "tuple/nested",
+      "hex": "2b1b0204"
+    },
+    {
+      "name": "list/empty",
+      "hex": "03"
+    },
+    {
+      "name": "list/one",
+      "hex": "1302"
+    },
+    {
+      "name": "list/fifteen",
+      "hex": "f300020406080a0c0e10121416181a1c"
+    },
+    {
+      "name": "list/sixteen",
+      "hex": "1f0000020406080a0c0e10121416181a1c1e"
+    },
+    {
+      "name": "list/two-hundred",
+      "hex": "1f81b800020406080a0c0e10121416181a1c1e20222426282a2c2e30323436383a3c3e40424446484a4c4e50525456585a5c5e60626466686a6c6e70727476787a7c7e6f006f016f026f036f046f056f066f076f086f096f0a6f0b6f0c6f0d6f0e6f0f6f106f116f126f136f146f156f166f176f186f196f1a6f1b6f1c6f1d6f1e6f1f6f206f216f226f236f246f256f266f276f286f296f2a6f2b6f2c6f2d6f2e6f2f6f306f316f326f336f346f356f366f376f386f396f3a6f3b6f3c6f3d6f3e6f3f6f406f416f426f436f446f456f466f476f486f496f4a6f4b6f4c6f4d6f4e6f4f6f506f516f526f536f546f556f566f576f586f596f5a6f5b6f5c6f5d6f5e6f5f6f606f616f626f636f646f656f666f676f686f696f6a6f6b6f6c6f6d6f6e6f6f6f706f716f726f736f746f756f766f776f786f796f7a6f7b6f7c6f7d6f7e6f7f6f81806f81816f81826f81836f81846f81856f81866f8187"
+    },
+    {
+      "name": "list/of-strings",
+      "hex": "230d6f6e650d74776f"
+    },
+    {
+      "name": "list/nested",
+      "hex": "23130203"
+    },
+    {
+      "name": "map/empty",
+      "hex": "2f00"
+    },
+    {
+      "name": "map/int-keys-unsorted",
+      "hex": "2f04862d6d696e7573207468726565040d74776f140d74656e6f8203a82174686f7573616e64"
+    },
+    {
+      "name": "map/string-keys-unsorted",
+      "hex": "2f045f00056102097a7a040d62626206"
+    },
+    {
+      "name": "map/address-keys",
+      "hex": "2f029f00a0000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f049f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa02"
+    },
+    {
+      "name": "map/set-shape",
+      "hex": "2f02023f063f"
+    },
+    {
+      "name": "map/nested-values",
+      "hex": "2f020203041328"
+    },
+    {
+      "name": "map/eighteen-entries",
+      "hex": "2f1200220220041e061c081a0a180c160e1410121210140e160c180a1a081c061e0420022200"
+    },
+    {
+      "name": "variant/none",
+      "hex": "af820001003f"
+    },
+    {
+      "name": "variant/some",
+      "hex": "af820001011b54"
+    },
+    {
+      "name": "variant/three-constructors",
+      "hex": "af83000201012b020578"
+    },
+    {
+      "name": "variant/wide-arities",
+      "hex": "af940001020001020001020001020001020001020001131b12"
+    },
+    {
+      "name": "calldata/no-args",
+      "hex": "2b11b2ba9d593f"
+    },
+    {
+      "name": "calldata/two-args",
+      "hex": "2b119f0337362b6f830f42001568656c6c6f"
+    },
+    {
+      "name": "calldata/address-arg",
+      "hex": "2b11001122331b9f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "type/int",
+      "hex": "07"
+    },
+    {
+      "name": "type/bool",
+      "hex": "17"
+    },
+    {
+      "name": "type/bits",
+      "hex": "57"
+    },
+    {
+      "name": "type/string",
+      "hex": "77"
+    },
+    {
+      "name": "type/any",
+      "hex": "f7"
+    },
+    {
+      "name": "type/bytes-32",
+      "hex": "9740"
+    },
+    {
+      "name": "type/bytes-1024",
+      "hex": "976f8203c0"
+    },
+    {
+      "name": "type/tvar",
+      "hex": "e703"
+    },
+    {
+      "name": "type/account-address",
+      "hex": "4700"
+    },
+    {
+      "name": "type/contract-address",
+      "hex": "4702"
+    },
+    {
+      "name": "type/oracle-address",
+      "hex": "4703"
+    },
+    {
+      "name": "type/oracle-query-address",
+      "hex": "4704"
+    },
+    {
+      "name": "type/channel-address",
+      "hex": "4705"
+    },
+    {
+      "name": "type/list-of-int",
+      "hex": "2707"
+    },
+    {
+      "name": "type/map-string-to-list",
+      "hex": "67772707"
+    },
+    {
+      "name": "type/unit",
+      "hex": "3700"
+    },
+    {
+      "name": "type/tuple",
+      "hex": "37020717"
+    },
+    {
+      "name": "type/option-int",
+      "hex": "87023700370107"
+    },
+    {
+      "name": "type/nested-list",
+      "hex": "272777"
+    }
+  ]
+}
