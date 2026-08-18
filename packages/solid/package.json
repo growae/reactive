@@ -1,6 +1,7 @@
 {
   "name": "@growae/reactive-solid",
   "version": "0.0.5",
+  "license": "MIT",
   "type": "module",
   "main": "dist/esm/exports/index.js",
   "types": "dist/types/exports/index.d.ts",
