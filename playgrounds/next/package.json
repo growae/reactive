@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@aeternity/aepp-sdk": "^14.0.0",
-    "@growae/reactive-react": "workspace:*",
     "@growae/reactive": "workspace:*",
     "@growae/reactive-connectors": "workspace:*",
+    "@growae/reactive-react": "workspace:*",
     "@tanstack/react-query": "^5.50.0",
-    "next": "^15.0.0",
+    "next": "^15.5.23",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

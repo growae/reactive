@@ -41,7 +41,7 @@
     "@tanstack/react-query": "^5.95.2",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
-    "jsdom": "^29.0.1",
+    "jsdom": "^29.1.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
