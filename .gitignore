@@ -14,5 +14,5 @@ packages/*/src/**/*.js
 packages/*/src/**/*.js.map
 packages/*/src/**/*.d.ts
 packages/*/src/**/*.d.ts.map
-# Rust build artifacts
-crates/*/target
+# Rust build artifacts — one workspace, one target directory
+/crates/target/
