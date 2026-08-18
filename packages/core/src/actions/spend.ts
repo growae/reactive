@@ -52,7 +52,11 @@ export async function spend(
     senderId,
     recipientId: recipient,
     amount: BigInt(amount),
-    payload: payload ?? '',
+    // The payload field is an optional `ba_`-encoded bytearray. Defaulting it
+    // to an empty string made every spend without a payload throw a
+    // DecodeError, because '' has no payload to decode; the field has to be
+    // absent instead.
+    payload: payload ? (payload as `ba_${string}`) : undefined,
     fee: txOptions.fee ? BigInt(txOptions.fee) : undefined,
     ttl: txOptions.ttl ?? DEFAULT_TTL,
     nonce,

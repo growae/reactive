@@ -1,20 +1,44 @@
 ---
+# Local devnet used by the integration suite.
+#
+# The node runs in dev mode with on-demand consensus rather than Cuckoo PoW:
+# key blocks are produced on a fixed interval and micro blocks are emitted as
+# soon as a transaction reaches the mempool. That keeps the suite fast and
+# deterministic, and removes the mining warm-up a PoW devnet needs before the
+# beneficiary holds a spendable balance.
+#
+# The faucet is funded directly from the genesis state trees, so it has a
+# balance at height 0 and the tests never have to wait for a mining reward.
+# Its address must stay in sync with FAUCET_PUBLIC_KEY in test/setup/integration.ts.
+system:
+  dev_mode: true
+
 fork_management:
   network_id: ae_devnet
 
 chain:
   persist: false
+  # Ceres (protocol 6) from height 1. aepp-sdk v14 signs the Ceres way — over
+  # the hash of the transaction — so a devnet left on protocol 1 rejects every
+  # transaction the SDK produces with signature_check_failed. The node refuses
+  # to boot unless protocol 1 is also declared at genesis.
   hard_forks:
     "1": 0
+    "6": 1
+  consensus:
+    "0":
+      type: on_demand
+  genesis_accounts:
+    ak_2JEnCrFapeDENGrJBasAauMH11Wk5agJCC2jTKRhV8SXjsfjJx: 1000000000000000000000000000
+
+dev_mode:
+  keyblock_interval: 1
+  microblock_interval: 1
+  auto_emit_microblocks: true
 
 mining:
-  autostart: true
-  beneficiary: "ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU"
-  cuckoo:
-    edge_bits: 15
-    miners:
-      - executable: mean15-generic
-        extra_args: ""
+  beneficiary: "ak_2JEnCrFapeDENGrJBasAauMH11Wk5agJCC2jTKRhV8SXjsfjJx"
+  beneficiary_reward_delay: 2
 
 http:
   external:

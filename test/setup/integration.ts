@@ -2,17 +2,30 @@ import { memory } from '../../packages/core/src/connectors/memory'
 import { createConfig } from '../../packages/core/src/createConfig'
 import type { Network } from '../../packages/core/src/types/network'
 
+export const NODE_URL = process.env.AE_NODE_URL ?? 'http://localhost:3013'
+
 export const devnet: Network = {
   id: 'ae_devnet',
   name: 'Local Devnet',
-  nodeUrl: 'http://localhost:3013',
+  nodeUrl: NODE_URL,
   networkId: 'ae_devnet',
 }
 
+/**
+ * Throwaway devnet keypair. It only ever holds tokens on the local devnet
+ * defined by test/config/aeternity.yaml, which pre-funds FAUCET_PUBLIC_KEY
+ * from its genesis accounts — the two must be changed together.
+ *
+ * aepp-sdk v14 takes the `sk_`-prefixed encoding, not a raw hex seed.
+ */
 export const FAUCET_SECRET_KEY =
-  'e6a91d633c77cf5771329d3571e1b97e4b6a8da1f92dec562e713ca30fba722c0fc9aa4e782fbd71af7de0a7b40ced95e03b73cb57d0fcf06a54c75ce36f01f02'
+  'sk_23dvMkkLdzvYZeWUtKvemFwkM6sB4pRjaskMnb7rFuGk8ajmqP'
 export const FAUCET_PUBLIC_KEY =
-  'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU'
+  'ak_2JEnCrFapeDENGrJBasAauMH11Wk5agJCC2jTKRhV8SXjsfjJx'
+
+/** Unfunded devnet address used as a spend target. */
+export const RECIPIENT_PUBLIC_KEY =
+  'ak_2faBrmBB7wDZs9FJjJNjucnxVhdnYtXFfv5Exs31iJL4QZWaaa'
 
 export function createTestConfig() {
   return createConfig({
@@ -26,7 +39,7 @@ export function createTestConfig() {
 }
 
 export async function waitForNode(
-  url = 'http://localhost:3013',
+  url = NODE_URL,
   maxRetries = 30,
   intervalMs = 2000,
 ): Promise<void> {

@@ -94,18 +94,6 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main'
     needs: build
     timeout-minutes: 15
-    services:
-      aeternity-node:
-        image: aeternity/aeternity:v7.2.0
-        ports:
-          - 3013:3013
-          - 3113:3113
-          - 3014:3014
-        options: >-
-          --health-cmd "curl -f http://localhost:3013/v3/status || exit 1"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 20
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -115,4 +103,16 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      # Started with compose rather than `services:`. A service container is
+      # created before the repository is checked out, so it cannot mount
+      # test/config/aeternity.yaml and boots as a default mainnet node with
+      # no devnet, no dev mode and no funded faucet.
+      - name: Start devnet
+        run: docker compose up -d --wait
       - run: pnpm test:integration
+      - name: Devnet logs
+        if: failure()
+        run: docker compose logs --tail=200
+      - name: Stop devnet
+        if: always()
+        run: docker compose down -v

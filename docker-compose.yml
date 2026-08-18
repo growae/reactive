@@ -1,12 +1,11 @@
-version: '3'
 services:
   aeternity-node:
     image: aeternity/aeternity:v7.2.0
     hostname: node
     ports:
-      - '3013:3013'
-      - '3113:3113'
-      - '3014:3014'
+      - '${AE_NODE_PORT:-3013}:3013'
+      - '${AE_INTERNAL_PORT:-3113}:3113'
+      - '${AE_CHANNEL_PORT:-3014}:3014'
     environment:
       AETERNITY_CONFIG: /home/aeternity/aeternity.yaml
     volumes:

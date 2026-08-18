@@ -71,9 +71,14 @@ export function memory(parameters: MemoryParameters) {
       return network
     },
 
-    async signTransaction({ tx }) {
+    async signTransaction({ tx, networkId, innerTx }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return accounts[0]!.signTransaction(tx as `tx_${string}`)
+      // networkId is part of the signed payload, so it has to reach the
+      // account — the SDK throws when it is missing rather than guessing.
+      return accounts[0]!.signTransaction(tx as `tx_${string}`, {
+        networkId,
+        innerTx,
+      })
     },
 
     async signMessage({ message }) {
