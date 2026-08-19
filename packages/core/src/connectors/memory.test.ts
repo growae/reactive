@@ -147,6 +147,27 @@ describe('memory connector', () => {
         connector.signTransaction!({ tx: 'tx_data', networkId: testnet.id }),
       ).rejects.toThrow('Connector not connected')
     })
+
+    // The SDK rejects a signing call with no network id, and signs for the
+    // wrong chain if given the wrong one, so assert both options reach it.
+    it('should forward networkId and innerTx to the account', async () => {
+      const { connector } = setupConnector()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+        innerTx: true,
+      })
+
+      expect(signed).toBe('signed_tx_data')
+      const account = vi.mocked(MemoryAccount).mock.results[0]!.value
+      expect(account.signTransaction).toHaveBeenCalledWith('tx_data', {
+        networkId: testnet.id,
+        innerTx: true,
+      })
+    })
   })
 
   describe('signMessage', () => {
