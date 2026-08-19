@@ -48,5 +48,17 @@ jobs:
       # this directory's own test) can load it without a Rust toolchain.
       # Rebuilding here and diffing against the committed copy is what makes
       # that convention enforced rather than trusted.
+      #
+      # `git diff` alone would miss an ADDED output file: build:js does
+      # `rm -rf generated` first, so a jco run that emits something new (a
+      # second core module once the world grows past one) leaves it untracked
+      # and invisible to a diff. `git status --porcelain` sees all three
+      # cases — modified, deleted and added.
       - name: Fail on committed-artifact drift
-        run: git diff --exit-code bindings/wasm-js/generated/
+        run: |
+          git status --porcelain --untracked-files=all bindings/wasm-js/generated/ > /tmp/drift
+          if [ -s /tmp/drift ]; then
+            echo "generated/ differs from a fresh build — regenerate with 'pnpm build' in bindings/wasm-js and commit:"
+            cat /tmp/drift
+            exit 1
+          fi
