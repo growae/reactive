@@ -17,11 +17,14 @@ exports.
   owns it) — this one is disposable and gets deleted once a real core
   artifact exists to transpile against.
 - `generated/` — the `jco transpile` output (`.core.wasm` + `.js` + `.d.ts`).
-  **Committed**, not gitignored: CI has no Rust toolchain
-  (`.github/workflows/ci.yml` is Node/pnpm-only), so the differential
-  harness and this package's own test load the pre-built glue rather than
-  rebuilding it. Regenerate with `pnpm build` after any `wit/` or
-  `placeholder-core/` change and commit the result.
+  **Committed**, not gitignored: the differential harness (and this
+  package's own test) load the pre-built glue rather than rebuilding it, so
+  a Rust toolchain is never a runtime dependency for consumers. Regenerate
+  with `pnpm build` after any `wit/` or `placeholder-core/` change and
+  commit the result — `.github/workflows/wasm-bindings.yml` rebuilds on
+  every push/PR touching this directory and fails the gate on any diff
+  between a fresh build and the committed copy, so drift here is caught,
+  not trusted.
 
 ### Pinned toolchain — measured, not guessed
 
@@ -49,9 +52,12 @@ pnpm test
 ```
 
 `pnpm build` needs a Rust toolchain with the `wasm32-unknown-unknown`
-target and `cargo-component` installed locally — it is a maintainer step,
-not a CI dependency. `pnpm test` only needs Node and runs against the
-committed `generated/` output.
+target and `cargo-component 0.21.1` installed locally.
+`.github/workflows/wasm-bindings.yml` runs it in CI too (path-filtered to
+this directory, same as `rust.yml` is to `crates/**`), so `pnpm test` alone
+only needs Node and runs against the committed `generated/` output, but the
+build itself is verified on every push and PR, not left to a maintainer's
+local state.
 
 ### Status
 

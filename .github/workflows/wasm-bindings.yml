@@ -1,0 +1,52 @@
+name: WASM bindings
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'bindings/wasm-js/**'
+      - '.github/workflows/wasm-bindings.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'bindings/wasm-js/**'
+      - '.github/workflows/wasm-bindings.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  wasm-bindings:
+    name: WASM bindings
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to match rust.yml's toolchain rather than left floating.
+      - uses: dtolnay/rust-toolchain@1.97
+        with:
+          targets: wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bindings/wasm-js/placeholder-core
+
+      - run: cargo install --locked cargo-component@0.21.1
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter @growae/reactive-wasm-js-binding run build
+
+      # The transpiled output is committed so the differential harness (and
+      # this directory's own test) can load it without a Rust toolchain.
+      # Rebuilding here and diffing against the committed copy is what makes
+      # that convention enforced rather than trusted.
+      - name: Fail on committed-artifact drift
+        run: git diff --exit-code bindings/wasm-js/generated/
