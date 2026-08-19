@@ -11,6 +11,11 @@ services:
       AETERNITY_CONFIG: /home/aeternity/aeternity.yaml
     volumes:
       - ./test/config/aeternity.yaml:/home/aeternity/aeternity.yaml
+      # Pre-fund the suite's disposable account at genesis rather than mining to
+      # it. Mining rewards only land after `beneficiary_reward_delay` key blocks,
+      # and the bundled cuckoo miner does not run on every host, so a suite that
+      # waits for a block is slow where it works and hangs where it does not.
+      - ./test/config/accounts.json:/home/aeternity/node/data/aecore/.genesis/accounts_test.json
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3013/v3/status']
       interval: 5s

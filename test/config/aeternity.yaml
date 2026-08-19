@@ -2,19 +2,21 @@
 fork_management:
   network_id: ae_devnet
 
+# Dev mode with on-demand consensus: blocks are produced when there is something
+# to put in them, with no proof of work. The previous config mined with cuckoo
+# `mean15-generic`, which meant the suite waited on real PoW for every block and
+# did not run at all on hosts where that prebuilt miner cannot execute.
+system:
+  dev_mode: true
+
 chain:
   persist: false
-  hard_forks:
-    "1": 0
+  consensus:
+    "0":
+      type: on_demand
 
-mining:
-  autostart: true
-  beneficiary: "ak_V85oq1Pkv1QweNQ3RBkCnvBgB2v5RdCmUo3EmLxp4KFcreVDe"
-  cuckoo:
-    edge_bits: 15
-    miners:
-      - executable: mean15-generic
-        extra_args: ""
+dev_mode:
+  auto_emit_microblocks: true
 
 http:
   external:

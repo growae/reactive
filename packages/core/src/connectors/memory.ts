@@ -71,9 +71,12 @@ export function memory(parameters: MemoryParameters) {
       return network
     },
 
-    async signTransaction({ tx }) {
+    async signTransaction({ tx, networkId, innerTx }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return accounts[0]!.signTransaction(tx as `tx_${string}`)
+      return accounts[0]!.signTransaction(tx as `tx_${string}`, {
+        networkId,
+        innerTx,
+      })
     },
 
     async signMessage({ message }) {
