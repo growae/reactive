@@ -9,10 +9,19 @@ export const devnet: Network = {
   networkId: 'ae_devnet',
 }
 
+/**
+ * A deliberately disposable devnet account. The secret below is committed on
+ * purpose: it is generated for this suite alone, it only ever signs on the
+ * throwaway `ae_devnet` chain that `docker-compose.yml` starts, and it holds
+ * nothing of value on any real network. `test/config/aeternity.yaml` mines to
+ * this same address, so the local node funds it from the first block and no
+ * external faucet is involved. Never reuse it elsewhere and never fund it on
+ * testnet or mainnet — rotate it here instead.
+ */
 export const FAUCET_SECRET_KEY =
-  'e6a91d633c77cf5771329d3571e1b97e4b6a8da1f92dec562e713ca30fba722c0fc9aa4e782fbd71af7de0a7b40ced95e03b73cb57d0fcf06a54c75ce36f01f02'
+  'sk_fD8RArGzn1SVugd71LYohCMdR7k6j495BwCao6BTSWEVDYyuS'
 export const FAUCET_PUBLIC_KEY =
-  'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU'
+  'ak_V85oq1Pkv1QweNQ3RBkCnvBgB2v5RdCmUo3EmLxp4KFcreVDe'
 
 export function createTestConfig() {
   return createConfig({

@@ -9,7 +9,7 @@ chain:
 
 mining:
   autostart: true
-  beneficiary: "ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU"
+  beneficiary: "ak_V85oq1Pkv1QweNQ3RBkCnvBgB2v5RdCmUo3EmLxp4KFcreVDe"
   cuckoo:
     edge_bits: 15
     miners:
