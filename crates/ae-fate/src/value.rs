@@ -63,9 +63,12 @@ impl AddressKind {
 
 /// A FATE map, held in the protocol's canonical key order.
 ///
-/// The order is not an implementation detail: the reference decoder rejects a
+/// The order is not an implementation detail: the *node's* decoder rejects a
 /// map whose entries arrive in any other order, so a map that is merely
-/// *correct* as a mapping is still unserialisable if it is unsorted. Entries
+/// *correct* as a mapping is still unserialisable if it is unsorted. The
+/// JavaScript library is the lenient one here and checks no order on read, so
+/// agreeing with it is not the same as being accepted by a chain; see
+/// `tests/divergence.rs`. Entries
 /// are therefore canonicalised on construction, and the only way to build one
 /// is through [`FateMap::new`], which also enforces the protocol's rule that a
 /// map may not be used as a key.

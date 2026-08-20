@@ -1,8 +1,13 @@
 //! The protocol's total order over FATE values.
 //!
 //! This is not a convenience: map serialisation is only canonical because the
-//! entries are sorted by it, and the reference decoder rejects a map sorted any
-//! other way. The order is `aeb_fate_data:lt/2`, including the parts that are
+//! entries are sorted by it, and the *node's* decoder rejects a map sorted any
+//! other way — `aebytecode` re-sorts what it read and raises
+//! `{unknown_map_serialization_format, …}` when the input did not already
+//! match. The JavaScript library does the opposite and validates no order at
+//! all, so it is not the implementation this sentence is about; see
+//! `tests/divergence.rs`. The order is `aeb_fate_data:lt/2`, including the
+//! parts that are
 //! surprising — values of different types are ordered by a fixed type ordinal
 //! rather than structurally, strings and byte strings order by *length first*
 //! and only then lexicographically, and negative bit fields sort after every

@@ -11,29 +11,46 @@
 //! the bytes a map serialises to, which means a contract written against one
 //! and read by the other disagrees about the same map.
 //!
-//! # What is ruled, and what is not
+//! # All four are ruled, and all four go the node's way
 //!
-//! All four are re-measured against an installed 1.9.1 rather than carried
-//! forward from the earlier note, and all four reproduced exactly.
+//! All four were re-measured against an installed 1.9.1 rather than carried
+//! forward from an earlier note, and all four reproduced exactly.
 //!
-//! The two decode-side cases are **closed**: strict. The closing evidence is
+//! **The two decode-side cases are closed as strict.** The closing evidence is
 //! not the tests below — those only assert the strictness — but the round-trip
 //! sweep in `tests/sweep.rs`, where the reference's own encoder wrote 337
 //! integer cases spanning ±(2^441) and 60 seeded large magnitudes and produced
 //! neither a negative zero nor a non-canonical magnitude once. The reference
 //! accepts these forms; it never emits them. Rejecting them therefore costs a
-//! consumer nothing, which is what makes this ours to rule.
+//! consumer nothing.
 //!
-//! The two ordering cases are **not ruled here**, and the code below is the
-//! standing behaviour pending that ruling rather than its conclusion. They
-//! change the bytes, so they are a consumer-visible compatibility decision.
-//! Two measurements bear on it and both are recorded on the tests themselves:
-//! how far the disagreement actually reaches, and — the one that matters most —
-//! that `MapSerializer.deserializeStream` performs no order validation at all,
-//! so the reference reads a map written in either order and recovers the same
-//! mapping. The direction that is still unmeasured is whether the *node's*
-//! decoder is equally forgiving; nothing in this repository can answer that
-//! without a chain.
+//! **The two ordering cases are closed the same way**, and they turned out not
+//! to be a two-sided compatibility choice at all: `aepp-calldata` 1.9.1 is
+//! wrong on both, and the node's own source says so.
+//!
+//! `aebytecode`'s `deserialize2/1` re-sorts a map it has read and raises
+//! `{unknown_map_serialization_format, KVList}` when the input was not already
+//! in that order — the clause is present in every release tag back to `v3.2.0`,
+//! so it is not a recent tightening — and the module states the intent directly
+//! above `sort/1`: *"Sorting is used to get a unique result. Deserialization is
+//! checking whether the provided key-value pairs are sorted and raises an
+//! exception if not."* `aeb_fate_data:lt/2` then gives both rules outright
+//! rather than by inference: `compare_bytes` measures length with `byte_size`,
+//! and the `?ORD_BITS` clause puts negatives after non-negatives while ordering
+//! two negatives numerically. Those are `src/ord.rs:40` and `src/ord.rs:65`.
+//!
+//! So the read direction runs opposite to what the JS suggested. The chain
+//! accepts exactly one order, this crate already writes it, and
+//! [`rejects_a_map_written_in_the_js_order`] mirrors the node rather than
+//! diverging from a peer. What the JS does on read — no order validation at
+//! all, recorded below — is leniency around its own encoder's output, not a
+//! second valid ordering.
+//!
+//! The consequence lands outside this crate: `packages/core` builds its
+//! calldata through `aepp-calldata`, so a contract call passing a map with
+//! non-ASCII string keys produces bytes the node refuses to deserialise, with
+//! no caller-side workaround. That is a defect in a shipped package rather than
+//! a parity question and is tracked on its own.
 
 use ae_fate::{deserialize, serialize, Error, FateInt, FateValue};
 
@@ -93,7 +110,7 @@ fn rejects_non_canonical_integers() {
 ///
 /// The reference reads either order — its map deserialiser does no order check
 /// — so what this crate writes stays readable by every `aepp-calldata`
-/// consumer. Which order the *node* accepts is the open half.
+/// consumer. The node reads only its own, which is the one written here.
 #[test]
 fn orders_string_keys_by_byte_length() {
     let map = FateValue::map([
@@ -144,19 +161,18 @@ fn orders_negative_bit_fields_numerically() {
     );
 }
 
-/// The read-direction cost of the two ordering rules, stated as behaviour
-/// rather than left in prose.
+/// The read direction, stated as behaviour rather than left in prose.
 ///
 /// A map the reference wrote is rejected here whenever its keys are ordered the
-/// way only the reference orders them — which is what "we follow the node"
-/// means when the bytes are already on chain. The reference is asymmetric about
-/// this: it writes one order and reads both, so the reverse never happens and
-/// nothing this crate writes is unreadable there.
+/// way only the reference orders them. That reads like a divergence from a peer
+/// and is not one: `aebytecode`'s map clause raises
+/// `{unknown_map_serialization_format, …}` on exactly these bytes, so this
+/// rejection is the node's, and the JS output is the side that no chain will
+/// accept.
 ///
-/// If the node turns out to read both orders too, these two rules are free and
-/// the case for strictness is unopposed. If it does not, this rejection is the
-/// correct behaviour and the JS output is the broken side. Either way the
-/// decision is about which of those is true, not about what this test asserts.
+/// The reference is asymmetric about it — it writes one order and reads both —
+/// so the converse never arises and nothing this crate writes is unreadable
+/// there.
 #[test]
 fn rejects_a_map_written_in_the_js_order() {
     let js_string_keys = [0x2f, 0x02, 0x09, 0xc3, 0xa4, 0x02, 0x09, 0x78, 0x79, 0x04];

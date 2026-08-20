@@ -107,7 +107,18 @@ impl fmt::Display for Error {
                 f,
                 "variant tag {tag} has arity {expected} but carried {found} values"
             ),
-            Error::MapNotSorted => write!(f, "map entries are not in canonical key order"),
+            // Overwhelmingly this is calldata built by `@aeternity/aepp-calldata`,
+            // which sorts non-ASCII string keys and negative bit-field keys into
+            // an order the node rejects, so the message names that before the
+            // reader goes looking for a corrupt byte. No separate variant: the
+            // bytes are indistinguishable from any other unsorted map, and a
+            // diagnostic is not worth widening the public surface for.
+            Error::MapNotSorted => write!(
+                f,
+                "map entries are not in canonical key order \
+                 (aepp-calldata orders non-ASCII string keys and negative bit-field keys \
+                 differently to the node)"
+            ),
             Error::DuplicateMapKey => write!(f, "duplicate map key"),
             Error::MapAsMapKey => write!(f, "a map cannot be used as a map key"),
             Error::InvalidBytesSize => write!(f, "invalid size in a bytes type"),
