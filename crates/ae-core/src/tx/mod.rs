@@ -12,6 +12,12 @@ pub use schema::{EntryTag, FieldKind, SchemaEntry, TX_SCHEMA};
 pub use tag::{Tag, ALL_TAGS};
 pub use value::{Pointer, TxParams, Value};
 
+/// The two field resolutions the fee model has to agree with byte for byte.
+///
+/// Not public: a consumer prices a transaction through
+/// [`crate::fee::minimum_transaction_fee`], which is the point of that function.
+pub(crate) use codec::{abi_version_byte, nested_tx_bytes};
+
 use crate::encoding::{self, Encoding};
 use crate::error::{Error, Result};
 use crate::protocol::ConsensusProtocolVersion;

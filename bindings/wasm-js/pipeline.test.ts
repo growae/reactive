@@ -138,8 +138,9 @@ describe('tx + aens + fee, end to end', () => {
     // nothing else may move with it.
     for (const tag of ['ContractCreateTx', 'GaAttachTx', 'GaMetaTx']) {
       const flat = 5n * 15000n + sizeGas
-      expect(fee.estimateGas(tag, size, 1, 0, 3)).toBe(flat)
-      expect(fee.estimateGas(tag, size, 1, 0, undefined)).toBe(flat)
+      for (const abi of [3, 1, undefined, 99]) {
+        expect(fee.estimateGas(tag, size, 1, 0, abi)).toBe(flat)
+      }
     }
   })
 

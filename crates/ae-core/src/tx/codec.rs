@@ -5,7 +5,7 @@ use crate::bytes::{bytes_to_uint, uint_to_bytes};
 use crate::encoding::{self, Encoding};
 use crate::error::{Error, Result};
 use crate::id::{deserialize_id, serialize_id, ID_ENCODINGS};
-use crate::protocol::{self, CallKind};
+use crate::protocol::{self, CallKind, ConsensusProtocolVersion};
 use crate::rlp::Item;
 use crate::tx::schema::{FieldKind, SchemaEntry};
 use crate::tx::{build_rlp, BuildOptions, Overrides, Pointer, Tag, TxParams, Value};
@@ -222,23 +222,12 @@ pub(crate) fn serialize(
             })?;
             Ok(int_item(BigUint::from(limit)))
         }
-        FieldKind::AbiVersion => {
-            let abi = match value {
-                Some(v) => u8::try_from(v.as_u64().ok_or(Error::FieldType {
-                    field: name,
-                    expected: "a one-byte abi version",
-                })?)
-                .map_err(|_| Error::FieldValue {
-                    field: name,
-                    reason: "does not fit in one byte".into(),
-                })?,
-                None => {
-                    protocol::params(options.protocol).abi_version(CallKind::for_tag(entry.tag))
-                        as u8
-                }
-            };
-            Ok(Item::Bytes(vec![abi]))
-        }
+        FieldKind::AbiVersion => Ok(Item::Bytes(vec![abi_version_byte(
+            name,
+            value,
+            entry.tag,
+            options.protocol,
+        )?])),
         FieldKind::CtVersion => {
             let (vm, abi) = match value {
                 Some(Value::CtVersion {
@@ -327,30 +316,9 @@ pub(crate) fn serialize(
             }
             Ok(Item::List(out))
         }
-        FieldKind::Transaction(expected) => {
-            let bytes = match value.ok_or(Error::MissingField(name))? {
-                Value::Tx(inner) => {
-                    if let Some(expected) = expected {
-                        if inner.tag() != *expected {
-                            return Err(Error::UnexpectedTag {
-                                expected: expected.as_u32(),
-                                actual: inner.tag().as_u32(),
-                            });
-                        }
-                    }
-                    build_rlp(inner, options, &Overrides::default())?
-                }
-                Value::Encoded(string) => decode_as(name, string, Encoding::Transaction)?,
-                Value::Bytes(bytes) => bytes.clone(),
-                _ => {
-                    return Err(Error::FieldType {
-                        field: name,
-                        expected: "a nested transaction",
-                    })
-                }
-            };
-            Ok(Item::Bytes(bytes))
-        }
+        FieldKind::Transaction(expected) => Ok(Item::Bytes(nested_tx_bytes(
+            name, value, expected, options,
+        )?)),
         FieldKind::Entry(_) => {
             let bytes = match value.ok_or(Error::MissingField(name))? {
                 Value::Bytes(bytes) => bytes.clone(),
@@ -495,6 +463,72 @@ pub(crate) fn deserialize(name: &'static str, kind: &FieldKind, item: &Item) -> 
             Ok(Value::Tx(Box::new(inner)))
         }
         FieldKind::Entry(_) => Ok(Value::Bytes(item.as_bytes()?.to_vec())),
+    }
+}
+
+/// The `abiVersion` byte a transaction will be *serialised* with.
+///
+/// One resolution, two callers: [`serialize`] writes this byte, and
+/// [`crate::fee::minimum_transaction_fee`] prices by it. Two copies of the
+/// protocol default would drift apart silently, and the direction they would
+/// drift in is the expensive one.
+///
+/// The subtlety is what happens when `params` carries no `abiVersion`: the field
+/// is not omitted from the wire, it is filled from the protocol's own default for
+/// the tag's call kind — which on Ceres makes a `ContractCallTx` a FATE call, abi
+/// `3`, priced by the node at `12×` the base gas. A fee model that read the
+/// params map instead of this would see nothing, take the `30×` arm meant for an
+/// ABI nobody can name, and overcharge 2.5× for an ABI this crate itself chose.
+pub(crate) fn abi_version_byte(
+    name: &'static str,
+    value: Option<&Value>,
+    tag: Tag,
+    protocol: ConsensusProtocolVersion,
+) -> Result<u8> {
+    match value {
+        Some(value) => u8::try_from(value.as_u64().ok_or(Error::FieldType {
+            field: name,
+            expected: "a one-byte abi version",
+        })?)
+        .map_err(|_| Error::FieldValue {
+            field: name,
+            reason: "does not fit in one byte".into(),
+        }),
+        None => Ok(protocol::params(protocol).abi_version(CallKind::for_tag(tag)) as u8),
+    }
+}
+
+/// The serialised bytes of a nested transaction field.
+///
+/// Shared for the same reason as [`abi_version_byte`]: [`serialize`] writes these
+/// bytes, and the fee model measures them, because a `GaMetaTx` and a
+/// `PayingForTx` pay only for their own bytes and the wrapped transaction is
+/// charged separately. A second copy that measured a different encoding of the
+/// same field would make the wrapper pay for bytes it does not owe.
+pub(crate) fn nested_tx_bytes(
+    name: &'static str,
+    value: Option<&Value>,
+    expected: &Option<Tag>,
+    options: &BuildOptions<'_>,
+) -> Result<Vec<u8>> {
+    match value.ok_or(Error::MissingField(name))? {
+        Value::Tx(inner) => {
+            if let Some(expected) = expected {
+                if inner.tag() != *expected {
+                    return Err(Error::UnexpectedTag {
+                        expected: expected.as_u32(),
+                        actual: inner.tag().as_u32(),
+                    });
+                }
+            }
+            build_rlp(inner, options, &Overrides::default())
+        }
+        Value::Encoded(string) => decode_as(name, string, Encoding::Transaction),
+        Value::Bytes(bytes) => Ok(bytes.clone()),
+        _ => Err(Error::FieldType {
+            field: name,
+            expected: "a nested transaction",
+        }),
     }
 }
 

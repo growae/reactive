@@ -16,7 +16,12 @@
 
 use crate::error::{Error, Result};
 use crate::protocol::{params, AbiVersion, ConsensusProtocolVersion, ProtocolParams};
-use crate::tx::Tag;
+use crate::tx::schema::{schema_for, SchemaEntry};
+use crate::tx::{
+    abi_version_byte, build_rlp, nested_tx_bytes, BuildOptions, FieldKind, Overrides, Tag,
+    TxParams, Value,
+};
+use num_bigint::BigUint;
 
 /// What the gas formula needs to know about a serialised transaction.
 ///
@@ -174,6 +179,196 @@ pub fn calculate_min_fee<R: RebuildTx + ?Sized>(
     })
 }
 
+/// The smallest fee, in aettos, that `params` may carry.
+///
+/// The join between the fee model and transaction serialisation. Everything
+/// [`TxGasInputs`] needs is read off the transaction being priced, so no caller
+/// assembles it and none can forget a field — which is the point, because the
+/// fields are not equally visible and the invisible ones fail expensively.
+///
+/// [`calculate_min_fee`] and [`RebuildTx`] are unchanged and stay public. A
+/// caller who has to drive the fixed point themselves — one holding a block
+/// height for an absolute oracle ttl, say — still can.
+///
+/// # The ABI comes off the wire, not off the params map
+///
+/// `abi_version` resolves to the byte [`crate::tx::build_tx`] *will serialise*.
+/// A `ContractCallTx` built without an explicit `abiVersion` is not sent without
+/// one: the protocol's default goes on the wire, and on Ceres that is FATE, abi
+/// `3`, which the node prices at `12×` the base gas. Reading the params map
+/// would answer "the caller did not say", take the `30×` arm, and overcharge
+/// 2.5× for an ABI this crate itself chose — this function's own defect, in the
+/// place it was moved to stop it happening in a binding.
+///
+/// `None` therefore survives only where the wire carries a number this crate has
+/// no name for, which is exactly where the node's own fallthrough is `30×` too.
+/// The dear arm is for an ABI nobody can name, not for one we picked.
+///
+/// # Errors
+///
+/// - **`gasLimit` absent** on a contract transaction. Its encoded length is part
+///   of the size this fixed point converges on, so there is no default that does
+///   not price a transaction nobody is going to send. Choose the gas first.
+/// - **An oracle ttl given as an absolute block height.** Turning it into the
+///   relative ttl the gas formula charges for needs the current height, which is
+///   a node lookup this crate deliberately does not do. Convert it yourself and
+///   drive [`calculate_min_fee`].
+pub fn minimum_transaction_fee(
+    version: ConsensusProtocolVersion,
+    params: &TxParams,
+) -> Result<u128> {
+    let entry = schema_for(params.tag(), params.version())?;
+    let options = BuildOptions {
+        protocol: version,
+        fee_model: None,
+    };
+    let mut rebuild = JoinedTx {
+        tag: entry.tag,
+        relative_ttl: relative_ttl_of(entry, params)?,
+        inner_tx_size: inner_tx_size_of(entry, params, &options)?,
+        abi_version: abi_version_of(entry, params, version)?,
+        params,
+        options,
+    };
+    calculate_min_fee(version, &mut rebuild)
+}
+
+/// The [`RebuildTx`] every binding would otherwise write for itself.
+struct JoinedTx<'a> {
+    params: &'a TxParams,
+    options: BuildOptions<'a>,
+    tag: Tag,
+    relative_ttl: u64,
+    inner_tx_size: usize,
+    abi_version: Option<AbiVersion>,
+}
+
+impl RebuildTx for JoinedTx<'_> {
+    fn rebuild_with_fee(&mut self, fee: u128) -> Result<TxGasInputs> {
+        // The candidate goes in as an override rather than into the params, so
+        // the caller's transaction is never mutated and `FieldKind::Fee` short
+        // circuits before it can ask a fee model for the number we are deriving.
+        let bytes = build_rlp(
+            self.params,
+            &self.options,
+            &Overrides {
+                fee: Some(BigUint::from(fee)),
+                gas_limit: None,
+            },
+        )?;
+        Ok(TxGasInputs {
+            tag: self.tag,
+            size: bytes.len(),
+            relative_ttl: self.relative_ttl,
+            inner_tx_size: self.inner_tx_size,
+            abi_version: self.abi_version,
+        })
+    }
+}
+
+/// The ABI the transaction will be serialised as, named where this crate has a
+/// name for it.
+///
+/// Resolved through [`crate::tx::codec::abi_version_byte`], so the byte priced
+/// here and the byte written to the wire cannot disagree. See this module's
+/// [`minimum_transaction_fee`] docs for why that matters more than it looks.
+///
+/// The `ctVersion` fallback is read from the params map rather than resolved,
+/// and that is safe rather than sloppy: the two tags carrying `ctVersion` —
+/// `ContractCreateTx` and `GaAttachTx` — answer `5×` on every ABI arm, which
+/// `no_other_tag_is_priced_by_its_abi` pins. `ContractCallTx` is the only tag
+/// whose multiplier moves with its ABI, and it carries `abiVersion`.
+fn abi_version_of(
+    entry: &SchemaEntry,
+    params: &TxParams,
+    version: ConsensusProtocolVersion,
+) -> Result<Option<AbiVersion>> {
+    let carries_abi_version = entry
+        .fields
+        .iter()
+        .any(|(name, kind)| *name == "abiVersion" && matches!(kind, FieldKind::AbiVersion));
+    let byte = if carries_abi_version {
+        abi_version_byte("abiVersion", params.get("abiVersion"), entry.tag, version)?
+    } else {
+        match params.get("ctVersion") {
+            Some(Value::CtVersion { abi_version, .. }) => *abi_version,
+            _ => return Ok(None),
+        }
+    };
+    Ok(match byte {
+        0 => Some(AbiVersion::NoAbi),
+        1 => Some(AbiVersion::Sophia),
+        3 => Some(AbiVersion::Fate),
+        // A number this crate has no name for. The node's own answer for an ABI
+        // it does not recognise is the 30x arm, and so is ours.
+        _ => None,
+    })
+}
+
+/// The ttl an oracle transaction is charged for, in key blocks.
+///
+/// One for every other tag, where the field is ignored. The values come from the
+/// schema's own defaults when the caller omitted them, for the same reason the
+/// ABI does: the wire will carry them.
+fn relative_ttl_of(entry: &SchemaEntry, params: &TxParams) -> Result<u64> {
+    let (type_key, value_key) = match entry.tag {
+        Tag::OracleRegisterTx | Tag::OracleExtendTx => ("oracleTtlType", "oracleTtlValue"),
+        Tag::OracleQueryTx => ("queryTtlType", "queryTtlValue"),
+        Tag::OracleRespondTx => ("responseTtlType", "responseTtlValue"),
+        _ => return Ok(1),
+    };
+    // `FieldKind::OracleTtlType` serialises an absent type as 0, delta.
+    if params.get(type_key).and_then(Value::as_u64).unwrap_or(0) != 0 {
+        return Err(Error::FieldValue {
+            field: type_key,
+            reason: "an absolute (block) ttl cannot be priced without the current height; \
+                     convert it to a delta, or drive calculate_min_fee yourself"
+                .into(),
+        });
+    }
+    params
+        .get(value_key)
+        .and_then(Value::as_u64)
+        .or_else(|| schema_default(entry, value_key))
+        .ok_or(Error::MissingField(value_key))
+}
+
+/// The serialised length of the wrapped transaction, for the two tags that carry
+/// one; zero for every other, which pays for all of its own bytes.
+fn inner_tx_size_of(
+    entry: &SchemaEntry,
+    params: &TxParams,
+    options: &BuildOptions<'_>,
+) -> Result<usize> {
+    if !matches!(entry.tag, Tag::GaMetaTx | Tag::PayingForTx) {
+        return Ok(0);
+    }
+    let wrapped = entry
+        .fields
+        .iter()
+        .find_map(|(name, kind)| match kind {
+            FieldKind::Transaction(expected) => Some((*name, expected)),
+            _ => None,
+        })
+        .ok_or(Error::MissingField("tx"))?;
+    Ok(nested_tx_bytes(wrapped.0, params.get(wrapped.0), wrapped.1, options)?.len())
+}
+
+/// The value the schema will serialise for a short-uint field the caller omitted.
+///
+/// Read out of the schema rather than repeated here, so a changed default moves
+/// the fee with it.
+fn schema_default(entry: &SchemaEntry, name: &str) -> Option<u64> {
+    entry.fields.iter().find_map(|(field, kind)| match kind {
+        FieldKind::ShortUIntDefault(default) | FieldKind::UintDefault(default)
+            if *field == name =>
+        {
+            Some(*default)
+        }
+        _ => None,
+    })
+}
+
 /// The minimum AENS fee for a name whose label is `label_length` characters.
 ///
 /// `label_length` is the punycode length of the name without its `.chain`
@@ -236,6 +431,8 @@ fn div_ceil_u128(numerator: u128, denominator: u128) -> u128 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    use crate::encoding::{encode, Encoding};
 
     const CERES: ConsensusProtocolVersion = ConsensusProtocolVersion::Ceres;
 
@@ -393,6 +590,254 @@ mod tests {
     #[test]
     fn a_non_converging_rebuilder_errors_rather_than_hangs() {
         assert!(calculate_min_fee(CERES, &mut Oscillating(0)).is_err());
+    }
+
+    // -----------------------------------------------------------------------
+    // The join: `minimum_transaction_fee`
+    //
+    // The chain corpus cannot reach any of the cases below. Every mined
+    // transaction carries `abiVersion` explicitly, so the wire and the params
+    // map agree on all 161 of them and the defaulted case — the ordinary one for
+    // anyone building a contract call — never appears. These are constructed for
+    // that reason, and they assert the node's numbers rather than the crate's.
+    // -----------------------------------------------------------------------
+
+    fn account(byte: u8) -> String {
+        encode(&[byte; 32], Encoding::AccountAddress).unwrap()
+    }
+
+    fn contract_call(abi_version: Option<u64>) -> TxParams {
+        let mut params = TxParams::new(Tag::ContractCallTx)
+            .with("callerId", account(1).as_str())
+            .with(
+                "contractId",
+                encode(&[2; 32], Encoding::ContractAddress)
+                    .unwrap()
+                    .as_str(),
+            )
+            .with("nonce", 1u64)
+            .with("amount", 0u64)
+            .with("gasLimit", 100_000u64)
+            .with(
+                "callData",
+                encode(&[7; 16], Encoding::ContractBytearray)
+                    .unwrap()
+                    .as_str(),
+            );
+        if let Some(abi_version) = abi_version {
+            params.set("abiVersion", abi_version);
+        }
+        params
+    }
+
+    fn spend() -> TxParams {
+        TxParams::new(Tag::SpendTx)
+            .with("senderId", account(1).as_str())
+            .with("recipientId", account(2).as_str())
+            .with("amount", 1_000u64)
+            .with("nonce", 1u64)
+    }
+
+    /// The transaction as it will actually go on the wire, carrying `fee`.
+    fn wire(params: &TxParams, fee: u128) -> TxParams {
+        let mut params = params.clone();
+        params.set("fee", Value::uint_str(&fee.to_string()).unwrap());
+        let bytes = crate::tx::build_tx_rlp(&params, &BuildOptions::default()).unwrap();
+        crate::tx::unpack_tx_rlp(&bytes).unwrap()
+    }
+
+    fn wire_size(params: &TxParams, fee: u128) -> usize {
+        let mut params = params.clone();
+        params.set("fee", Value::uint_str(&fee.to_string()).unwrap());
+        crate::tx::build_tx_rlp(&params, &BuildOptions::default())
+            .unwrap()
+            .len()
+    }
+
+    /// What a transaction of `size` bytes costs at `multiplier ×` the base gas.
+    fn priced_at(multiplier: u64, size: usize) -> u128 {
+        u128::from(multiplier * 15_000 + size as u64 * 20) * 1_000_000_000
+    }
+
+    /// The case the corpus cannot show and a binding meets on its first contract
+    /// call: no `abiVersion` given, so `codec` writes the protocol's default and
+    /// the transaction goes out as a FATE call. Pricing it from the params map
+    /// would answer "nobody said" and charge the `30×` arm — 2.5× the base gas,
+    /// for an ABI this crate itself chose.
+    #[test]
+    fn a_contract_call_that_defaults_its_abi_is_priced_as_the_fate_call_it_is_serialised_as() {
+        let params = contract_call(None);
+        let fee = minimum_transaction_fee(CERES, &params).unwrap();
+        let size = wire_size(&params, fee);
+
+        // The pair is the assertion. Either half alone passes against a bug.
+        assert_eq!(
+            wire(&params, fee).get("abiVersion").and_then(Value::as_u64),
+            Some(3),
+            "the wire carries FATE"
+        );
+        assert_eq!(fee, priced_at(12, size), "and the fee is the FATE fee");
+
+        // What reading the params map would have charged for those same bytes.
+        assert!(priced_at(30, size) > fee);
+    }
+
+    #[test]
+    fn a_contract_call_at_the_aevm_abi_is_priced_at_the_dearer_arm() {
+        let params = contract_call(Some(1));
+        let fee = minimum_transaction_fee(CERES, &params).unwrap();
+        let size = wire_size(&params, fee);
+
+        assert_eq!(
+            wire(&params, fee).get("abiVersion").and_then(Value::as_u64),
+            Some(1)
+        );
+        assert_eq!(fee, priced_at(30, size));
+    }
+
+    /// An ABI the crate has no name for is charged the way the node charges one
+    /// it does not recognise: the `_ -> 30 * TX_BASE_GAS` arm. This is the only
+    /// case in which the join answers `None` — never "the params map was silent".
+    #[test]
+    fn a_contract_call_at_an_abi_this_crate_cannot_name_is_priced_at_the_dearer_arm() {
+        let params = contract_call(Some(99));
+        let fee = minimum_transaction_fee(CERES, &params).unwrap();
+        let size = wire_size(&params, fee);
+
+        assert_eq!(
+            wire(&params, fee).get("abiVersion").and_then(Value::as_u64),
+            Some(99),
+            "the unrecognised value reaches the wire unchanged"
+        );
+        assert_eq!(fee, priced_at(30, size));
+    }
+
+    /// The join is the bridge every binding would have written, so it must agree
+    /// with one written correctly by hand.
+    #[test]
+    fn the_join_agrees_with_a_hand_driven_rebuild() {
+        struct ByHand<'a>(&'a TxParams);
+        impl RebuildTx for ByHand<'_> {
+            fn rebuild_with_fee(&mut self, fee: u128) -> Result<TxGasInputs> {
+                let mut params = self.0.clone();
+                params.set("fee", Value::uint_str(&fee.to_string())?);
+                let bytes = crate::tx::build_tx_rlp(&params, &BuildOptions::default())?;
+                Ok(TxGasInputs {
+                    abi_version: Some(AbiVersion::Fate),
+                    ..TxGasInputs::new(params.tag(), bytes.len())
+                })
+            }
+        }
+
+        for params in [spend(), contract_call(Some(3))] {
+            let joined = minimum_transaction_fee(CERES, &params).unwrap();
+            let by_hand = calculate_min_fee(CERES, &mut ByHand(&params)).unwrap();
+            assert_eq!(joined, by_hand, "{:?}", params.tag());
+        }
+    }
+
+    #[test]
+    fn a_contract_call_without_a_gas_limit_names_the_model_that_owns_it() {
+        let mut params = contract_call(Some(3));
+        assert!(minimum_transaction_fee(CERES, &params).is_ok());
+
+        // The gas limit's own encoded length is part of the size the fixed point
+        // converges on, so there is no default that prices a real transaction.
+        params = TxParams::new(Tag::ContractCallTx);
+        for (key, value) in contract_call(Some(3)).fields() {
+            if key != "gasLimit" {
+                params.set(key.as_str(), value.clone());
+            }
+        }
+        assert!(matches!(
+            minimum_transaction_fee(CERES, &params),
+            Err(Error::ModelRequired {
+                field: "gasLimit",
+                ..
+            })
+        ));
+    }
+
+    /// A `block` ttl is absolute, and the gas formula charges for the relative
+    /// one. Recovering it needs the current height, which is a node lookup this
+    /// crate does not do — so it is refused rather than guessed at, and the seam
+    /// stays open for a caller who holds the height.
+    #[test]
+    fn an_absolute_oracle_ttl_is_refused_rather_than_guessed_at() {
+        let register = |ttl_type: u64| {
+            TxParams::new(Tag::OracleRegisterTx)
+                .with("accountId", account(1).as_str())
+                .with("nonce", 1u64)
+                .with("queryFormat", "string")
+                .with("responseFormat", "string")
+                .with("queryFee", 0u64)
+                .with("oracleTtlType", ttl_type)
+                .with("oracleTtlValue", 1_000_000u64)
+        };
+        assert!(minimum_transaction_fee(CERES, &register(0)).is_ok());
+        assert!(matches!(
+            minimum_transaction_fee(CERES, &register(1)),
+            Err(Error::FieldValue {
+                field: "oracleTtlType",
+                ..
+            })
+        ));
+    }
+
+    /// An omitted oracle ttl is not absent from the wire either — the schema's
+    /// own default is serialised, and the gas has to be charged against that.
+    #[test]
+    fn an_omitted_oracle_ttl_is_priced_at_the_schemas_own_default() {
+        let base = TxParams::new(Tag::OracleRegisterTx)
+            .with("accountId", account(1).as_str())
+            .with("nonce", 1u64)
+            .with("queryFormat", "string")
+            .with("responseFormat", "string")
+            .with("queryFee", 0u64);
+        let omitted = minimum_transaction_fee(CERES, &base).unwrap();
+        // `("oracleTtlValue", FieldKind::ShortUIntDefault(500))`, read from the
+        // schema rather than repeated in the fee model.
+        let explicit =
+            minimum_transaction_fee(CERES, &base.clone().with("oracleTtlValue", 500u64)).unwrap();
+        assert_eq!(omitted, explicit);
+
+        // And the ttl genuinely reaches the gas formula.
+        let longer =
+            minimum_transaction_fee(CERES, &base.with("oracleTtlValue", 50_000u64)).unwrap();
+        assert!(longer > omitted);
+    }
+
+    /// A wrapper pays for its own bytes only, so the join has to measure the
+    /// wrapped transaction the same way `codec` serialises it.
+    #[test]
+    fn a_wrapper_is_not_charged_for_the_bytes_it_wraps() {
+        let inner = crate::tx::build_tx(&spend().with("fee", 16_660_000_000_000u64)).unwrap();
+        let signed = TxParams::new(Tag::SignedTx)
+            .with("signatures", Value::List(vec![Value::Bytes(vec![0; 64])]))
+            .with("encodedTx", Value::Encoded(inner));
+        let paying_for = TxParams::new(Tag::PayingForTx)
+            .with("payerId", account(3).as_str())
+            .with("nonce", 1u64)
+            .with("tx", Value::Tx(Box::new(signed)));
+
+        let fee = minimum_transaction_fee(CERES, &paying_for).unwrap();
+        let size = wire_size(&paying_for, fee);
+        let inner_size = match wire(&paying_for, fee).get("tx") {
+            Some(Value::Tx(wrapped)) => crate::tx::build_tx_rlp(wrapped, &BuildOptions::default())
+                .unwrap()
+                .len(),
+            _ => panic!("a PayingForTx carries a nested transaction"),
+        };
+
+        // A fifth of the base gas — 3000, not 15000 — and the wrapped bytes
+        // charged to the inner transaction rather than to this one.
+        assert!(inner_size > 0);
+        assert_eq!(
+            fee,
+            u128::from(3_000 + (size - inner_size) as u64 * 20) * 1_000_000_000
+        );
+        // Charging the wrapper for them too would be this, and it is not the answer.
+        assert!(u128::from(3_000 + size as u64 * 20) * 1_000_000_000 > fee);
     }
 
     #[test]

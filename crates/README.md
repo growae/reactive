@@ -14,24 +14,32 @@ Nothing here is published. The workspace is `publish = false` and stays that way
 binding will one day depend on it, and so will the Python and Dart ones. Naming
 it after one binding's brand would be backwards.
 
-## The public surface is frozen, and changing it costs three edits elsewhere
+## The public surface is frozen, and changing it costs two edits elsewhere
 
 **Read this before you change a signature in `ae-core` or `ae-fate`.**
 
-There is no single interface definition these crates are bound through. WIT is
-read by exactly one of the four targets. The other two bind the Rust surface
-directly and each carries a **hand-maintained mirror** of every public type:
+There is no single interface definition these crates are bound through. The two
+bindings on duty both bind the Rust surface directly, and each carries a
+**hand-maintained mirror** of every public type they use:
 
-| Target | Binding | Reads the WIT? | What one signature change costs |
+| Target | Binding | On mirror duty | What one signature change costs |
 |---|---|---|---|
-| Browser JS | `jco`, WASM component | yes | the WIT interface, regenerated |
-| Python | PyO3, native | **no** | a hand-written `#[pyclass]`/`#[pymethods]` mirror |
-| Dart / Flutter | `flutter_rust_bridge`, native | **no** | a hand-written mirror plus regenerated Dart |
+| Python | PyO3, native | **yes** | a hand-written `#[pyclass]`/`#[pymethods]` mirror |
+| Dart / Flutter | `flutter_rust_bridge`, native | **yes** | a hand-written mirror plus regenerated Dart |
+| Browser JS | `jco`, WASM component | **no — frozen reference** | nothing |
 | Rust | it is a crate | n/a | nothing |
 
-So one changed signature is **three simultaneous binding edits, forever**, and
-they land in three repositories' worth of review. That is the tax the freeze
-exists to keep bounded — not a preference about churn.
+So one changed signature is **two simultaneous binding edits, forever**. That is
+the tax the freeze exists to keep bounded — not a preference about churn.
+
+**`bindings/wasm-js` is on this list and off duty, deliberately.** The browser
+binding was cancelled: the first real WASM build measured 135,373 B gzip against
+a 60 KB ceiling, so the browser stays on `@aeternity/aepp-sdk` and the Rust core
+serves Python, Dart/Flutter and Rust. What remains is a frozen reference artifact
+— it keeps building and its tests keep running, but **a surface addition does not
+have to reach it**, and a WIT interface that has no mirror of some newer function
+is correct rather than stale. It is written down here so its absence from a
+change never reads as an oversight.
 
 ### The protocol
 
@@ -53,6 +61,42 @@ exists to keep bounded — not a preference about churn.
 5. **Nothing here is a place to put ergonomics.** If a change is only convenient,
    it belongs in the binding, in that language's idiom — which is where it will
    read better anyway.
+6. **A mirrored parameter that no test exercises is not mirrored, it is
+   documented.** A binding that declares a parameter and one that threads it
+   into the core are indistinguishable from outside the boundary — same
+   signature, same types, same green build. A mirror is therefore not finished
+   when it compiles. It is finished when a test fails if the parameter is
+   dropped.
+
+### Proving a mirror landed
+
+Rules 1 to 5 say what a surface change costs. This says how you show you paid it,
+because all five of them are satisfiable by a mirror that does nothing.
+
+The test rule 6 asks for is **not** a unit test of the core. The core already has
+those and they pass whether or not any binding reaches them. It is a test in the
+binding's own language, driven through the boundary:
+
+- **Vary the parameter and assert the answer moves.** A test pinning one value
+  passes just as well against a hardcoded constant on the binding side. Cover
+  every arm the parameter has, including the unset one — that is usually the arm
+  a forgetful mirror lands on, and the one nothing else would catch.
+- **Assert the node's numbers, not the crate's.** A mirror test that reads its
+  expectations from the thing it mirrors proves the two agree and says nothing
+  about whether either is right. Where the node is the specification, the
+  expected values are copied from the node.
+- **Pin what must not move.** A parameter that changes an answer it had no
+  business changing is the same defect pointing the other way, and only an
+  explicit assertion of the unmoved case will catch it.
+
+`bindings/wasm-js/pipeline.test.ts` is the worked example: a
+`ContractCallTx` priced through the boundary at each ABI — `12×` for FATE, `30×`
+for the AEVM ABI, for unset, and for a value the node would not recognise — and
+`5×` unmoved across all four arms for `ContractCreateTx`, `GaAttachTx` and
+`GaMetaTx`. It fails if `abi-version` is ever declared and dropped.
+
+So a surface change is not landed when every binding compiles against it. It is
+landed when that test exists in every mirror on the duty list above.
 
 ### What is not a surface change
 
@@ -103,7 +147,7 @@ than guessing across it.
 
 | Seam | Shape here | Owner |
 |---|---|---|
-| Fee and gas model | **Filled.** `fee` owns the model; `fee::RebuildTx` is the seam that keeps the size/fee fixed point testable without a whole transaction, and `tx::FeeModel` remains the seam `build_tx` calls through | `fee` |
+| Fee and gas model | **Filled and joined.** `fee::minimum_transaction_fee` prices a `TxParams` end to end, so no binding writes the bridge itself; `fee::RebuildTx` stays public for a caller who has to drive the fixed point, and `tx::FeeModel` is still an open seam — nothing implements it, so `build_tx` cannot fill an absent `fee` and says so | `fee` |
 | State-tree entries | **Filled.** `entry` and `mpt`. A `poi` transaction field still round-trips as opaque bytes on the `tx` side, so the channel decode-and-re-encode path stays byte-exact either way | `entry`, `mpt` |
 | Sophia FATE ABI | Call data arrives already encoded, as a `cb_` string | `ae-fate` |
 | Anything needing a node | Nonces, relative TTLs and oracle query fees are inputs, not lookups | each language's binding |
@@ -166,7 +210,8 @@ its signatures, checks our decoding field by field against the node's, and holds
 the fee model against fees a node actually took. Two things it found are written
 up in that file's module docs and in the tests themselves, because neither is
 visible from an offline corpus. Both are now fixed, and each is a behaviour
-change a consumer can see — lift the two bullets below into the release note:
+change a consumer can see — lift the bullets below into the release note. The
+third is not the corpus's find; it is what the second one made unavoidable:
 
 - **A node verifies a signature against two payloads**, `network_id ++ tx` and
   `network_id ++ blake2b_256(tx)`. `keys::PublicKey::verify_transaction` now
@@ -186,7 +231,20 @@ change a consumer can see — lift the two bullets below into the release note:
   an omitted `abi-version` will quietly pick FATE — pass the ABI for a contract
   call or pay 2.5× more than you need to.
 
-The second one is the first place this crate knowingly stops matching
+- **A transaction can now be priced in one call.** `fee::minimum_transaction_fee`
+  takes a protocol version and a `TxParams` and returns the smallest fee that
+  transaction may carry, reading everything the gas formula needs off the
+  transaction itself — its ABI, the wrapped transaction's size for a `GaMetaTx`
+  or `PayingForTx`, and an oracle's relative ttl. It replaces the `RebuildTx`
+  bridge each caller used to write. **The ABI it prices by is the byte that will
+  be serialised, not the one the caller passed**: a `ContractCallTx` built
+  without an explicit `abiVersion` still goes on the wire as a FATE call, and
+  pricing it any other way charges 2.5× the base gas for an ABI the crate chose
+  itself. `fee::RebuildTx` and `fee::calculate_min_fee` are unchanged and stay
+  public — a caller holding a block height for an absolute oracle ttl still
+  drives the fixed point directly, which the joined call refuses to guess at.
+
+The ABI bullet is the first place this crate knowingly stops matching
 `@aeternity/aepp-sdk`, which keys its `TX_BASE_GAS` on the tag alone. **The node
 is the specification; the SDK is a cross-check.** Parity with the SDK was only
 ever a proxy for *a node will accept this*, and where the proxy and the thing
