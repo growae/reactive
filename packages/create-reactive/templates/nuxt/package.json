@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "nuxt": "^3.14.0",
-    "typescript": "^5.7.0",
+    "typescript": "^7.0.2",
     "@tanstack/vue-query": "^5.50.0"
   },
   "overrides": {
