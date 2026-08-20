@@ -53,6 +53,43 @@ exists to keep bounded — not a preference about churn.
 5. **Nothing here is a place to put ergonomics.** If a change is only convenient,
    it belongs in the binding, in that language's idiom — which is where it will
    read better anyway.
+6. **A mirrored parameter that no test exercises is not mirrored, it is
+   documented.** A binding that declares a parameter and one that threads it
+   into the core are indistinguishable from outside the boundary — same
+   signature, same types, same green build. A mirror is therefore not finished
+   when it compiles. It is finished when a test fails if the parameter is
+   dropped.
+
+### Proving a mirror landed
+
+Rules 1 to 5 say what a surface change costs. This says how you show you paid it,
+because the four preceding rules are all satisfiable by a mirror that does
+nothing.
+
+The test rule 6 asks for is **not** a unit test of the core. The core already has
+those and they pass whether or not any binding reaches them. It is a test in the
+binding's own language, driven through the boundary:
+
+- **Vary the parameter and assert the answer moves.** A test pinning one value
+  passes just as well against a hardcoded constant on the binding side. Cover
+  every arm the parameter has, including the unset one — that is usually the arm
+  a forgetful mirror lands on, and the one nothing else would catch.
+- **Assert the node's numbers, not the crate's.** A mirror test that reads its
+  expectations from the thing it mirrors proves the two agree and says nothing
+  about whether either is right. Where the node is the specification, the
+  expected values are copied from the node.
+- **Pin what must not move.** A parameter that changes an answer it had no
+  business changing is the same defect pointing the other way, and only an
+  explicit assertion of the unmoved case will catch it.
+
+`bindings/wasm-js/pipeline.test.ts` is the worked example: a
+`ContractCallTx` priced through the boundary at each ABI — `12×` for FATE, `30×`
+for the AEVM ABI, for unset, and for a value the node would not recognise — and
+`5×` unmoved across all four arms for `ContractCreateTx`, `GaAttachTx` and
+`GaMetaTx`. It fails if `abi-version` is ever declared and dropped.
+
+So a surface change is not landed when every binding compiles against it. It is
+landed when that test exists in every mirror on the duty list above.
 
 ### What is not a surface change
 
