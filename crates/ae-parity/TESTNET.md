@@ -6,7 +6,7 @@ below are what a later run is compared against.
 | | |
 |---|---|
 | Node | `https://testnet.aeternity.io/v3`, `7.3.0-rc8`, network `ae_uat` |
-| Height | 1283414 |
+| Height | 1283426 |
 | Recorded | 2026-08-20, UTC |
 | References | `@aeternity/aepp-sdk` 14.1.1, `@aeternity/aepp-calldata` 1.9.1 |
 | Corpus | 41 vectors over 26 tags — 38 postable, 3 not |
@@ -119,7 +119,7 @@ directions: removing the exception without giving the tag a postable vector
 fails, and giving it one without removing the exception fails too. Turning it
 into a silent pass takes deleting a line.
 
-## Node-builder byte agreement — 18 identical, 0 disagreements
+## Node-builder byte agreement — 18 identical, 0 disagreements, 1 not comparable
 
 The node exposes its own Erlang transaction builders behind `/v3/debug/…`. Same
 parameters in, bytes compared. This is a third implementation, not a second
@@ -128,11 +128,11 @@ opinion from the same family.
 | Verdict | Vectors |
 |---|---|
 | identical | 18 |
-| node declined to build (needs chain state, or rejects a corpus value) | 12 |
+| node declined to build (needs chain state, rejects a value, or errors) | 14 |
 | no builder on the node's HTTP surface | 6 |
-| not comparable (different transaction version) | 2 |
 | excluded, non-postable | 2 |
-| differs | 1 |
+| not comparable — the endpoint returned a different transaction | 1 |
+| **differs** — same transaction, different bytes | **0** |
 
 **Eighteen byte-for-byte agreements across `SpendTx`, four name tags, three
 oracle tags, `ContractCreateTx` and five channel tags.** No vector where all
@@ -145,16 +145,24 @@ asking whether it builds the same bytes scores a disagreement already recorded a
 the refusal. That removes `name update v2, id pointer`, where the node builds at
 version 1 per the rule above.
 
-One row remains where the endpoint's bytes are not ours, and it is not an
-encoding disagreement in this core:
+**Nothing here is excluded by anyone's judgement.** Every row that is not
+byte-identical is classified by decoding both sides through `ae-core` and
+comparing them field by field. A row leaves the comparison only when the decoded
+content differs, and it has to name the field that says so — one row does:
 
-- `name update v1, explicit ttls and several pointers` — the node's HTTP builder
-  emits the pointer list **reversed**. Ours is in the order given, byte-identical
-  to the reference sdk, and the node's own decoder accepts it.
+- `name update v1, explicit ttls and several pointers` — field `pointers`, sent
+  `account, oracle, contract`, returned `contract, oracle, account`. The node's
+  own decoder accepts our bytes.
 
-Measured directly against `/v3/debug/names/update` rather than inferred, because
-"reversed" and "canonicalised" are different findings and only one of them
-disqualifies the endpoint:
+`differs` therefore keeps meaning same transaction, different bytes, and there
+are **none**. It is an unconditional failure with no prose attached: making the
+classifier blind to `pointers` turns that row into `differs` and the run exits
+non-zero with `CLAUSE 6 FAILED — the node built the same transaction with
+different bytes`. Measured, then reverted.
+
+The reversal was re-measured by this run rather than taken from the ruling that
+named it, because "reversed" and "canonicalised" are different findings and only
+one of them disqualifies the endpoint:
 
 | Pointer order sent | Order the endpoint emits |
 |---|---|
@@ -168,22 +176,33 @@ in either direction and cannot serve as a reference for that field whichever
 order is correct. What it returns is not the transaction it was asked for, which
 is the same ground `ChannelCreateTx` is already *not comparable* on.
 
-Under the clause as it now reads this row is **not comparable** rather than
-`differs`, and the reversal is a standing finding against that endpoint. It is
-not exempted for being a quirk: the classification has to be earned by decoding
-the node's bytes and naming the field that differs, and the probe above is re-run
-so that a fixed endpoint forces the row back into the comparison rather than
-leaving it quietly excluded.
+The probe runs on every exercise, so the exclusion is re-earned rather than
+remembered. If the endpoint is ever fixed it stops holding and the run exits
+non-zero with `PROBE CHANGED — the name-update endpoint now preserves pointer
+order`, forcing the row back into the comparison instead of leaving it quietly
+excluded — verified by inverting the probe's predicate, and reverted. Clause 6
+also refuses to score satisfied while the probe reports a preserved order.
 
-The twelve declines are all state lookups or value rejections, not serialisation:
+Twelve of the fourteen declines are state lookups or value rejections, not
+serialisation:
 `Contract code … not found`, `Oracle address … not found`, `Invalid hash: name`
 (the endpoint wants a name hash where the transaction carries the name),
 `Invalid hash: payload`, `Invalid pointers`.
 
-`ChannelCreateTx` is *not comparable* rather than failing: the node's HTTP
-builder takes one `delegate_ids` list, while the tag serialises at version 2 with
-separate initiator and responder lists. Comparing them would compare two
-different transactions.
+### `ChannelCreateTx` — the endpoint is broken, which is not what was claimed
+
+The other two declines are this tag, and they are a correction to my own earlier
+report. The row used to be excluded by a mapper that refused to send at all, on
+the stated ground that the endpoint's single `delegate_ids` list and the tag's
+two lists are different transactions. Sending it and letting the mechanism decide
+measured something else: **`/v3/debug/channels/create` answers HTTP 500 to every
+well-formed body** — with delegates, with an empty list, and with the key absent.
+It validates first, since a missing `state_hash` still comes back as a 400 naming
+the field, so the 500 is the builder rather than the request.
+
+Whether the two delegate lists would have compared was therefore never
+established, and the old comment asserted a conclusion its evidence did not
+reach. Both rows are now `node-declined`, which is what was observed.
 
 ## Per tag
 
@@ -193,7 +212,7 @@ different transactions.
 | `SignedTx` | no builder ×2 | accepted ×2 |
 | `NamePreclaimTx` | identical | accepted |
 | `NameClaimTx` | declined ×2 | accepted ×2 |
-| `NameUpdateTx` | identical ×2, differs ×1, declined, excluded ×1 | accepted ×4, **non-postable ×1** |
+| `NameUpdateTx` | identical ×2, not comparable ×1, declined, excluded ×1 | accepted ×4, **non-postable ×1** |
 | `NameTransferTx` | identical | accepted |
 | `NameRevokeTx` | identical | accepted |
 | `ContractCreateTx` | identical ×2 | accepted ×2 |
@@ -202,7 +221,7 @@ different transactions.
 | `OracleQueryTx` | declined ×2 | accepted ×2 |
 | `OracleRespondTx` | declined | accepted |
 | `OracleExtendTx` | identical | accepted |
-| `ChannelCreateTx` | not comparable ×2, excluded ×1 | accepted ×2, **non-postable ×1** |
+| `ChannelCreateTx` | declined ×2 (HTTP 500), excluded ×1 | accepted ×2, **non-postable ×1** |
 | `ChannelDepositTx` | identical | accepted |
 | `ChannelWithdrawTx` | identical | accepted |
 | `ChannelCloseMutualTx` | identical | accepted |
