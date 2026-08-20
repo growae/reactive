@@ -1,0 +1,29 @@
+[package]
+name = "ae-core-dart"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+license = "MIT"
+description = "flutter_rust_bridge binding over the ae-core protocol primitives"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+# Native FFI, not WASM: flutter_rust_bridge binds ae-core directly and never
+# reads the WIT file the browser binding is generated from — same reasoning
+# as bindings/python/Cargo.toml.
+[dependencies]
+ae-core = { path = "../../../crates/ae-core" }
+flutter_rust_bridge = "=2.12.0"
+
+[profile.release]
+lto = true
+strip = true
+
+# `#[frb(...)]` expands to code gated on `cfg(frb_expand)`, a cfg this crate
+# never sets — it exists for flutter_rust_bridge's own internal tooling, not
+# for us. Without this, `-D warnings` turns every bound function red on
+# `unexpected_cfgs` for a cfg we do not control and did not write.
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(frb_expand)"] }
