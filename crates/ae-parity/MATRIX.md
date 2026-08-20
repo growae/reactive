@@ -11,7 +11,7 @@ References: `@aeternity/aepp-sdk` 14.1.1, `@aeternity/aepp-calldata` 1.9.1.
 | Transaction schema entries | 27 | 27 | `aepp-sdk` 14.1.1 |
 | Transaction schema fields | 176 | 200 | — |
 | State-tree entry pairs | 0 | 25 | **none committed** |
-| FATE vectors, decode and re-encode | 85 | 85 | `aepp-calldata` 1.9.1 |
+| FATE vectors, decode and re-encode | 113 | 113 | `aepp-calldata` 1.9.1 |
 | FATE value variants | 10 | 13 | `aepp-calldata` 1.9.1 |
 | FATE type variants | 12 | 13 | `aepp-calldata` 1.9.1 |
 
@@ -93,7 +93,7 @@ No entry **fixture set** is committed anywhere in this repository, so every row 
 
 Every vector is decoded through `ae-fate` and re-encoded; the row counts those that come back to the reference's exact bytes. Variant coverage is read off what the corpus actually decodes to, including nested values, not off the case names.
 
-- vectors: 85 decode and re-encode, 85 total
+- vectors: 113 decode and re-encode, 113 total
 - value variants with no vector: `StoreMap`, `ContractBytearray`, `Typerep`
 - type variants with no vector: `ContractBytearray`
 

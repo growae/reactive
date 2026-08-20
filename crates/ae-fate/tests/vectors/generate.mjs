@@ -20,7 +20,18 @@
 //
 // This is the fixed-corpus half of the differential harness — see
 // `crates/ae-parity` for the coverage matrix and the on-node exercise built on
-// top of it.
+// top of it. The generated-input half lives there; this file is a fixed corpus,
+// regenerated when the reference version moves.
+//
+// Two layers are generated. The `values`, `types` and the three original
+// `calldata/…` cases go through the reference's own `Serializer`, which is the
+// wire format this crate implements directly. The `call/…` and `return/…` cases
+// go through `AciContractCallEncoder` instead — the class `@aeternity/aepp-sdk`
+// drives when `Contract.$call` runs, and therefore the path every contract call
+// `packages/core` makes actually takes. Those are generated from a contract ACI
+// and from JavaScript-shaped arguments, so the reference chooses the wire types
+// rather than being told them; that is what makes them evidence about the
+// surface rather than about the serialiser alone.
 
 // The package's `exports` map publishes only its high level encoders, so the
 // serialiser and the data classes are reached through the resolved entry point
@@ -57,6 +68,9 @@ const { default: FateChannelAddress } = await load(
   './types/FateChannelAddress.js',
 )
 const { default: FateCalldata } = await load('./types/FateCalldata.js')
+const { default: AciTypeResolver } = await load('./AciTypeResolver.js')
+const { default: ApiEncoder } = await load('./ApiEncoder.js')
+const { AciContractCallEncoder, ContractByteArrayEncoder } = await import(entry)
 const {
   FateTypeInt,
   FateTypeBool,
@@ -275,12 +289,238 @@ const types = {
   'type/nested-list': FateTypeList(FateTypeList(FateTypeString())),
 }
 
+// The ACI of a contract that mentions, once each, every Sophia type a call from
+// `packages/core` can carry: the primitives, the address-shaped types, sized
+// byte strings under their three Sophia spellings, and the four compound shapes
+// — record, variant, tuple and the list/map containers — including one nested
+// two levels deep. It is a fixture rather than a real contract; what is under
+// test is the type surface, not the contract's behaviour.
+const ACI = [
+  {
+    contract: {
+      name: 'Registry',
+      kind: 'contract_main',
+      payable: false,
+      typedefs: [
+        {
+          name: 'meta',
+          vars: [],
+          typedef: {
+            record: [
+              { name: 'label', type: 'string' },
+              { name: 'score', type: 'int' },
+              { name: 'active', type: 'bool' },
+            ],
+          },
+        },
+        {
+          name: 'choice',
+          vars: [],
+          typedef: {
+            variant: [
+              { Nothing: [] },
+              { One: ['int'] },
+              { Both: ['int', 'string'] },
+            ],
+          },
+        },
+      ],
+      state: { map: ['address', 'Registry.meta'] },
+      functions: [
+        { name: 'init', arguments: [], returns: 'Registry.state' },
+        {
+          name: 'transfer',
+          arguments: [
+            { name: 'to', type: 'address' },
+            { name: 'amount', type: 'int' },
+          ],
+          returns: 'bool',
+        },
+        {
+          name: 'register',
+          arguments: [
+            { name: 'owner', type: 'address' },
+            { name: 'info', type: 'Registry.meta' },
+          ],
+          returns: 'Registry.meta',
+        },
+        {
+          name: 'set_flags',
+          arguments: [{ name: 'flags', type: { list: ['bool'] } }],
+          returns: 'int',
+        },
+        {
+          name: 'bulk',
+          arguments: [{ name: 'entries', type: { map: ['string', 'int'] } }],
+          returns: { map: ['address', 'int'] },
+        },
+        {
+          name: 'maybe',
+          arguments: [{ name: 'v', type: { option: ['int'] } }],
+          returns: { option: ['string'] },
+        },
+        {
+          name: 'verify',
+          arguments: [
+            { name: 'h', type: 'hash' },
+            { name: 'sig', type: 'signature' },
+          ],
+          returns: 'bool',
+        },
+        {
+          name: 'blob',
+          arguments: [{ name: 'b', type: { bytes: 8 } }],
+          returns: { bytes: 4 },
+        },
+        {
+          name: 'pick',
+          arguments: [{ name: 'c', type: 'Registry.choice' }],
+          returns: 'Registry.choice',
+        },
+        {
+          name: 'pair',
+          arguments: [{ name: 'p', type: { tuple: ['int', 'string'] } }],
+          returns: { tuple: ['string', 'bool'] },
+        },
+        {
+          name: 'nested',
+          arguments: [{ name: 'xs', type: { list: ['Registry.meta'] } }],
+          returns: { list: [{ map: ['string', { list: ['int'] }] }] },
+        },
+        {
+          name: 'watch',
+          arguments: [{ name: 'o', type: { oracle: ['string', 'int'] } }],
+          returns: 'address',
+        },
+        { name: 'ping', arguments: [], returns: 'unit' },
+        // The state type reached by name, which is the one shape the resolver
+        // takes from `state` rather than from `typedefs`.
+        { name: 'snapshot', arguments: [], returns: 'Registry.state' },
+      ],
+    },
+  },
+]
+
+const aciEncoder = new AciContractCallEncoder(ACI)
+const aciResolver = new AciTypeResolver(ACI)
+const byteArrayEncoder = new ContractByteArrayEncoder()
+const apiEncoder = new ApiEncoder()
+
+// The same two 32-byte addresses the value corpus uses, in the base58check form
+// the ACI layer takes. Deriving them rather than pinning the strings keeps the
+// Rust twin able to reuse its existing byte constants.
+const ACCOUNT_A = apiEncoder.encode('account_pubkey', ADDRESS_A)
+const ACCOUNT_B = apiEncoder.encode('account_pubkey', ADDRESS_B)
+const ORACLE_A = apiEncoder.encode('oracle_pubkey', ADDRESS_A)
+
+// `cb_…` is base64check: the payload followed by a four byte checksum. The
+// envelope belongs to `ae-core`, so it is stripped here and the corpus carries
+// the FATE bytes this crate is responsible for.
+const unwrap = (encoded) => {
+  const decoded = Buffer.from(encoded.slice(3), 'base64')
+  return decoded.subarray(0, decoded.length - 4)
+}
+
+// Arguments as a caller writes them in JavaScript — the reference picks the
+// wire type from the ACI, which is the half of the surface a hand-built vector
+// would beg the question on.
+const calls = {
+  'call/transfer': ['transfer', [ACCOUNT_A, 1000000n]],
+  'call/register': [
+    'register',
+    [ACCOUNT_B, { label: 'alice', score: -7n, active: true }],
+  ],
+  'call/set-flags': ['set_flags', [[true, false, true]]],
+  // Deliberately out of key order, in calldata position: the reference has to
+  // sort before writing exactly as it does for a bare map.
+  'call/bulk-unsorted-map': [
+    'bulk',
+    [
+      new Map([
+        ['zz', 3n],
+        ['a', 1n],
+        ['mm', 2n],
+      ]),
+    ],
+  ],
+  'call/maybe-some': ['maybe', [42n]],
+  'call/maybe-none': ['maybe', [undefined]],
+  'call/verify': [
+    'verify',
+    [repeat(0x11, 32), repeat(0x22, 64)],
+  ],
+  'call/blob': ['blob', [Uint8Array.from({ length: 8 }, (_, i) => i + 1)]],
+  'call/pick-nothing': ['pick', [{ Nothing: [] }]],
+  'call/pick-both': ['pick', [{ Both: [5n, 'five'] }]],
+  'call/pair': ['pair', [[1n, 'x']]],
+  'call/nested': [
+    'nested',
+    [
+      [
+        { label: 'a', score: 1n, active: false },
+        { label: 'b', score: 2n, active: true },
+      ],
+    ],
+  ],
+  'call/watch': ['watch', [ORACLE_A]],
+  'call/ping': ['ping', []],
+}
+
+// Return values as a contract yields them, encoded against the ACI's declared
+// return type. `decodeResult` is asserted to read each one back, so a vector
+// that the reference could not itself decode never reaches the corpus.
+const returns = {
+  'return/bool': ['transfer', true],
+  'return/record': ['register', { label: 'alice', score: -7n, active: true }],
+  'return/int': ['set_flags', 3n],
+  'return/map-address-keys': [
+    'bulk',
+    new Map([
+      [ACCOUNT_A, 2n],
+      [ACCOUNT_B, 1n],
+    ]),
+  ],
+  'return/option-some': ['maybe', 'yes'],
+  'return/option-none': ['maybe', undefined],
+  'return/bytes': ['blob', repeat(0x5a, 4)],
+  'return/variant-nullary': ['pick', { Nothing: [] }],
+  'return/variant-payload': ['pick', { Both: [5n, 'five'] }],
+  'return/tuple': ['pair', ['s', false]],
+  'return/nested-containers': [
+    'nested',
+    [
+      new Map([
+        ['k', [1n, 2n]],
+        ['j', []],
+      ]),
+    ],
+  ],
+  'return/address': ['watch', ACCOUNT_A],
+  'return/unit': ['ping', []],
+  'return/state-map': [
+    'snapshot',
+    new Map([[ACCOUNT_A, { label: 'a', score: 1n, active: false }]]),
+  ],
+}
+
 const vectors = []
 for (const [name, value] of Object.entries(values)) {
   vectors.push({ name, hex: hex(serializer.serialize(value)) })
 }
 for (const [name, type] of Object.entries(types)) {
   vectors.push({ name, hex: hex(typeSerializer.serialize(type)) })
+}
+for (const [name, [funName, args]] of Object.entries(calls)) {
+  const encoded = aciEncoder.encodeCall('Registry', funName, args)
+  // Fails loudly rather than emitting a vector the reference cannot read back.
+  aciEncoder.decodeCall('Registry', funName, encoded)
+  vectors.push({ name, hex: hex(unwrap(encoded)) })
+}
+for (const [name, [funName, value]] of Object.entries(returns)) {
+  const type = aciResolver.getReturnType('Registry', funName)
+  const encoded = byteArrayEncoder.encodeWithType(value, type)
+  aciEncoder.decodeResult('Registry', funName, encoded, 'ok')
+  vectors.push({ name, hex: hex(unwrap(encoded)) })
 }
 
 const document = JSON.stringify(

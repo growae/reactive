@@ -33,16 +33,32 @@
 //!
 //! - **Negative zero.** The small-integer form with the sign bit set and a zero
 //!   magnitude has a second encoding of zero. Erlang rejects it on decode; the
-//!   JS library decodes it to zero. Rejected here.
+//!   JS library decodes it to zero. Rejected here. *Closed:* the JS library
+//!   accepts the form but never writes it.
 //! - **Non-canonical integers.** Erlang re-encodes every RLP integer it reads
 //!   and rejects the input unless the bytes match, so a leading zero byte or
 //!   the empty string is an error. The JS library accepts both. Rejected here.
+//!   *Closed*, for the same reason.
 //! - **String ordering.** Both order strings by length before content, but the
 //!   JS library measures length in UTF-16 code units, so two strings whose byte
 //!   lengths differ but whose code-unit lengths agree sort differently there.
-//!   Length is measured in bytes here.
+//!   Length is measured in bytes here. *Closed* — it reaches every map with a
+//!   non-ASCII string key, and the JS order is the one no chain accepts.
 //! - **Bit-field ordering.** Erlang orders two negative bit fields numerically;
-//!   the JS library reverses them. Numeric here.
+//!   the JS library reverses them. Numeric here. *Closed*, for the same reason,
+//!   reaching every map keyed by `bits` that holds two negative keys.
+//!
+//! The last two looked like a compatibility choice between two live orderings
+//! and are not one. `aebytecode` re-sorts every map it decodes and raises
+//! `{unknown_map_serialization_format, …}` when the input was not already in
+//! that order, so the chain accepts exactly one — the one written here. The JS
+//! library validates no order on read, which is what made it look symmetric.
+//!
+//! The JS library also selects a key comparator from a map's *declared* key
+//! type, so it has no cross-type order at all, while [`FateValue`]'s `Ord` needs
+//! one to be total. That comes from the node's `?ORD_*` table in
+//! `aeb_fate_data` instead, which `src/ord.rs` matches entry for entry. Sophia
+//! maps are keyed by a single type, so no compiled contract reaches it.
 //!
 //! One tag is dead in both: `EMPTY_MAP` (`0b1101_1111`). Neither implementation
 //! ever writes it — an empty map is `MAP` with a zero length — and the Erlang

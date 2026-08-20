@@ -342,6 +342,118 @@
     {
       "name": "type/nested-list",
       "hex": "272777"
+    },
+    {
+      "name": "call/transfer",
+      "hex": "2b1184a15da12b9f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa6f830f4200"
+    },
+    {
+      "name": "call/register",
+      "hex": "2b11229b553f2b9f00a0000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f3b15616c6963658eff"
+    },
+    {
+      "name": "call/set-flags",
+      "hex": "2b11a16946661b33ff7fff"
+    },
+    {
+      "name": "call/bulk-unsorted-map",
+      "hex": "2b11d72a98011b2f03056102096d6d04097a7a06"
+    },
+    {
+      "name": "call/maybe-some",
+      "hex": "2b11eeb46ed91baf820001011b54"
+    },
+    {
+      "name": "call/maybe-none",
+      "hex": "2b11eeb46ed91baf820001003f"
+    },
+    {
+      "name": "call/verify",
+      "hex": "2b111860ff3b2b9f018111111111111111111111111111111111111111111111111111111111111111119f01010022222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "name": "call/blob",
+      "hex": "2b1163bc91fd1b9f01210102030405060708"
+    },
+    {
+      "name": "call/pick-nothing",
+      "hex": "2b11f7c103721baf83000102003f"
+    },
+    {
+      "name": "call/pick-both",
+      "hex": "2b11f7c103721baf83000102022b0a1166697665"
+    },
+    {
+      "name": "call/pair",
+      "hex": "2b1185d511381b2b020578"
+    },
+    {
+      "name": "call/nested",
+      "hex": "2b1148f480f91b233b0561027f3b056204ff"
+    },
+    {
+      "name": "call/watch",
+      "hex": "2b116696bfd21b9f03a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "call/ping",
+      "hex": "2b11f706af5c3f"
+    },
+    {
+      "name": "return/bool",
+      "hex": "ff"
+    },
+    {
+      "name": "return/record",
+      "hex": "3b15616c6963658eff"
+    },
+    {
+      "name": "return/int",
+      "hex": "06"
+    },
+    {
+      "name": "return/map-address-keys",
+      "hex": "2f029f00a0000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f029f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa04"
+    },
+    {
+      "name": "return/option-some",
+      "hex": "af820001011b0d796573"
+    },
+    {
+      "name": "return/option-none",
+      "hex": "af820001003f"
+    },
+    {
+      "name": "return/bytes",
+      "hex": "9f01115a5a5a5a"
+    },
+    {
+      "name": "return/variant-nullary",
+      "hex": "af83000102003f"
+    },
+    {
+      "name": "return/variant-payload",
+      "hex": "af83000102022b0a1166697665"
+    },
+    {
+      "name": "return/tuple",
+      "hex": "2b05737f"
+    },
+    {
+      "name": "return/nested-containers",
+      "hex": "132f02056a03056b230204"
+    },
+    {
+      "name": "return/address",
+      "hex": "9f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "name": "return/unit",
+      "hex": "3f"
+    },
+    {
+      "name": "return/state-map",
+      "hex": "2f019f00a0aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3b0561027f"
     }
   ]
 }

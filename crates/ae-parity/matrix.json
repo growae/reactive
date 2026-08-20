@@ -1,7 +1,7 @@
 {
   "fate": {
     "failures": [],
-    "roundtrip_pass": 85,
+    "roundtrip_pass": 113,
     "type_variants_covered": [
       "Address",
       "Any",
@@ -36,7 +36,7 @@
       "ContractBytearray",
       "Typerep"
     ],
-    "vectors": 85
+    "vectors": 113
   },
   "named_exceptions": [
     "ChannelForceProgressTx"

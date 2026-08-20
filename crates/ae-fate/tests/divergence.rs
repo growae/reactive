@@ -10,6 +10,47 @@
 //! decode-side leniency and cost nothing but strictness; the other two change
 //! the bytes a map serialises to, which means a contract written against one
 //! and read by the other disagrees about the same map.
+//!
+//! # All four are ruled, and all four go the node's way
+//!
+//! All four were re-measured against an installed 1.9.1 rather than carried
+//! forward from an earlier note, and all four reproduced exactly.
+//!
+//! **The two decode-side cases are closed as strict.** The closing evidence is
+//! not the tests below — those only assert the strictness — but the round-trip
+//! sweep in `tests/sweep.rs`, where the reference's own encoder wrote 337
+//! integer cases spanning ±(2^441) and 60 seeded large magnitudes and produced
+//! neither a negative zero nor a non-canonical magnitude once. The reference
+//! accepts these forms; it never emits them. Rejecting them therefore costs a
+//! consumer nothing.
+//!
+//! **The two ordering cases are closed the same way**, and they turned out not
+//! to be a two-sided compatibility choice at all: `aepp-calldata` 1.9.1 is
+//! wrong on both, and the node's own source says so.
+//!
+//! `aebytecode`'s `deserialize2/1` re-sorts a map it has read and raises
+//! `{unknown_map_serialization_format, KVList}` when the input was not already
+//! in that order — the clause is present in every release tag back to `v3.2.0`,
+//! so it is not a recent tightening — and the module states the intent directly
+//! above `sort/1`: *"Sorting is used to get a unique result. Deserialization is
+//! checking whether the provided key-value pairs are sorted and raises an
+//! exception if not."* `aeb_fate_data:lt/2` then gives both rules outright
+//! rather than by inference: `compare_bytes` measures length with `byte_size`,
+//! and the `?ORD_BITS` clause puts negatives after non-negatives while ordering
+//! two negatives numerically. Those are `src/ord.rs:40` and `src/ord.rs:65`.
+//!
+//! So the read direction runs opposite to what the JS suggested. The chain
+//! accepts exactly one order, this crate already writes it, and
+//! [`rejects_a_map_written_in_the_js_order`] mirrors the node rather than
+//! diverging from a peer. What the JS does on read — no order validation at
+//! all, recorded below — is leniency around its own encoder's output, not a
+//! second valid ordering.
+//!
+//! The consequence lands outside this crate: `packages/core` builds its
+//! calldata through `aepp-calldata`, so a contract call passing a map with
+//! non-ASCII string keys produces bytes the node refuses to deserialise, with
+//! no caller-side workaround. That is a defect in a shipped package rather than
+//! a parity question and is tracked on its own.
 
 use ae_fate::{deserialize, serialize, Error, FateInt, FateValue};
 
@@ -51,6 +92,25 @@ fn rejects_non_canonical_integers() {
 /// first. Erlang's `compare_bytes` sees equal byte lengths and falls through to
 /// a byte comparison, which puts `"xy"` first. This is the divergence with
 /// teeth: the two implementations produce different bytes for the same map.
+///
+/// How far it reaches, measured over every pair drawn from five pools of
+/// realistic map keys:
+///
+/// | key pool | pairs that disagree |
+/// |---|---|
+/// | ASCII only | 0 / 45 |
+/// | Latin-1 accents (`café`, `über`, `ä`) | 5 / 45 |
+/// | CJK (`名前`, `東京`) | 8 / 28 |
+/// | emoji and astral (`🚀`, `𝔞`) | 3 / 15 |
+/// | currency and brand (`€`, `₿`, `æternity`) | 10 / 45 |
+///
+/// The boundary is exact rather than statistical: an all-ASCII key set cannot
+/// disagree, because that is precisely where a string's byte length and its
+/// UTF-16 length coincide. Every disagreement needs a non-ASCII key.
+///
+/// The reference reads either order — its map deserialiser does no order check
+/// — so what this crate writes stays readable by every `aepp-calldata`
+/// consumer. The node reads only its own, which is the one written here.
 #[test]
 fn orders_string_keys_by_byte_length() {
     let map = FateValue::map([
@@ -74,6 +134,17 @@ fn orders_string_keys_by_byte_length() {
 /// `2f02cf0102cf0504`, ordering `-1` before `-5`. Erlang orders two negative
 /// bit fields numerically, so `-5` comes first; only the boundary between
 /// non-negative and negative is inverted, not the negatives among themselves.
+///
+/// Where the string case is a fringe, this one is total: across the pairs drawn
+/// from `{-1, -2, -5, -64, -255, 0, 1, 7}`, **every** pair of two negatives
+/// disagrees — 10 of 10 — and every pair with a non-negative agrees. The JS
+/// comparator negates the whole comparison as soon as either operand is
+/// negative, which happens to restore the correct non-negative-before-negative
+/// boundary and to invert everything inside the negative half.
+///
+/// The reach is narrower than the rate suggests: it needs a Sophia `map` keyed
+/// by `bits`, holding two keys that are both negative. As above, the reference
+/// reads either order.
 #[test]
 fn orders_negative_bit_fields_numerically() {
     let map = FateValue::map([
@@ -88,6 +159,27 @@ fn orders_negative_bit_fields_numerically() {
         "2f02cf0102cf0504",
         "this is the aepp-calldata 1.9.1 output"
     );
+}
+
+/// The read direction, stated as behaviour rather than left in prose.
+///
+/// A map the reference wrote is rejected here whenever its keys are ordered the
+/// way only the reference orders them. That reads like a divergence from a peer
+/// and is not one: `aebytecode`'s map clause raises
+/// `{unknown_map_serialization_format, …}` on exactly these bytes, so this
+/// rejection is the node's, and the JS output is the side that no chain will
+/// accept.
+///
+/// The reference is asymmetric about it — it writes one order and reads both —
+/// so the converse never arises and nothing this crate writes is unreadable
+/// there.
+#[test]
+fn rejects_a_map_written_in_the_js_order() {
+    let js_string_keys = [0x2f, 0x02, 0x09, 0xc3, 0xa4, 0x02, 0x09, 0x78, 0x79, 0x04];
+    assert_eq!(deserialize(&js_string_keys), Err(Error::MapNotSorted));
+
+    let js_bit_field_keys = [0x2f, 0x02, 0xcf, 0x01, 0x02, 0xcf, 0x05, 0x04];
+    assert_eq!(deserialize(&js_bit_field_keys), Err(Error::MapNotSorted));
 }
 
 /// `EMPTY_MAP` (`0b1101_1111`) is a dead tag.

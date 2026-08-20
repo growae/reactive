@@ -9,6 +9,14 @@
 //! This is a fixed corpus, not the differential harness — it does not generate
 //! inputs and it does not run the reference on every change. Regenerate it when
 //! the reference version moves; see the header of `generate.mjs`.
+//!
+//! The `call/…` and `return/…` cases come from a different reference path to
+//! the rest. They are generated through `AciContractCallEncoder`, the class
+//! `@aeternity/aepp-sdk` drives from `Contract.$call`, from a contract ACI and
+//! JavaScript-shaped arguments — so the reference, not the generator, decides
+//! which wire type each Sophia type maps to. That is the surface
+//! `packages/core` actually calls, and it is the half a vector written to match
+//! this crate's own output could not be evidence about.
 
 use ae_fate::{
     deserialize, deserialize_type, serialize, serialize_type, AddressKind, BytesSize, FateInt,
@@ -289,6 +297,165 @@ fn types() -> Vec<(&'static str, FateType)> {
     ]
 }
 
+/// A Sophia record — a tuple on the wire, with its field names lost.
+fn record(label: &str, score: i32, active: bool) -> FateValue {
+    FateValue::Tuple(vec![
+        FateValue::string(label),
+        FateValue::int(score),
+        FateValue::Bool(active),
+    ])
+}
+
+/// The `Registry.choice` typedef in `generate.mjs`: `Nothing | One(int) |
+/// Both(int, string)`.
+fn choice(tag: u8, values: Vec<FateValue>) -> FateValue {
+    FateValue::variant(vec![0, 1, 2], tag, values).expect("well formed")
+}
+
+/// The four byte function id the reference derives from a function's name.
+///
+/// Computing it here rather than pinning the bytes makes every `call/…` case a
+/// check on the derivation as well as on the encoding — the hash lives in
+/// `ae-core`, and a corpus that carried the id as a literal would agree with
+/// the reference even if the two disagreed about how it is produced.
+fn function_id(name: &str) -> Vec<u8> {
+    ae_core::hash::blake2b_256(name.as_bytes())[..4].to_vec()
+}
+
+/// Calls as `packages/core` makes them, named by the ACI function they call.
+fn aci_calls() -> Vec<(&'static str, &'static str, Vec<FateValue>)> {
+    vec![
+        (
+            "call/transfer",
+            "transfer",
+            vec![FateValue::account(ADDRESS_A), FateValue::int(1_000_000i32)],
+        ),
+        (
+            "call/register",
+            "register",
+            vec![FateValue::account(address_b()), record("alice", -7, true)],
+        ),
+        (
+            "call/set-flags",
+            "set_flags",
+            vec![FateValue::List(vec![
+                FateValue::Bool(true),
+                FateValue::Bool(false),
+                FateValue::Bool(true),
+            ])],
+        ),
+        (
+            "call/bulk-unsorted-map",
+            "bulk",
+            vec![FateValue::map([
+                (FateValue::string("zz"), FateValue::int(3i32)),
+                (FateValue::string("a"), FateValue::int(1i32)),
+                (FateValue::string("mm"), FateValue::int(2i32)),
+            ])
+            .unwrap()],
+        ),
+        (
+            "call/maybe-some",
+            "maybe",
+            vec![FateValue::some(FateValue::int(42i32))],
+        ),
+        ("call/maybe-none", "maybe", vec![FateValue::none()]),
+        (
+            "call/verify",
+            "verify",
+            vec![
+                FateValue::Bytes(vec![0x11; 32]),
+                FateValue::Bytes(vec![0x22; 64]),
+            ],
+        ),
+        (
+            "call/blob",
+            "blob",
+            vec![FateValue::Bytes((1u8..=8).collect())],
+        ),
+        ("call/pick-nothing", "pick", vec![choice(0, Vec::new())]),
+        (
+            "call/pick-both",
+            "pick",
+            vec![choice(
+                2,
+                vec![FateValue::int(5i32), FateValue::string("five")],
+            )],
+        ),
+        (
+            "call/pair",
+            "pair",
+            vec![FateValue::Tuple(vec![
+                FateValue::int(1i32),
+                FateValue::string("x"),
+            ])],
+        ),
+        (
+            "call/nested",
+            "nested",
+            vec![FateValue::List(vec![
+                record("a", 1, false),
+                record("b", 2, true),
+            ])],
+        ),
+        (
+            "call/watch",
+            "watch",
+            vec![FateValue::Address(AddressKind::Oracle, ADDRESS_A.to_vec())],
+        ),
+        ("call/ping", "ping", Vec::new()),
+    ]
+}
+
+/// Return values, encoded against the ACI's declared return type.
+fn aci_returns() -> Vec<(&'static str, FateValue)> {
+    vec![
+        ("return/bool", FateValue::Bool(true)),
+        ("return/record", record("alice", -7, true)),
+        ("return/int", FateValue::int(3i32)),
+        (
+            "return/map-address-keys",
+            FateValue::map([
+                (FateValue::account(ADDRESS_A), FateValue::int(2i32)),
+                (FateValue::account(address_b()), FateValue::int(1i32)),
+            ])
+            .unwrap(),
+        ),
+        (
+            "return/option-some",
+            FateValue::some(FateValue::string("yes")),
+        ),
+        ("return/option-none", FateValue::none()),
+        ("return/bytes", FateValue::Bytes(vec![0x5a; 4])),
+        ("return/variant-nullary", choice(0, Vec::new())),
+        (
+            "return/variant-payload",
+            choice(2, vec![FateValue::int(5i32), FateValue::string("five")]),
+        ),
+        (
+            "return/tuple",
+            FateValue::Tuple(vec![FateValue::string("s"), FateValue::Bool(false)]),
+        ),
+        (
+            "return/nested-containers",
+            FateValue::List(vec![FateValue::map([
+                (
+                    FateValue::string("k"),
+                    FateValue::List(vec![FateValue::int(1i32), FateValue::int(2i32)]),
+                ),
+                (FateValue::string("j"), FateValue::List(Vec::new())),
+            ])
+            .unwrap()]),
+        ),
+        ("return/address", FateValue::account(ADDRESS_A)),
+        ("return/unit", FateValue::unit()),
+        (
+            "return/state-map",
+            FateValue::map([(FateValue::account(ADDRESS_A), record("a", 1, false))]).unwrap(),
+        ),
+    ]
+}
+
 /// Calldata cases, which the reference builds through its own calldata type.
 fn calls() -> Vec<(&'static str, Vec<u8>, Vec<FateValue>)> {
     vec![
@@ -338,6 +505,25 @@ fn matches_the_reference_implementation() {
             let decoded = ae_fate::decode_calldata(expected).expect("decodes");
             assert_eq!(decoded.function_id, function_id, "function id for {name}");
             assert_eq!(decoded.arguments, arguments, "arguments for {name}");
+            checked += 1;
+        } else if let Some((_, function, arguments)) =
+            aci_calls().into_iter().find(|(case, _, _)| case == name)
+        {
+            let id = function_id(function);
+            let encoded = ae_fate::encode_calldata(&id, &arguments).expect("encodes");
+            assert_eq!(hex(&encoded), hex(expected), "call mismatch for {name}");
+            let decoded = ae_fate::decode_calldata(expected).expect("decodes");
+            assert_eq!(decoded.function_id, id, "function id for {name}");
+            assert_eq!(decoded.arguments, arguments, "arguments for {name}");
+            checked += 1;
+        } else if let Some((_, value)) = aci_returns().into_iter().find(|(case, _)| case == name) {
+            let encoded = serialize(&value).expect("encodes");
+            assert_eq!(hex(&encoded), hex(expected), "return mismatch for {name}");
+            assert_eq!(
+                deserialize(expected).expect("decodes"),
+                value,
+                "return decoding mismatch for {name}"
+            );
             checked += 1;
         } else {
             panic!("corpus case {name} has no counterpart in this test");
