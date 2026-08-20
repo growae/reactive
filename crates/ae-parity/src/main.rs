@@ -13,7 +13,7 @@
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use ae_parity::{matrix, render, sign};
+use ae_parity::{matrix, render, sign, unpack};
 
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
@@ -21,10 +21,12 @@ fn main() -> ExitCode {
     match command {
         Some("matrix") => run_matrix(&arguments[1..]),
         Some("sign") => run_sign(&arguments[1..]),
+        Some("unpack") => run_unpack(&arguments[1..]),
         _ => {
-            eprintln!("usage: ae-parity <matrix|sign> [options]");
+            eprintln!("usage: ae-parity <matrix|sign|unpack> [options]");
             eprintln!("  matrix [--node <path>] [--out <dir>]");
             eprintln!("  sign   [--network-id <id>] [--out <path>]");
+            eprintln!("  unpack --input <path> [--out <path>]");
             ExitCode::FAILURE
         }
     }
@@ -99,6 +101,43 @@ fn run_sign(arguments: &[String]) -> ExitCode {
         return ExitCode::FAILURE;
     }
     println!("signed corpus written to {out} for {network_id}");
+    ExitCode::SUCCESS
+}
+
+/// Decode a json array of `tx_` strings to a field map each.
+///
+/// The on-node exercise calls this to decide whether the node's builder returned
+/// the transaction it was asked for. Batched rather than one call per string
+/// because the alternative is a process launch per vector.
+fn run_unpack(arguments: &[String]) -> ExitCode {
+    let Some(input) = flag(arguments, "--input") else {
+        eprintln!("unpack needs --input <path to a json array of tx_ strings>");
+        return ExitCode::FAILURE;
+    };
+    let encoded: Vec<String> = match std::fs::read_to_string(&input)
+        .map_err(|error| error.to_string())
+        .and_then(|text| serde_json::from_str(&text).map_err(|error| error.to_string()))
+    {
+        Ok(encoded) => encoded,
+        Err(error) => {
+            eprintln!("could not read {input}: {error}");
+            return ExitCode::FAILURE;
+        }
+    };
+
+    let text = format!(
+        "{}\n",
+        serde_json::to_string_pretty(&unpack::unpack_all(&encoded)).expect("serialises")
+    );
+    match flag(arguments, "--out") {
+        Some(out) => {
+            if let Err(error) = write(Path::new(&out), &text) {
+                eprintln!("{error}");
+                return ExitCode::FAILURE;
+            }
+        }
+        None => print!("{text}"),
+    }
     ExitCode::SUCCESS
 }
 

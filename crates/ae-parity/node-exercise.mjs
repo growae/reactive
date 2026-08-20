@@ -32,8 +32,10 @@
 // establishes that the rejections are real. The debug builders return bytes and
 // touch no state. No key material in this repository is read or used.
 
+import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -296,16 +298,27 @@ const builders = {
   },
   ChannelCreateTx: {
     path: '/debug/channels/create',
-    // The node's HTTP builder takes one `delegate_ids` list; the protocol's
-    // version 2 carries an initiator list and a responder list, which is what
-    // the reference sdk and this core both serialise. The shapes are not the
-    // same transaction, so comparing their bytes would compare two versions.
-    map: () => {
-      throw new Error(
-        'node builder takes a single delegate_ids list; the tag serialises at ' +
-          'version 2 with separate initiator and responder lists',
-      )
-    },
+    // The endpoint takes one `delegate_ids` list where the tag serialises two.
+    // This used to refuse to send at all and declare the row not comparable in
+    // prose. It now sends the closest request the endpoint can express and lets
+    // the field comparison say so — the exclusion has to be earned by decoding
+    // what comes back, not asserted by whoever wrote the mapper.
+    map: (p) => ({
+      initiator_id: plain(p.initiator),
+      initiator_amount: big(p.initiatorAmount),
+      responder_id: plain(p.responder),
+      responder_amount: big(p.responderAmount),
+      channel_reserve: big(p.channelReserve),
+      lock_period: number(p.lockPeriod),
+      state_hash: plain(p.stateHash),
+      delegate_ids: [
+        ...(p.initiatorDelegateIds?.v ?? []),
+        ...(p.responderDelegateIds?.v ?? []),
+      ].map((id) => id.v ?? id),
+      fee: big(p.fee),
+      ttl: number(p.ttl) ?? 0,
+      nonce: number(p.nonce),
+    }),
   },
   ChannelDepositTx: {
     path: '/debug/channels/deposit',
@@ -460,11 +473,174 @@ async function measureBuilders() {
     rows.push({
       name,
       tag,
-      verdict: response.tx === mine ? 'identical' : 'differs',
+      // Provisional. Anything not byte-identical is classified below, by
+      // decoding both sides rather than by anyone's judgement about the row.
+      verdict: response.tx === mine ? 'identical' : 'pending-classification',
       ...(response.tx === mine ? {} : { ours: mine, node: response.tx }),
     })
   }
   return rows
+}
+
+// ---------------------------------------------------------------------------
+// 1b. CLASSIFY — did the node build the transaction it was asked for?
+// ---------------------------------------------------------------------------
+
+/**
+ * Decode `tx_` strings through `ae-core`, the decoder the corpus already proves
+ * against the reference.
+ *
+ * Not reimplemented here on purpose. Decoding a transaction needs the tag schema,
+ * and a JavaScript copy of 27 entries over 200 fields would be a mirror that
+ * drifts the first time one of them changes — this workspace carries three such
+ * mirrors already and does not need a fourth to answer one question.
+ */
+function unpackThroughCore(encoded) {
+  if (encoded.length === 0) return []
+  const scratch = mkdtempSync(join(tmpdir(), 'parity-unpack-'))
+  try {
+    const input = join(scratch, 'input.json')
+    const output = join(scratch, 'output.json')
+    writeFileSync(input, JSON.stringify(encoded))
+    execFileSync(
+      'cargo',
+      [
+        'run',
+        '--quiet',
+        '-p',
+        'ae-parity',
+        '--',
+        'unpack',
+        '--input',
+        input,
+        '--out',
+        output,
+      ],
+      { cwd: crates, stdio: ['ignore', 'ignore', 'inherit'] },
+    )
+    return JSON.parse(readFileSync(output, 'utf8'))
+  } finally {
+    rmSync(scratch, { recursive: true, force: true })
+  }
+}
+
+/**
+ * Turn every provisional row into a verdict, by decoding both sides.
+ *
+ * `not-comparable` means the node did not return the transaction it was asked
+ * for, and it has to name the field that says so. `differs` therefore keeps
+ * meaning what it says — same transaction, different bytes — and stays an
+ * unconditional failure. Nothing is excused for being a quirk, and the day an
+ * endpoint starts returning what it was given its row becomes comparable again
+ * on its own.
+ */
+function classifyBuilders(rows) {
+  const pending = rows.filter((row) => row.verdict === 'pending-classification')
+  if (pending.length === 0) return rows
+
+  const decoded = unpackThroughCore(
+    pending.flatMap((row) => [row.ours, row.node]),
+  )
+
+  pending.forEach((row, index) => {
+    const mine = decoded[index * 2]
+    const theirs = decoded[index * 2 + 1]
+    if (!mine?.ok || !theirs?.ok) {
+      row.verdict = 'unclassified'
+      row.detail =
+        `could not decode: ${mine?.error ?? ''} ${theirs?.error ?? ''}`.trim()
+      return
+    }
+
+    const differing = []
+    if (mine.tag !== theirs.tag) {
+      differing.push(`tag (sent ${mine.tag}, node ${theirs.tag})`)
+    }
+    if (mine.version !== theirs.version) {
+      differing.push(`version (sent ${mine.version}, node ${theirs.version})`)
+    }
+    for (const field of new Set([
+      ...Object.keys(mine.fields),
+      ...Object.keys(theirs.fields),
+    ])) {
+      const sent = mine.fields[field]
+      const back = theirs.fields[field]
+      if (sent !== back) {
+        differing.push(
+          `${field} (sent ${sent ?? '<absent>'}, node ${back ?? '<absent>'})`,
+        )
+      }
+    }
+
+    if (differing.length > 0) {
+      row.verdict = 'not-comparable'
+      row.fields_differing = differing
+      row.detail = `the endpoint returned a different transaction: ${differing.join('; ')}`
+    } else {
+      // Same transaction, different bytes. A real encoding disagreement.
+      row.verdict = 'differs'
+    }
+  })
+
+  return rows
+}
+
+// ---------------------------------------------------------------------------
+// 1c. PROBE — is the pointer-order finding still true?
+// ---------------------------------------------------------------------------
+
+/**
+ * The name-update endpoint reverses the pointer list. That is what takes one row
+ * out of the byte comparison, so it is re-measured rather than assumed: three
+ * orders in, and the endpoint has to fail to preserve every one of them.
+ *
+ * The probe exists for the direction nobody watches. If the endpoint is ever
+ * fixed, this stops holding and the run fails loudly — rather than the row
+ * staying quietly excluded on a finding that has expired.
+ */
+async function probePointerOrder() {
+  const nameUpdate = corpus.cases.find(
+    (entry) =>
+      entry.name === 'name update v1, explicit ttls and several pointers',
+  )
+  if (nameUpdate === undefined)
+    return { ran: false, reason: 'no multi-pointer vector' }
+
+  const sent = nameUpdate.params.pointers.v.map((pointer) => pointer.key)
+  const orders = [sent, [...sent].reverse(), [sent[1], sent[0], sent[2]]]
+  const byKey = new Map(
+    nameUpdate.params.pointers.v.map((pointer) => [pointer.key, pointer.id]),
+  )
+
+  const observations = []
+  for (const order of orders) {
+    const { status, body } = await call('/debug/names/update', {
+      ...builders.NameUpdateTx.map(nameUpdate.params),
+      pointers: order.map((key) => ({ key, id: byKey.get(key) })),
+    })
+    if (status !== 200 || typeof body.tx !== 'string') {
+      observations.push({ sent: order, error: `HTTP ${status}` })
+      continue
+    }
+    const [decoded] = unpackThroughCore([body.tx])
+    const returned = decoded.ok
+      ? decoded.fields.pointers
+          .replace(/^\[|\]$/g, '')
+          .split(',')
+          .filter(Boolean)
+          .map((pair) => pair.split('=')[0])
+      : []
+    observations.push({
+      sent: order,
+      returned,
+      preserved: order.join(',') === returned.join(','),
+    })
+  }
+
+  const preservesOrder = observations.some(
+    (observation) => observation.preserved,
+  )
+  return { ran: true, observations, preservesOrder }
 }
 
 // ---------------------------------------------------------------------------
@@ -564,7 +740,8 @@ console.log(
   }`,
 )
 
-const built = await measureBuilders()
+const built = classifyBuilders(await measureBuilders())
+const pointerOrder = await probePointerOrder()
 const accepted = await measureAcceptance()
 const controls = await measureControls()
 
@@ -596,6 +773,15 @@ const summary = {
   controls_all_rejected: controls.every(
     (row) => row.verdict === 'decoder-rejected',
   ),
+  builder_differs: built
+    .filter((row) => row.verdict === 'differs')
+    .map((row) => row.name),
+  builder_not_comparable: built
+    .filter((row) => row.verdict === 'not-comparable')
+    .map(
+      (row) => `${row.name}: ${row.fields_differing?.join('; ') ?? row.detail}`,
+    ),
+  pointer_order_endpoint_preserves_order: pointerOrder.preservesOrder ?? null,
 }
 
 function tally(rows, key) {
@@ -612,6 +798,7 @@ const result = {
   },
   signer: signed.signer,
   summary,
+  pointer_order_probe: pointerOrder,
   built,
   accepted,
   controls,
@@ -627,6 +814,25 @@ if (!summary.controls_all_rejected) {
   stderr(
     'CONTROL FAILED — a corrupted transaction was not rejected by the decoder, ' +
       'so the acceptance results are not evidence of anything.',
+  )
+  process.exit(1)
+}
+// The endpoint that reverses a pointer list is why one row is not comparable.
+// If it is ever fixed the row has to go back into the byte comparison, so this
+// fails rather than letting the exclusion outlive the finding that earned it.
+if (pointerOrder.ran && pointerOrder.preservesOrder) {
+  stderr(
+    'PROBE CHANGED — the name-update endpoint now preserves pointer order for at ' +
+      'least one input. The row it excused is comparable again and the ' +
+      'classification has to be re-derived:',
+    `\n  ${JSON.stringify(pointerOrder.observations)}`,
+  )
+  process.exit(1)
+}
+if (summary.builder_differs.length > 0) {
+  stderr(
+    'CLAUSE 6 FAILED — the node built the same transaction with different bytes:',
+    `\n  ${summary.builder_differs.join('\n  ')}`,
   )
   process.exit(1)
 }
