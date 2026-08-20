@@ -26,13 +26,38 @@ One sentence, precise enough to be used as a gate by someone who was not here:
 >    and every vector in the FATE corpus decodes and re-encodes byte-for-byte;
 > 5. regenerating both corpora at their pinned reference versions produces no
 >    diff;
-> 6. on a node: every transaction we build is accepted by the node's decoder, and
->    every tag the node has a builder for produces bytes identical to ours — with
->    the control cases proving the node rejects corrupted bytes differently.
+> 6. on a node: every transaction we build **that the corpus marks postable** is
+>    accepted by the node's decoder; every vector marked non-postable names the
+>    chain rule that refuses it and the tag has a postable sibling that the node
+>    does accept; and every tag the node has a builder for produces bytes
+>    identical to ours — with the control cases proving the node rejects
+>    corrupted bytes differently.
 
 Points 1, 2, 4 and 5 are enforced in CI. Point 3 has no fixtures at all today.
 Point 6 needs a reachable node and is recorded in `TESTNET.md` rather than gated,
 because a public testnet going down is not a reason to fail a pull request.
+
+### Why point 6 has two classes of vector
+
+A committed vector is an assertion about **bytes**. A transaction the chain
+accepts is an assertion about **content**. Those are different claims and the
+first run of the on-node half found three vectors where they part company: the
+reference SDK and this core produce identical bytes, and the node's decoder
+refuses them. An offline byte-diff scores all three green, which is exactly the
+blind spot this half exists to remove.
+
+So the corpus carries both classes rather than choosing between them. A
+non-postable vector is a valid encoding test and is kept — deleting it deletes
+the evidence — but it is marked, it names the rule that refuses it, and it never
+counts towards the on-node clause. Where a chain-acceptable sibling exists for
+that tag it is added alongside, so the tag still has an acceptance result.
+
+`ChannelForceProgressTx` is today the one tag with no accepted vector at all:
+seven variants, crossing payload signedness, update-entry validity and
+off-chain-trees validity, were refused identically. It is a **named exception**
+carried in `TESTNET.md`, not a pass, and it is reachable through the generic
+builder today — which makes it a finding against the tag, not against the
+harness.
 
 **None of these is a percentage.** A percentage over four surfaces of different
 sizes answers no question anyone has, and it hides exactly the rows that decide
@@ -95,3 +120,30 @@ HTTP 400, which is why the code and not the status is what gets classified.
 | `signature_check_failed` | fully decoded, signer identified, signature checked — accepted |
 | `invalid_at_protocol` | decoded and validated, refused on a protocol rule — accepted |
 | `tx_nonce_too_low`, `insufficient_funds` | decoded and validated against chain state — accepted |
+
+## The `NameUpdateTx` version rule is ours to enforce, not the reference's
+
+The chain enforces one encoding per content: version 2 only when a pointer needs
+it, version 1 only when none does, checked at decode. The reference SDK
+serialises whichever version the caller names, so a caller can build a
+transaction that no node will take and nothing offline notices. The node's own
+builder agrees with the node, which makes the reference the odd one out of three
+implementations rather than this core being wrong.
+
+We encode the rule here rather than wait for it upstream. We are replacing that
+dependency, not depending on its fix, and the rule is cheap to state:
+
+- on the **default path** — the one a consumer reaches — the serialised version
+  of a `NameUpdateTx` is **derived from its pointers**: version 2 if any pointer
+  is a raw `ba_` blob, version 1 otherwise;
+- a caller-pinned version that contradicts its own pointer content is a
+  build-time error at that boundary, not bytes handed to a node that will refuse
+  them;
+- `TxParams::with_version` stays an **unchecked serialiser pin**. The encoder has
+  to remain total — it must still be able to emit any well-formed vector,
+  including the ones the chain refuses — or the corpus above cannot be
+  reproduced. The check belongs one layer up, where a consumer actually builds a
+  transaction.
+
+That keeps the two claims separate, which is the same distinction point 6 draws:
+bytes we can encode, versus transactions we will hand someone.

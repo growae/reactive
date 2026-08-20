@@ -42,9 +42,16 @@ What they are instead is the failure mode the on-node half exists to catch — a
 committed vector both implementations agree on that the chain will not take. An
 offline byte-diff scores all three green.
 
+All three stay in the corpus. They are correct encoding tests and invalid
+transactions, and that is the finding — deleting them deletes the evidence. Each
+is marked non-postable, names the chain rule that refuses it, and is excluded
+from the on-node clause of parity green; where a chain-acceptable sibling exists
+for the tag it is added alongside, so the tag still has an acceptance result. See
+`README.md` for the clause this scopes.
+
 ### 1. `NameUpdateTx` version 2 — the version is not free
 
-Five probes, all built by the reference sdk:
+Eight probes, all built by the reference sdk:
 
 | Serialised version | Pointers | Node |
 |---|---|---|
