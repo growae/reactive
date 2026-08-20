@@ -76,4 +76,16 @@ def test_every_vector_survives_unpack_then_rebuild(case):
 
 
 def test_corpus_is_not_empty():
-    assert len(CASES) == 40
+    """The corpus loaded, and loaded whole.
+
+    This guards the failure mode where `CORPUS_PATH` resolves to something that
+    is not the corpus and every parametrised test above silently collapses to
+    zero cases. It is deliberately a floor rather than an exact count: the file
+    it checks is the Rust tests' corpus, so pinning the exact length here
+    duplicates a number that lives in that file and turns every legitimate
+    addition to it into a red gate in a directory nobody adding a vector is
+    looking at. That is not hypothetical — it is what happened when the corpus
+    grew to 41. Coverage is policed on the Rust side, by
+    `every_transaction_schema_entry_has_at_least_one_vector`.
+    """
+    assert len(CASES) >= 40
