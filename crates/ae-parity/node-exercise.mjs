@@ -59,6 +59,21 @@ const corpus = JSON.parse(
 )
 const signed = JSON.parse(readFileSync(signedPath, 'utf8'))
 
+/**
+ * The corpus's own claim about which vectors a node refuses, and why.
+ *
+ * Everything below re-measures it. A marking that nothing re-checks is a marking
+ * that rots: it silently removes a vector from the on-node clause and nobody
+ * finds out when the chain rule it names stops applying. So this script fails in
+ * **both** directions — a postable vector the node refuses, and a non-postable
+ * vector the node takes.
+ */
+const refusedBy = new Map(
+  corpus.cases
+    .filter((entry) => entry.postable === false)
+    .map((entry) => [entry.name, entry.refusedBy]),
+)
+
 /** base64check, the envelope every `tx_`-family string uses. */
 function encodeCheck(prefix, bytes) {
   const first = createHash('sha256').update(bytes).digest()
@@ -417,6 +432,13 @@ async function measureBuilders() {
       rows.push({ name, tag, verdict: 'no-node-builder' })
       continue
     }
+    // A vector the node has already said it will not take leaves the builder
+    // comparison too. Asking whether it builds the same bytes for a transaction
+    // it refuses scores a disagreement already recorded as the refusal.
+    if (refusedBy.has(name)) {
+      rows.push({ name, tag, verdict: 'excluded-non-postable' })
+      continue
+    }
     let body
     try {
       body = builder.map(entry.params)
@@ -477,10 +499,12 @@ async function post(tx) {
 async function measureAcceptance() {
   const rows = []
   for (const entry of signed.cases) {
+    const refusal = refusedBy.get(entry.name) ?? null
     if (typeof entry.signed !== 'string') {
       rows.push({
         name: entry.name,
         tag: entry.tag,
+        postable: refusal === null,
         verdict: 'not-built',
         code: entry.build_error,
       })
@@ -489,6 +513,8 @@ async function measureAcceptance() {
     rows.push({
       name: entry.name,
       tag: entry.tag,
+      postable: refusal === null,
+      ...(refusal === null ? {} : { marked: refusal }),
       ...(await post(entry.signed)),
     })
   }
@@ -542,9 +568,31 @@ const built = await measureBuilders()
 const accepted = await measureAcceptance()
 const controls = await measureControls()
 
+const postableRejected = accepted
+  .filter((row) => row.postable && row.verdict === 'decoder-rejected')
+  .map((row) => `${row.name}: ${row.code}`)
+// The other direction, and the one a marking makes easy to forget: a vector
+// excused from the clause that the chain has since started accepting. The
+// exclusion is then unearned, and an unearned exclusion is a vector quietly
+// removed from the measurement.
+const staleMarkings = accepted
+  .filter((row) => row.postable === false && row.verdict === 'decoder-accepted')
+  .map(
+    (row) => `${row.name}: marked ${row.marked?.errorCode}, node accepted it`,
+  )
+
 const summary = {
   built: tally(built, 'verdict'),
   accepted: tally(accepted, 'verdict'),
+  postable_accepted: accepted.filter(
+    (row) => row.postable && row.verdict === 'decoder-accepted',
+  ).length,
+  postable_total: accepted.filter((row) => row.postable).length,
+  postable_rejected: postableRejected,
+  non_postable_excluded: accepted
+    .filter((row) => row.postable === false)
+    .map((row) => `${row.name}: ${row.code}`),
+  stale_markings: staleMarkings,
   controls_all_rejected: controls.every(
     (row) => row.verdict === 'decoder-rejected',
   ),
@@ -579,6 +627,22 @@ if (!summary.controls_all_rejected) {
   stderr(
     'CONTROL FAILED — a corrupted transaction was not rejected by the decoder, ' +
       'so the acceptance results are not evidence of anything.',
+  )
+  process.exit(1)
+}
+if (summary.postable_rejected.length > 0) {
+  stderr(
+    'CLAUSE 6 FAILED — a postable vector was refused by the decoder:',
+    `\n  ${summary.postable_rejected.join('\n  ')}`,
+  )
+  process.exit(1)
+}
+if (summary.stale_markings.length > 0) {
+  stderr(
+    'STALE MARKING — a vector marked non-postable was accepted by the node. ' +
+      'The exclusion is no longer earned; re-measure and drop the marking, or ' +
+      'correct the rule it names:',
+    `\n  ${summary.stale_markings.join('\n  ')}`,
   )
   process.exit(1)
 }

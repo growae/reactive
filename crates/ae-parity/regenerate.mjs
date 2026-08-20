@@ -87,9 +87,12 @@ try {
     `${JSON.stringify({ name: 'parity-regenerate', private: true, type: 'module' }, null, 2)}\n`,
   )
 
+  // `path` and `text` stay separate fields. An earlier revision reused one name
+  // for both, which the check path never noticed because it only ever compares —
+  // and `--write` then tried to open the whole corpus as a filename.
   const pins = corpora.map((corpus) => {
-    const committed = readFileSync(corpus.committed, 'utf8')
-    const version = corpus.version(JSON.parse(committed))
+    const text = readFileSync(corpus.committed, 'utf8')
+    const version = corpus.version(JSON.parse(text))
     if (!version) {
       throw new Error(
         `${corpus.committed} does not record its reference version`,
@@ -97,7 +100,8 @@ try {
     }
     return {
       ...corpus,
-      committed,
+      path: corpus.committed,
+      text,
       pinned: `${corpus.package}@${version}`,
       version,
     }
@@ -129,13 +133,13 @@ try {
       maxBuffer: 64 * 1024 * 1024,
     })
 
-    if (regenerated === pin.committed) {
+    if (regenerated === pin.text) {
       console.log(`${pin.label}: reproducible from ${pin.pinned}`)
       continue
     }
 
     if (write) {
-      writeFileSync(pin.committed, regenerated)
+      writeFileSync(pin.path, regenerated)
       console.log(
         `${pin.label}: rewritten from ${pin.pinned} — review the diff`,
       )
@@ -146,7 +150,7 @@ try {
     stderr(
       `${pin.label}: DRIFT — the committed corpus is not what ${pin.pinned} produces`,
     )
-    stderr(describeDifference(pin.committed, regenerated))
+    stderr(describeDifference(pin.text, regenerated))
     stderr(
       'Re-run with --write to take the new bytes, then review the diff and the ' +
         'parity matrix before committing.',

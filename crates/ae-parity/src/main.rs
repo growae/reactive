@@ -47,7 +47,7 @@ fn run_matrix(arguments: &[String]) -> ExitCode {
                 .map_err(|error| error.to_string())
                 .and_then(|text| serde_json::from_str(&text).map_err(|error| error.to_string()))
             {
-                Ok(node) => computed.node = Some(node),
+                Ok(node) => computed.merge_node_run(node),
                 Err(error) => {
                     eprintln!("could not read {path}: {error}");
                     return ExitCode::FAILURE;

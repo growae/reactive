@@ -151,3 +151,110 @@ fn the_recorded_gaps_are_exactly_what_was_reported() {
         matrix.unexercised_codecs
     );
 }
+
+/// The non-postable set, pinned exactly.
+///
+/// This is the offline half of clause 6: the corpus's own claim about which
+/// vectors a node refuses and why. It cannot check that claim against a node —
+/// that is `node-exercise.mjs`, which re-measures every one of these on each run
+/// and fails in either direction. What it does check is that the claim is
+/// well-formed: every marking names a rule and an error code, and every marking
+/// either names a postable sibling that exists or is a declared exception.
+#[test]
+fn every_non_postable_vector_names_its_rule_and_its_sibling() {
+    let matrix = matrix::compute();
+    let corpus = ae_parity::corpus::transactions();
+    let names: Vec<&str> = corpus.iter().map(|case| case.name.as_str()).collect();
+
+    let refusals: Vec<&matrix::VectorRefusal> = matrix
+        .transactions
+        .iter()
+        .flat_map(|row| row.refusals.iter())
+        .collect();
+
+    assert_eq!(
+        refusals
+            .iter()
+            .map(|refusal| refusal.vector.as_str())
+            .collect::<Vec<_>>(),
+        vec![
+            "name update v2, id pointer",
+            "channel create, with delegates",
+            "channel force progress",
+        ],
+        "the non-postable set changed; re-run the on-node exercise before editing this"
+    );
+
+    for refusal in &refusals {
+        assert!(
+            !refusal.error_code.is_empty() && !refusal.rule.is_empty(),
+            "{} is marked non-postable without naming a code and a rule",
+            refusal.vector
+        );
+        if let Some(sibling) = &refusal.sibling {
+            assert!(
+                names.contains(&sibling.as_str()),
+                "{} names sibling {sibling}, which is not in the corpus",
+                refusal.vector
+            );
+        }
+    }
+}
+
+/// `ChannelForceProgressTx` has no accepted vector at all, and that is a named
+/// exception rather than a pass.
+///
+/// Seven variants — crossing payload signedness, update-entry validity and
+/// off-chain-trees validity — were refused identically. The tag is reachable
+/// through the generic builder today, so this is a finding against the tag.
+///
+/// The assertion is deliberately two-sided. Removing the exception without
+/// giving the tag a postable vector fails here, and giving it one without
+/// removing the exception fails here too — which is what stops it becoming a
+/// silent pass in either direction.
+#[test]
+fn the_named_exception_is_exactly_channel_force_progress() {
+    let matrix = matrix::compute();
+    assert_eq!(
+        matrix.named_exceptions,
+        vec!["ChannelForceProgressTx".to_string()]
+    );
+
+    for row in &matrix.transactions {
+        let declared = matrix.named_exceptions.contains(&format!("{:?}", row.tag));
+        assert_eq!(
+            declared,
+            row.postable_vectors == 0,
+            "{:?} v{}: declared exception = {declared}, but it has {} postable vectors",
+            row.tag,
+            row.version,
+            row.postable_vectors
+        );
+    }
+}
+
+/// Both tags that lost a vector to a chain rule kept an acceptance result.
+#[test]
+fn every_other_refused_tag_still_has_a_postable_vector() {
+    let matrix = matrix::compute();
+    for row in &matrix.transactions {
+        if row.refusals.is_empty() {
+            continue;
+        }
+        let excepted = matrix.named_exceptions.contains(&format!("{:?}", row.tag));
+        assert!(
+            excepted || row.postable_vectors > 0,
+            "{:?} v{} has a refused vector, no postable vector, and no exception",
+            row.tag,
+            row.version
+        );
+    }
+    assert_eq!(
+        matrix
+            .transactions
+            .iter()
+            .map(|row| row.postable_vectors)
+            .sum::<usize>(),
+        38
+    );
+}
