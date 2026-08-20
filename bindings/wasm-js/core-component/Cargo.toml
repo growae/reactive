@@ -1,0 +1,32 @@
+[package]
+name = "core-component"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+ae-core = { path = "../../../crates/ae-core" }
+num-bigint = "0.4"
+wit-bindgen-rt = { version = "0.41", features = ["bitflags"] }
+# `ae-core` depends on `rand_core`'s `getrandom` feature for
+# `SecretKey::generate()`, which this component does not export (see
+# `wit/world.wit`, the `keys` interface doc) — but `getrandom` still has to
+# *compile* for this target, and bare `wasm32-unknown-unknown` has no default
+# backend. `js` would pull in `wasm-bindgen`'s ABI, which `cargo-component`
+# does not speak. `custom` registers a stub that traps if ever actually
+# called, which it is not: `from-seed` is deterministic and touches no RNG.
+getrandom = { version = "0.2", features = ["custom"] }
+
+[package.metadata.component]
+package = "growae:core-harness"
+
+[package.metadata.component.target]
+path = "../wit"
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true

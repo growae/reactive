@@ -18,8 +18,8 @@ packages/*/src/**/*.d.ts.map
 # Rust build output — the compiled .wasm and jco-transpiled JS glue in
 # bindings/wasm-js/generated/ are committed as the actual binding artifact,
 # not this
-bindings/wasm-js/placeholder-core/target/
-bindings/wasm-js/placeholder-core/src/bindings.rs
+bindings/wasm-js/core-component/target/
+bindings/wasm-js/core-component/src/bindings.rs
 
 # Rust build artifacts — one workspace, one target directory
 /crates/target/
