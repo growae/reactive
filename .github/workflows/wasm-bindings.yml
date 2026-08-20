@@ -30,7 +30,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: bindings/wasm-js/placeholder-core
+          workspaces: bindings/wasm-js/core-component
 
       - run: cargo install --locked cargo-component@0.21.1
 
