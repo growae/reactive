@@ -23,3 +23,14 @@ bindings/wasm-js/placeholder-core/src/bindings.rs
 
 # Rust build artifacts — one workspace, one target directory
 /crates/target/
+
+# Python binding — Rust build output, the maturin-managed venv, Python's own
+# caches, and the compiled extension `maturin develop` copies into the
+# package directory for editable installs. Wheels land under dist/, already
+# ignored above.
+bindings/python/target/
+bindings/python/.venv/
+bindings/python/**/__pycache__/
+bindings/python/.pytest_cache/
+bindings/python/python/ae_core/*.so
+bindings/python/python/ae_core/*.pyd

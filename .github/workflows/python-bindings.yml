@@ -1,0 +1,108 @@
+name: Python bindings
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'bindings/python/**'
+      - 'crates/ae-core/**'
+      - '.github/workflows/python-bindings.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'bindings/python/**'
+      - 'crates/ae-core/**'
+      - '.github/workflows/python-bindings.yml'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: bindings/python
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to match crates/rust-toolchain.toml, same reasoning as rust.yml:
+      # a floating toolchain turns an unrelated Rust release into a red gate on
+      # an untouched branch.
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bindings/python
+
+      - run: cargo fmt --all -- --check
+
+      - run: cargo clippy --locked --all-targets --all-features -- -D warnings
+
+  build:
+    name: Build
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # abi3 (abi3-py39): one wheel per platform covers every CPython
+          # 3.9+, so the matrix is OS x arch, not OS x CPython minor.
+          - os: ubuntu-latest
+            target: x86_64
+            manylinux: auto
+          - os: ubuntu-latest
+            target: aarch64
+            manylinux: auto
+          - os: macos-latest
+            target: x86_64
+          - os: macos-latest
+            target: aarch64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@1.97.1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build wheel
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: bindings/python
+          target: ${{ matrix.target }}
+          args: --release --out dist
+          manylinux: ${{ matrix.manylinux || 'auto' }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.target }}
+          path: bindings/python/dist/*.whl
+
+  test:
+    name: Test
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@1.97.1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install maturin pytest
+
+      - run: maturin develop --release
+
+      - run: pytest tests/ -v

@@ -8,7 +8,9 @@
       "crates/target/**",
       "crates/**/tests/vectors/**",
       "bindings/wasm-js/generated/**",
-      "bindings/wasm-js/placeholder-core/target/**"
+      "bindings/wasm-js/placeholder-core/target/**",
+      "bindings/python/target/**",
+      "bindings/python/.venv/**"
     ]
   },
   "formatter": {
