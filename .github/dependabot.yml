@@ -84,7 +84,7 @@ updates:
       vite-vue-template-minor-patch:
         update-types: ['minor', 'patch']
 
-  # Two independent Rust crate trees, each with its own Cargo.lock.
+  # Three independent Rust crate trees, each with its own Cargo.lock.
   - package-ecosystem: 'cargo'
     directory: '/crates'
     target-branch: 'develop'
@@ -96,13 +96,25 @@ updates:
         update-types: ['minor', 'patch']
 
   - package-ecosystem: 'cargo'
-    directory: '/bindings/wasm-js/placeholder-core'
+    directory: '/bindings/wasm-js/core-component'
     target-branch: 'develop'
     schedule:
       interval: 'weekly'
       day: 'monday'
     groups:
       wasm-bindings-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # The PyO3 binding is a third tree, not a member of the crates/ workspace —
+  # it carries its own Cargo.lock and pins pyo3 independently.
+  - package-ecosystem: 'cargo'
+    directory: '/bindings/python'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      python-bindings-minor-patch:
         update-types: ['minor', 'patch']
 
   # Actions referenced across .github/workflows/*.yml.
