@@ -26,6 +26,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ae-parity"
+version = "0.0.0"
+dependencies = [
+ "ae-core",
+ "ae-fate",
+ "serde_json",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

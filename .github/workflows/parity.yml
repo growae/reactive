@@ -1,0 +1,74 @@
+name: Parity
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'crates/**'
+      - '.github/workflows/parity.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'crates/**'
+      - '.github/workflows/parity.yml'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: crates
+
+jobs:
+  matrix:
+    name: Matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # Must stay equal to `crates/rust-toolchain.toml`, for the same reason the
+      # Rust workflow pins it: rustup reads that file inside `crates/`, so a
+      # disagreement here installs one toolchain and builds with another.
+      - uses: dtolnay/rust-toolchain@1.97.1
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates
+
+      # Regenerates `MATRIX.md` and `matrix.json` in place. The gate below is a
+      # test in `ae-parity` that compares them to what the code produces, so a
+      # coverage change shows up as a diff in review rather than as a number in a
+      # log nobody opens.
+      - run: cargo run --locked -p ae-parity -- matrix
+
+      - run: git diff --exit-code -- ae-parity/MATRIX.md ae-parity/matrix.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: parity-matrix
+          path: |
+            crates/ae-parity/MATRIX.md
+            crates/ae-parity/matrix.json
+
+  drift:
+    name: Reference drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Reinstalls the exact reference versions each corpus records for itself,
+      # regenerates both, and fails on any difference. Without this the committed
+      # corpora decay into a snapshot of whatever the generator produced on the
+      # day someone last ran it, and the first dependency bump that changes an
+      # encoding passes a green suite.
+      #
+      # This job reaches the npm registry. It is deliberately separate from the
+      # matrix job so a registry outage cannot take the offline gate red.
+      - run: node ae-parity/regenerate.mjs

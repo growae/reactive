@@ -23,3 +23,9 @@ bindings/wasm-js/placeholder-core/src/bindings.rs
 
 # Rust build artifacts — one workspace, one target directory
 /crates/target/
+
+# Outputs of the on-node exercise. Generated per run, never committed: one
+# carries a freshly generated signing key and the other is a record of a network
+# round trip, and neither is reproducible from a checkout.
+crates/ae-parity/signed.json
+crates/ae-parity/node.json

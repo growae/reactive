@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["ae-core", "ae-fate"]
+members = ["ae-core", "ae-fate", "ae-parity"]
 
 [workspace.package]
 version = "0.0.0"
@@ -12,6 +12,7 @@ publish = false
 
 [workspace.dependencies]
 ae-core = { path = "ae-core" }
+ae-fate = { path = "ae-fate" }
 bs58 = "0.5"
 base64 = "0.22"
 blake2 = "0.10"
