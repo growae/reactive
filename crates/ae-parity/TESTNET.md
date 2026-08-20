@@ -173,8 +173,10 @@ one of them disqualifies the endpoint:
 It is an involution, not a canonicalisation — a canonicalisation is idempotent,
 and this one round-trips. The endpoint therefore does not preserve pointer order
 in either direction and cannot serve as a reference for that field whichever
-order is correct. What it returns is not the transaction it was asked for, which
-is the same ground `ChannelCreateTx` is already *not comparable* on.
+order is correct. What it returns is not the transaction it was asked for, and it
+is the only row in the corpus for which that is true — the `ChannelCreateTx`
+precedent this originally cited did not survive being measured, as the section
+below records.
 
 The probe runs on every exercise, so the exclusion is re-earned rather than
 remembered. If the endpoint is ever fixed it stops holding and the run exits

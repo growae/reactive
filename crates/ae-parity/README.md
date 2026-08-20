@@ -57,9 +57,17 @@ that tag it is added alongside, so the tag still has an acceptance result.
 The builder half asks whether two implementations encode **one** transaction the
 same way. When the node's HTTP builder hands back a transaction whose decoded
 content is not the one it was given, there is no shared subject and there is
-nothing to compare — the same ground `ChannelCreateTx` is already *not
-comparable* on, where the endpoint takes one delegate list and the tag serialises
-two.
+nothing to compare.
+
+This paragraph first cited `ChannelCreateTx` as the precedent, on the ground that
+the endpoint takes one delegate list where the tag serialises two. That was
+inherited from a mapper that refused to send rather than from anything measured,
+and it did not survive being measured: `/v3/debug/channels/create` answers HTTP
+500 to every well-formed body, so the delegate-list question is never reached and
+those rows are `node-declined`. The correction is left visible here rather than
+edited away, because it is the case for the rule — an exclusion written in prose
+read as settled for two reviews, and the first thing that decoded instead of
+described disagreed with it.
 
 This is a classification, not an exemption, and the difference is the whole
 point: **it is decided by decoding the node's bytes and comparing them field by
