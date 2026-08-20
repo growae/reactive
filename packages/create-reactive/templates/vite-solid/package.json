@@ -10,7 +10,7 @@
   "dependencies": {
     "@growae/reactive-solid": "latest",
     "@tanstack/solid-query": "^5.101.4",
-    "solid-js": "^1.9.15"
+    "solid-js": "^1.9.14"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
