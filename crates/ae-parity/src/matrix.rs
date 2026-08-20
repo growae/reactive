@@ -170,6 +170,13 @@ pub struct NodeClause {
     pub builder_identical: usize,
     /// Vectors whose bytes differed from the node's own builder.
     pub builder_differs: Vec<String>,
+    /// Vectors the node's builder did not return the transaction it was asked
+    /// for, each naming the field that says so. Not a pass and not a failure —
+    /// there is no shared subject to compare.
+    pub builder_not_comparable: Vec<String>,
+    /// Whether the pointer-order probe found the endpoint preserving order.
+    /// `Some(true)` means a standing exclusion has outlived its finding.
+    pub endpoint_preserves_pointer_order: Option<bool>,
 }
 
 /// Compute the offline half of the matrix. No network, no working directory.
@@ -699,6 +706,8 @@ impl Matrix {
                 "controls_rejected": clause.controls_rejected,
                 "builder_identical": clause.builder_identical,
                 "builder_differs": clause.builder_differs,
+                "builder_not_comparable": clause.builder_not_comparable,
+                "endpoint_preserves_pointer_order": clause.endpoint_preserves_pointer_order,
             })),
         })
     }
@@ -717,6 +726,8 @@ impl Matrix {
                 .as_bool()
                 .unwrap_or(false),
             exceptions: self.named_exceptions.clone(),
+            endpoint_preserves_pointer_order: run["pointer_order_probe"]["preservesOrder"]
+                .as_bool(),
             ..NodeClause::default()
         };
 
@@ -772,6 +783,17 @@ impl Matrix {
             match row["verdict"].as_str() {
                 Some("identical") => clause.builder_identical += 1,
                 Some("differs") => clause.builder_differs.push(name.to_string()),
+                Some("not-comparable") => clause.builder_not_comparable.push(format!(
+                    "{name}: {}",
+                    row["fields_differing"]
+                        .as_array()
+                        .map(|fields| fields
+                            .iter()
+                            .filter_map(|field| field.as_str())
+                            .collect::<Vec<_>>()
+                            .join("; "))
+                        .unwrap_or_else(|| row["detail"].as_str().unwrap_or("").to_string())
+                )),
                 _ => {}
             }
         }
@@ -794,6 +816,11 @@ impl NodeClause {
             && self.postable_rejected.is_empty()
             && self.stale_markings.is_empty()
             && self.builder_differs.is_empty()
+            // A row excused as not comparable rests on the endpoint failing to
+            // return what it was given. If that stops being true the exclusion
+            // has outlived its finding, and the clause is not green on a reason
+            // nobody re-checked.
+            && self.endpoint_preserves_pointer_order != Some(true)
     }
 }
 

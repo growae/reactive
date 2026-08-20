@@ -313,6 +313,21 @@ pub fn markdown(matrix: &Matrix) -> String {
                     "- corrupted controls all rejected: {}",
                     clause.controls_rejected
                 );
+                let _ = writeln!(
+                    out,
+                    "- node builder returned a different transaction, so nothing to \
+                     compare: {}",
+                    list_or_none(&clause.builder_not_comparable)
+                );
+                let _ = writeln!(
+                    out,
+                    "- name-update endpoint preserves pointer order: {}",
+                    match clause.endpoint_preserves_pointer_order {
+                        None => "not probed".to_string(),
+                        Some(true) => "**yes — a standing exclusion has expired**".to_string(),
+                        Some(false) => "no, re-measured this run".to_string(),
+                    }
+                );
                 if !clause.excluded.is_empty() {
                     let _ = writeln!(out);
                     let _ = writeln!(out, "Excluded, each naming its rule:");
