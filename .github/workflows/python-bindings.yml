@@ -103,6 +103,11 @@ jobs:
 
       - run: pip install maturin pytest
 
-      - run: maturin develop --release
+      # Not `maturin develop`: that needs an active virtualenv to install
+      # into, and a bare `actions/setup-python` runner has none. Build the
+      # wheel and install it the same way a real consumer would.
+      - run: maturin build --release --out dist
+
+      - run: pip install dist/*.whl
 
       - run: pytest tests/ -v

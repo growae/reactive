@@ -52,7 +52,7 @@ import ae_core as core
 key = core.SecretKey.generate()
 recipient = core.SecretKey.generate().address()
 
-params = core.TxParams(12)  # SpendTx
+params = core.TxParams(core.Tag.SPEND_TX)
 params.set("senderId", core.Value.encoded(key.address()))
 params.set("recipientId", core.Value.encoded(recipient))
 params.set("amount", core.Value.uint(1_000_000_000_000_000_000))
@@ -65,7 +65,7 @@ assert tx.startswith("tx_")
 rlp = core.build_tx_rlp(params)
 signature = key.sign_transaction(rlp, core.NETWORK_ID_TESTNET)
 
-signed = core.TxParams(11)  # SignedTx
+signed = core.TxParams(core.Tag.SIGNED_TX)
 signed.set("signatures", core.Value.list([core.Value.bytes(signature.to_bytes())]))
 signed.set("encodedTx", core.Value.encoded(tx))
 signed_tx = core.build_tx(signed)

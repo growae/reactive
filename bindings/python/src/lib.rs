@@ -156,9 +156,9 @@ pub struct PyTxParams(ae_core::tx::TxParams);
 #[pymethods]
 impl PyTxParams {
     /// A new, empty parameter record for `tag` — the protocol's numeric tag
-    /// (`12` for `SpendTx`, `42` for `ContractCreateTx`, and so on; see
-    /// `ae_core::tx::Tag` in the Rust crate for the full, stable list) — at
-    /// the tag's default version.
+    /// (`12` for `SpendTx`, `42` for `ContractCreateTx`, and so on; see the
+    /// `ae_core.Tag` `IntEnum` in `python/ae_core/__init__.py` for the full,
+    /// stable list) — at the tag's default version.
     #[new]
     fn new(tag: u32) -> PyResult<Self> {
         let tag = ae_core::tx::Tag::from_u32(tag).map_err(to_py_err)?;
