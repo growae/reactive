@@ -3,16 +3,27 @@ name: WASM bindings
 # `agent/**` so a feature branch gates itself before a pull request exists —
 # full reasoning, including why the duplicate run while a PR is open is
 # deliberate, in ci.yml.
+#
+# `crates/**` is in both filters because the component links `ae-core` and
+# mirrors its types: `fee.estimate-gas` is `TxGasInputs` field for field. A
+# change to that struct breaks this build, and without this line a merge
+# touching only `crates/**` would not run this workflow at all — leaving
+# `develop` red and silent until something happened to touch `bindings/wasm-js/`.
+# `parity.yml` cannot cover the gap either: it loads the committed `.wasm`, so it
+# would keep passing against a stale component. `python-bindings.yml` already
+# carries the same line for the same reason.
 on:
   push:
     branches: [main, develop, 'agent/**']
     paths:
       - 'bindings/wasm-js/**'
+      - 'crates/**'
       - '.github/workflows/wasm-bindings.yml'
   pull_request:
     branches: [main, develop]
     paths:
       - 'bindings/wasm-js/**'
+      - 'crates/**'
       - '.github/workflows/wasm-bindings.yml'
 
 permissions:

@@ -3,7 +3,7 @@ mod bindings;
 use bindings::exports::growae::core_harness::{aens, encoding, fee, hash, keys, tx};
 use bindings::growae::core_harness::types::{FieldValue, Pointer, TxField};
 
-use ae_core::protocol::ConsensusProtocolVersion;
+use ae_core::protocol::{AbiVersion, ConsensusProtocolVersion};
 use ae_core::tx::{Tag, Value};
 use num_bigint::BigUint;
 
@@ -18,6 +18,22 @@ getrandom::register_custom_getrandom!(unreachable_getrandom);
 fn parse_biguint(s: &str) -> Result<BigUint, String> {
     BigUint::parse_bytes(s.as_bytes(), 10)
         .ok_or_else(|| format!("`{s}` is not a decimal unsigned integer"))
+}
+
+/// The `abiVersion` a caller passed as a bare `u8`, as the `tx` interface
+/// already carries it.
+///
+/// An unrecognised value is `None` rather than an error, and `None` is charged
+/// the node's 30x base-gas arm for a `ContractCallTx` — which is the answer the
+/// node itself gives an ABI it does not recognise. Erroring instead would refuse
+/// to price a transaction the node would happily accept.
+fn abi_version_from_u8(abi_version: u8) -> Option<AbiVersion> {
+    match abi_version {
+        0 => Some(AbiVersion::NoAbi),
+        1 => Some(AbiVersion::Sophia),
+        3 => Some(AbiVersion::Fate),
+        _ => None,
+    }
 }
 
 fn tag_from_name(name: &str) -> Option<Tag> {
@@ -294,6 +310,7 @@ impl fee::Guest for Component {
         size: u32,
         relative_ttl: u64,
         inner_tx_size: u32,
+        abi_version: Option<u8>,
     ) -> Result<u64, String> {
         let tag = tag_from_name(&tag).ok_or_else(|| format!("unknown transaction tag: {tag}"))?;
         let inputs = ae_core::fee::TxGasInputs {
@@ -301,6 +318,7 @@ impl fee::Guest for Component {
             size: size as usize,
             relative_ttl,
             inner_tx_size: inner_tx_size as usize,
+            abi_version: abi_version.and_then(abi_version_from_u8),
         };
         Ok(ae_core::fee::transaction_gas(
             ConsensusProtocolVersion::default(),
