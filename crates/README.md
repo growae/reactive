@@ -178,16 +178,27 @@ change a consumer can see — lift the two bullets below into the release note:
 - **The node prices a contract call's base gas by its ABI version** — 12× base
   gas for FATE, 30× for AEVM and for any ABI it does not recognise. `fee` now
   does the same, and `TxGasInputs` carries an `abi_version` for it.
-  `transaction_base_gas` takes `TxGasInputs` rather than a `Tag`. **An unset
-  `abi_version` is charged the 30× rate**, on purpose: too low is `too_low_fee`
-  and a rejected transaction, too high is accepted, so the unknown case takes
-  the answer that cannot fail. `TxGasInputs::new` will not quietly pick FATE.
+  `transaction_base_gas` takes `TxGasInputs` rather than a `Tag`, and the WASM
+  binding's `fee.estimate-gas` takes `abi-version: option<u8>` as a last
+  parameter. **An unset `abi_version` is charged the 30× rate**, on purpose: too
+  low is `too_low_fee` and a rejected transaction, too high is accepted, so the
+  unknown case takes the answer that cannot fail. Neither `TxGasInputs::new` nor
+  an omitted `abi-version` will quietly pick FATE — pass the ABI for a contract
+  call or pay 2.5× more than you need to.
 
 The second one is the first place this crate knowingly stops matching
 `@aeternity/aepp-sdk`, which keys its `TX_BASE_GAS` on the tag alone. **The node
 is the specification; the SDK is a cross-check.** Parity with the SDK was only
 ever a proxy for *a node will accept this*, and where the proxy and the thing
 itself disagree, the thing wins and the divergence gets recorded here.
+
+**These two bullets have a shelf life, and it is the price of not keeping a
+changelog.** They are written in the tense of a change — "now accepts", "used to
+answer" — because their job is to be lifted verbatim into the CHANGELOG of
+whichever package ships them. Once one has been, rewrite it here in the present
+tense to say what the crate *does*, and let git hold the change record.
+Otherwise this section becomes a changelog by accretion, which is the file we
+deliberately do not have.
 
 Regenerating the corpus is a harvest from the middleware, and the diff is the
 record of what the chain started doing differently. It is public chain data: no
