@@ -15,7 +15,7 @@
 //! transaction serialisation belongs to a different module.
 
 use crate::error::{Error, Result};
-use crate::protocol::{params, ConsensusProtocolVersion, ProtocolParams};
+use crate::protocol::{params, AbiVersion, ConsensusProtocolVersion, ProtocolParams};
 use crate::tx::Tag;
 
 /// What the gas formula needs to know about a serialised transaction.
@@ -33,16 +33,30 @@ pub struct TxGasInputs {
     /// For `GaMetaTx` and `PayingForTx`, the serialised length of the wrapped
     /// transaction. Zero otherwise; the inner transaction pays for its own bytes.
     pub inner_tx_size: usize,
+    /// The transaction's `abiVersion`, where it has one.
+    ///
+    /// A `ContractCallTx` is charged 12× the base gas under the FATE ABI and 30×
+    /// under any other — see [`transaction_base_gas`]. `None` means the caller
+    /// did not say, and is charged the 30× rate: a fee below the minimum is
+    /// rejected by the node as `too_low_fee`, and a fee above it is accepted, so
+    /// the unknown case takes the answer that cannot be wrong in the direction
+    /// that fails.
+    pub abi_version: Option<AbiVersion>,
 }
 
 impl TxGasInputs {
-    /// The common case: a transaction that is neither an oracle nor a wrapper.
+    /// The common case: a transaction that is neither an oracle, nor a wrapper,
+    /// nor a contract call.
+    ///
+    /// Leaves `abi_version` unset. For a `ContractCallTx` that is deliberate and
+    /// not a gap — see the field's own documentation before "fixing" it to FATE.
     pub const fn new(tag: Tag, size: usize) -> Self {
         Self {
             tag,
             size,
             relative_ttl: 1,
             inner_tx_size: 0,
+            abi_version: None,
         }
     }
 }
@@ -63,12 +77,23 @@ pub trait RebuildTx {
 /// `PayingForTx` pays a fifth of the base gas, so this cannot be an integer.
 /// Returned as `(numerator, denominator)` and applied before the division so
 /// nothing rounds twice.
-const fn base_gas_factor(tag: Tag) -> (u64, u64) {
+///
+/// `ContractCallTx` is the one tag whose multiplier depends on its ABI. The
+/// node's `aec_governance:tx_base_gas/3` carries an ABI-keyed clause for four
+/// tags, but three of them — `ContractCreateTx`, `GaAttachTx`, `GaMetaTx` —
+/// answer `5×` on every arm, so only this one varies in practice.
+const fn base_gas_factor(tag: Tag, abi_version: Option<AbiVersion>) -> (u64, u64) {
     match tag {
         Tag::ChannelForceProgressTx => (30, 1),
         Tag::ChannelOffChainTx => (0, 1),
         Tag::ContractCreateTx => (5, 1),
-        Tag::ContractCallTx => (12, 1),
+        Tag::ContractCallTx => match abi_version {
+            Some(AbiVersion::Fate) => (12, 1),
+            // The node's own fallthrough is `_ -> 30 * TX_BASE_GAS`, and it
+            // covers the AEVM ABI, an ABI it does not recognise, and — here —
+            // a caller who did not say.
+            _ => (30, 1),
+        },
         Tag::GaAttachTx => (5, 1),
         Tag::GaMetaTx => (5, 1),
         Tag::PayingForTx => (1, 5),
@@ -76,10 +101,15 @@ const fn base_gas_factor(tag: Tag) -> (u64, u64) {
     }
 }
 
-/// The base gas a transaction of this tag is charged, before its size.
-pub fn transaction_base_gas(version: ConsensusProtocolVersion, tag: Tag) -> u64 {
+/// The base gas a transaction is charged, before its size.
+///
+/// Takes the whole [`TxGasInputs`] rather than a tag, because a `ContractCallTx`
+/// is priced by its ABI as well: `12×` the base gas under FATE, `30×` under the
+/// AEVM ABI, under an ABI the node does not recognise, and under
+/// [`TxGasInputs::abi_version`] left unset.
+pub fn transaction_base_gas(version: ConsensusProtocolVersion, inputs: TxGasInputs) -> u64 {
     let params: ProtocolParams = params(version);
-    let (numerator, denominator) = base_gas_factor(tag);
+    let (numerator, denominator) = base_gas_factor(inputs.tag, inputs.abi_version);
     params.base_gas * numerator / denominator
 }
 
@@ -109,7 +139,7 @@ pub fn transaction_size_gas(version: ConsensusProtocolVersion, inputs: TxGasInpu
 
 /// Total gas for a serialised transaction.
 pub fn transaction_gas(version: ConsensusProtocolVersion, inputs: TxGasInputs) -> u64 {
-    transaction_base_gas(version, inputs.tag) + transaction_size_gas(version, inputs)
+    transaction_base_gas(version, inputs) + transaction_size_gas(version, inputs)
 }
 
 /// The fee that gas costs at the protocol's minimum gas price, in aettos.
@@ -209,36 +239,78 @@ mod tests {
 
     const CERES: ConsensusProtocolVersion = ConsensusProtocolVersion::Ceres;
 
+    /// The base gas for a tag whose multiplier does not depend on its ABI.
+    fn base_gas(tag: Tag) -> u64 {
+        transaction_base_gas(CERES, TxGasInputs::new(tag, 0))
+    }
+
+    /// The base gas for a contract call under a given ABI.
+    fn call_base_gas(abi_version: Option<AbiVersion>) -> u64 {
+        transaction_base_gas(
+            CERES,
+            TxGasInputs {
+                abi_version,
+                ..TxGasInputs::new(Tag::ContractCallTx, 0)
+            },
+        )
+    }
+
     #[test]
     fn base_gas_matches_the_published_per_tag_multipliers() {
-        assert_eq!(transaction_base_gas(CERES, Tag::SpendTx), 15_000);
-        assert_eq!(
-            transaction_base_gas(CERES, Tag::ChannelForceProgressTx),
-            30 * 15_000
-        );
-        assert_eq!(transaction_base_gas(CERES, Tag::ChannelOffChainTx), 0);
-        assert_eq!(
-            transaction_base_gas(CERES, Tag::ContractCreateTx),
-            5 * 15_000
-        );
-        assert_eq!(
-            transaction_base_gas(CERES, Tag::ContractCallTx),
-            12 * 15_000
-        );
-        assert_eq!(transaction_base_gas(CERES, Tag::GaAttachTx), 5 * 15_000);
-        assert_eq!(transaction_base_gas(CERES, Tag::GaMetaTx), 5 * 15_000);
+        assert_eq!(base_gas(Tag::SpendTx), 15_000);
+        assert_eq!(base_gas(Tag::ChannelForceProgressTx), 30 * 15_000);
+        assert_eq!(base_gas(Tag::ChannelOffChainTx), 0);
+        assert_eq!(base_gas(Tag::ContractCreateTx), 5 * 15_000);
+        assert_eq!(base_gas(Tag::GaAttachTx), 5 * 15_000);
+        assert_eq!(base_gas(Tag::GaMetaTx), 5 * 15_000);
         // A fifth of the base gas, and it must not round to zero or to 15000.
-        assert_eq!(transaction_base_gas(CERES, Tag::PayingForTx), 3_000);
+        assert_eq!(base_gas(Tag::PayingForTx), 3_000);
+    }
+
+    /// `aec_governance:tx_base_gas/3`:
+    ///
+    /// ```erlang
+    /// tx_base_gas(contract_call_tx, _Protocol, ABI) ->
+    ///     case ABI of
+    ///         ?ABI_FATE_SOPHIA_1 -> 12 * ?TX_BASE_GAS;
+    ///         ?ABI_AEVM_SOPHIA_1 -> 30 * ?TX_BASE_GAS;
+    ///         _                  -> 30 * ?TX_BASE_GAS      %% Max gas
+    ///     end;
+    /// ```
+    #[test]
+    fn a_contract_call_is_priced_by_its_abi_and_defaults_to_the_dearer_arm() {
+        assert_eq!(call_base_gas(Some(AbiVersion::Fate)), 12 * 15_000);
+        assert_eq!(call_base_gas(Some(AbiVersion::Sophia)), 30 * 15_000);
+        assert_eq!(call_base_gas(Some(AbiVersion::NoAbi)), 30 * 15_000);
+        // A caller who did not say is charged the rate that cannot be rejected.
+        assert_eq!(call_base_gas(None), 30 * 15_000);
+        // And `new` is that caller: it must not quietly pick FATE.
+        assert_eq!(base_gas(Tag::ContractCallTx), 30 * 15_000);
+    }
+
+    /// The node keys three more tags on the ABI and answers the same on every
+    /// arm, so nothing here may vary with it.
+    #[test]
+    fn no_other_tag_is_priced_by_its_abi() {
+        for tag in [Tag::ContractCreateTx, Tag::GaAttachTx, Tag::GaMetaTx] {
+            let flat = base_gas(tag);
+            assert_eq!(flat, 5 * 15_000, "{tag}");
+            for abi in [AbiVersion::Fate, AbiVersion::Sophia, AbiVersion::NoAbi] {
+                let inputs = TxGasInputs {
+                    abi_version: Some(abi),
+                    ..TxGasInputs::new(tag, 0)
+                };
+                assert_eq!(transaction_base_gas(CERES, inputs), flat, "{tag} {abi:?}");
+            }
+        }
     }
 
     #[test]
     fn oracle_gas_charges_for_the_ttl_it_holds() {
         // The reference example: a 10-byte OracleRespondTx with a ttl of 12.
         let inputs = TxGasInputs {
-            tag: Tag::OracleRespondTx,
-            size: 10,
             relative_ttl: 12,
-            inner_tx_size: 0,
+            ..TxGasInputs::new(Tag::OracleRespondTx, 10)
         };
         let blocks_per_year: u64 = (60 * 24 * 365) / 3;
         let expected = 10 * 20 + (32_000 * 12u64).div_ceil(blocks_per_year);
@@ -254,10 +326,8 @@ mod tests {
     #[test]
     fn a_wrapper_pays_only_for_its_own_bytes() {
         let inputs = TxGasInputs {
-            tag: Tag::PayingForTx,
-            size: 300,
-            relative_ttl: 1,
             inner_tx_size: 200,
+            ..TxGasInputs::new(Tag::PayingForTx, 300)
         };
         assert_eq!(transaction_size_gas(CERES, inputs), 100 * 20);
         // And a plain transaction of the same size pays for all of them.

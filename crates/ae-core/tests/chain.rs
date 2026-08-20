@@ -33,7 +33,7 @@
 //! Regenerating it is a harvest from the middleware, and the diff is the record
 //! of what the chain started doing differently.
 //!
-//! # Two signing payloads, and only one of them is ours
+//! # Two signing payloads: we accept both, we emit one
 //!
 //! The chain says something here that no offline corpus could. A node verifies a
 //! transaction signature against **either** of two payloads —
@@ -45,17 +45,23 @@
 //! hashed  network_id [ "-inner_tx" ] ++ blake2b_256(tx_bytes)   accepted from Lima (4) on
 //! ```
 //!
-//! [`ae_core::keys`] implements the **hashed** payload, which is what
-//! `@aeternity/aepp-sdk` signs, so what this crate *produces* is accepted. What
-//! it *verifies* is the narrower of the two, and both forms are live on chain
-//! today. The corpus pins that split rather than papering over it, so widening
-//! the verifier — a public-surface change, and one that widens what we accept —
-//! is a decision someone takes deliberately.
+//! [`ae_core::keys`] **signs** the hashed payload and nothing else, matching
+//! `@aeternity/aepp-sdk`, and [`ae_core::keys::PublicKey::verify_transaction`]
+//! **accepts both**, matching the node. That asymmetry is the rule, not an
+//! oversight: widening what we accept was never licence to widen what we emit.
+//!
+//! The corpus keeps counting the split even though the verifier no longer cares.
+//! The plain population is the 26% the verifier used to reject, and it is the
+//! only thing that would notice if the widening were ever backed out — so
+//! closing the gap does not get to cost the observability that found it.
 
 use ae_core::encoding::{decode, encode, Encoding};
 use ae_core::fee::{calculate_min_fee, RebuildTx, TxGasInputs};
-use ae_core::keys::{PublicKey, Signature, TxPosition, NETWORK_ID_MAINNET, NETWORK_ID_TESTNET};
-use ae_core::protocol::ConsensusProtocolVersion;
+use ae_core::keys::{
+    transaction_signing_payload, PublicKey, Signature, TxPosition, NETWORK_ID_MAINNET,
+    NETWORK_ID_TESTNET,
+};
+use ae_core::protocol::{AbiVersion, ConsensusProtocolVersion};
 use ae_core::tx::{
     build_tx, build_tx_rlp, transaction_hash, unpack_tx, BuildOptions, Tag, TxParams, Value,
 };
@@ -190,18 +196,25 @@ fn rlp_of(params: &TxParams) -> Vec<u8> {
 }
 
 /// One of the two payloads a node will verify a transaction signature against.
+///
+/// `keys::PublicKey::verify_transaction` accepts both and does not say which
+/// matched — deliberately, since no consumer has a use for the distinction and a
+/// type reporting it would be a permanent mirror in every binding. This corpus
+/// does have a use for it: the plain population is what the verifier used to
+/// reject, and it stays counted so that closing the gap did not cost the
+/// observability that found it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Payload {
-    /// `network_id [ "-inner_tx" ] ++ blake2b_256(tx)` — what this crate signs
-    /// and verifies, and what `@aeternity/aepp-sdk` produces.
+    /// `network_id [ "-inner_tx" ] ++ blake2b_256(tx)` — what this crate signs,
+    /// and what `@aeternity/aepp-sdk` produces.
     Hashed,
-    /// `network_id [ "-inner_tx" ] ++ tx` — the node's first-choice payload,
-    /// accepted at every protocol version. This crate cannot verify it.
+    /// `network_id [ "-inner_tx" ] ++ tx` — accepted at every protocol version,
+    /// and what the node's own channel FSM produces. This crate never signs it.
     Plain,
 }
 
-/// The plain payload, spelled out through the public API so the gap is visible
-/// as exactly the code a consumer would have to write for itself.
+/// The plain payload, built here rather than taken from `keys`, which keeps it
+/// private so that nothing can accidentally sign one.
 fn plain_payload(rlp: &[u8], network_id: &str, position: TxPosition) -> Vec<u8> {
     let mut payload = network_id.as_bytes().to_vec();
     if position == TxPosition::Inner {
@@ -213,6 +226,11 @@ fn plain_payload(rlp: &[u8], network_id: &str, position: TxPosition) -> Vec<u8> 
 
 /// Whether any account the transaction names produced this signature, and under
 /// which of the two payloads.
+///
+/// Discriminates by checking each payload explicitly, because
+/// `verify_transaction` accepts both and would report every signature as one
+/// kind. Each match is then cross-checked against `verify_transaction`, which is
+/// the property that matters: whatever a node accepts, we accept.
 fn signer_of(
     accounts: &BTreeSet<String>,
     rlp: &[u8],
@@ -222,13 +240,22 @@ fn signer_of(
 ) -> Option<(String, Payload)> {
     accounts.iter().find_map(|address| {
         let key = PublicKey::from_address(address).ok()?;
-        if key.verify_transaction(rlp, network_id, position, signature) {
-            return Some((address.clone(), Payload::Hashed));
-        }
-        if key.verify(&plain_payload(rlp, network_id, position), signature) {
-            return Some((address.clone(), Payload::Plain));
-        }
-        None
+        let payload = if key.verify(
+            &transaction_signing_payload(rlp, network_id, position),
+            signature,
+        ) {
+            Payload::Hashed
+        } else if key.verify(&plain_payload(rlp, network_id, position), signature) {
+            Payload::Plain
+        } else {
+            return None;
+        };
+        assert!(
+            key.verify_transaction(rlp, network_id, position, signature),
+            "{address}: a {payload:?}-payload signature a node accepts was rejected by \
+             verify_transaction"
+        );
+        Some((address.clone(), payload))
     })
 }
 
@@ -395,21 +422,23 @@ fn every_mined_signature_verifies_under_its_own_network_id_and_under_no_other() 
     let plain = by_payload.get(&Payload::Plain).copied().unwrap_or(0);
     assert!(
         hashed > 0,
-        "no mined signature used the payload this crate signs and verifies"
+        "no mined signature used the payload this crate signs"
     );
-    // Pinned deliberately. `plain` is the population `keys::PublicKey::verify_transaction`
-    // returns `false` for and a node accepts. If this reaches zero the chain has
-    // stopped producing them; if the verifier is ever widened it will be counted
-    // as `Hashed` and this fires. Either is a decision, not a silent drift.
+    // Both populations stay pinned now that `verify_transaction` accepts both.
+    // `signer_of` asserts the verifier takes whichever one matched, so these two
+    // numbers are what makes the widening observable: `plain` is the 26% that
+    // used to be rejected, and a corpus where it reached zero would let the
+    // widening be backed out without a test noticing.
     assert!(
         plain > 0,
-        "the plain payload has vanished from the corpus — re-read the finding \
-         in this file's module docs before deleting it"
+        "the plain payload has vanished from the corpus — the widened verifier \
+         is no longer covered by anything; re-read this file's module docs \
+         before deleting the counter"
     );
     eprintln!(
-        "signatures: {checked} mined, {hashed} under the hashed payload this crate verifies, \
-         {plain} under the plain payload it cannot ({:.1}%), \
-         {} unattributable channel counterparties {unattributed:?}",
+        "signatures: {checked} mined, all attributable ones accepted by verify_transaction — \
+         {hashed} under the hashed payload this crate signs, {plain} under the plain payload \
+         it never signs ({:.1}%), {} unattributable channel counterparties {unattributed:?}",
         100.0 * plain as f64 / (hashed + plain) as f64,
         checked - hashed - plain,
     );
@@ -658,12 +687,19 @@ fn our_decoding_agrees_with_the_nodes_on_every_field_both_of_us_name() {
 ///
 /// This crate ships both halves of the fee seam and nothing that joins them, so
 /// every binding writes this itself. It is written here rather than in `src`
-/// because joining them is a public-surface change and the surface is frozen —
-/// see the surface-change protocol in `crates/README.md`.
+/// because joining them is a public-surface change — see the surface-change
+/// protocol in `crates/README.md`.
+///
+/// Note what that costs, because it is the argument for moving the join into the
+/// core. `abi_version` below has to be read off the decoded transaction by hand,
+/// and a bridge that omits it gets `None`, the 30× arm, and a minimum fee 2.5×
+/// too high for every FATE contract call. Here that is a loud test failure; in a
+/// binding it is a wallet quietly overcharging.
 struct MinedTx {
     params: TxParams,
     relative_ttl: u64,
     inner_tx_size: usize,
+    abi_version: Option<AbiVersion>,
 }
 
 impl RebuildTx for MinedTx {
@@ -676,7 +712,29 @@ impl RebuildTx for MinedTx {
             size: bytes.len(),
             relative_ttl: self.relative_ttl,
             inner_tx_size: self.inner_tx_size,
+            abi_version: self.abi_version,
         })
+    }
+}
+
+/// The transaction's ABI, from `abiVersion` or from the abi half of `ctVersion`.
+///
+/// An ABI the crate has no name for reads as `None`, which prices the
+/// transaction at the node's `_ -> 30 * TX_BASE_GAS` arm — the same answer the
+/// node gives an ABI it does not recognise.
+fn abi_version_of(params: &TxParams) -> Option<AbiVersion> {
+    let abi = match params.get("abiVersion") {
+        Some(value) => value.as_u64()?,
+        None => match params.get("ctVersion") {
+            Some(Value::CtVersion { abi_version, .. }) => u64::from(*abi_version),
+            _ => return None,
+        },
+    };
+    match abi {
+        0 => Some(AbiVersion::NoAbi),
+        1 => Some(AbiVersion::Sophia),
+        3 => Some(AbiVersion::Fate),
+        _ => None,
     }
 }
 
@@ -759,6 +817,7 @@ fn no_fee_a_node_accepted_is_below_what_the_model_asks_for() {
             params: inner.clone(),
             relative_ttl,
             inner_tx_size,
+            abi_version: abi_version_of(inner),
         };
         let minimum = match calculate_min_fee(ConsensusProtocolVersion::Ceres, &mut rebuild) {
             Ok(minimum) => minimum,
@@ -804,8 +863,8 @@ fn no_fee_a_node_accepted_is_below_what_the_model_asks_for() {
     );
 }
 
-/// The node charges a contract call's base gas by its ABI version; this crate
-/// does not, and neither does the SDK it was built to match.
+/// A contract call's base gas, held against the node's own table rather than
+/// against `@aeternity/aepp-sdk`.
 ///
 /// `aec_governance:tx_base_gas/3`:
 ///
@@ -818,42 +877,59 @@ fn no_fee_a_node_accepted_is_below_what_the_model_asks_for() {
 ///     end;
 /// ```
 ///
-/// [`ae_core::fee::transaction_base_gas`] returns `12 * 15_000` for every
-/// `ContractCallTx`, so the minimum fee it computes for an AEVM call — or for a
-/// call carrying any ABI the node does not recognise — is **2.5× too low**, and
-/// a node would answer `too_low_fee`. `@aeternity/aepp-sdk` 14.1.1 keys
-/// `TX_BASE_GAS` on the tag alone and has the same gap, which is why the vector
-/// corpus agrees with us and the chain corpus cannot show it either: every
-/// mined contract call in it is FATE, and every one sits exactly on our minimum.
+/// The SDK keys `TX_BASE_GAS` on the tag alone and answers `12×` for all three,
+/// so this is where the two corpora part company and the node wins: parity with
+/// the SDK was only ever a proxy for *a node will accept this*. The failure is
+/// one-directional — too low is `too_low_fee` and a rejected transaction, too
+/// high is accepted — so the unknown arm takes the dearer answer.
 ///
-/// This test pins the divergence rather than the fix. Closing it means making
-/// the base gas ABI-aware, which changes a **public** signature and therefore
-/// goes past the Technical Lead first — see the surface-change protocol in
-/// `crates/README.md`. Whoever closes it updates this test, and the numbers it
-/// needs are here.
+/// The chain corpus cannot police this on its own: every mined contract call in
+/// it is FATE. That is why the numbers are asserted directly.
 #[test]
-fn the_contract_call_base_gas_is_flat_here_and_abi_dependent_on_the_node() {
+fn a_contract_call_is_priced_by_the_nodes_abi_table() {
     use ae_core::fee::transaction_base_gas;
 
-    const NODE_FATE: u64 = 12 * 15_000;
-    const NODE_AEVM_OR_UNKNOWN: u64 = 30 * 15_000;
+    const FATE: u64 = 12 * 15_000;
+    const AEVM_OR_UNKNOWN: u64 = 30 * 15_000;
 
-    let ours = transaction_base_gas(ConsensusProtocolVersion::Ceres, Tag::ContractCallTx);
-    assert_eq!(ours, NODE_FATE, "FATE calls are priced correctly");
-    assert_ne!(
-        ours, NODE_AEVM_OR_UNKNOWN,
-        "the ABI-dependent base gas has been implemented — delete this test and \
-         the note above it"
-    );
+    let base_gas = |abi_version| {
+        transaction_base_gas(
+            ConsensusProtocolVersion::Ceres,
+            TxGasInputs {
+                abi_version,
+                ..TxGasInputs::new(Tag::ContractCallTx, 0)
+            },
+        )
+    };
 
-    // Every other tag whose base gas the node makes ABI-dependent agrees at both
-    // ABI versions, so the gap is this one tag and no other.
+    assert_eq!(base_gas(Some(AbiVersion::Fate)), FATE);
+    assert_eq!(base_gas(Some(AbiVersion::Sophia)), AEVM_OR_UNKNOWN);
+    assert_eq!(base_gas(Some(AbiVersion::NoAbi)), AEVM_OR_UNKNOWN);
+    // "The caller did not say" takes the node's `_` arm, not the FATE one.
+    assert_eq!(base_gas(None), AEVM_OR_UNKNOWN);
+
+    // The node keys three more tags on the ABI and answers `5×` on every arm of
+    // each, so the divergence was this one tag and no other. Nothing changed for
+    // them, and nothing may.
     for tag in [Tag::ContractCreateTx, Tag::GaAttachTx, Tag::GaMetaTx] {
-        assert_eq!(
-            transaction_base_gas(ConsensusProtocolVersion::Ceres, tag),
-            5 * 15_000,
-            "{tag} is 5x at every ABI on the node, and must be 5x here"
-        );
+        for abi_version in [
+            None,
+            Some(AbiVersion::Fate),
+            Some(AbiVersion::Sophia),
+            Some(AbiVersion::NoAbi),
+        ] {
+            assert_eq!(
+                transaction_base_gas(
+                    ConsensusProtocolVersion::Ceres,
+                    TxGasInputs {
+                        abi_version,
+                        ..TxGasInputs::new(tag, 0)
+                    }
+                ),
+                5 * 15_000,
+                "{tag} is 5x at every ABI on the node, and must be 5x here"
+            );
+        }
     }
 }
 

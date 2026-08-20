@@ -18,6 +18,34 @@
 //! produces a signature that verifies locally and is rejected by every node, so
 //! [`SecretKey::sign_transaction`] takes it as an argument with no default.
 //!
+//! # We accept two payloads and emit one
+//!
+//! A node verifies a transaction signature against **either** of two payloads.
+//! `aetx_sign:signed_payloads/3` builds both and falls back from the first to
+//! the second:
+//!
+//! ```text
+//! plain   utf8(network_id [ "-inner_tx" ]) || transaction_bytes
+//! hashed  utf8(network_id [ "-inner_tx" ]) || blake2b_256(transaction_bytes)
+//! ```
+//!
+//! The plain payload is accepted at every protocol version and the hashed one
+//! from Lima onward; both are in live use today, and the node's own state-channel
+//! FSM signs the plain one. So [`PublicKey::verify_transaction`] answers the
+//! question a caller is actually asking — *would a node accept this?* — and tries
+//! both.
+//!
+//! **The asymmetry is deliberate and is not to be closed.** [`SecretKey::sign_transaction`]
+//! and [`transaction_signing_payload`] produce the hashed payload and nothing
+//! else, matching `@aeternity/aepp-sdk`. Widening what we accept is not licence
+//! to widen what we emit, and nothing in this crate can produce a plain-payload
+//! signature.
+//!
+//! The widening is bounded to exactly those two payloads: both still carry the
+//! network id and the `-inner_tx` suffix, so neither binding property is
+//! weakened, and the two cannot be confused for one another without a blake2b
+//! preimage.
+//!
 //! # Key material
 //!
 //! [`SecretKey`] does not implement `Display`, and its `Debug` prints the
@@ -118,6 +146,13 @@ impl PublicKey {
     }
 
     /// Verify a signature over a transaction, given the network it was signed for.
+    ///
+    /// Accepts either payload a node accepts — the hashed one this crate emits,
+    /// and the plain one the node's own channel FSM emits. Both carry the
+    /// network id and, for an inner transaction, the `-inner_tx` suffix, so a
+    /// signature still does not carry across a network or across the inner
+    /// boundary. See the module docs for why the asymmetry with
+    /// [`SecretKey::sign_transaction`] is deliberate.
     pub fn verify_transaction(
         &self,
         transaction: &[u8],
@@ -127,6 +162,9 @@ impl PublicKey {
     ) -> bool {
         self.verify(
             &transaction_signing_payload(transaction, network_id, position),
+            signature,
+        ) || self.verify(
+            &plain_signing_payload(transaction, network_id, position),
             signature,
         )
     }
@@ -262,12 +300,30 @@ pub fn transaction_signing_payload(
     network_id: &str,
     position: TxPosition,
 ) -> Vec<u8> {
-    let mut payload = Vec::with_capacity(network_id.len() + INNER_TX_SUFFIX.len() + 32);
+    let mut payload = signing_prefix(network_id, position, 32);
+    payload.extend_from_slice(&blake2b_256(transaction));
+    payload
+}
+
+/// The other payload a node accepts: the transaction itself rather than its hash.
+///
+/// Deliberately private. Nothing in this crate signs it, and a caller who needs
+/// to construct it is producing a signature we do not want to make easy — the
+/// only legitimate use is verification, which
+/// [`PublicKey::verify_transaction`] already covers.
+fn plain_signing_payload(transaction: &[u8], network_id: &str, position: TxPosition) -> Vec<u8> {
+    let mut payload = signing_prefix(network_id, position, transaction.len());
+    payload.extend_from_slice(transaction);
+    payload
+}
+
+/// The network id, plus the inner-transaction suffix where one applies.
+fn signing_prefix(network_id: &str, position: TxPosition, body: usize) -> Vec<u8> {
+    let mut payload = Vec::with_capacity(network_id.len() + INNER_TX_SUFFIX.len() + body);
     payload.extend_from_slice(network_id.as_bytes());
     if position == TxPosition::Inner {
         payload.extend_from_slice(INNER_TX_SUFFIX.as_bytes());
     }
-    payload.extend_from_slice(&blake2b_256(transaction));
     payload
 }
 
@@ -419,6 +475,75 @@ mod tests {
             TxPosition::Outer,
             &mainnet
         ));
+    }
+
+    #[test]
+    fn a_plain_payload_signature_verifies_and_this_crate_never_makes_one() {
+        let key = rfc8032_key();
+        let transaction = b"not really a transaction";
+
+        // What the node's own channel FSM produces: the transaction itself under
+        // the network id, not its hash.
+        let plain = key.sign_raw(&plain_signing_payload(
+            transaction,
+            NETWORK_ID_MAINNET,
+            TxPosition::Outer,
+        ));
+        let public = key.public_key();
+        assert!(public.verify_transaction(
+            transaction,
+            NETWORK_ID_MAINNET,
+            TxPosition::Outer,
+            &plain
+        ));
+
+        // Accepting it does not weaken either binding property.
+        assert!(!public.verify_transaction(
+            transaction,
+            NETWORK_ID_TESTNET,
+            TxPosition::Outer,
+            &plain
+        ));
+        assert!(!public.verify_transaction(
+            transaction,
+            NETWORK_ID_MAINNET,
+            TxPosition::Inner,
+            &plain
+        ));
+        assert!(!public.verify_transaction(
+            b"a different transaction",
+            NETWORK_ID_MAINNET,
+            TxPosition::Outer,
+            &plain
+        ));
+
+        // And we still emit only the hashed payload: what this crate signs is
+        // not what it just accepted.
+        let ours = key.sign_transaction(transaction, NETWORK_ID_MAINNET, TxPosition::Outer);
+        assert_ne!(ours.as_bytes(), plain.as_bytes());
+        assert_eq!(
+            transaction_signing_payload(transaction, NETWORK_ID_MAINNET, TxPosition::Outer).len(),
+            NETWORK_ID_MAINNET.len() + 32,
+            "sign_transaction must keep taking the hash, whatever verify accepts"
+        );
+    }
+
+    #[test]
+    fn both_payloads_share_the_network_id_and_the_inner_suffix() {
+        let transaction = b"not really a transaction";
+        for position in [TxPosition::Outer, TxPosition::Inner] {
+            let hashed = transaction_signing_payload(transaction, NETWORK_ID_MAINNET, position);
+            let plain = plain_signing_payload(transaction, NETWORK_ID_MAINNET, position);
+            let prefix_len = NETWORK_ID_MAINNET.len()
+                + if position == TxPosition::Inner {
+                    INNER_TX_SUFFIX.len()
+                } else {
+                    0
+                };
+            assert_eq!(hashed[..prefix_len], plain[..prefix_len]);
+            assert_eq!(&plain[prefix_len..], transaction);
+            assert_eq!(&hashed[prefix_len..], &blake2b_256(transaction));
+        }
     }
 
     #[test]
