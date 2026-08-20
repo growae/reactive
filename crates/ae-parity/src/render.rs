@@ -6,6 +6,7 @@ use std::fmt::Write as _;
 
 use ae_core::entry::SdkCoverage;
 
+use crate::corpus::Provenance;
 use crate::matrix::Matrix;
 use crate::scope::{Origin, Reach};
 
@@ -54,11 +55,24 @@ pub fn markdown(matrix: &Matrix) -> String {
         matrix.entries.iter().filter(|row| row.fixtures > 0).count(),
         matrix.entries.len()
     );
-    let _ = writeln!(
-        out,
-        "| FATE vectors, decode and re-encode | {} | {} | `aepp-calldata` {} |",
-        matrix.fate.roundtrip_pass, matrix.fate.vectors, matrix.references.aepp_calldata
-    );
+    // One row per committed corpus and evidence class, never a single total.
+    // The row this replaced said `113 | 113` while 636 vectors were committed,
+    // and it read fully covered because the number was true about the one file
+    // it happened to be counting.
+    for row in &matrix.fate.corpora {
+        let reference = match row.provenance {
+            Provenance::Reference => format!("`aepp-calldata` {}", matrix.references.aepp_calldata),
+            Provenance::Twinned => "**this repository**".to_string(),
+        };
+        let _ = writeln!(
+            out,
+            "| FATE vectors, `{}`, {} | {} | {} | {reference} |",
+            row.file,
+            row.provenance.label(),
+            row.roundtrip_pass,
+            row.vectors
+        );
+    }
     let _ = writeln!(
         out,
         "| FATE value variants | {} | {} | `aepp-calldata` {} |",
@@ -220,17 +234,55 @@ pub fn markdown(matrix: &Matrix) -> String {
     let _ = writeln!(out);
     let _ = writeln!(
         out,
-        "Every vector is decoded through `ae-fate` and re-encoded; the row counts \
-         those that come back to the reference's exact bytes. Variant coverage is \
-         read off what the corpus actually decodes to, including nested values, \
-         not off the case names."
+        "Every vector in every committed corpus is decoded through `ae-fate` and \
+         re-encoded; the rows count those that come back to the committed bytes. \
+         Variant coverage is read off what the corpus actually decodes to, \
+         including nested values, not off the case names."
     );
     let _ = writeln!(out);
     let _ = writeln!(
         out,
-        "- vectors: {} decode and re-encode, {} total",
-        matrix.fate.roundtrip_pass, matrix.fate.vectors
+        "The rows are per corpus **and per evidence class**, and are never added \
+         up. A reference-written vector is two implementations agreeing on the \
+         bytes. A twinned vector is bytes this repository assembled, because the \
+         reference cannot produce them at all: the two `node-order/…` cases are \
+         maps keyed by non-ASCII strings and by negative bit fields, the places \
+         where the reference's key order disagrees with the node's, and their \
+         order is stated by hand from `aeb_fate_data` rather than measured. Both \
+         are evidence; they are not the same evidence, and one total would hide \
+         which kind a row rests on."
     );
+    let _ = writeln!(out);
+    let _ = writeln!(
+        out,
+        "| Corpus | Evidence | Vectors | Decode and re-encode |"
+    );
+    let _ = writeln!(out, "|---|---|---|---|");
+    for row in &matrix.fate.corpora {
+        let _ = writeln!(
+            out,
+            "| `{}` | {} | {} | {} |",
+            row.file,
+            row.provenance.label(),
+            row.vectors,
+            mark(row.roundtrip_pass, row.vectors)
+        );
+    }
+    let _ = writeln!(out);
+    let _ = writeln!(
+        out,
+        "**Variant coverage is scored over the {} reference-written vectors only.** \
+         Every FATE vector here carries a name and a hex string and nothing else, \
+         so a variant is marked covered by decoding the bytes — that is true of \
+         the main corpus as much as of the sweep, and widening the corpus changes \
+         how much of that evidence there is rather than what kind it is. What does \
+         change with provenance is who wrote the bytes: letting a vector this \
+         repository assembled mark a variant covered would let this crate close \
+         its own gap with its own bytes. The {} twinned vectors therefore \
+         round-trip and are counted above, and score no coverage below.",
+        matrix.fate.reference_vectors, matrix.fate.twinned_vectors
+    );
+    let _ = writeln!(out);
     let _ = writeln!(
         out,
         "- value variants with no vector: {}",
@@ -240,6 +292,30 @@ pub fn markdown(matrix: &Matrix) -> String {
         out,
         "- type variants with no vector: {}",
         list_or_none(&matrix.fate.type_variants_uncovered)
+    );
+    let _ = writeln!(
+        out,
+        "- variants the twinned vectors reach, recorded and not scored: {} (values), \
+         {} (types) — every one is already reached by a reference-written vector, \
+         so the exclusion above costs no coverage. A gate fails if that stops \
+         being true, because then the exclusion would be hiding a real gap rather \
+         than declining a weak one.",
+        list_or_none(
+            &matrix
+                .fate
+                .twinned_value_variants
+                .iter()
+                .cloned()
+                .collect::<Vec<_>>()
+        ),
+        list_or_none(
+            &matrix
+                .fate
+                .twinned_type_variants
+                .iter()
+                .cloned()
+                .collect::<Vec<_>>()
+        )
     );
     if !matrix.fate.failures.is_empty() {
         let _ = writeln!(out);

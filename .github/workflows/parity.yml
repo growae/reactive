@@ -67,7 +67,7 @@ jobs:
           node-version: 20
 
       # Reinstalls the exact reference versions each corpus records for itself,
-      # regenerates both, and fails on any difference. Without this the committed
+      # regenerates every one, and fails on any difference. Without this the committed
       # corpora decay into a snapshot of whatever the generator produced on the
       # day someone last ran it, and the first dependency bump that changes an
       # encoding passes a green suite.

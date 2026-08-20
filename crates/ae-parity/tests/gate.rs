@@ -47,7 +47,7 @@ fn every_transaction_schema_entry_has_at_least_one_vector() {
 }
 
 #[test]
-fn every_fate_vector_decodes_and_re_encodes_to_the_reference_bytes() {
+fn every_fate_vector_decodes_and_re_encodes_to_the_committed_bytes() {
     let matrix = matrix::compute();
     assert!(
         matrix.fate.failures.is_empty(),
@@ -56,7 +56,110 @@ fn every_fate_vector_decodes_and_re_encodes_to_the_reference_bytes() {
         matrix.references.aepp_calldata,
         matrix.fate.failures.join("\n")
     );
-    assert_eq!(matrix.fate.roundtrip_pass, matrix.fate.vectors);
+    // Per class, because the two are different claims. The reference-written
+    // half says this crate agrees with `aepp-calldata`; the twinned half says it
+    // agrees with an ordering rule stated here. Asserting a merged total would
+    // let one make up for the other.
+    assert_eq!(
+        matrix.fate.reference_roundtrip_pass,
+        matrix.fate.reference_vectors
+    );
+    assert_eq!(
+        matrix.fate.twinned_roundtrip_pass,
+        matrix.fate.twinned_vectors
+    );
+}
+
+/// Every committed corpus is counted, per file and per class, pinned exactly.
+///
+/// The number this replaced was `113`, at a head carrying 636 committed vectors,
+/// and it was rendered as `113 | 113` — fully covered. A count that only ever
+/// moves in the diff is the point: a corpus growing is as reviewable an event as
+/// a corpus shrinking.
+#[test]
+fn the_fate_corpora_are_counted_per_file_and_per_class() {
+    let matrix = matrix::compute();
+    let rows: Vec<(String, &'static str, usize, usize)> = matrix
+        .fate
+        .corpora
+        .iter()
+        .map(|row| {
+            (
+                row.file.clone(),
+                row.provenance.label(),
+                row.vectors,
+                row.roundtrip_pass,
+            )
+        })
+        .collect();
+
+    assert_eq!(
+        rows,
+        vec![
+            (
+                "aepp-calldata-1.9.1.json".to_string(),
+                "reference-written",
+                113,
+                113
+            ),
+            (
+                "aepp-calldata-1.9.1-sweep.json".to_string(),
+                "reference-written",
+                521,
+                521
+            ),
+            (
+                "aepp-calldata-1.9.1-sweep.json".to_string(),
+                "twinned by construction",
+                2,
+                2
+            ),
+        ]
+    );
+
+    assert_eq!(matrix.fate.reference_vectors, 634);
+    assert_eq!(matrix.fate.twinned_vectors, 2);
+}
+
+/// Excluding the twinned vectors from variant coverage closes no gap, and this
+/// is what says so rather than a sentence in a document.
+///
+/// The decision is that a vector this repository assembled may not mark a
+/// variant covered. That is right whatever the numbers do — but it is only
+/// *free* while every variant those vectors reach is already reached by a
+/// reference-written one. The day a twinned vector is the sole evidence for a
+/// variant, the exclusion stops being a declined weak claim and becomes a hidden
+/// gap, and someone has to decide which it is rather than inherit the answer.
+#[test]
+fn the_excluded_twinned_vectors_are_the_sole_evidence_for_nothing() {
+    let matrix = matrix::compute();
+
+    let sole_value: Vec<&String> = matrix
+        .fate
+        .twinned_value_variants
+        .iter()
+        .filter(|variant| !matrix.fate.value_variants_covered.contains(*variant))
+        .collect();
+    assert!(
+        sole_value.is_empty(),
+        "value variants only a twinned vector reaches: {sole_value:?} — the \
+         exclusion is now hiding a gap, not declining weak evidence"
+    );
+
+    let sole_type: Vec<&String> = matrix
+        .fate
+        .twinned_type_variants
+        .iter()
+        .filter(|variant| !matrix.fate.type_variants_covered.contains(*variant))
+        .collect();
+    assert!(
+        sole_type.is_empty(),
+        "type variants only a twinned vector reaches: {sole_type:?}"
+    );
+
+    // Two-sided, like the named-exception test: a twinned corpus that decodes to
+    // nothing at all would satisfy the assertions above vacuously.
+    assert!(!matrix.fate.twinned_value_variants.is_empty());
 }
 
 /// The committed snapshot is the artifact a reviewer reads and a later decision
@@ -120,10 +223,11 @@ fn the_recorded_gaps_are_exactly_what_was_reported() {
         "fee fixed point unexercised on: {unexercised:?}"
     );
 
-    // Three FATE value variants and one type variant have no vector at all. The
-    // reference generator's table does not reach them, so this is a gap in the
-    // corpus rather than in either implementation — but an encoder nothing has
-    // ever checked is an encoder nobody has checked.
+    // Three FATE value variants and one type variant have no vector at all —
+    // unchanged by the sweep corpus entering the matrix, which is measured
+    // rather than assumed: neither generator's table reaches them. So this stays
+    // a gap in the corpora rather than in either implementation — but an encoder
+    // nothing has ever checked is an encoder nobody has checked.
     assert_eq!(
         matrix.fate.value_variants_uncovered,
         vec![

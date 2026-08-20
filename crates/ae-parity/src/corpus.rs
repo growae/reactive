@@ -1,10 +1,24 @@
-//! Reading the two committed reference corpora.
+//! Reading the committed reference corpora.
 //!
-//! Both are compiled in with `include_str!` rather than read from disk, for the
+//! All are compiled in with `include_str!` rather than read from disk, for the
 //! same reason the crates under test do it: the matrix must be reproducible from
 //! a checkout with no network and no working directory assumptions, and a path
 //! that resolves differently under `cargo test` and under `cargo run` is a way
 //! to report a matrix for a corpus nobody committed.
+//!
+//! # Why the FATE corpora are a list and not a constant
+//!
+//! There was one `include_str!` here and there were two committed FATE corpora,
+//! so the matrix reported 113 vectors of 636 and the row read fully covered.
+//! Nothing was wrong with the number; it was a number about a corpus, presented
+//! as a number about the crate.
+//!
+//! The defect class is that a new corpus file is invisible by default: it costs
+//! nothing to add one, and nothing anywhere notices it was never read.
+//! [`FATE_CORPORA`] is the single place a corpus becomes visible, and
+//! `tests/reachability.rs` walks the committed directory and fails when a file
+//! is not in it. Adding a corpus and forgetting to list it is now a red gate
+//! rather than a silently smaller matrix.
 
 use ae_core::tx::{Pointer, Tag, TxParams, Value};
 use serde_json::Value as Json;
@@ -12,8 +26,74 @@ use serde_json::Value as Json;
 /// The transaction corpus, generated from `@aeternity/aepp-sdk`.
 pub const TRANSACTIONS: &str = include_str!("../../ae-core/tests/vectors/transactions.json");
 
-/// The FATE corpus, generated from `@aeternity/aepp-calldata`.
-pub const FATE: &str = include_str!("../../ae-fate/tests/vectors/aepp-calldata-1.9.1.json");
+/// One committed FATE corpus.
+#[derive(Debug, Clone, Copy)]
+pub struct FateCorpusFile {
+    /// The file name as committed, which is what the reachability gate walks the
+    /// vector directory for.
+    pub file: &'static str,
+    /// The corpus text, compiled in.
+    pub text: &'static str,
+}
+
+/// Every committed FATE corpus, in the order the matrix reports them.
+///
+/// A file here is measured. A file in `ae-fate/tests/vectors` that is not here
+/// is invisible to the matrix — which is the whole of the defect this list and
+/// its reachability gate exist to make impossible.
+pub const FATE_CORPORA: [FateCorpusFile; 2] = [
+    FateCorpusFile {
+        file: "aepp-calldata-1.9.1.json",
+        text: include_str!("../../ae-fate/tests/vectors/aepp-calldata-1.9.1.json"),
+    },
+    FateCorpusFile {
+        file: "aepp-calldata-1.9.1-sweep.json",
+        text: include_str!("../../ae-fate/tests/vectors/aepp-calldata-1.9.1-sweep.json"),
+    },
+];
+
+/// Where a FATE vector's bytes came from.
+///
+/// The two classes are never merged into one total, because they are not the
+/// same evidence. A reference-written vector is two implementations agreeing. A
+/// twinned vector is this repository agreeing with a rule this repository also
+/// wrote down — real evidence, weaker evidence, and a single count hides which
+/// kind a row rests on.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Provenance {
+    /// Written by `@aeternity/aepp-calldata` itself.
+    Reference,
+    /// Assembled in this repository rather than by the reference, because the
+    /// reference *cannot* produce these bytes: they are maps keyed by non-ASCII
+    /// strings and by negative bit fields, the two places where its ordering
+    /// disagrees with the node's, so asking it to write them would produce bytes
+    /// the chain rejects. The key order is stated by hand from `aeb_fate_data`
+    /// rather than measured. See `ae-fate/tests/sweep.rs`, which says the same
+    /// thing about the same two cases.
+    Twinned,
+}
+
+impl Provenance {
+    /// How the class is named in the rendered matrix and in the json.
+    pub fn label(self) -> &'static str {
+        match self {
+            Provenance::Reference => "reference-written",
+            Provenance::Twinned => "twinned by construction",
+        }
+    }
+}
+
+/// The evidence class a vector's name declares.
+///
+/// The generator names the two hand-assembled cases `node-order/…` rather than
+/// `sweep/…` precisely so they stay distinguishable in the committed file. This
+/// reads that convention rather than inventing a second one.
+fn provenance_of(name: &str) -> Provenance {
+    match name.split('/').next().unwrap_or_default() {
+        "node-order" => Provenance::Twinned,
+        _ => Provenance::Reference,
+    }
+}
 
 /// One transaction vector.
 #[derive(Debug, Clone)]
@@ -61,12 +141,16 @@ pub struct Refusal {
     pub sibling: Option<String>,
 }
 
-/// One FATE vector: a name and the bytes the reference produced.
+/// One FATE vector: a name, the bytes, and where the bytes came from.
 #[derive(Debug, Clone)]
 pub struct FateCase {
     /// The case's name in the generator's table, `family/detail`.
     pub name: String,
-    /// The reference bytes.
+    /// The committed corpus this case was read from.
+    pub corpus: &'static str,
+    /// Whether the reference wrote these bytes or this repository did.
+    pub provenance: Provenance,
+    /// The bytes.
     pub bytes: Vec<u8>,
 }
 
@@ -79,26 +163,45 @@ pub struct References {
     pub aepp_calldata: String,
 }
 
-/// Read both corpora's recorded reference versions.
+/// Read every corpus's recorded reference version.
 ///
 /// # Panics
 ///
-/// If either corpus is not the shape its generator emits. That is a hard failure
-/// on purpose: a matrix computed from a corpus this cannot parse would be a
-/// number with nothing behind it.
+/// If a corpus is not the shape its generator emits. That is a hard failure on
+/// purpose: a matrix computed from a corpus this cannot parse would be a number
+/// with nothing behind it.
+///
+/// Also if the FATE corpora disagree about their reference version. The matrix
+/// prints one `aepp-calldata` version in its header and scores every FATE vector
+/// against it; two corpora generated from different versions would make that
+/// header a claim about vectors that were never produced by it.
 pub fn references() -> References {
     let transactions: Json =
         serde_json::from_str(TRANSACTIONS).expect("transaction corpus is json");
-    let fate: Json = serde_json::from_str(FATE).expect("fate corpus is json");
+
+    let mut aepp_calldata: Option<String> = None;
+    for corpus in FATE_CORPORA {
+        let json: Json = serde_json::from_str(corpus.text).expect("fate corpus is json");
+        let version = json["version"]
+            .as_str()
+            .expect("corpus records its calldata version")
+            .to_string();
+        match &aepp_calldata {
+            None => aepp_calldata = Some(version),
+            Some(first) => assert_eq!(
+                first, &version,
+                "{} records aepp-calldata {version}, but an earlier corpus records {first}",
+                corpus.file
+            ),
+        }
+    }
+
     References {
         aepp_sdk: transactions["sdkVersion"]
             .as_str()
             .expect("corpus records its sdk version")
             .to_string(),
-        aepp_calldata: fate["version"]
-            .as_str()
-            .expect("corpus records its calldata version")
-            .to_string(),
+        aepp_calldata: aepp_calldata.expect("at least one fate corpus is committed"),
     }
 }
 
@@ -119,22 +222,27 @@ pub fn transactions() -> Vec<TxCase> {
         .collect()
 }
 
-/// Every FATE vector, in corpus order.
+/// Every FATE vector from every committed corpus, in corpus order then case
+/// order.
 ///
 /// # Panics
 ///
-/// If the corpus is not the shape its generator emits.
+/// If a corpus is not the shape its generator emits.
 pub fn fate() -> Vec<FateCase> {
-    let corpus: Json = serde_json::from_str(FATE).expect("fate corpus is json");
-    corpus["vectors"]
-        .as_array()
-        .expect("corpus has vectors")
-        .iter()
-        .map(|case| FateCase {
-            name: case["name"].as_str().expect("case has a name").to_string(),
-            bytes: hex_decode(case["hex"].as_str().expect("case has hex")),
-        })
-        .collect()
+    let mut cases = Vec::new();
+    for corpus in FATE_CORPORA {
+        let json: Json = serde_json::from_str(corpus.text).expect("fate corpus is json");
+        for case in json["vectors"].as_array().expect("corpus has vectors") {
+            let name = case["name"].as_str().expect("case has a name").to_string();
+            cases.push(FateCase {
+                corpus: corpus.file,
+                provenance: provenance_of(&name),
+                name,
+                bytes: hex_decode(case["hex"].as_str().expect("case has hex")),
+            });
+        }
+    }
+    cases
 }
 
 fn read_tx_case(case: &Json) -> TxCase {
@@ -229,11 +337,39 @@ mod tests {
     use super::*;
 
     #[test]
-    fn both_corpora_parse_and_record_their_reference_version() {
+    fn every_corpus_parses_and_records_its_reference_version() {
         let references = references();
         assert!(!references.aepp_sdk.is_empty());
         assert!(!references.aepp_calldata.is_empty());
         assert!(!transactions().is_empty());
         assert!(!fate().is_empty());
+    }
+
+    /// A corpus listed but never read contributes nothing, and the matrix would
+    /// look exactly the same as it did before someone added it.
+    #[test]
+    fn every_listed_fate_corpus_contributes_at_least_one_vector() {
+        let cases = fate();
+        for corpus in FATE_CORPORA {
+            assert!(
+                cases.iter().any(|case| case.corpus == corpus.file),
+                "{} is listed but contributes no vector",
+                corpus.file
+            );
+        }
+    }
+
+    /// The classification is read off the generator's own naming convention, so
+    /// it is worth one assertion that the convention is still what it was.
+    #[test]
+    fn the_node_order_cases_are_the_twinned_ones() {
+        for case in fate() {
+            let expected = if case.name.starts_with("node-order/") {
+                Provenance::Twinned
+            } else {
+                Provenance::Reference
+            };
+            assert_eq!(case.provenance, expected, "{}", case.name);
+        }
     }
 }

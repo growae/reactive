@@ -1,4 +1,4 @@
-// Drift detection for the two reference corpora.
+// Drift detection for the committed reference corpora.
 //
 //   node regenerate.mjs            # check: fails if a corpus is not reproducible
 //   node regenerate.mjs --write    # rewrite them, so a bump produces a git diff
@@ -36,8 +36,14 @@ const crates = dirname(here)
 const write = process.argv.includes('--write')
 
 /**
- * The two corpora, each with the generator that produces it and the field the
- * corpus records its own reference version in.
+ * Every committed corpus, each with the generator that produces it and the field
+ * the corpus records its own reference version in.
+ *
+ * The sweep corpus was committed without an entry here, so 523 of the 636
+ * committed FATE vectors were re-derived by nothing and clause 5 was scored over
+ * the two files that happened to be listed. That is the same defect class the
+ * matrix had: a corpus file is invisible by default. `tests/reachability.rs`
+ * now fails the build when a committed corpus is not named in this file.
  */
 const corpora = [
   {
@@ -52,6 +58,21 @@ const corpora = [
     package: '@aeternity/aepp-calldata',
     generator: join(crates, 'ae-fate/tests/vectors/generate.mjs'),
     committed: join(crates, 'ae-fate/tests/vectors/aepp-calldata-1.9.1.json'),
+    version: (json) => json.version,
+  },
+  {
+    // Two of its 523 cases are `node-order/…`, assembled by the generator
+    // rather than written by the reference. They are still regenerated from
+    // this same script: the generator is deterministic and serialises every key
+    // and value through the reference, so a drift in either is caught here even
+    // though the key *order* is stated by hand.
+    label: 'fate-sweep',
+    package: '@aeternity/aepp-calldata',
+    generator: join(crates, 'ae-fate/tests/vectors/generate-sweep.mjs'),
+    committed: join(
+      crates,
+      'ae-fate/tests/vectors/aepp-calldata-1.9.1-sweep.json',
+    ),
     version: (json) => json.version,
   },
 ]
@@ -107,16 +128,16 @@ try {
     }
   })
 
-  console.log(`installing ${pins.map((pin) => pin.pinned).join(', ')}`)
+  // Two corpora can pin the same package — the FATE corpus and its sweep both
+  // record `@aeternity/aepp-calldata`. Deduplicated so the install line names
+  // each version once, and so a genuine disagreement between two corpora about
+  // the same package shows up as two entries rather than being averaged away by
+  // whichever npm resolved last.
+  const installs = [...new Set(pins.map((pin) => pin.pinned))]
+  console.log(`installing ${installs.join(', ')}`)
   execFileSync(
     'npm',
-    [
-      'install',
-      '--no-audit',
-      '--no-fund',
-      '--loglevel=error',
-      ...pins.map((pin) => pin.pinned),
-    ],
+    ['install', '--no-audit', '--no-fund', '--loglevel=error', ...installs],
     { cwd: scratch, stdio: 'inherit' },
   )
 

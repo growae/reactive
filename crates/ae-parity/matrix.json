@@ -1,7 +1,37 @@
 {
   "fate": {
+    "corpora": [
+      {
+        "file": "aepp-calldata-1.9.1.json",
+        "provenance": "reference-written",
+        "roundtrip_pass": 113,
+        "vectors": 113
+      },
+      {
+        "file": "aepp-calldata-1.9.1-sweep.json",
+        "provenance": "reference-written",
+        "roundtrip_pass": 521,
+        "vectors": 521
+      },
+      {
+        "file": "aepp-calldata-1.9.1-sweep.json",
+        "provenance": "twinned by construction",
+        "roundtrip_pass": 2,
+        "vectors": 2
+      }
+    ],
     "failures": [],
-    "roundtrip_pass": 113,
+    "reference_roundtrip_pass": 634,
+    "reference_vectors": 634,
+    "twinned_roundtrip_pass": 2,
+    "twinned_type_variants_not_scored": [],
+    "twinned_value_variants_not_scored": [
+      "Bits",
+      "Int",
+      "Map",
+      "String"
+    ],
+    "twinned_vectors": 2,
     "type_variants_covered": [
       "Address",
       "Any",
@@ -36,7 +66,7 @@
       "ContractBytearray",
       "Typerep"
     ],
-    "vectors": 113
+    "variant_coverage_scored_over": "reference-written vectors only"
   },
   "named_exceptions": [
     "ChannelForceProgressTx"

@@ -11,7 +11,7 @@ one failure mode this whole thing exists to prevent.
 One sentence, precise enough to be used as a gate by someone who was not here:
 
 > **Parity green**, at a named head SHA and against the reference versions the
-> two corpora record for themselves, means all six of:
+> committed corpora record for themselves, means all six of:
 >
 > 1. every transaction schema entry has at least one committed vector, and
 >    `ae-core` reproduces every vector's `tx_` string byte-for-byte **and**
@@ -22,10 +22,11 @@ One sentence, precise enough to be used as a gate by someone who was not here:
 > 3. every state-tree entry pair has at least one committed fixture that decodes
 >    and re-encodes — from the reference SDK where it implements the pair, and
 >    from a node where it does not;
-> 4. every `FateValue` and `FateType` variant has at least one committed vector,
->    and every vector in the FATE corpus decodes and re-encodes byte-for-byte;
-> 5. regenerating both corpora at their pinned reference versions produces no
->    diff;
+> 4. every `FateValue` and `FateType` variant has at least one committed
+>    **reference-written** vector, and every vector in every committed FATE
+>    corpus decodes and re-encodes byte-for-byte;
+> 5. regenerating **every** committed corpus at its pinned reference version
+>    produces no diff;
 > 6. on a node: every transaction we build **that the corpus marks postable** is
 >    accepted by the node's decoder; every vector marked non-postable names the
 >    chain rule that refuses it and the tag has a postable sibling that the node
@@ -36,6 +37,35 @@ One sentence, precise enough to be used as a gate by someone who was not here:
 Points 1, 2, 4 and 5 are enforced in CI. Point 3 has no fixtures at all today.
 Point 6 needs a reachable node and is recorded in `TESTNET.md` rather than gated,
 because a public testnet going down is not a reason to fail a pull request.
+
+### Clauses 4 and 5 were narrower than their own wording
+
+Both said "the FATE corpus" and "both corpora" while three corpora were
+committed. `aepp-calldata-1.9.1-sweep.json` — 523 vectors, five sixths of the
+FATE evidence — was reached by neither the matrix nor `regenerate.mjs`, so
+clause 4 was scored over 113 of 636 vectors and clause 5 re-earned two files of
+three. `ae-fate`'s own `tests/sweep.rs` did exercise it throughout, which is why
+nothing was ever wrong; it was invisible, not unmeasured.
+
+Neither verdict moved when the corpora were counted properly. All 636 vectors
+decode and re-encode, and the uncovered variants are still `StoreMap`,
+`ContractBytearray`, `Typerep` and type `ContractBytearray` — 634 more vectors
+closed no gap, which is the result to want here, because a gap that closed by
+counting differently would have been a gap that was never real.
+
+**Clause 4 now says reference-written**, which is the one wording change. The
+FATE surface is reported per corpus and per **evidence class**, and the two
+`node-order/…` vectors are assembled here rather than written by the reference —
+they round-trip, they are counted, and they score no variant coverage. A crate
+whose stated purpose is to refuse to fill its own gaps cannot mark a variant
+covered with bytes it wrote itself. `tests/gate.rs` asserts that this exclusion
+is the sole evidence for nothing, so it stays a declined weak claim rather than
+becoming a hidden gap.
+
+The counting defect is closed by `tests/reachability.rs` rather than by the
+corrected numbers: it walks `ae-fate/tests/vectors/*.json` and fails, by file
+name, on any corpus that the matrix or the drift script does not reach. Adding a
+corpus and forgetting to wire it up is now a red gate.
 
 ### Why point 6 has two classes of vector
 
@@ -111,7 +141,7 @@ cargo run -p ae-parity -- matrix
 # The gate, including the check that the committed matrix is the one this produces.
 cargo test -p ae-parity
 
-# Drift: reinstall the pinned references, regenerate both corpora, diff.
+# Drift: reinstall the pinned references, regenerate every corpus, diff.
 node ae-parity/regenerate.mjs
 node ae-parity/regenerate.mjs --write   # on a deliberate bump, to get the diff
 

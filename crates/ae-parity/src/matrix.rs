@@ -12,6 +12,10 @@
 //!
 //! An uncovered row is a finding to report, never something to quietly fill in
 //! and then call green.
+//!
+//! The FATE surface is reported per committed corpus **and per evidence class**,
+//! never as one number. See [`fate_surface`] for which class scores variant
+//! coverage and why the other one does not.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -97,23 +101,61 @@ pub struct EntryRow {
     pub fixtures: usize,
 }
 
-/// The FATE surface, split by what the corpus can and cannot speak for.
+/// One committed corpus's vectors of one evidence class.
+///
+/// The unit of the FATE surface is the pair, not the file and not the total. The
+/// sweep corpus carries both classes, so a per-file count would merge them again
+/// and a single grand total merges everything.
+#[derive(Debug, Clone)]
+pub struct FateCorpusRow {
+    /// The committed file the vectors came from.
+    pub file: String,
+    /// Whether the reference wrote these bytes or this repository did.
+    pub provenance: corpus::Provenance,
+    /// Vectors in this corpus of this class.
+    pub vectors: usize,
+    /// Those that decode and re-encode to the exact committed bytes.
+    pub roundtrip_pass: usize,
+}
+
+/// The FATE surface, split by what the corpora can and cannot speak for.
+///
+/// There is deliberately no field holding one count of all FATE vectors.
+/// Reference-written and twinned bytes are different evidence, and the reason
+/// this crate exists is that a single number reads as green whatever it is made
+/// of.
 #[derive(Debug, Clone)]
 pub struct FateSurface {
-    /// Vectors in the corpus.
-    pub vectors: usize,
-    /// Vectors that decode and re-encode to the reference's exact bytes.
-    pub roundtrip_pass: usize,
-    /// Vectors that failed, with the reason.
+    /// One row per committed corpus and evidence class.
+    pub corpora: Vec<FateCorpusRow>,
+    /// Vectors the reference wrote.
+    pub reference_vectors: usize,
+    /// Those that decode and re-encode to the reference's exact bytes.
+    pub reference_roundtrip_pass: usize,
+    /// Vectors assembled in this repository because the reference cannot produce
+    /// them.
+    pub twinned_vectors: usize,
+    /// Those that decode and re-encode to the committed bytes.
+    pub twinned_roundtrip_pass: usize,
+    /// Vectors that failed, with the reason, across every corpus.
     pub failures: Vec<String>,
-    /// Value variants with at least one vector.
+    /// Value variants with at least one **reference-written** vector.
     pub value_variants_covered: BTreeSet<String>,
     /// Value variants with none.
     pub value_variants_uncovered: Vec<String>,
-    /// Type variants with at least one vector.
+    /// Type variants with at least one **reference-written** vector.
     pub type_variants_covered: BTreeSet<String>,
     /// Type variants with none.
     pub type_variants_uncovered: Vec<String>,
+    /// What the twinned vectors decode to, recorded but never scored.
+    ///
+    /// The exclusion above is only cost-free while every one of these is already
+    /// reached by a reference-written vector. Recording them is what lets the
+    /// gate check that, instead of the decision quietly hiding a real gap the day
+    /// a twinned vector reaches somewhere the reference never does.
+    pub twinned_value_variants: BTreeSet<String>,
+    /// The same, for types.
+    pub twinned_type_variants: BTreeSet<String>,
 }
 
 /// The whole matrix.
@@ -404,26 +446,88 @@ const FATE_TYPE_VARIANTS: [&str; 13] = [
     "Any",
 ];
 
+/// Compute the FATE surface over every committed corpus.
+///
+/// # Variant coverage is scored over reference-written vectors only
+///
+/// A decision, not an accident, and it is the load-bearing one here.
+///
+/// Every FATE vector in this repository carries a name and a hex string and
+/// nothing else — the main corpus as much as the sweep — so a variant is marked
+/// covered by decoding the bytes and looking at what came out. That is scoring
+/// off our own decoder, and widening the corpus does not change the *kind* of
+/// evidence it is; it changes how much of it there is. Saying otherwise about
+/// the sweep alone would be inventing a distinction that the main corpus does
+/// not survive either.
+///
+/// The distinction that does hold is who wrote the bytes. A `node-order/…`
+/// vector was assembled here from an ordering rule this repository also wrote
+/// down. Letting it mark a variant covered would let this crate close its own
+/// gap with its own bytes — the exact failure mode `README.md` says the
+/// instrument exists to prevent — so the twinned cases round-trip and are
+/// counted, and they score no coverage.
+///
+/// Round-trip pass counts are reported for both classes, separately. Whether
+/// bytes decode and re-encode is a question about the bytes, and it is worth
+/// asking of the twinned ones too; it is only *coverage* that they must not
+/// close.
 fn fate_surface() -> FateSurface {
     let cases = corpus::fate();
-    let mut roundtrip_pass = 0;
     let mut failures = Vec::new();
     let mut value_variants: BTreeSet<String> = BTreeSet::new();
     let mut type_variants: BTreeSet<String> = BTreeSet::new();
+    let mut twinned_value_variants: BTreeSet<String> = BTreeSet::new();
+    let mut twinned_type_variants: BTreeSet<String> = BTreeSet::new();
+    let mut rows: Vec<FateCorpusRow> = Vec::new();
 
     for case in &cases {
+        // Per case, then merged only for the reference-written ones. Collecting
+        // into the shared sets and filtering afterwards is not the same thing:
+        // a variant reached by a twinned vector and by nothing else has to come
+        // out uncovered, which it cannot do once it is in the set.
+        let mut case_values: BTreeSet<String> = BTreeSet::new();
+        let mut case_types: BTreeSet<String> = BTreeSet::new();
+
         // The family in the name decides which of the three reference encoders
         // produced the bytes; there is no in-band tag that distinguishes a
         // serialised type from a serialised value.
         let family = case.name.split('/').next().unwrap_or_default();
         let result = match family {
-            "type" => roundtrip_type(&case.bytes, &mut type_variants),
-            "calldata" => roundtrip_calldata(&case.bytes, &mut value_variants),
-            _ => roundtrip_value(&case.bytes, &mut value_variants, &mut type_variants),
+            "type" => roundtrip_type(&case.bytes, &mut case_types),
+            "calldata" => roundtrip_calldata(&case.bytes, &mut case_values),
+            _ => roundtrip_value(&case.bytes, &mut case_values, &mut case_types),
         };
+
+        match case.provenance {
+            corpus::Provenance::Reference => {
+                value_variants.append(&mut case_values);
+                type_variants.append(&mut case_types);
+            }
+            corpus::Provenance::Twinned => {
+                twinned_value_variants.append(&mut case_values);
+                twinned_type_variants.append(&mut case_types);
+            }
+        }
+
+        let row = match rows
+            .iter_mut()
+            .find(|row| row.file == case.corpus && row.provenance == case.provenance)
+        {
+            Some(row) => row,
+            None => {
+                rows.push(FateCorpusRow {
+                    file: case.corpus.to_string(),
+                    provenance: case.provenance,
+                    vectors: 0,
+                    roundtrip_pass: 0,
+                });
+                rows.last_mut().expect("just pushed")
+            }
+        };
+        row.vectors += 1;
         match result {
-            Ok(()) => roundtrip_pass += 1,
-            Err(why) => failures.push(format!("{}: {why}", case.name)),
+            Ok(()) => row.roundtrip_pass += 1,
+            Err(why) => failures.push(format!("{} [{}]: {why}", case.name, case.corpus)),
         }
     }
 
@@ -438,14 +542,28 @@ fn fate_surface() -> FateSurface {
         .map(|variant| (*variant).to_string())
         .collect();
 
+    let class_total = |wanted: corpus::Provenance, field: fn(&FateCorpusRow) -> usize| {
+        rows.iter()
+            .filter(|row| row.provenance == wanted)
+            .map(field)
+            .sum()
+    };
+
     FateSurface {
-        vectors: cases.len(),
-        roundtrip_pass,
+        reference_vectors: class_total(corpus::Provenance::Reference, |row| row.vectors),
+        reference_roundtrip_pass: class_total(corpus::Provenance::Reference, |row| {
+            row.roundtrip_pass
+        }),
+        twinned_vectors: class_total(corpus::Provenance::Twinned, |row| row.vectors),
+        twinned_roundtrip_pass: class_total(corpus::Provenance::Twinned, |row| row.roundtrip_pass),
+        corpora: rows,
         failures,
         value_variants_covered: value_variants,
         value_variants_uncovered,
         type_variants_covered: type_variants,
         type_variants_uncovered,
+        twinned_value_variants,
+        twinned_type_variants,
     }
 }
 
@@ -685,13 +803,24 @@ impl Matrix {
                 })).collect::<Vec<_>>(),
             },
             "fate": {
-                "vectors": self.fate.vectors,
-                "roundtrip_pass": self.fate.roundtrip_pass,
+                "corpora": self.fate.corpora.iter().map(|row| json!({
+                    "file": row.file,
+                    "provenance": row.provenance.label(),
+                    "vectors": row.vectors,
+                    "roundtrip_pass": row.roundtrip_pass,
+                })).collect::<Vec<_>>(),
+                "reference_vectors": self.fate.reference_vectors,
+                "reference_roundtrip_pass": self.fate.reference_roundtrip_pass,
+                "twinned_vectors": self.fate.twinned_vectors,
+                "twinned_roundtrip_pass": self.fate.twinned_roundtrip_pass,
+                "variant_coverage_scored_over": "reference-written vectors only",
                 "failures": self.fate.failures,
                 "value_variants_covered": self.fate.value_variants_covered,
                 "value_variants_uncovered": self.fate.value_variants_uncovered,
                 "type_variants_covered": self.fate.type_variants_covered,
                 "type_variants_uncovered": self.fate.type_variants_uncovered,
+                "twinned_value_variants_not_scored": self.fate.twinned_value_variants,
+                "twinned_type_variants_not_scored": self.fate.twinned_type_variants,
             },
             "named_exceptions": self.named_exceptions,
             "node": self.node,
