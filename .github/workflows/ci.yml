@@ -93,7 +93,7 @@ jobs:
           name: coverage-report
           path: coverage/
       - name: Generate badge
-        uses: jaywcjlove/coverage-badges-cli@v2.2.0
+        uses: jaywcjlove/coverage-badges-cli@v2.3.0
         with:
           source: coverage/coverage-summary.json
           output: coverage/badge.svg
