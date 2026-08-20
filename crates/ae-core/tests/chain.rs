@@ -56,7 +56,7 @@
 //! closing the gap does not get to cost the observability that found it.
 
 use ae_core::encoding::{decode, encode, Encoding};
-use ae_core::fee::{calculate_min_fee, RebuildTx, TxGasInputs};
+use ae_core::fee::{minimum_transaction_fee, TxGasInputs};
 use ae_core::keys::{
     transaction_signing_payload, PublicKey, Signature, TxPosition, NETWORK_ID_MAINNET,
     NETWORK_ID_TESTNET,
@@ -682,79 +682,43 @@ fn our_decoding_agrees_with_the_nodes_on_every_field_both_of_us_name() {
 // 4. The fee model against fees a node accepted
 // ---------------------------------------------------------------------------
 
-/// The bridge between [`calculate_min_fee`]'s `RebuildTx` seam and transaction
-/// serialisation.
+/// What the crate's own join answers for a mined transaction.
 ///
-/// This crate ships both halves of the fee seam and nothing that joins them, so
-/// every binding writes this itself. It is written here rather than in `src`
-/// because joining them is a public-surface change — see the surface-change
-/// protocol in `crates/README.md`.
+/// This used to be `MinedTx`, a `RebuildTx` written here because `ae_core`
+/// shipped both halves of the fee seam and nothing that joined them. It read the
+/// ABI off the decoded transaction by hand, and the note next to it said that a
+/// binding author who forgot that step would over-price every FATE contract call
+/// by 2.5x — silently, because a fee above the minimum is accepted.
 ///
-/// Note what that costs, because it is the argument for moving the join into the
-/// core. `abi_version` below has to be read off the decoded transaction by hand,
-/// and a bridge that omits it gets `None`, the 30× arm, and a minimum fee 2.5×
-/// too high for every FATE contract call. Here that is a loud test failure; in a
-/// binding it is a wallet quietly overcharging.
-struct MinedTx {
-    params: TxParams,
-    relative_ttl: u64,
-    inner_tx_size: usize,
-    abi_version: Option<AbiVersion>,
+/// [`minimum_transaction_fee`] is that join, in `src`. The corpus now drives the
+/// shipped code rather than proving a bridge nothing ships, which is the only
+/// version of this test worth having: a hand-written copy here would keep passing
+/// while every binding did something else.
+///
+/// It is also the reason the numbers below do not move. Every mined transaction
+/// carries `abiVersion` explicitly, so the wire and the params map agree on all
+/// of them — which is exactly why this corpus could never have found the defect
+/// the join exists to prevent, and why that case is pinned in `fee`'s own tests
+/// instead.
+fn model_minimum(inner: &TxParams) -> ae_core::Result<u128> {
+    minimum_transaction_fee(ConsensusProtocolVersion::Ceres, inner)
 }
 
-impl RebuildTx for MinedTx {
-    fn rebuild_with_fee(&mut self, fee: u128) -> ae_core::Result<TxGasInputs> {
-        let mut params = self.params.clone();
-        params.set("fee", Value::uint_str(&fee.to_string())?);
-        let bytes = build_tx_rlp(&params, &BuildOptions::default())?;
-        Ok(TxGasInputs {
-            tag: params.tag(),
-            size: bytes.len(),
-            relative_ttl: self.relative_ttl,
-            inner_tx_size: self.inner_tx_size,
-            abi_version: self.abi_version,
-        })
-    }
-}
-
-/// The transaction's ABI, from `abiVersion` or from the abi half of `ctVersion`.
+/// Whether an oracle transaction states its ttl as an absolute block height.
 ///
-/// An ABI the crate has no name for reads as `None`, which prices the
-/// transaction at the node's `_ -> 30 * TX_BASE_GAS` arm — the same answer the
-/// node gives an ABI it does not recognise.
-fn abi_version_of(params: &TxParams) -> Option<AbiVersion> {
-    let abi = match params.get("abiVersion") {
-        Some(value) => value.as_u64()?,
-        None => match params.get("ctVersion") {
-            Some(Value::CtVersion { abi_version, .. }) => u64::from(*abi_version),
-            _ => return None,
-        },
+/// The join refuses to price one: the gas formula charges for the *relative*
+/// ttl, and recovering it needs the current height, which is a node lookup this
+/// crate does not do. The corpus is checked for these rather than silently
+/// skipping them, so "the error arm never fires here" stays a measured fact
+/// about the chain instead of an assumption about it.
+fn has_absolute_oracle_ttl(params: &TxParams) -> bool {
+    let type_key = match params.tag() {
+        Tag::OracleRegisterTx | Tag::OracleExtendTx => "oracleTtlType",
+        Tag::OracleQueryTx => "queryTtlType",
+        Tag::OracleRespondTx => "responseTtlType",
+        _ => return false,
     };
-    match abi {
-        0 => Some(AbiVersion::NoAbi),
-        1 => Some(AbiVersion::Sophia),
-        3 => Some(AbiVersion::Fate),
-        _ => None,
-    }
-}
-
-/// The ttl an oracle transaction is charged for, in key blocks.
-///
-/// A `block` ttl is absolute, so the delta is only recoverable with the height
-/// the transaction was mined at — which is why the model takes the relative
-/// value rather than reading the field itself.
-fn oracle_relative_ttl(params: &TxParams, height: u64) -> Option<u64> {
-    let (type_key, value_key) = match params.tag() {
-        Tag::OracleRegisterTx | Tag::OracleExtendTx => ("oracleTtlType", "oracleTtlValue"),
-        Tag::OracleQueryTx => ("queryTtlType", "queryTtlValue"),
-        Tag::OracleRespondTx => ("responseTtlType", "responseTtlValue"),
-        _ => return Some(1),
-    };
-    let value = params.get(value_key).and_then(Value::as_u64)?;
-    match params.get(type_key).and_then(Value::as_u64) {
-        Some(0) | None => Some(value),
-        Some(_) => value.checked_sub(height),
-    }
+    params.get(type_key).and_then(Value::as_u64).unwrap_or(0) != 0
 }
 
 /// How far above the model's minimum the chain's own fees sat, per tag.
@@ -798,28 +762,13 @@ fn no_fee_a_node_accepted_is_below_what_the_model_asks_for() {
             *skipped.entry("no fee field").or_default() += 1;
             continue;
         };
-        let Some(relative_ttl) = oracle_relative_ttl(inner, case.height) else {
+        if has_absolute_oracle_ttl(inner) {
             *skipped
-                .entry("absolute oracle ttl below the mined height")
+                .entry("oracle ttl stated as an absolute block height")
                 .or_default() += 1;
             continue;
-        };
-        let inner_tx_size = match inner.tag() {
-            Tag::GaMetaTx | Tag::PayingForTx => inner
-                .get("tx")
-                .and_then(Value::as_tx)
-                .map(|wrapped| rlp_of(wrapped).len())
-                .unwrap_or(0),
-            _ => 0,
-        };
-
-        let mut rebuild = MinedTx {
-            params: inner.clone(),
-            relative_ttl,
-            inner_tx_size,
-            abi_version: abi_version_of(inner),
-        };
-        let minimum = match calculate_min_fee(ConsensusProtocolVersion::Ceres, &mut rebuild) {
+        }
+        let minimum = match model_minimum(inner) {
             Ok(minimum) => minimum,
             Err(error) => {
                 below.push(format!("{}: model errored: {error}", case.label()));
