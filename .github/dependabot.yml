@@ -117,6 +117,31 @@ updates:
       python-bindings-minor-patch:
         update-types: ['minor', 'patch']
 
+  # The flutter_rust_bridge binding is a fourth tree, same shape as the
+  # PyO3 one above — its own Cargo.lock, pins flutter_rust_bridge
+  # independently.
+  - package-ecosystem: 'cargo'
+    directory: '/bindings/dart/rust'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      dart-bindings-rust-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # The Dart package side of the same binding — pubspec.yaml/pubspec.lock,
+  # not part of the pnpm workspace above.
+  - package-ecosystem: 'pub'
+    directory: '/bindings/dart'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      dart-bindings-pub-minor-patch:
+        update-types: ['minor', 'patch']
+
   # Actions referenced across .github/workflows/*.yml.
   - package-ecosystem: 'github-actions'
     directory: '/'

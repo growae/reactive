@@ -1,0 +1,122 @@
+name: Dart bindings
+
+# `agent/**` so a feature branch gates itself before a pull request exists —
+# full reasoning, including why the duplicate run while a PR is open is
+# deliberate, in ci.yml.
+on:
+  push:
+    branches: [main, develop, 'agent/**']
+    paths:
+      - 'bindings/dart/**'
+      - 'crates/ae-core/**'
+      - '.github/workflows/dart-bindings.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'bindings/dart/**'
+      - 'crates/ae-core/**'
+      - '.github/workflows/dart-bindings.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: bindings/dart
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to match python-bindings.yml, same reasoning: a floating
+      # toolchain turns an unrelated Rust release into a red gate on an
+      # untouched branch.
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bindings/dart/rust
+
+      - run: cargo fmt --all -- --check
+        working-directory: bindings/dart/rust
+
+      - run: cargo clippy --locked --all-targets -- -D warnings
+        working-directory: bindings/dart/rust
+
+      - uses: dart-lang/setup-dart@v1
+
+      - run: dart pub get
+
+      - run: dart analyze --fatal-infos
+
+  build:
+    name: Build
+    needs: check
+    # A packaging check, not a compile gate — Test already builds the Linux
+    # native library, so a branch that cannot compile goes red without this.
+    # Keep it off intermediate pushes, same reasoning as python-bindings.yml.
+    if: github.event_name == 'pull_request' || github.ref_name == 'develop' || github.ref_name == 'main'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux-x86_64
+          - os: macos-latest
+            name: macos-arm64
+          - os: macos-13
+            name: macos-x86_64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: bindings/dart/rust
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@1.97.1
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bindings/dart/rust
+
+      - run: cargo build --release --locked
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ae-core-dart-${{ matrix.name }}
+          path: |
+            bindings/dart/rust/target/release/*.so
+            bindings/dart/rust/target/release/*.dylib
+          if-no-files-found: ignore
+
+  test:
+    name: Test
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: bindings/dart
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@1.97.1
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: bindings/dart/rust
+
+      - run: cargo build --release --locked
+        working-directory: bindings/dart/rust
+
+      - uses: dart-lang/setup-dart@v1
+
+      - run: dart pub get
+
+      - run: dart test
