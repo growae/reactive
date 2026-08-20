@@ -6,10 +6,10 @@ below are what a later run is compared against.
 | | |
 |---|---|
 | Node | `https://testnet.aeternity.io/v3`, `7.3.0-rc8`, network `ae_uat` |
-| Height | 1283399 |
+| Height | 1283414 |
 | Recorded | 2026-08-20, UTC |
 | References | `@aeternity/aepp-sdk` 14.1.1, `@aeternity/aepp-calldata` 1.9.1 |
-| Corpus | 40 vectors over 26 tags |
+| Corpus | 41 vectors over 26 tags — 38 postable, 3 not |
 
 Nothing was spent. The signer was generated in-process, never persisted, and has
 never held a balance on any network; every posted transaction was rejected before
@@ -31,12 +31,21 @@ A single flipped byte turns `signature_check_failed` into `broken_tx`. That is
 the whole basis for reading `signature_check_failed` as "the decoder took our
 bytes".
 
-## Decoder acceptance — 37 of 40 vectors, 23 of 26 tags
+## Decoder acceptance — 38 of 38 postable vectors, every tag but one
 
-Every vector rebuilt through `ae-core`, wrapped and signed, posted. Three were
-refused by the decoder, and **none of the three is a defect in this core**: each
-was reproduced byte-for-byte with `@aeternity/aepp-sdk` 14.1.1 building *and*
-wrapping the transaction, independently of anything written here.
+Every vector rebuilt through `ae-core`, wrapped and signed, posted. Every one of
+the 38 postable vectors was accepted by the decoder. Three vectors are marked
+non-postable and are excluded from that count, and **none of the three is a
+defect in this core**: each was reproduced byte-for-byte with
+`@aeternity/aepp-sdk` 14.1.1 building *and* wrapping the transaction,
+independently of anything written here.
+
+The exclusion is re-earned on every run rather than assumed. `node-exercise.mjs`
+posts the non-postable vectors too and fails if the node now takes one, because
+an exclusion nobody has re-checked is a vector quietly removed from the
+measurement. Verified against a deliberately false marking: marking `spend,
+minimal` non-postable makes the run exit non-zero with
+`STALE MARKING — a vector marked non-postable was accepted by the node`.
 
 What they are instead is the failure mode the on-node half exists to catch — a
 committed vector both implementations agree on that the chain will not take. An
@@ -74,7 +83,9 @@ parameters it returns a **version 1** transaction. Two of the three implementati
 agree, and the odd one out is the reference sdk.
 
 The committed vector `name update v2, id pointer` is therefore a valid *encoding*
-test and an invalid *transaction*.
+test and an invalid *transaction*. Its postable sibling is
+`name update v2, raw pointer`, which was already in the corpus — a version 2
+name update the node does accept, because its pointer needs version 2.
 
 ### 2. `ChannelCreateTx` — delegates must be accounts
 
@@ -87,7 +98,9 @@ test and an invalid *transaction*.
 
 The committed vector `channel create, with delegates` uses a contract and an
 oracle as responder delegates. Same shape of finding as above: the bytes are
-agreed, the transaction is not acceptable.
+agreed, the transaction is not acceptable. Its postable sibling
+`channel create, with account delegates` was added for it and the node accepts
+it — this was the only sibling the corpus was actually missing.
 
 ### 3. `ChannelForceProgressTx` — refused whatever it contains
 
@@ -101,6 +114,11 @@ tag has no on-node evidence available by this route; diagnosing why is the node'
 business, not this harness's. It is the one tag in the corpus with no acceptance
 result, and it is reachable today through `buildTransaction()`.
 
+It is therefore a **named exception**, not a pass. `gate.rs` pins it in both
+directions: removing the exception without giving the tag a postable vector
+fails, and giving it one without removing the exception fails too. Turning it
+into a silent pass takes deleting a line.
+
 ## Node-builder byte agreement — 18 identical, 0 disagreements
 
 The node exposes its own Erlang transaction builders behind `/v3/debug/…`. Same
@@ -113,21 +131,32 @@ opinion from the same family.
 | node declined to build (needs chain state, or rejects a corpus value) | 12 |
 | no builder on the node's HTTP surface | 6 |
 | not comparable (different transaction version) | 2 |
-| differs | 2 |
+| excluded, non-postable | 2 |
+| differs | 1 |
 
 **Eighteen byte-for-byte agreements across `SpendTx`, four name tags, three
 oracle tags, `ContractCreateTx` and five channel tags.** No vector where all
 three implementations built the same transaction produced three different
 answers.
 
-The two `differs` rows are both `NameUpdateTx`, and neither is an encoding
-disagreement in this core:
+A non-postable vector leaves this half too, for the reason it left the
+acceptance half: the node has already said it will not take that transaction, so
+asking whether it builds the same bytes scores a disagreement already recorded as
+the refusal. That removes `name update v2, id pointer`, where the node builds at
+version 1 per the rule above.
+
+One `differs` row remains, and it is not an encoding disagreement in this core:
 
 - `name update v1, explicit ttls and several pointers` — the node's HTTP builder
   emits the pointer list **reversed**. Ours is in the order given, byte-identical
   to the reference sdk, and the node's own decoder accepts it. A quirk of that
   endpoint, not a wire rule.
-- `name update v2, id pointer` — the node builds at version 1, per the rule above.
+
+It is the single reason clause 6 scores **not satisfied** on this run: the
+acceptance half is 38 of 38, and the builder half asks for byte-identity from
+every tag the node builds. Whether a node-endpoint quirk belongs inside that half
+is the same shape of call as the one that scoped the acceptance half, and it is
+not this harness's to make.
 
 The twelve declines are all state lookups or value rejections, not serialisation:
 `Contract code … not found`, `Oracle address … not found`, `Invalid hash: name`
@@ -147,7 +176,7 @@ different transactions.
 | `SignedTx` | no builder ×2 | accepted ×2 |
 | `NamePreclaimTx` | identical | accepted |
 | `NameClaimTx` | declined ×2 | accepted ×2 |
-| `NameUpdateTx` | identical ×2, differs ×2, declined | accepted ×4, **rejected ×1** |
+| `NameUpdateTx` | identical ×2, differs ×1, declined, excluded ×1 | accepted ×4, **non-postable ×1** |
 | `NameTransferTx` | identical | accepted |
 | `NameRevokeTx` | identical | accepted |
 | `ContractCreateTx` | identical ×2 | accepted ×2 |
@@ -156,7 +185,7 @@ different transactions.
 | `OracleQueryTx` | declined ×2 | accepted ×2 |
 | `OracleRespondTx` | declined | accepted |
 | `OracleExtendTx` | identical | accepted |
-| `ChannelCreateTx` | not comparable ×2 | accepted, **rejected ×1** |
+| `ChannelCreateTx` | not comparable ×2, excluded ×1 | accepted ×2, **non-postable ×1** |
 | `ChannelDepositTx` | identical | accepted |
 | `ChannelWithdrawTx` | identical | accepted |
 | `ChannelCloseMutualTx` | identical | accepted |
@@ -165,7 +194,7 @@ different transactions.
 | `ChannelSettleTx` | identical | accepted |
 | `ChannelSnapshotSoloTx` | declined | accepted (`invalid_at_protocol`) |
 | `ChannelOffChainTx` | no builder | accepted |
-| `ChannelForceProgressTx` | no builder | **rejected** |
+| `ChannelForceProgressTx` | no builder | **non-postable, named exception** |
 | `GaAttachTx` | no builder | accepted |
 | `GaMetaTx` | no builder | accepted |
 | `PayingForTx` | declined | accepted |

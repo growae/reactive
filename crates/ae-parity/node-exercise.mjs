@@ -59,6 +59,21 @@ const corpus = JSON.parse(
 )
 const signed = JSON.parse(readFileSync(signedPath, 'utf8'))
 
+/**
+ * The corpus's own claim about which vectors a node refuses, and why.
+ *
+ * Everything below re-measures it. A marking that nothing re-checks is a marking
+ * that rots: it silently removes a vector from the on-node clause and nobody
+ * finds out when the chain rule it names stops applying. So this script fails in
+ * **both** directions — a postable vector the node refuses, and a non-postable
+ * vector the node takes.
+ */
+const refusedBy = new Map(
+  corpus.cases
+    .filter((entry) => entry.postable === false)
+    .map((entry) => [entry.name, entry.refusedBy]),
+)
+
 /** base64check, the envelope every `tx_`-family string uses. */
 function encodeCheck(prefix, bytes) {
   const first = createHash('sha256').update(bytes).digest()
@@ -415,6 +430,13 @@ async function measureBuilders() {
     }
     if (builder === null) {
       rows.push({ name, tag, verdict: 'no-node-builder' })
+      continue
+    }
+    // A vector the node has already said it will not take leaves the builder
+    // comparison too. Asking whether it builds the same bytes for a transaction
+    // it refuses scores a disagreement already recorded as the refusal.
+    if (refusedBy.has(name)) {
+      rows.push({ name, tag, verdict: 'excluded-non-postable' })
       continue
     }
     let body
