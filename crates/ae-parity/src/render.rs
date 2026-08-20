@@ -87,9 +87,9 @@ pub fn markdown(matrix: &Matrix) -> String {
     let _ = writeln!(out);
     let _ = writeln!(
         out,
-        "| Tag | v | Reach | Origin | Vectors | Build | Round trip | Fields not set | Fee fixed point |"
+        "| Tag | v | Reach | Origin | Vectors | Postable | Build | Round trip | Fields not set | Fee fixed point |"
     );
-    let _ = writeln!(out, "|---|---|---|---|---|---|---|---|---|");
+    let _ = writeln!(out, "|---|---|---|---|---|---|---|---|---|---|");
     for row in &matrix.transactions {
         let reach = match row.reach {
             Reach::NamedAction => "action",
@@ -115,9 +115,14 @@ pub fn markdown(matrix: &Matrix) -> String {
         } else {
             "—"
         };
+        let postable = if row.refusals.is_empty() {
+            format!("{}", row.postable_vectors)
+        } else {
+            format!("**{}/{}**", row.postable_vectors, row.vectors)
+        };
         let _ = writeln!(
             out,
-            "| `{:?}` | {} | {reach} | {origin} | {} | {build} | {roundtrip} | {unset} | {fee} |",
+            "| `{:?}` | {} | {reach} | {origin} | {} | {postable} | {build} | {roundtrip} | {unset} | {fee} |",
             row.tag, row.version, row.vectors
         );
     }
@@ -134,6 +139,34 @@ pub fn markdown(matrix: &Matrix) -> String {
                 .collect::<Vec<_>>()
                 .join(", ")
         );
+        let _ = writeln!(out);
+    }
+
+    let refusals: Vec<&crate::matrix::VectorRefusal> = matrix
+        .transactions
+        .iter()
+        .flat_map(|row| row.refusals.iter())
+        .collect();
+    if !refusals.is_empty() {
+        let _ = writeln!(
+            out,
+            "**Non-postable vectors.** Correct bytes, content a node refuses. Kept \
+             as encoding tests, excluded from the on-node clause, and re-measured \
+             on every on-node run — a marking nothing re-checks is a marking that \
+             rots."
+        );
+        let _ = writeln!(out);
+        for refusal in &refusals {
+            let sibling = match &refusal.sibling {
+                Some(sibling) => format!("postable sibling `{sibling}`"),
+                None => "**no postable sibling — named exception**".to_string(),
+            };
+            let _ = writeln!(
+                out,
+                "- `{}` — `{}`, {sibling}. {}",
+                refusal.vector, refusal.error_code, refusal.rule
+            );
+        }
         let _ = writeln!(out);
     }
 
@@ -226,6 +259,68 @@ pub fn markdown(matrix: &Matrix) -> String {
             );
         }
         Some(node) => {
+            if let Some(clause) = &matrix.node_clause {
+                let _ = writeln!(
+                    out,
+                    "Clause 6, scored over the **postable** set. A non-postable \
+                     vector is excluded by construction — scoring it would make \
+                     the clause unachievable by any corpus that documents a chain \
+                     rule — and a named exception is carried rather than counted."
+                );
+                let _ = writeln!(out);
+                let _ = writeln!(
+                    out,
+                    "**Clause 6: {}.**",
+                    if clause.is_satisfied() {
+                        "satisfied"
+                    } else {
+                        "NOT satisfied"
+                    }
+                );
+                let _ = writeln!(out);
+                let _ = writeln!(
+                    out,
+                    "- postable vectors accepted by the decoder: {} of {}",
+                    clause.postable_accepted, clause.postable_total
+                );
+                let _ = writeln!(
+                    out,
+                    "- postable vectors refused: {}",
+                    list_or_none(&clause.postable_rejected)
+                );
+                let _ = writeln!(
+                    out,
+                    "- stale markings — non-postable but the node took them: {}",
+                    list_or_none(&clause.stale_markings)
+                );
+                let _ = writeln!(
+                    out,
+                    "- named exceptions, carried not counted: {}",
+                    list_or_none(&clause.exceptions)
+                );
+                let _ = writeln!(
+                    out,
+                    "- node builder: {} identical, differs on {}",
+                    clause.builder_identical,
+                    list_or_none(&clause.builder_differs)
+                );
+                let _ = writeln!(
+                    out,
+                    "- corrupted controls all rejected: {}",
+                    clause.controls_rejected
+                );
+                if !clause.excluded.is_empty() {
+                    let _ = writeln!(out);
+                    let _ = writeln!(out, "Excluded, each naming its rule:");
+                    let _ = writeln!(out);
+                    for excluded in &clause.excluded {
+                        let _ = writeln!(out, "- {excluded}");
+                    }
+                }
+                let _ = writeln!(out);
+            }
+            let _ = writeln!(out, "<details><summary>Raw run</summary>");
+            let _ = writeln!(out);
             let _ = writeln!(out, "```json");
             let _ = writeln!(
                 out,
@@ -233,6 +328,8 @@ pub fn markdown(matrix: &Matrix) -> String {
                 serde_json::to_string_pretty(node).unwrap_or_default()
             );
             let _ = writeln!(out, "```");
+            let _ = writeln!(out);
+            let _ = writeln!(out, "</details>");
         }
     }
 

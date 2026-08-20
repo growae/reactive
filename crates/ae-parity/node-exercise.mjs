@@ -477,10 +477,12 @@ async function post(tx) {
 async function measureAcceptance() {
   const rows = []
   for (const entry of signed.cases) {
+    const refusal = refusedBy.get(entry.name) ?? null
     if (typeof entry.signed !== 'string') {
       rows.push({
         name: entry.name,
         tag: entry.tag,
+        postable: refusal === null,
         verdict: 'not-built',
         code: entry.build_error,
       })
@@ -489,6 +491,8 @@ async function measureAcceptance() {
     rows.push({
       name: entry.name,
       tag: entry.tag,
+      postable: refusal === null,
+      ...(refusal === null ? {} : { marked: refusal }),
       ...(await post(entry.signed)),
     })
   }
@@ -542,9 +546,31 @@ const built = await measureBuilders()
 const accepted = await measureAcceptance()
 const controls = await measureControls()
 
+const postableRejected = accepted
+  .filter((row) => row.postable && row.verdict === 'decoder-rejected')
+  .map((row) => `${row.name}: ${row.code}`)
+// The other direction, and the one a marking makes easy to forget: a vector
+// excused from the clause that the chain has since started accepting. The
+// exclusion is then unearned, and an unearned exclusion is a vector quietly
+// removed from the measurement.
+const staleMarkings = accepted
+  .filter((row) => row.postable === false && row.verdict === 'decoder-accepted')
+  .map(
+    (row) => `${row.name}: marked ${row.marked?.errorCode}, node accepted it`,
+  )
+
 const summary = {
   built: tally(built, 'verdict'),
   accepted: tally(accepted, 'verdict'),
+  postable_accepted: accepted.filter(
+    (row) => row.postable && row.verdict === 'decoder-accepted',
+  ).length,
+  postable_total: accepted.filter((row) => row.postable).length,
+  postable_rejected: postableRejected,
+  non_postable_excluded: accepted
+    .filter((row) => row.postable === false)
+    .map((row) => `${row.name}: ${row.code}`),
+  stale_markings: staleMarkings,
   controls_all_rejected: controls.every(
     (row) => row.verdict === 'decoder-rejected',
   ),
@@ -579,6 +605,22 @@ if (!summary.controls_all_rejected) {
   stderr(
     'CONTROL FAILED — a corrupted transaction was not rejected by the decoder, ' +
       'so the acceptance results are not evidence of anything.',
+  )
+  process.exit(1)
+}
+if (summary.postable_rejected.length > 0) {
+  stderr(
+    'CLAUSE 6 FAILED — a postable vector was refused by the decoder:',
+    `\n  ${summary.postable_rejected.join('\n  ')}`,
+  )
+  process.exit(1)
+}
+if (summary.stale_markings.length > 0) {
+  stderr(
+    'STALE MARKING — a vector marked non-postable was accepted by the node. ' +
+      'The exclusion is no longer earned; re-measure and drop the marking, or ' +
+      'correct the rule it names:',
+    `\n  ${summary.stale_markings.join('\n  ')}`,
   )
   process.exit(1)
 }

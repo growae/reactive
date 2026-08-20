@@ -38,6 +38,27 @@ pub struct TxCase {
     /// fixed-point iteration is erased by the act of committing the corpus. A
     /// vector with no fee is one whose tag has no fee field at all.
     pub fee_present: bool,
+    /// Why a node's decoder refuses this vector, when one does.
+    ///
+    /// `None` is the ordinary case: the bytes are correct *and* the transaction
+    /// is one a node will take. `Some` marks a vector whose bytes are correct and
+    /// whose content the chain rejects — a valid encoding test that must never
+    /// count towards the on-node clause of parity green.
+    pub refused_by: Option<Refusal>,
+}
+
+/// A chain rule that refuses a vector, and the vector that stands in for it.
+#[derive(Debug, Clone)]
+pub struct Refusal {
+    /// The node's `error_code` for it, measured rather than assumed.
+    pub error_code: String,
+    /// The rule, in a sentence a reviewer can check against a node.
+    pub rule: String,
+    /// The vector that gives this tag its acceptance result, if it has one.
+    ///
+    /// `None` is a **named exception**: the tag has no accepted vector at all,
+    /// which is a finding against the tag rather than a hole in the corpus.
+    pub sibling: Option<String>,
 }
 
 /// One FATE vector: a name and the bytes the reference produced.
@@ -136,9 +157,31 @@ fn read_tx_case(case: &Json) -> TxCase {
         pinned_version,
         tx: case["tx"].as_str().expect("case has a tx").to_string(),
         fee_present: param_names.iter().any(|name| name == "fee"),
+        refused_by: read_refusal(case),
         param_names,
         params,
     }
+}
+
+fn read_refusal(case: &Json) -> Option<Refusal> {
+    // Absent means postable. A vector that is silently missing the field would
+    // otherwise read as non-postable and drop itself out of the on-node clause,
+    // which is the one direction this must never fail in.
+    if case["postable"].as_bool().unwrap_or(true) {
+        return None;
+    }
+    let refused = &case["refusedBy"];
+    Some(Refusal {
+        error_code: refused["errorCode"]
+            .as_str()
+            .expect("a non-postable vector names the error code")
+            .to_string(),
+        rule: refused["rule"]
+            .as_str()
+            .expect("a non-postable vector names the rule that refuses it")
+            .to_string(),
+        sibling: refused["sibling"].as_str().map(ToString::to_string),
+    })
 }
 
 fn read_value(json: &Json) -> Value {

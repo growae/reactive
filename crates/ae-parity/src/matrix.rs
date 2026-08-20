@@ -56,6 +56,24 @@ pub struct TxRow {
     pub unexercised_fields: Vec<String>,
     /// Whether the entry has a fee field whose derivation no vector exercises.
     pub fee_fixed_point_unexercised: bool,
+    /// Vectors on this entry a node's decoder will take.
+    pub postable_vectors: usize,
+    /// Vectors on this entry whose bytes are correct and whose content the chain
+    /// refuses, with the rule that refuses each.
+    pub refusals: Vec<VectorRefusal>,
+}
+
+/// One vector the chain refuses, carried into the matrix from the corpus.
+#[derive(Debug, Clone)]
+pub struct VectorRefusal {
+    /// The vector's name in the generator's table.
+    pub vector: String,
+    /// The node's `error_code` for it.
+    pub error_code: String,
+    /// The rule that refuses it.
+    pub rule: String,
+    /// The vector that gives this tag its acceptance result, if it has one.
+    pub sibling: Option<String>,
 }
 
 impl TxRow {
@@ -115,8 +133,43 @@ pub struct Matrix {
     pub fields_total: usize,
     /// Fields some vector sets.
     pub fields_exercised: usize,
+    /// Tags with a refused vector and no postable sibling — a finding against the
+    /// tag, carried as a named exception rather than counted as a pass.
+    pub named_exceptions: Vec<String>,
     /// The on-node exercise, when one has been merged in.
     pub node: Option<Json>,
+    /// Clause 6 of parity green, evaluated over the postable set. `None` until an
+    /// on-node run is merged.
+    pub node_clause: Option<NodeClause>,
+}
+
+/// Clause 6, scored. Every count here is over the **postable** set: a vector the
+/// corpus marks non-postable is excluded by construction, because scoring it
+/// would make the clause unachievable by any corpus that documents a chain rule.
+#[derive(Debug, Clone, Default)]
+pub struct NodeClause {
+    /// Postable vectors the node's decoder accepted.
+    pub postable_accepted: usize,
+    /// Postable vectors posted.
+    pub postable_total: usize,
+    /// Postable vectors the decoder refused. Any entry here fails clause 6.
+    pub postable_rejected: Vec<String>,
+    /// Non-postable vectors excluded from the count, named so the exclusion is
+    /// visible rather than silent.
+    pub excluded: Vec<String>,
+    /// Non-postable vectors the node **accepted**. The marking is then stale, and
+    /// a stale marking is an exclusion nobody has re-earned.
+    pub stale_markings: Vec<String>,
+    /// Tags carried as named exceptions, restated here so the clause never reads
+    /// as green over a tag with no acceptance result at all.
+    pub exceptions: Vec<String>,
+    /// Whether the corrupted controls were all rejected. Without this the
+    /// acceptance counts above are not evidence of anything.
+    pub controls_rejected: bool,
+    /// Vectors whose bytes matched the node's own builder.
+    pub builder_identical: usize,
+    /// Vectors whose bytes differed from the node's own builder.
+    pub builder_differs: Vec<String>,
 }
 
 /// Compute the offline half of the matrix. No network, no working directory.
@@ -200,6 +253,21 @@ pub fn compute() -> Matrix {
             failures,
             unexercised_fields,
             fee_fixed_point_unexercised,
+            postable_vectors: cases
+                .iter()
+                .filter(|case| case.refused_by.is_none())
+                .count(),
+            refusals: cases
+                .iter()
+                .filter_map(|case| {
+                    case.refused_by.as_ref().map(|refusal| VectorRefusal {
+                        vector: case.name.clone(),
+                        error_code: refusal.error_code.clone(),
+                        rule: refusal.rule.clone(),
+                        sibling: refusal.sibling.clone(),
+                    })
+                })
+                .collect(),
         });
     }
 
@@ -231,15 +299,31 @@ pub fn compute() -> Matrix {
     let unexercised_codecs: Vec<String> =
         all_codecs.difference(&exercised_codecs).cloned().collect();
 
+    // A tag whose only word from the chain is a refusal. Not a pass and not a
+    // hole in the corpus: a finding against the tag, which stays named so that it
+    // cannot become a pass without someone deleting this line.
+    let mut named_exceptions: Vec<String> = transactions
+        .iter()
+        .filter(|row| {
+            row.refusals.iter().any(|refusal| refusal.sibling.is_none())
+                && row.postable_vectors == 0
+        })
+        .map(|row| format!("{:?}", row.tag))
+        .collect();
+    named_exceptions.sort();
+    named_exceptions.dedup();
+
     Matrix {
         references: corpus::references(),
         transactions,
         entries: entry_rows(),
         fate: fate_surface(),
         unexercised_codecs,
+        named_exceptions,
         fields_total,
         fields_exercised,
         node: None,
+        node_clause: None,
     }
 }
 
@@ -546,6 +630,13 @@ impl Matrix {
                 "fields_total": self.fields_total,
                 "fields_exercised": self.fields_exercised,
                 "unexercised_codecs": self.unexercised_codecs,
+                "postable_vectors": self.transactions.iter().map(|row| row.postable_vectors).sum::<usize>(),
+                "non_postable_vectors": self
+                    .transactions
+                    .iter()
+                    .flat_map(|row| row.refusals.iter())
+                    .map(|refusal| refusal.vector.clone())
+                    .collect::<Vec<_>>(),
                 "fee_fixed_point_unexercised": self
                     .transactions
                     .iter()
@@ -564,6 +655,13 @@ impl Matrix {
                     "failures": row.failures,
                     "unexercised_fields": row.unexercised_fields,
                     "fee_fixed_point_unexercised": row.fee_fixed_point_unexercised,
+                    "postable_vectors": row.postable_vectors,
+                    "refusals": row.refusals.iter().map(|refusal| json!({
+                        "vector": refusal.vector,
+                        "error_code": refusal.error_code,
+                        "rule": refusal.rule,
+                        "sibling": refusal.sibling,
+                    })).collect::<Vec<_>>(),
                 })).collect::<Vec<_>>(),
             },
             "state_tree_entries": {
@@ -588,8 +686,114 @@ impl Matrix {
                 "type_variants_covered": self.fate.type_variants_covered,
                 "type_variants_uncovered": self.fate.type_variants_uncovered,
             },
+            "named_exceptions": self.named_exceptions,
             "node": self.node,
+            "node_clause": self.node_clause.as_ref().map(|clause| json!({
+                "satisfied": clause.is_satisfied(),
+                "postable_accepted": clause.postable_accepted,
+                "postable_total": clause.postable_total,
+                "postable_rejected": clause.postable_rejected,
+                "excluded": clause.excluded,
+                "stale_markings": clause.stale_markings,
+                "exceptions": clause.exceptions,
+                "controls_rejected": clause.controls_rejected,
+                "builder_identical": clause.builder_identical,
+                "builder_differs": clause.builder_differs,
+            })),
         })
+    }
+}
+
+impl Matrix {
+    /// Merge an on-node run and score clause 6 over the postable set.
+    ///
+    /// The scoring lives here rather than in the script that does the posting,
+    /// for the same reason the corpus carries the marking rather than the
+    /// harness: the thing that decides whether a run satisfies the clause has to
+    /// be readable next to the definition of the clause.
+    pub fn merge_node_run(&mut self, run: Json) {
+        let mut clause = NodeClause {
+            controls_rejected: run["summary"]["controls_all_rejected"]
+                .as_bool()
+                .unwrap_or(false),
+            exceptions: self.named_exceptions.clone(),
+            ..NodeClause::default()
+        };
+
+        let refusals: BTreeMap<&str, &VectorRefusal> = self
+            .transactions
+            .iter()
+            .flat_map(|row| row.refusals.iter())
+            .map(|refusal| (refusal.vector.as_str(), refusal))
+            .collect();
+
+        for row in run["accepted"].as_array().into_iter().flatten() {
+            let Some(name) = row["name"].as_str() else {
+                continue;
+            };
+            let accepted = row["verdict"].as_str() == Some("decoder-accepted");
+            let code = row["code"].as_str().unwrap_or("no code");
+            match refusals.get(name) {
+                // Non-postable. Excluded from the count either way — but if the
+                // node now takes it, the exclusion is unearned and says so.
+                Some(refusal) => {
+                    if accepted {
+                        clause.stale_markings.push(format!(
+                            "{name}: marked non-postable ({}) but the node accepted it — \
+                             re-measure and drop the marking, or correct the rule: {}",
+                            refusal.error_code, refusal.rule
+                        ));
+                    } else {
+                        clause
+                            .excluded
+                            .push(format!("{name}: {} — {}", refusal.error_code, refusal.rule));
+                    }
+                }
+                None => {
+                    clause.postable_total += 1;
+                    if accepted {
+                        clause.postable_accepted += 1;
+                    } else {
+                        clause.postable_rejected.push(format!("{name}: {code}"));
+                    }
+                }
+            }
+        }
+
+        for row in run["built"].as_array().into_iter().flatten() {
+            let name = row["name"].as_str().unwrap_or("unnamed");
+            // Non-postable vectors leave the builder half too, and for the same
+            // reason they left the acceptance half: the node has already said it
+            // will not take this transaction, so asking whether it builds the
+            // same bytes for it scores a disagreement we have already recorded.
+            if refusals.contains_key(name) {
+                continue;
+            }
+            match row["verdict"].as_str() {
+                Some("identical") => clause.builder_identical += 1,
+                Some("differs") => clause.builder_differs.push(name.to_string()),
+                _ => {}
+            }
+        }
+
+        self.node = Some(run);
+        self.node_clause = Some(clause);
+    }
+}
+
+impl NodeClause {
+    /// Whether this run satisfies clause 6.
+    ///
+    /// A named exception does not fail it — the exception is the honest record of
+    /// a tag with no acceptance result, and it is carried in the report rather
+    /// than scored. A stale marking does fail it: an exclusion nobody has
+    /// re-earned is a vector quietly removed from the measurement.
+    pub fn is_satisfied(&self) -> bool {
+        self.controls_rejected
+            && self.postable_total > 0
+            && self.postable_rejected.is_empty()
+            && self.stale_markings.is_empty()
+            && self.builder_differs.is_empty()
     }
 }
 

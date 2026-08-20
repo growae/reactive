@@ -28,7 +28,8 @@
           "v": "16660000000000"
         }
       },
-      "tx": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAIYPJvVhyAAAAYBOKPYa"
+      "tx": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAIYPJvVhyAAAAYBOKPYa",
+      "postable": true
     },
     {
       "name": "spend, every field set",
@@ -64,7 +65,8 @@
           "v": "16960000000000"
         }
       },
-      "tx": "tx_+GAMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICiA3gtrOnZAAAhg9szsaAAIIB9CqFaGVsbG9sFwgP"
+      "tx": "tx_+GAMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICiA3gtrOnZAAAhg9szsaAAIIB9CqFaGVsbG9sFwgP",
+      "postable": true
     },
     {
       "name": "spend, to a contract",
@@ -92,7 +94,8 @@
           "v": "16660000000000"
         }
       },
-      "tx": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhBQMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAYYPJvVhyAAAAYD0Dl2b"
+      "tx": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhBQMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAYYPJvVhyAAAAYD0Dl2b",
+      "postable": true
     },
     {
       "name": "spend, to a name",
@@ -120,7 +123,8 @@
           "v": "16660000000000"
         }
       },
-      "tx": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAlCYygTo5mrGvATbkThUR6EXecvfzfsug8dFPZFieKO3AYYPJvVhyAAAAYBNyxTk"
+      "tx": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAlCYygTo5mrGvATbkThUR6EXecvfzfsug8dFPZFieKO3AYYPJvVhyAAAAYBNyxTk",
+      "postable": true
     },
     {
       "name": "signed tx",
@@ -141,7 +145,8 @@
           "v": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAYYPJvVhyAAAAYCsIXtD"
         }
       },
-      "tx": "tx_+JsLAfhCuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgMi/ZoY="
+      "tx": "tx_+JsLAfhCuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgMi/ZoY=",
+      "postable": true
     },
     {
       "name": "signed tx, two signatures",
@@ -166,7 +171,8 @@
           "v": "tx_+FEMAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGhAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAYYPJvVhyAAAAYCsIXtD"
         }
       },
-      "tx": "tx_+N0LAfiEuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruEDNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3NuFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgEfrw1U="
+      "tx": "tx_+N0LAfiEuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruEDNzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3NuFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgEfrw1U=",
+      "postable": true
     },
     {
       "name": "name preclaim",
@@ -190,7 +196,8 @@
           "v": "16620000000000"
         }
       },
-      "tx": "tx_+E8hAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEDoQMGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBoYPHaUyOAAAWMy6kw=="
+      "tx": "tx_+E8hAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEDoQMGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBoYPHaUyOAAAWMy6kw==",
+      "postable": true
     },
     {
       "name": "name claim",
@@ -222,7 +229,8 @@
           "v": "16420000000000"
         }
       },
-      "tx": "tx_+EUgAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEEinRlc3QuY2hhaW6CMDmJCteOvFrGIAAAhg7vFERoAACWy7VM"
+      "tx": "tx_+EUgAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEEinRlc3QuY2hhaW6CMDmJCteOvFrGIAAAhg7vFERoAACWy7VM",
+      "postable": true
     },
     {
       "name": "name claim, default salt and minimum name fee",
@@ -246,7 +254,8 @@
           "v": "16660000000000"
         }
       },
-      "tx": "tx_+FEgAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEEmmF2ZXJ5bG9uZ25hbWV0aGF0aXNjLmNoYWluAIfYty1DTIAAhg8m9WHIAADkgPXa"
+      "tx": "tx_+FEgAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEEmmF2ZXJ5bG9uZ25hbWV0aGF0aXNjLmNoYWluAIfYty1DTIAAhg8m9WHIAADkgPXa",
+      "postable": true
     },
     {
       "name": "name update v1",
@@ -279,7 +288,8 @@
           "v": "17780000000000"
         }
       },
-      "tx": "tx_+IkiAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEFoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDy8Y5hY2NvdW50X3B1YmtleaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKCDhCGECu6lYgAAFAPm4A="
+      "tx": "tx_+IkiAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEFoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDy8Y5hY2NvdW50X3B1YmtleaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKCDhCGECu6lYgAAFAPm4A=",
+      "postable": true
     },
     {
       "name": "name update v1, explicit ttls and several pointers",
@@ -332,7 +342,8 @@
           "v": "19780000000000"
         }
       },
-      "tx": "tx_+O0iAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEFoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4ID6PiW8Y5hY2NvdW50X3B1YmtleaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLwjW9yYWNsZV9wdWJrZXmhBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE8o9jb250cmFjdF9wdWJrZXmhBQMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDeIYR/WPfqACCAry4mwfV"
+      "tx": "tx_+O0iAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEFoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4ID6PiW8Y5hY2NvdW50X3B1YmtleaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLwjW9yYWNsZV9wdWJrZXmhBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE8o9jb250cmFjdF9wdWJrZXmhBQMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDeIYR/WPfqACCAry4mwfV",
+      "postable": true
     },
     {
       "name": "name update v1, no pointers",
@@ -360,7 +371,8 @@
           "v": "16780000000000"
         }
       },
-      "tx": "tx_+FciAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEFoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDAgg4Qhg9C5fB4AACt97DW"
+      "tx": "tx_+FciAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEFoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDAgg4Qhg9C5fB4AACt97DW",
+      "postable": true
     },
     {
       "name": "name update v2, id pointer",
@@ -393,7 +405,13 @@
           "v": "17800000000000"
         }
       },
-      "tx": "tx_+IoiAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEGoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDz8o5hY2NvdW50X3B1YmtleaIBAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgg4QhhAwYq1QAACmjBiH"
+      "tx": "tx_+IoiAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEGoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDz8o5hY2NvdW50X3B1YmtleaIBAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICgg4QhhAwYq1QAACmjBiH",
+      "postable": false,
+      "refusedBy": {
+        "errorCode": "broken_tx",
+        "rule": "the node accepts serialised version 2 only when a pointer needs it — a raw ba_ blob — and version 1 when none does. One encoding per content, enforced at decode. The reference sdk serialises whichever version the caller names.",
+        "sibling": "name update v2, raw pointer"
+      }
     },
     {
       "name": "name update v2, raw pointer",
@@ -426,7 +444,8 @@
           "v": "17020000000000"
         }
       },
-      "tx": "tx_+GMiAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEGoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDMy4NyYXeGAmhlbGxvgg4Qhg96xw3YAAD5up17"
+      "tx": "tx_+GMiAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEGoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4MCvyDMy4NyYXeGAmhlbGxvgg4Qhg96xw3YAAD5up17",
+      "postable": true
     },
     {
       "name": "name transfer",
@@ -454,7 +473,8 @@
           "v": "17300000000000"
         }
       },
-      "tx": "tx_+HEkAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEHoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt6EBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKGD7v4WsgAALo/hkg="
+      "tx": "tx_+HEkAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEHoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt6EBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgKGD7v4WsgAALo/hkg=",
+      "postable": true
     },
     {
       "name": "name revoke",
@@ -478,7 +498,8 @@
           "v": "16620000000000"
         }
       },
-      "tx": "tx_+E8jAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEIoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4YPHaUyOAAA1e0zpQ=="
+      "tx": "tx_+E8jAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEIoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijt4YPHaUyOAAA1e0zpQ==",
+      "postable": true
     },
     {
       "name": "contract create",
@@ -529,7 +550,8 @@
           "v": "76300000000000"
         }
       },
-      "tx": "tx_+D8qAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEJgsr+gwgAA4ZFZPpleAAAAABMhDuaygCCyv6fqx39"
+      "tx": "tx_+D8qAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEJgsr+gwgAA4ZFZPpleAAAAABMhDuaygCCyv6fqx39",
+      "postable": true
     },
     {
       "name": "contract create, protocol default ctVersion",
@@ -569,7 +591,8 @@
           "v": "76300000000000"
         }
       },
-      "tx": "tx_+D8qAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEJgsr+gwgAA4ZFZPpleAAAAAFMhDuaygCCyv4WYRvw"
+      "tx": "tx_+D8qAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEJgsr+gwgAA4ZFZPpleAAAAAFMhDuaygCCyv4WYRvw",
+      "postable": true
     },
     {
       "name": "contract call",
@@ -613,7 +636,8 @@
           "v": "181880000000000"
         }
       },
-      "tx": "tx_+FwrAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEKoQUDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOGpWs8yrAAAACCYaiEO5rKAILK/nBFiVg="
+      "tx": "tx_+FwrAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEKoQUDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOGpWs8yrAAAACCYaiEO5rKAILK/nBFiVg=",
+      "postable": true
     },
     {
       "name": "contract call, to a name",
@@ -653,7 +677,8 @@
           "v": "181880000000000"
         }
       },
-      "tx": "tx_+FwrAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEKoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijtwOGpWs8yrAAAAeCYaiEO5rKAILK/sU8diI="
+      "tx": "tx_+FwrAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEKoQJQmMoE6OZqxrwE25E4VEehF3nL3837LoPHRT2RYnijtwOGpWs8yrAAAAeCYaiEO5rKAILK/sU8diI=",
+      "postable": true
     },
     {
       "name": "oracle register",
@@ -685,7 +710,8 @@
           "v": "16432000000000"
         }
       },
-      "tx": "tx_+EEWAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQELhnN0cmluZ4ZzdHJpbmcAAIIB9IYO8d+F4AAAAPGisjA="
+      "tx": "tx_+EEWAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQELhnN0cmluZ4ZzdHJpbmcAAIIB9IYO8d+F4AAAAPGisjA=",
+      "postable": true
     },
     {
       "name": "oracle register, block ttl and fate abi",
@@ -733,7 +759,8 @@
           "v": "16666000000000"
         }
       },
-      "tx": "tx_+D8WAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQELg2ludINpbnSCA+gBggfQhg8oWwKEAIIDhAORHb+6"
+      "tx": "tx_+D8WAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQELg2ludINpbnSCA+gBggfQhg8oWwKEAIIDhAORHb+6",
+      "postable": true
     },
     {
       "name": "oracle extend",
@@ -753,7 +780,8 @@
           "v": "16092000000000"
         }
       },
-      "tx": "tx_8RkBoQQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAwAggH0hg6itfGYAAAavkyU"
+      "tx": "tx_8RkBoQQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAwAggH0hg6itfGYAAAavkyU",
+      "postable": true
     },
     {
       "name": "oracle query",
@@ -785,7 +813,8 @@
           "v": "16862000000000"
         }
       },
-      "tx": "tx_+FsXAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQENoQQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBIRob3c/ggPoAAoACoYPVf2FLAAAlucZPg=="
+      "tx": "tx_+FsXAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQENoQQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBIRob3c/ggPoAAoACoYPVf2FLAAAlucZPg==",
+      "postable": true
     },
     {
       "name": "oracle query, every ttl explicit",
@@ -837,7 +866,8 @@
           "v": "16919000000000"
         }
       },
-      "tx": "tx_+F0XAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQENoQQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBIRob3c/ggPoAWQAMoYPY0L8JgCCAyD7YFam"
+      "tx": "tx_+F0XAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQENoQQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBIRob3c/ggPoAWQAMoYPY0L8JgCCAyD7YFam",
+      "postable": true
     },
     {
       "name": "oracle respond",
@@ -865,7 +895,8 @@
           "v": "16722000000000"
         }
       },
-      "tx": "tx_+FQYAaEEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQOoAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIg3llcwAKhg81ZN60AAB0wzS3"
+      "tx": "tx_+FQYAaEEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQOoAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIg3llcwAKhg81ZN60AAB0wzS3",
+      "postable": true
     },
     {
       "name": "channel create",
@@ -917,7 +948,8 @@
           "v": "17480000000000"
         }
       },
-      "tx": "tx_+HoyAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCA+ihAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICggPoCgMAhg/l4TDQAMDAoAcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHD5nllGQ="
+      "tx": "tx_+HoyAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCA+ihAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICggPoCgMAhg/l4TDQAMDAoAcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHD5nllGQ=",
+      "postable": true
     },
     {
       "name": "channel create, with delegates",
@@ -987,7 +1019,80 @@
           "v": "15"
         }
       },
-      "tx": "tx_+OMyAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCA+ihAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICggfQCgOCAliGEc7S8dgA4qEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH4RKEFAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOhBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEoAcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHD7VWtfk="
+      "tx": "tx_+OMyAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCA+ihAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICggfQCgOCAliGEc7S8dgA4qEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH4RKEFAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwOhBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEoAcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHD7VWtfk=",
+      "postable": false,
+      "refusedBy": {
+        "errorCode": "broken_tx",
+        "rule": "a channel delegate must be an account; this vector uses a contract and an oracle.",
+        "sibling": "channel create, with account delegates"
+      }
+    },
+    {
+      "name": "channel create, with account delegates",
+      "tag": 50,
+      "version": null,
+      "params": {
+        "initiator": {
+          "t": "enc",
+          "v": "ak_SeLqn3UAUoRymWmwW7axrzJK7JfNaBR2cHCryA6cFsgFkHEF"
+        },
+        "initiatorAmount": {
+          "t": "uint",
+          "v": "1000"
+        },
+        "responder": {
+          "t": "enc",
+          "v": "ak_tHggZ5wKxbrxY2Yt1EAviybdDcKk9Mq4DZQiwKCDWkEaXE8U"
+        },
+        "responderAmount": {
+          "t": "uint",
+          "v": "2000"
+        },
+        "channelReserve": {
+          "t": "uint",
+          "v": "10"
+        },
+        "lockPeriod": {
+          "t": "uint",
+          "v": "3"
+        },
+        "ttl": {
+          "t": "uint",
+          "v": "600"
+        },
+        "initiatorDelegateIds": {
+          "t": "list",
+          "v": [
+            {
+              "t": "enc",
+              "v": "ak_SeLqn3UAUoRymWmwW7axrzJK7JfNaBR2cHCryA6cFsgFkHEF"
+            }
+          ]
+        },
+        "responderDelegateIds": {
+          "t": "list",
+          "v": [
+            {
+              "t": "enc",
+              "v": "ak_tHggZ5wKxbrxY2Yt1EAviybdDcKk9Mq4DZQiwKCDWkEaXE8U"
+            }
+          ]
+        },
+        "stateHash": {
+          "t": "enc",
+          "v": "st_BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwfrYL3u"
+        },
+        "nonce": {
+          "t": "uint",
+          "v": "15"
+        },
+        "fee": {
+          "t": "uint",
+          "v": "18880000000000"
+        }
+      },
+      "tx": "tx_+MAyAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCA+ihAQICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICggfQCgOCAliGESvXsYAA4qEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQHioQECAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqAHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBw90zpta",
+      "postable": true
     },
     {
       "name": "channel deposit",
@@ -1023,7 +1128,8 @@
           "v": "17360000000000"
         }
       },
-      "tx": "tx_+HQzAaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggH0AIYPyfCiIACgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcEEJeF6wg="
+      "tx": "tx_+HQzAaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggH0AIYPyfCiIACgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcEEJeF6wg=",
+      "postable": true
     },
     {
       "name": "channel withdraw",
@@ -1059,7 +1165,8 @@
           "v": "17360000000000"
         }
       },
-      "tx": "tx_+HQ0AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggH0AIYPyfCiIACgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcFEVU9vMw="
+      "tx": "tx_+HQ0AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggH0AIYPyfCiIACgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcFEVU9vMw=",
+      "postable": true
     },
     {
       "name": "channel close mutual",
@@ -1091,7 +1198,8 @@
           "v": "16740000000000"
         }
       },
-      "tx": "tx_+FU1AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggOEggRMAIYPOZXA6AAS80VL4g=="
+      "tx": "tx_+FU1AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggOEggRMAIYPOZXA6AAS80VL4g==",
+      "postable": true
     },
     {
       "name": "channel close solo",
@@ -1123,7 +1231,8 @@
           "v": "18300000000000"
         }
       },
-      "tx": "tx_+KM2AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBuEj4RjkCoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQKgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweJyDwBwMDAwMDAAIYQpMz/2AATLUm/4w=="
+      "tx": "tx_+KM2AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBuEj4RjkCoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQKgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweJyDwBwMDAwMDAAIYQpMz/2AATLUm/4w==",
+      "postable": true
     },
     {
       "name": "channel slash",
@@ -1155,7 +1264,8 @@
           "v": "18300000000000"
         }
       },
-      "tx": "tx_+KM3AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBuEj4RjkCoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQKgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweJyDwBwMDAwMDAAIYQpMz/2AAUmb2jtg=="
+      "tx": "tx_+KM3AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBuEj4RjkCoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQKgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweJyDwBwMDAwMDAAIYQpMz/2AAUmb2jtg==",
+      "postable": true
     },
     {
       "name": "channel settle",
@@ -1187,7 +1297,8 @@
           "v": "16740000000000"
         }
       },
-      "tx": "tx_+FU4AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggOEggRMAIYPOZXA6AAV5R9i8w=="
+      "tx": "tx_+FU4AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBggOEggRMAIYPOZXA6AAV5R9i8w==",
+      "postable": true
     },
     {
       "name": "channel snapshot solo",
@@ -1215,7 +1326,8 @@
           "v": "18100000000000"
         }
       },
-      "tx": "tx_+Jk7AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBuEj4RjkCoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQKgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcAhhB2PBIIABZ1KJbV"
+      "tx": "tx_+Jk7AaEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQWhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBuEj4RjkCoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQKgBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcAhhB2PBIIABZ1KJbV",
+      "postable": true
     },
     {
       "name": "channel force progress",
@@ -1259,7 +1371,13 @@
           "v": "453960000000000"
         }
       },
-      "tx": "tx_+MSCAgkBoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQG4SPhGOQKhBgUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFAqAHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwaCyv6gBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweCAQIAhwGc38yK0AAXRKoaSA=="
+      "tx": "tx_+MSCAgkBoQYFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQG4SPhGOQKhBgUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFAqAHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwaCyv6gBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBweCAQIAhwGc38yK0AAXRKoaSA==",
+      "postable": false,
+      "refusedBy": {
+        "errorCode": "broken_tx",
+        "rule": "refused whatever it contains. Seven variants, crossing payload signedness, update-entry validity and off-chain-trees validity, were refused identically, so the cause is none of those fields.",
+        "sibling": null
+      }
     },
     {
       "name": "channel off-chain",
@@ -1279,7 +1397,8 @@
           "v": "st_BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwfrYL3u"
         }
       },
-      "tx": "tx_+EY5AqEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUCoAcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcH55xIMw=="
+      "tx": "tx_+EY5AqEGBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUCoAcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcH55xIMw==",
+      "postable": true
     },
     {
       "name": "ga attach",
@@ -1326,7 +1445,8 @@
           "v": "cb_yv6aT3/a"
         }
       },
-      "tx": "tx_+GBQAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBgsr+oAkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJgwgAA4ZHZTSdaAAAggPohDuaygCCyv4KLH+D"
+      "tx": "tx_+GBQAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBgsr+oAkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJgwgAA4ZHZTSdaAAAggPohDuaygCCyv4KLH+D",
+      "postable": true
     },
     {
       "name": "ga meta",
@@ -1362,7 +1482,8 @@
           "v": "77660000000000"
         }
       },
-      "tx": "tx_+NZRAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCyv4DhkahoLaYAIITiIQ7msoAuJ34mwsB+EK4QKurq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6u4U/hRDAGhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBoQECAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgGGDyb1YcgAAAGAltf1RQ=="
+      "tx": "tx_+NZRAqEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQGCyv4DhkahoLaYAIITiIQ7msoAuJ34mwsB+EK4QKurq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6u4U/hRDAGhAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBoQECAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgGGDyb1YcgAAAGAltf1RQ==",
+      "postable": true
     },
     {
       "name": "paying for",
@@ -1386,7 +1507,8 @@
           "v": "tx_+JsLAfhCuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgMi/ZoY="
         }
       },
-      "tx": "tx_+MtSAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEYhhGW8dR4ALid+JsLAfhCuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgBwcAlw="
+      "tx": "tx_+MtSAaEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEYhhGW8dR4ALid+JsLAfhCuECrq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6uruFP4UQwBoQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAaEBAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIBhg8m9WHIAAABgBwcAlw=",
+      "postable": true
     }
   ]
 }
