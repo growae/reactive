@@ -14,6 +14,55 @@ Nothing here is published. The workspace is `publish = false` and stays that way
 binding will one day depend on it, and so will the Python and Dart ones. Naming
 it after one binding's brand would be backwards.
 
+## The public surface is frozen, and changing it costs three edits elsewhere
+
+**Read this before you change a signature in `ae-core` or `ae-fate`.**
+
+There is no single interface definition these crates are bound through. WIT is
+read by exactly one of the four targets. The other two bind the Rust surface
+directly and each carries a **hand-maintained mirror** of every public type:
+
+| Target | Binding | Reads the WIT? | What one signature change costs |
+|---|---|---|---|
+| Browser JS | `jco`, WASM component | yes | the WIT interface, regenerated |
+| Python | PyO3, native | **no** | a hand-written `#[pyclass]`/`#[pymethods]` mirror |
+| Dart / Flutter | `flutter_rust_bridge`, native | **no** | a hand-written mirror plus regenerated Dart |
+| Rust | it is a crate | n/a | nothing |
+
+So one changed signature is **three simultaneous binding edits, forever**, and
+they land in three repositories' worth of review. That is the tax the freeze
+exists to keep bounded — not a preference about churn.
+
+### The protocol
+
+1. **Any change to the public surface goes to the Technical Lead before it is
+   written**, not after. Bring the signature, the reason, and the binding cost
+   in the terms of the table above — which mirrors move, and whether any of them
+   needs a type that does not exist on the other side yet.
+2. **Additive is not automatically free.** A new public type is a new mirror in
+   Python and in Dart, and it is permanent: the surface only ever grows, because
+   removing something is itself a breaking change. A new *variant* on an existing
+   enum is worse than a new function — every mirror's match arms move with it.
+   `tx::Value` is the widest type here and the most expensive to widen.
+3. **Widening what we accept is a change, not a fix.** Making a verifier,
+   decoder or validator take input it previously rejected is a security-relevant
+   decision even when it makes a test pass. Say so explicitly when you bring it.
+4. **A change that loosens a type is a regression** even when the runtime
+   behaviour is identical. The whole value of this layer is that the types are
+   right end to end.
+5. **Nothing here is a place to put ergonomics.** If a change is only convenient,
+   it belongs in the binding, in that language's idiom — which is where it will
+   read better anyway.
+
+### What is not a surface change
+
+Internals, private helpers, `pub(crate)` items, test code, documentation, and
+the vector and chain corpora. Adding a test is always free. So is anything that
+changes what a function *computes* without changing what it *accepts or
+returns* — but if that computation is protocol behaviour, it is a consumer-facing
+change and it goes in the release note whether or not the Technical Lead has to
+rule on it.
+
 ## Where this sits
 
 The core is **pure computation** — bytes in, bytes out. No HTTP client, no async,
@@ -102,6 +151,34 @@ This is a floor, not the differential harness. The harness adds the fee fixed
 point with the field omitted, the FATE ABI corpus, and a node in the loop as a
 third opinion — without which the failure mode where both implementations agree
 and are both wrong stays invisible.
+
+## The chain corpus
+
+`ae-core/tests/vectors/chain.json` is the other half of that argument, and it is
+the half the SDK cannot supply: 181 transactions **a node already accepted and
+mined**, harvested from the middleware on mainnet and testnet, spanning every one
+of the 25 tags a transaction can be mined as. Each carries the signed bytes, the
+signatures it was included with, the `th_` the chain indexed it by, the node's
+own decoding, and the protocol version at its height.
+
+`ae-core/tests/chain.rs` re-encodes every one byte-identical, hashes it, verifies
+its signatures, checks our decoding field by field against the node's, and holds
+the fee model against fees a node actually took. Two things it found are written
+up in that file's module docs and in the tests themselves, because neither is
+visible from an offline corpus:
+
+- **A node verifies a signature against two payloads**, `network_id ++ tx` and
+  `network_id ++ blake2b_256(tx)`. This crate signs and verifies the second, as
+  `@aeternity/aepp-sdk` does, so what we produce is accepted — but `verify_transaction`
+  returns `false` for a quarter of the signatures on chain today.
+- **The node prices a contract call's base gas by its ABI version** — 12× base
+  gas for FATE, 30× for AEVM and for any ABI it does not recognise. `fee` is flat
+  at 12×, as the SDK is.
+
+Regenerating the corpus is a harvest from the middleware, and the diff is the
+record of what the chain started doing differently. It is public chain data: no
+key material is read, written or referenced, every signature is checked with a
+public key that is already on chain, and nothing in that file signs anything.
 
 ## Test keys
 
