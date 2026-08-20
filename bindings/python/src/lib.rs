@@ -273,6 +273,13 @@ impl PyPublicKey {
     /// Verify a signature over a transaction, given the network id it was
     /// signed for. Set `inner=True` for a signature taken over a
     /// `GaMetaTx`/`PayingForTx`-wrapped transaction.
+    ///
+    /// Accepts either payload a node accepts: the transaction's hash under the
+    /// network id, which is what this library signs, and the transaction itself
+    /// under the network id, which the node's own state-channel FSM signs. Both
+    /// still carry the network id and the `inner` suffix, so a signature does
+    /// not carry across a network or across the inner boundary. Signing is
+    /// unaffected — `SecretKey.sign_transaction` emits the hashed payload only.
     #[pyo3(signature = (transaction, network_id, signature, inner=false))]
     fn verify_transaction(
         &self,

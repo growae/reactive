@@ -107,10 +107,40 @@ describe('tx + aens + fee, end to end', () => {
       { key: 'nonce', value: { tag: 'uint', val: '1' } },
     ])
     const size = encoding.decode(built).length
-    const gas = fee.estimateGas('SpendTx', size, 1, 0)
+    const gas = fee.estimateGas('SpendTx', size, 1, 0, undefined)
     expect(gas).toBeGreaterThan(0n)
     const minFee = fee.feeForGas(gas)
     expect(BigInt(minFee)).toBeGreaterThan(0n)
+  })
+
+  // The node charges a contract call 12x the base gas under the FATE ABI and
+  // 30x under anything else, so `abi-version` has to actually reach the model
+  // rather than merely appear in the signature. A caller who omits it gets the
+  // 30x arm on purpose: too low is `too_low_fee` and a rejected transaction,
+  // too high is accepted.
+  it('prices a contract call by the abi-version it is given', () => {
+    const size = 200
+    const fate = fee.estimateGas('ContractCallTx', size, 1, 0, 3)
+    const aevm = fee.estimateGas('ContractCallTx', size, 1, 0, 1)
+    const unspecified = fee.estimateGas('ContractCallTx', size, 1, 0, undefined)
+    const unrecognised = fee.estimateGas('ContractCallTx', size, 1, 0, 99)
+
+    const sizeGas = BigInt(size) * 20n
+    expect(fate).toBe(12n * 15000n + sizeGas)
+    expect(aevm).toBe(30n * 15000n + sizeGas)
+    // Not knowing the ABI costs the same as the dearest known one, never the
+    // cheapest — and an ABI the node would not recognise is charged the same
+    // way the node charges it.
+    expect(unspecified).toBe(aevm)
+    expect(unrecognised).toBe(aevm)
+
+    // Every other tag the node keys on the ABI answers 5x on every arm, so
+    // nothing else may move with it.
+    for (const tag of ['ContractCreateTx', 'GaAttachTx', 'GaMetaTx']) {
+      const flat = 5n * 15000n + sizeGas
+      expect(fee.estimateGas(tag, size, 1, 0, 3)).toBe(flat)
+      expect(fee.estimateGas(tag, size, 1, 0, undefined)).toBe(flat)
+    }
   })
 
   it('derives AENS name id and minimum fee', () => {

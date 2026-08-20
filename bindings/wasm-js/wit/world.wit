@@ -154,7 +154,17 @@ interface fee {
   /// serialised length in bytes (`encoding.decode` the built `tx_...` and take
   /// its length). `relative-ttl` matters only for oracle tags (1 otherwise);
   /// `inner-tx-size` only for `GaMetaTx`/`PayingForTx` (0 otherwise).
-  estimate-gas: func(tag: string, size: u32, relative-ttl: u64, inner-tx-size: u32) -> result<u64, string>;
+  ///
+  /// `abi-version` is the transaction's `abiVersion` field, and matters only for
+  /// `ContractCallTx`: the node charges 12x the base gas for the FATE ABI (3)
+  /// and 30x for every other ABI, including one it does not recognise. `none` —
+  /// the caller did not say — takes the 30x arm too, and so does any value that
+  /// is not a known ABI. That is deliberate and is the same rule the Rust
+  /// `TxGasInputs::abi_version` documents: too low is `too_low_fee` and a
+  /// rejected transaction, too high is accepted, so the unknown case takes the
+  /// answer that cannot fail. Pass `some(3)` for a FATE call or the fee will be
+  /// 2.5x what it needs to be.
+  estimate-gas: func(tag: string, size: u32, relative-ttl: u64, inner-tx-size: u32, abi-version: option<u8>) -> result<u64, string>;
   /// The fee, in aettos, that `gas` costs at the protocol minimum gas price —
   /// a decimal string.
   fee-for-gas: func(gas: u64) -> string;
