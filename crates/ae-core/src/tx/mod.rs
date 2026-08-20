@@ -148,5 +148,5 @@ pub fn unpack_tx_rlp(bytes: &[u8]) -> Result<TxParams> {
 /// The `th_` hash of a signed transaction, from its `tx_` string.
 pub fn transaction_hash(encoded_tx: &str) -> Result<String> {
     let bytes = encoding::decode(encoded_tx)?;
-    crate::signing::transaction_hash(&bytes)
+    crate::keys::transaction_hash(&bytes)
 }

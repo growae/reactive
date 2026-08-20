@@ -20,3 +20,6 @@ packages/*/src/**/*.d.ts.map
 # not this
 bindings/wasm-js/placeholder-core/target/
 bindings/wasm-js/placeholder-core/src/bindings.rs
+
+# Rust build artifacts — one workspace, one target directory
+/crates/target/

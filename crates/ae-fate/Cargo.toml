@@ -11,12 +11,14 @@ publish.workspace = true
 # Deliberately empty, and load-bearing rather than incidental: this crate is the
 # one compiled to WebAssembly for the browser, where every dependency is bytes in
 # the bundle. See `crates/README.md` on the RLP codec it therefore does not share
-# with `reactive-core`.
+# with `ae-core`.
 [dependencies]
 
-[lints.rust]
-missing_docs = "deny"
-unsafe_code = "forbid"
+[dev-dependencies]
+# Dev-only, so the zero-dependency property above survives. Two canonicality
+# implementations in one workspace drift; the `agreement` module in
+# `src/rlp.rs` pins them to each other over a shared corpus.
+ae-core.workspace = true
 
-[lints.clippy]
-all = "warn"
+[lints]
+workspace = true

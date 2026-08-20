@@ -27,10 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Pinned to a minor rather than `stable`: clippy's lint set changes with
-      # the minor, and the crate denies warnings below, so a floating toolchain
-      # turns an unrelated Rust release into a red gate on an untouched branch.
-      - uses: dtolnay/rust-toolchain@1.97
+      # Pinned to the exact version, not `stable` and not a minor: clippy's lint
+      # set changes with the release and the workspace denies warnings below, so
+      # a floating toolchain turns an unrelated Rust release into a red gate on
+      # an untouched branch. This must stay equal to `crates/rust-toolchain.toml`
+      # — rustup reads that file inside `crates/`, so a disagreement here means
+      # the runner installs one toolchain and cargo silently fetches another.
+      - uses: dtolnay/rust-toolchain@1.97.1
         with:
           components: rustfmt, clippy
 

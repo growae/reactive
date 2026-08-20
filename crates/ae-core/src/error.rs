@@ -113,6 +113,30 @@ pub enum Error {
         model: &'static str,
     },
 
+    /// A Merkle-Patricia node did not hash to the key it was filed under.
+    ///
+    /// The whole point of a proof of inclusion: a node that does not rehash to
+    /// its own key proves nothing, so it is rejected on parse rather than
+    /// answered from.
+    #[error("merkle tree node hash mismatch")]
+    MerkleHashMismatch,
+
+    /// A Merkle-Patricia node referenced a hash the proof does not carry.
+    ///
+    /// Only for references that make the proof unwalkable. A branch missing a
+    /// child is the normal shape of a partial proof and is reported by
+    /// `MerklePatriciaTree::is_complete` instead.
+    #[error("missing node in merkle tree: {0}")]
+    MerkleNodeMissing(&'static str),
+
+    /// A Merkle-Patricia node had a length other than 2 or 17.
+    #[error("merkle node of unknown length: {0}")]
+    MerkleNodeArity(usize),
+
+    /// A Merkle-Patricia path header carried a nibble above 3.
+    #[error("unknown merkle path nibble: {0}")]
+    MerklePathNibble(u8),
+
     /// Signature verification input was not a valid Ed25519 key or signature.
     #[error("crypto: {0}")]
     Crypto(String),

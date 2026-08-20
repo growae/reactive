@@ -92,11 +92,21 @@ pub struct ProtocolParams {
     /// The ABI version an oracle transaction defaults to.
     pub oracle_call_abi: AbiVersion,
     /// The minimum gas price, in aettos.
-    ///
-    /// The rest of the fee and gas model — base gas, per-byte gas, the per-tag
-    /// multipliers — belongs to the fee/gas workstream and extends this struct
-    /// rather than living somewhere else.
     pub min_gas_price: u64,
+    /// Gas charged for every transaction before any per-tag multiplier.
+    pub base_gas: u64,
+    /// Gas charged per serialised byte.
+    pub gas_per_byte: u64,
+    /// Target key block interval, in minutes. Divides the oracle ttl gas.
+    pub key_block_interval_minutes: u64,
+    /// Numerator of the oracle state-holding gas charge.
+    pub oracle_state_gas_per_ttl: u64,
+    /// AENS name fee multiplier, applied to the per-length bid range.
+    pub name_fee_multiplier: u128,
+    /// The minimum bid increment on an AENS auction, as a percentage.
+    pub name_bid_increment_percent: u64,
+    /// The longest name label that still attracts a length-scaled fee.
+    pub name_max_length_fee: usize,
 }
 
 /// The parameters for a protocol version.
@@ -108,6 +118,13 @@ pub const fn params(version: ConsensusProtocolVersion) -> ProtocolParams {
             contract_call_abi: AbiVersion::Fate,
             oracle_call_abi: AbiVersion::NoAbi,
             min_gas_price: 1_000_000_000,
+            base_gas: 15_000,
+            gas_per_byte: 20,
+            key_block_interval_minutes: 3,
+            oracle_state_gas_per_ttl: 32_000,
+            name_fee_multiplier: 100_000_000_000_000,
+            name_bid_increment_percent: 5,
+            name_max_length_fee: 31,
         },
     }
 }
@@ -137,6 +154,18 @@ mod tests {
         // An oracle register carries abi 0 unless the caller asks for a typed oracle.
         assert_eq!(p.oracle_call_abi as u8, 0);
         assert_eq!(p.min_gas_price, 1_000_000_000);
+    }
+
+    #[test]
+    fn ceres_carries_the_published_fee_constants() {
+        let p = params(ConsensusProtocolVersion::Ceres);
+        assert_eq!(p.base_gas, 15_000);
+        assert_eq!(p.gas_per_byte, 20);
+        assert_eq!(p.key_block_interval_minutes, 3);
+        assert_eq!(p.oracle_state_gas_per_ttl, 32_000);
+        assert_eq!(p.name_fee_multiplier, 100_000_000_000_000);
+        assert_eq!(p.name_bid_increment_percent, 5);
+        assert_eq!(p.name_max_length_fee, 31);
     }
 
     #[test]
