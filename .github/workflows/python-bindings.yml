@@ -1,8 +1,11 @@
 name: Python bindings
 
+# `agent/**` so a feature branch gates itself before a pull request exists —
+# full reasoning, including why the duplicate run while a PR is open is
+# deliberate, in ci.yml.
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'agent/**']
     paths:
       - 'bindings/python/**'
       - 'crates/ae-core/**'
@@ -47,6 +50,12 @@ jobs:
   build:
     name: Build
     needs: check
+    # Four runners producing wheels is a packaging check, not a compile gate:
+    # the Test job below already builds a wheel on Linux, so a branch that
+    # cannot compile goes red without this. Keep it off intermediate pushes and
+    # run it where the wheels are actually about to matter — the pull request
+    # and the integration branches.
+    if: github.event_name == 'pull_request' || github.ref_name == 'develop' || github.ref_name == 'main'
     strategy:
       fail-fast: false
       matrix:
