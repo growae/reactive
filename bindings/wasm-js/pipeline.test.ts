@@ -11,10 +11,12 @@ import { describe, expect, it } from 'vitest'
 // `generated/` via `pnpm build` here whenever wit/ or core-component/ change,
 // and commit the result.
 //
-// This is the differential harness's pipeline smoke test, not the
-// differential suite itself (that's the parity-chase row): it proves the
-// wasm32-unknown-unknown + jco round trip holds for the real ae-core surface,
-// the same way the placeholder's `ping` proved it for an empty one.
+// This is this directory's own pipeline smoke test, and its only consumer.
+// It is not the differential parity suite — that lives in crates/ae-parity,
+// which links ae-core and ae-fate directly as Rust crates and never crosses a
+// WASM boundary. All this proves is that the wasm32-unknown-unknown + jco
+// round trip holds for the real ae-core surface, the same way the
+// placeholder's `ping` proved it for an empty one.
 const generatedDir = process.env.WASM_GENERATED_DIR ?? './generated'
 const mod = await import(`${generatedDir}/core-harness.js`)
 const { encoding, hash, keys, tx, aens, fee } = mod

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "WIT world and jco-transpiled JS glue for the differential harness. Not published.",
+  "description": "WIT world and jco-transpiled JS glue over ae-core. A frozen reference artifact with no consumer — see README. Not published.",
   "scripts": {
     "build:rust": "cd core-component && CARGO_HOME_RESOLVED=\"${CARGO_HOME:-$HOME/.cargo}\" REPO_ROOT=\"$(git rev-parse --show-toplevel)\" RUSTFLAGS=\"--remap-path-prefix=$CARGO_HOME_RESOLVED=/cargo-home --remap-path-prefix=$REPO_ROOT=/workspace\" cargo component build --release --target wasm32-unknown-unknown",
     "build:js": "rm -rf generated && mkdir generated && jco transpile core-component/target/wasm32-unknown-unknown/release/core_component.wasm -o generated --name core-harness --minify",
