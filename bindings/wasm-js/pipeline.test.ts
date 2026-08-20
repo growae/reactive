@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-// Exercises the committed jco-transpiled output, not a fresh Rust build — CI
-// has no Rust toolchain (see .github/workflows/ci.yml). Regenerate
+// Exercises a jco-transpiled output — the committed one by default, or
+// WASM_GENERATED_DIR when the CI gate points this at the committed
+// core-harness.core.wasm specifically, to prove it is still functionally
+// current without requiring it to byte-match a fresh build (rustc's LTO
+// ordering for the ae-core path-dependency is not reproducible across
+// checkout directories even with --remap-path-prefix on every path that
+// shows up as a string — see .github/workflows/wasm-bindings.yml). CI has no
+// Rust toolchain otherwise (see .github/workflows/ci.yml). Regenerate
 // `generated/` via `pnpm build` here whenever wit/ or core-component/ change,
 // and commit the result.
 //
@@ -9,7 +15,8 @@ import { describe, expect, it } from 'vitest'
 // differential suite itself (that's the parity-chase row): it proves the
 // wasm32-unknown-unknown + jco round trip holds for the real ae-core surface,
 // the same way the placeholder's `ping` proved it for an empty one.
-const mod = await import('./generated/core-harness.js')
+const generatedDir = process.env.WASM_GENERATED_DIR ?? './generated'
+const mod = await import(`${generatedDir}/core-harness.js`)
 const { encoding, hash, keys, tx, aens, fee } = mod
 
 const NETWORK_ID = 'ae_uat'

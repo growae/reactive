@@ -23,8 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Pinned to match rust.yml's toolchain rather than left floating.
-      - uses: dtolnay/rust-toolchain@1.97
+      # Pinned to the exact patch, matching core-component/rust-toolchain.toml
+      # rather than left floating — std's panic-location prefix moves with the
+      # patch, and the committed core-harness.js/.d.ts (deterministic; see the
+      # drift check below) have to byte-match a build made with this exact
+      # toolchain.
+      - uses: dtolnay/rust-toolchain@1.97.1
         with:
           targets: wasm32-unknown-unknown
 
@@ -44,21 +48,57 @@ jobs:
 
       - run: pnpm --filter @growae/reactive-wasm-js-binding run build
 
+      - run: pnpm --filter @growae/reactive-wasm-js-binding run test
+
       # The transpiled output is committed so the differential harness (and
       # this directory's own test) can load it without a Rust toolchain.
       # Rebuilding here and diffing against the committed copy is what makes
-      # that convention enforced rather than trusted.
+      # that convention enforced rather than trusted — for the files where a
+      # byte diff is a meaningful signal.
+      #
+      # core-harness.core.wasm is deliberately NOT compared by byte here.
+      # --remap-path-prefix (build:rust, package.json) makes it independent of
+      # CARGO_HOME and the checkout root — verified by building the same
+      # source under two different values of both and diffing — but ae-core is
+      # a local *path* dependency, and rustc/LTO's ordering of its
+      # monomorphized code is not reproducible across checkout directories
+      # even so: the same verification, repeated, still showed a byte diff in
+      # the type section with the JS glue and every .d.ts identical either
+      # side. That's a real rustc/Cargo reproducible-builds gap for path
+      # deps, not a leftover host string, and no combination of remap flags
+      # available in this pipeline closes it. A byte-exact check here would
+      # fail on every rebuild off the exact runner that produced the
+      # committed copy, which defeats the point of a CI gate. Its currency is
+      # instead proven functionally, below.
       #
       # `git diff` alone would miss an ADDED output file: build:js does
       # `rm -rf generated` first, so a jco run that emits something new (a
       # second core module once the world grows past one) leaves it untracked
       # and invisible to a diff. `git status --porcelain` sees all three
       # cases — modified, deleted and added.
-      - name: Fail on committed-artifact drift
+      - name: Fail on drift in the deterministic generated files
         run: |
-          git status --porcelain --untracked-files=all bindings/wasm-js/generated/ > /tmp/drift
+          git status --porcelain --untracked-files=all \
+            -- bindings/wasm-js/generated/core-harness.js \
+               bindings/wasm-js/generated/core-harness.d.ts \
+               bindings/wasm-js/generated/interfaces/ \
+            > /tmp/drift
           if [ -s /tmp/drift ]; then
-            echo "generated/ differs from a fresh build — regenerate with 'pnpm build' in bindings/wasm-js and commit:"
+            echo "generated/'s JS glue or types differ from a fresh build — regenerate with 'pnpm build' in bindings/wasm-js and commit:"
             cat /tmp/drift
             exit 1
           fi
+
+      # core-harness.core.wasm's currency: not a byte diff (see above) — the
+      # committed binary, paired with the (byte-identical, already checked)
+      # fresh JS glue, has to pass the same pipeline test suite a fresh wasm
+      # build just did. A wit/ or core-component/ change that isn't matched by
+      # a `pnpm build` + commit shows up here as a real test failure — a
+      # missing export, a changed signature, wrong behaviour — rather than as
+      # a warning that two non-reproducible binaries differ.
+      - name: Verify the committed core-harness.core.wasm is still functionally current
+        run: |
+          mkdir -p /tmp/committed-wasm
+          git show HEAD:bindings/wasm-js/generated/core-harness.core.wasm > /tmp/committed-wasm/core-harness.core.wasm
+          cp bindings/wasm-js/generated/core-harness.js /tmp/committed-wasm/core-harness.js
+          WASM_GENERATED_DIR=/tmp/committed-wasm pnpm --filter @growae/reactive-wasm-js-binding exec vitest run pipeline.test.ts
