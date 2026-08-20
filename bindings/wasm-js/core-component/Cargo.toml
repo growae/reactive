@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 ae-core = { path = "../../../crates/ae-core" }
 num-bigint = "0.5"
-wit-bindgen-rt = { version = "0.41", features = ["bitflags"] }
+wit-bindgen-rt = { version = "0.44", features = ["bitflags"] }
 # `ae-core` depends on `rand_core`'s `getrandom` feature for
 # `SecretKey::generate()`, which this component does not export (see
 # `wit/world.wit`, the `keys` interface doc) — but `getrandom` still has to
