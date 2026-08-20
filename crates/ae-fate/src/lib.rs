@@ -33,16 +33,27 @@
 //!
 //! - **Negative zero.** The small-integer form with the sign bit set and a zero
 //!   magnitude has a second encoding of zero. Erlang rejects it on decode; the
-//!   JS library decodes it to zero. Rejected here.
+//!   JS library decodes it to zero. Rejected here. *Closed:* the JS library
+//!   accepts the form but never writes it.
 //! - **Non-canonical integers.** Erlang re-encodes every RLP integer it reads
 //!   and rejects the input unless the bytes match, so a leading zero byte or
 //!   the empty string is an error. The JS library accepts both. Rejected here.
+//!   *Closed*, for the same reason.
 //! - **String ordering.** Both order strings by length before content, but the
 //!   JS library measures length in UTF-16 code units, so two strings whose byte
 //!   lengths differ but whose code-unit lengths agree sort differently there.
-//!   Length is measured in bytes here.
+//!   Length is measured in bytes here. *Open* — it changes the bytes a map
+//!   serialises to, and reaches every map with a non-ASCII string key.
 //! - **Bit-field ordering.** Erlang orders two negative bit fields numerically;
-//!   the JS library reverses them. Numeric here.
+//!   the JS library reverses them. Numeric here. *Open*, for the same reason,
+//!   reaching every map keyed by `bits` that holds two negative keys.
+//!
+//! The two open ones are a compatibility decision rather than a correctness
+//! one, and the behaviour above is the standing rule until it is taken. There
+//! is also one place where the two cannot be compared at all: the JS library
+//! selects a key comparator from a map's declared key type, so it has no
+//! cross-type order, while `src/ord.rs` needs one to keep `Ord` total. Sophia
+//! maps are keyed by a single type, so no compiled contract reaches it.
 //!
 //! One tag is dead in both: `EMPTY_MAP` (`0b1101_1111`). Neither implementation
 //! ever writes it — an empty map is `MAP` with a zero length — and the Erlang
