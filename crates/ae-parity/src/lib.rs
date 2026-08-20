@@ -1,6 +1,6 @@
 //! The differential parity harness — the instrument, not the thing measured.
 //!
-//! `ae-core` and `ae-fate` prove themselves against two committed corpora
+//! `ae-core` and `ae-fate` prove themselves against the committed corpora
 //! generated from the reference JavaScript implementations. That is a floor, and
 //! on its own it is easy to misread: a suite where every committed vector passes
 //! reports green whether it covers three tags or twenty-six, and says nothing at
@@ -17,7 +17,7 @@
 //!    committed vector through the crates under test and reports coverage across
 //!    four independent surfaces.
 //! 2. **Drift** — `regenerate.mjs`, which reinstalls the pinned reference versions,
-//!    regenerates both corpora and fails on any difference. Without it
+//!    regenerates every committed corpus and fails on any difference. Without it
 //!    "byte-identical" decays silently on the first dependency bump.
 //! 3. **On-node** — [`sign::signed_corpus`] plus `node-exercise.mjs`. An offline
 //!    byte-diff proves we agree with the reference sdk; it does not prove the node

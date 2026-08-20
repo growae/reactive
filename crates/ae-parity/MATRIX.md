@@ -11,7 +11,9 @@ References: `@aeternity/aepp-sdk` 14.1.1, `@aeternity/aepp-calldata` 1.9.1.
 | Transaction schema entries | 27 | 27 | `aepp-sdk` 14.1.1 |
 | Transaction schema fields | 176 | 200 | — |
 | State-tree entry pairs | 0 | 25 | **none committed** |
-| FATE vectors, decode and re-encode | 113 | 113 | `aepp-calldata` 1.9.1 |
+| FATE vectors, `aepp-calldata-1.9.1.json`, reference-written | 113 | 113 | `aepp-calldata` 1.9.1 |
+| FATE vectors, `aepp-calldata-1.9.1-sweep.json`, reference-written | 521 | 521 | `aepp-calldata` 1.9.1 |
+| FATE vectors, `aepp-calldata-1.9.1-sweep.json`, twinned by construction | 2 | 2 | **this repository** |
 | FATE value variants | 10 | 13 | `aepp-calldata` 1.9.1 |
 | FATE type variants | 12 | 13 | `aepp-calldata` 1.9.1 |
 
@@ -91,11 +93,21 @@ No entry **fixture set** is committed anywhere in this repository, so every row 
 
 ## FATE
 
-Every vector is decoded through `ae-fate` and re-encoded; the row counts those that come back to the reference's exact bytes. Variant coverage is read off what the corpus actually decodes to, including nested values, not off the case names.
+Every vector in every committed corpus is decoded through `ae-fate` and re-encoded; the rows count those that come back to the committed bytes. Variant coverage is read off what the corpus actually decodes to, including nested values, not off the case names.
 
-- vectors: 113 decode and re-encode, 113 total
+The rows are per corpus **and per evidence class**, and are never added up. A reference-written vector is two implementations agreeing on the bytes. A twinned vector is bytes this repository assembled, because the reference cannot produce them at all: the two `node-order/…` cases are maps keyed by non-ASCII strings and by negative bit fields, the places where the reference's key order disagrees with the node's, and their order is stated by hand from `aeb_fate_data` rather than measured. Both are evidence; they are not the same evidence, and one total would hide which kind a row rests on.
+
+| Corpus | Evidence | Vectors | Decode and re-encode |
+|---|---|---|---|
+| `aepp-calldata-1.9.1.json` | reference-written | 113 | 113/113 |
+| `aepp-calldata-1.9.1-sweep.json` | reference-written | 521 | 521/521 |
+| `aepp-calldata-1.9.1-sweep.json` | twinned by construction | 2 | 2/2 |
+
+**Variant coverage is scored over the 634 reference-written vectors only.** Every FATE vector here carries a name and a hex string and nothing else, so a variant is marked covered by decoding the bytes — that is true of the main corpus as much as of the sweep, and widening the corpus changes how much of that evidence there is rather than what kind it is. What does change with provenance is who wrote the bytes: letting a vector this repository assembled mark a variant covered would let this crate close its own gap with its own bytes. The 2 twinned vectors therefore round-trip and are counted above, and score no coverage below.
+
 - value variants with no vector: `StoreMap`, `ContractBytearray`, `Typerep`
 - type variants with no vector: `ContractBytearray`
+- variants the twinned vectors reach, recorded and not scored: `Bits`, `Int`, `Map`, `String` (values), none (types) — every one is already reached by a reference-written vector, so the exclusion above costs no coverage. A gate fails if that stops being true, because then the exclusion would be hiding a real gap rather than declining a weak one.
 
 ## On-node
 
