@@ -16,7 +16,9 @@
       "TypeVar",
       "Variant"
     ],
-    "type_variants_uncovered": ["ContractBytearray"],
+    "type_variants_uncovered": [
+      "ContractBytearray"
+    ],
     "value_variants_covered": [
       "Address",
       "Bits",
@@ -29,7 +31,11 @@
       "Tuple",
       "Variant"
     ],
-    "value_variants_uncovered": ["StoreMap", "ContractBytearray", "Typerep"],
+    "value_variants_uncovered": [
+      "StoreMap",
+      "ContractBytearray",
+      "Typerep"
+    ],
     "vectors": 85
   },
   "node": null,
@@ -260,7 +266,9 @@
         "roundtrip_pass": 1,
         "tag": "NamePreclaimTx",
         "tag_value": 33,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -273,7 +281,9 @@
         "roundtrip_pass": 2,
         "tag": "NameClaimTx",
         "tag_value": 32,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 2,
         "version": 2
       },
@@ -316,7 +326,9 @@
         "roundtrip_pass": 1,
         "tag": "NameTransferTx",
         "tag_value": 36,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -329,7 +341,9 @@
         "roundtrip_pass": 1,
         "tag": "NameRevokeTx",
         "tag_value": 35,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -342,7 +356,9 @@
         "roundtrip_pass": 2,
         "tag": "ContractCreateTx",
         "tag_value": 42,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 2,
         "version": 1
       },
@@ -355,7 +371,9 @@
         "roundtrip_pass": 2,
         "tag": "ContractCallTx",
         "tag_value": 43,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 2,
         "version": 1
       },
@@ -441,7 +459,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelCloseMutualTx",
         "tag_value": 53,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -454,7 +474,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelCloseSoloTx",
         "tag_value": 54,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -467,7 +489,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelSlashTx",
         "tag_value": 55,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -480,7 +504,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelDepositTx",
         "tag_value": 51,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -493,7 +519,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelWithdrawTx",
         "tag_value": 52,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -506,7 +534,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelSettleTx",
         "tag_value": 56,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -519,7 +549,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelForceProgressTx",
         "tag_value": 521,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -545,7 +577,9 @@
         "roundtrip_pass": 1,
         "tag": "ChannelSnapshotSoloTx",
         "tag_value": 59,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },
@@ -558,7 +592,9 @@
         "roundtrip_pass": 1,
         "tag": "GaAttachTx",
         "tag_value": 80,
-        "unexercised_fields": ["ttl (Ttl)"],
+        "unexercised_fields": [
+          "ttl (Ttl)"
+        ],
         "vectors": 1,
         "version": 1
       },

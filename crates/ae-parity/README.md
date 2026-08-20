@@ -54,10 +54,12 @@ node ae-parity/regenerate.mjs --write   # on a deliberate bump, to get the diff
 # The on-node half. Generates a throwaway key, spends nothing.
 cargo run -p ae-parity -- sign --out ae-parity/signed.json
 node ae-parity/node-exercise.mjs --signed ae-parity/signed.json --out ae-parity/node.json
-cargo run -p ae-parity -- matrix --node ae-parity/node.json
+cargo run -p ae-parity -- matrix --node ae-parity/node.json   # writes MATRIX-with-node.md
 ```
 
-`signed.json` and `node.json` are outputs, not inputs, and are not committed.
+`signed.json`, `node.json` and the `*-with-node.*` pair are outputs, not inputs,
+and are not committed. `--node` deliberately writes to its own files: the committed
+matrix has to stay reproducible from a checkout with no network.
 
 ## Why the on-node half exists
 

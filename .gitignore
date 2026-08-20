@@ -29,3 +29,5 @@ bindings/wasm-js/placeholder-core/src/bindings.rs
 # round trip, and neither is reproducible from a checkout.
 crates/ae-parity/signed.json
 crates/ae-parity/node.json
+crates/ae-parity/matrix-with-node.json
+crates/ae-parity/MATRIX-with-node.md

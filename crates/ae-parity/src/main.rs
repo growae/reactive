@@ -36,28 +36,36 @@ fn run_matrix(arguments: &[String]) -> ExitCode {
         .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")));
 
     let mut computed = matrix::compute();
-    if let Some(path) = flag(arguments, "--node") {
-        match std::fs::read_to_string(&path)
-            .map_err(|error| error.to_string())
-            .and_then(|text| serde_json::from_str(&text).map_err(|error| error.to_string()))
-        {
-            Ok(node) => computed.node = Some(node),
-            Err(error) => {
-                eprintln!("could not read {path}: {error}");
-                return ExitCode::FAILURE;
+    // A merged matrix goes to its own pair of files. The committed snapshot has
+    // to stay reproducible from a checkout with no network, and one `--node` run
+    // writing over it would put a record of one afternoon's testnet round trip
+    // where a deterministic artifact is supposed to be.
+    let (json_name, markdown_name) = match flag(arguments, "--node") {
+        None => ("matrix.json", "MATRIX.md"),
+        Some(path) => {
+            match std::fs::read_to_string(&path)
+                .map_err(|error| error.to_string())
+                .and_then(|text| serde_json::from_str(&text).map_err(|error| error.to_string()))
+            {
+                Ok(node) => computed.node = Some(node),
+                Err(error) => {
+                    eprintln!("could not read {path}: {error}");
+                    return ExitCode::FAILURE;
+                }
             }
+            ("matrix-with-node.json", "MATRIX-with-node.md")
         }
-    }
+    };
 
     let json = format!(
         "{}\n",
         serde_json::to_string_pretty(&computed.to_json()).expect("the matrix serialises")
     );
-    if let Err(error) = write(&out.join("matrix.json"), &json) {
+    if let Err(error) = write(&out.join(json_name), &json) {
         eprintln!("{error}");
         return ExitCode::FAILURE;
     }
-    if let Err(error) = write(&out.join("MATRIX.md"), &render::markdown(&computed)) {
+    if let Err(error) = write(&out.join(markdown_name), &render::markdown(&computed)) {
         eprintln!("{error}");
         return ExitCode::FAILURE;
     }
