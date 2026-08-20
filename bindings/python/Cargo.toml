@@ -1,0 +1,23 @@
+[package]
+name = "ae-core-py"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82"
+license = "MIT"
+description = "PyO3 binding over the ae-core protocol primitives"
+publish = false
+
+[lib]
+name = "_ae_core"
+crate-type = ["cdylib"]
+
+# Native FFI, not WASM: PyO3 binds ae-core directly and never reads the WIT
+# file. abi3 buys one wheel per platform across every supported CPython minor
+# instead of one per version — see README.md for the built/not-built matrix.
+[dependencies]
+ae-core = { path = "../../crates/ae-core" }
+pyo3 = { version = "0.29.2", features = ["extension-module", "abi3-py39"] }
+
+[profile.release]
+lto = true
+strip = true
