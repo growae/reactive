@@ -29,9 +29,9 @@ One sentence, precise enough to be used as a gate by someone who was not here:
 > 6. on a node: every transaction we build **that the corpus marks postable** is
 >    accepted by the node's decoder; every vector marked non-postable names the
 >    chain rule that refuses it and the tag has a postable sibling that the node
->    does accept; and every tag the node has a builder for produces bytes
->    identical to ours — with the control cases proving the node rejects
->    corrupted bytes differently.
+>    does accept; and every tag the node has a builder for **that returns the
+>    transaction it was asked for** produces bytes identical to ours — with the
+>    control cases proving the node rejects corrupted bytes differently.
 
 Points 1, 2, 4 and 5 are enforced in CI. Point 3 has no fixtures at all today.
 Point 6 needs a reachable node and is recorded in `TESTNET.md` rather than gated,
@@ -51,6 +51,37 @@ non-postable vector is a valid encoding test and is kept — deleting it deletes
 the evidence — but it is marked, it names the rule that refuses it, and it never
 counts towards the on-node clause. Where a chain-acceptable sibling exists for
 that tag it is added alongside, so the tag still has an acceptance result.
+
+### Why the builder half compares only the same transaction
+
+The builder half asks whether two implementations encode **one** transaction the
+same way. When the node's HTTP builder hands back a transaction whose decoded
+content is not the one it was given, there is no shared subject and there is
+nothing to compare — the same ground `ChannelCreateTx` is already *not
+comparable* on, where the endpoint takes one delegate list and the tag serialises
+two.
+
+This is a classification, not an exemption, and the difference is the whole
+point: **it is decided by decoding the node's bytes and comparing them field by
+field to the parameters sent, and a mismatch has to name the field.** Nothing is
+excused for being "a quirk". `differs` therefore keeps meaning what it says —
+same transaction, different bytes — and stays an unconditional failure no prose
+can talk its way out of. The day an endpoint starts returning what it was asked
+for, its row becomes comparable again and has to match.
+
+`name update v1, explicit ttls and several pointers` is the first row to land
+here: the endpoint emits the pointer list **reversed**. It is not a
+canonicalisation — measured directly against the node, `a,o,c` comes back
+`c,o,a`, `c,o,a` comes back `a,o,c`, and `o,a,c` comes back `c,a,o`. A
+canonicalisation is idempotent; an involution is an accumulator nobody reversed.
+The endpoint therefore fails to preserve pointer order in either direction, which
+disqualifies it as a reference for that field whichever order is right — and the
+node's own decoder accepts our bytes.
+
+The reversal is carried as a standing finding against that endpoint in
+`TESTNET.md`, and re-measured rather than assumed: if it is ever fixed, the
+round-trip probe stops holding and the row has to be reclassified instead of
+quietly staying excluded.
 
 `ChannelForceProgressTx` is today the one tag with no accepted vector at all:
 seven variants, crossing payload signedness, update-entry validity and

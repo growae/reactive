@@ -190,11 +190,15 @@ pub fn markdown(matrix: &Matrix) -> String {
     let _ = writeln!(out);
     let _ = writeln!(
         out,
-        "No entry corpus is committed anywhere in this repository, so every row \
-         below is zero. The `reference` column says who could speak for the pair \
-         if one existed: two pairs the node emits and the reference sdk does not \
-         implement, where the sdk is not an oracle and a node fixture is the only \
-         honest source."
+        "No entry **fixture set** is committed anywhere in this repository, so \
+         every row below is zero. Real entry bytes do exist here — the mined \
+         corpus in `ae-core/tests/vectors/chain.json` carries `TreesPoi` inside \
+         its channel transactions — but bytes nobody has decoded pair by pair \
+         are not coverage, and extracting them is Core parity's row rather than \
+         this crate's. The `reference` column says who could speak for the pair \
+         if a fixture existed: two pairs the node emits and the reference sdk \
+         does not implement, where the sdk is not an oracle and a node fixture \
+         is the only honest source."
     );
     let _ = writeln!(out);
     let _ = writeln!(out, "| Entry | v | Reference | Fixtures |");

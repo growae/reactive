@@ -145,18 +145,35 @@ asking whether it builds the same bytes scores a disagreement already recorded a
 the refusal. That removes `name update v2, id pointer`, where the node builds at
 version 1 per the rule above.
 
-One `differs` row remains, and it is not an encoding disagreement in this core:
+One row remains where the endpoint's bytes are not ours, and it is not an
+encoding disagreement in this core:
 
 - `name update v1, explicit ttls and several pointers` — the node's HTTP builder
   emits the pointer list **reversed**. Ours is in the order given, byte-identical
-  to the reference sdk, and the node's own decoder accepts it. A quirk of that
-  endpoint, not a wire rule.
+  to the reference sdk, and the node's own decoder accepts it.
 
-It is the single reason clause 6 scores **not satisfied** on this run: the
-acceptance half is 38 of 38, and the builder half asks for byte-identity from
-every tag the node builds. Whether a node-endpoint quirk belongs inside that half
-is the same shape of call as the one that scoped the acceptance half, and it is
-not this harness's to make.
+Measured directly against `/v3/debug/names/update` rather than inferred, because
+"reversed" and "canonicalised" are different findings and only one of them
+disqualifies the endpoint:
+
+| Pointer order sent | Order the endpoint emits |
+|---|---|
+| `account`, `oracle`, `contract` | `contract`, `oracle`, `account` |
+| `contract`, `oracle`, `account` | `account`, `oracle`, `contract` |
+| `oracle`, `account`, `contract` | `contract`, `account`, `oracle` |
+
+It is an involution, not a canonicalisation — a canonicalisation is idempotent,
+and this one round-trips. The endpoint therefore does not preserve pointer order
+in either direction and cannot serve as a reference for that field whichever
+order is correct. What it returns is not the transaction it was asked for, which
+is the same ground `ChannelCreateTx` is already *not comparable* on.
+
+Under the clause as it now reads this row is **not comparable** rather than
+`differs`, and the reversal is a standing finding against that endpoint. It is
+not exempted for being a quirk: the classification has to be earned by decoding
+the node's bytes and naming the field that differs, and the probe above is re-run
+so that a fixed endpoint forces the row back into the comparison rather than
+leaving it quietly excluded.
 
 The twelve declines are all state lookups or value rejections, not serialisation:
 `Contract code … not found`, `Oracle address … not found`, `Invalid hash: name`
