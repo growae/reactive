@@ -71,15 +71,47 @@ signed.set("encodedTx", core.Value.encoded(tx))
 signed_tx = core.build_tx(signed)
 ```
 
+## Computing the minimum fee
+
+`minimum_transaction_fee` forwards `ae_core::fee`'s joined entry point rather
+than this binding hand-writing a `RebuildTx` bridge — the ABI a contract call
+is priced at is read off the byte `build_tx` will actually serialise, not off
+whether the caller's `TxParams` happens to carry an explicit `abiVersion`:
+
+```python
+params = core.TxParams(core.Tag.CONTRACT_CALL_TX)
+params.set("callerId", core.Value.encoded(caller_address))
+params.set("nonce", core.Value.uint(1))
+params.set("contractId", core.Value.encoded(contract_address))
+params.set("abiVersion", core.Value.uint(3))
+params.set("amount", core.Value.uint(0))
+params.set("gasLimit", core.Value.uint(25_000))
+params.set("gasPrice", core.Value.uint(1_000_000_000))
+params.set("callData", core.Value.encoded(call_data))
+
+fee = core.minimum_transaction_fee(params)  # an int, in aettos
+params.set("fee", core.Value.uint(fee))
+```
+
+Raises `ValueError` when `gasLimit` is absent on a contract transaction (no
+default is invented) and when an oracle ttl is given as an absolute block
+height (convert it to a delta first — this function does not look up the
+current height).
+
 ## What is, and is not, bound
 
-The surface mirrors `ae_core::tx::Value`'s eight shapes, `TxParams`, and the
-address/signing operations in `ae_core::keys` — what a caller needs to build
-and sign a transaction. It does not mirror `mpt`, `protocol`'s internals, or
-`aens`'s hashing directly; nothing here reaches for a type the crate doc calls
-out as an implementation detail. `ae-fate` (the Sophia ABI) is not wrapped
-yet — no vector in the differential corpus needs it, since contract call data
-arrives pre-encoded as a `cb_...` string either way.
+The surface mirrors `ae_core::tx::Value`'s eight shapes, `TxParams`, the
+address/signing operations in `ae_core::keys`, and the fee model's joined
+entry point, `ae_core::fee::minimum_transaction_fee` — what a caller needs to
+build, price and sign a transaction. It does not mirror `mpt`, `protocol`'s
+internals, or `aens`'s hashing directly; nothing here reaches for a type the
+crate doc calls out as an implementation detail. `TxGasInputs`, `RebuildTx`
+and `calculate_min_fee` stay unmirrored too — that seam is for a caller who
+wants to drive the fixed point itself (an absolute oracle ttl it can resolve
+against a node, say), and this binding does not hand-write it. `ae-fate` (the
+Sophia ABI) is not wrapped yet — no vector in the differential corpus needs
+it, since contract call data arrives pre-encoded as a `cb_...` string either
+way.
 
 ## Testing against the reference corpus
 
@@ -88,3 +120,9 @@ arrives pre-encoded as a `cb_...` string either way.
 by `@aeternity/aepp-sdk` 14.1.1 — through this binding and asserts byte-for-byte
 equality with the reference `tx_...` string, then round-trips each through
 `unpack_tx`/`build_tx`. Run it with `pytest` after `maturin develop`.
+
+`tests/test_fee.py` has one test per parameter `minimum_transaction_fee`
+mirrors, checked against fees computed independently of that function —
+from the Ceres constants in `crates/ae-core/src/protocol.rs` and this
+binding's own `build_tx_rlp` for real serialised sizes, never a second call
+into the function under test.

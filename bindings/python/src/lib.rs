@@ -10,6 +10,7 @@
 //! or `rlp` directly, so none of them are mirrored.
 
 use ae_core::keys::TxPosition;
+use ae_core::protocol::ConsensusProtocolVersion;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
@@ -245,6 +246,26 @@ fn transaction_hash(encoded_tx: &str) -> PyResult<String> {
     ae_core::tx::transaction_hash(encoded_tx).map_err(to_py_err)
 }
 
+/// The smallest fee, in aettos, `params` may carry.
+///
+/// Forwards `ae_core::fee::minimum_transaction_fee` — the joined entry point —
+/// rather than hand-writing a `RebuildTx` bridge in this binding. That
+/// matters beyond style: the ABI byte this prices a `ContractCallTx` at comes
+/// off the wire `build_tx` will serialise, not off whether the caller's
+/// `TxParams` happens to carry an explicit `abiVersion`, and a bridge written
+/// per binding is exactly where that distinction has gone missing before.
+///
+/// # Errors
+///
+/// - `gasLimit` absent on a contract transaction — no default is invented.
+/// - An oracle ttl given as an absolute block height — convert it to a delta
+///   first; this function does not look up the current height.
+#[pyfunction]
+fn minimum_transaction_fee(params: &PyTxParams) -> PyResult<u128> {
+    ae_core::fee::minimum_transaction_fee(ConsensusProtocolVersion::default(), &params.0)
+        .map_err(to_py_err)
+}
+
 /// An account's public key.
 #[pyclass(name = "PublicKey", module = "ae_core", from_py_object)]
 #[derive(Clone)]
@@ -421,5 +442,6 @@ fn _ae_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(unpack_tx, m)?)?;
     m.add_function(wrap_pyfunction!(unpack_tx_as, m)?)?;
     m.add_function(wrap_pyfunction!(transaction_hash, m)?)?;
+    m.add_function(wrap_pyfunction!(minimum_transaction_fee, m)?)?;
     Ok(())
 }
