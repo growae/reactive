@@ -1,8 +1,11 @@
 name: Rust
 
+# `agent/**` so a feature branch gates itself before a pull request exists —
+# full reasoning, including why the duplicate run while a PR is open is
+# deliberate, in ci.yml.
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'agent/**']
     paths:
       - 'crates/**'
       - '.github/workflows/rust.yml'

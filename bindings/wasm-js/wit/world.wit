@@ -1,10 +1,175 @@
 package growae:core-harness;
 
-// Placeholder world. No Core surface has landed yet — this exists to keep
-// the wasm32-unknown-unknown + jco pipeline exercised end-to-end while
-// it's empty, and gets replaced interface-by-interface as Core freezes
-// real exports. Do not add protocol logic here; that belongs to the Core
-// rows.
+/// Shared shapes the other interfaces build on.
+///
+/// WIT has no recursive types — confirmed empirically, not assumed: a
+/// self-referential variant (`variant v { items(list<v>) }`) is rejected by
+/// `cargo component build` with "type `v` depends on itself". `ae_core::Value`
+/// is recursive (`List(Vec<Value>)`, `Tx(Box<TxParams>)`), so `field-value`
+/// below mirrors only its six non-recursive shapes. A nested transaction
+/// crosses the boundary as its own `tx_.../sg_...` string via `encoded`
+/// instead of nesting — call `tx.unpack` again to look inside it.
+interface types {
+  /// One AENS pointer: a schema key (e.g. `"account_pubkey"`) and its
+  /// `xx_...`-encoded or `ba_...`-encoded target.
+  record pointer {
+    key: string,
+    id: string,
+  }
+
+  /// A transaction field's value. Six of `ae_core::tx::Value`'s eight shapes —
+  /// `List` and `Tx` are the two that recurse and are deliberately absent.
+  /// `uint` carries a decimal string: WIT has no bignum, and `ae_core` fields
+  /// go up to a 128-bit aetto amount.
+  variant field-value {
+    uint(string),
+    text(string),
+    encoded(string),
+    bytes(list<u8>),
+    ct-version(tuple<u8, u8>),
+    pointers(list<pointer>),
+  }
+
+  /// One transaction field, by its schema name (e.g. `"senderId"`, `"amount"`).
+  record tx-field {
+    key: string,
+    value: field-value,
+  }
+}
+
+/// `ae_core::encoding` — the `xx_...` base64check/base58check substrate every
+/// other interface's strings are spelled in.
+///
+/// `prefix` is the two-letter tag (`"ak"`, `"ct"`, `"tx"`, ...) rather than a
+/// mirror of `Encoding`'s 27-case enum: `Encoding::from_prefix`/`.prefix()`
+/// already round-trip through the string on the Rust side, and a caller on
+/// the JS side only ever has the string form.
+interface encoding {
+  encode: func(data: list<u8>, prefix: string) -> result<string, string>;
+  decode: func(data: string) -> result<list<u8>, string>;
+  decode-any: func(data: string) -> result<tuple<string, list<u8>>, string>;
+}
+
+/// `ae_core::hash` — the two digests the rest of the crate is built on.
+interface hash {
+  blake2b256: func(input: list<u8>) -> list<u8>;
+  sha256: func(input: list<u8>) -> list<u8>;
+}
+
+/// `ae_core::keys` — addresses, Ed25519 signing, the network-id binding.
+///
+/// No `generate()`. `SecretKey::generate()` reads OS randomness through
+/// `rand_core::OsRng`, and `getrandom` has no backend for bare
+/// `wasm32-unknown-unknown` that does not itself depend on `wasm-bindgen`'s JS
+/// glue — a second, incompatible binding mechanism this pipeline does not run
+/// (`jco`/`cargo-component` speak the Component Model, not wasm-bindgen's
+/// ABI). The browser already has a CSPRNG (`crypto.getRandomValues`); a
+/// caller draws a 32-byte seed there and calls `from-seed`, same as
+/// `viem`/`noble-curves` do. `from-seed` is deterministic and needs no entropy
+/// source on this side of the boundary.
+interface keys {
+  /// Derive (`sk_...` secret, `ak_...` address) from a 32-byte seed.
+  from-seed: func(seed: list<u8>) -> result<tuple<string, string>, string>;
+  /// The `ak_...` address for an `sk_...` secret key.
+  address-from-secret: func(secret: string) -> result<string, string>;
+  /// Sign `encoded-tx` (a `tx_...` string, unsigned) for `network-id`.
+  /// `inner` selects the domain: `false` signs it as itself, `true` as a
+  /// transaction wrapped by a `GaMetaTx`/`PayingForTx`. Returns an `sg_...`
+  /// signature — pair it with `tx.wrap-signed` to get a broadcastable
+  /// `SignedTx`.
+  sign-transaction: func(secret: string, encoded-tx: string, network-id: string, inner: bool) -> result<string, string>;
+  /// Sign a human-readable message under the standard message prefix.
+  sign-message: func(secret: string, message: string) -> result<string, string>;
+  /// Verify a message signature against an `ak_...` address.
+  verify-message: func(message: string, signature: string, address: string) -> result<bool, string>;
+}
+
+/// `ae_core::tx` — `TxParams` ⇄ `tx_...`, over the tags a wallet-less caller
+/// actually drives.
+///
+/// Out of scope for this pass, and why: `SignedTx` is built and read through
+/// `wrap-signed`/`unpack-signed` below rather than through `build`/`unpack`,
+/// because its `signatures` field is `ae_core::tx::Value::List` — one of the
+/// two recursive shapes `field-value` leaves out. `ChannelCreateTx` (a
+/// repeated address list) and `ChannelCloseSoloTx`/`ChannelSlashTx` (a
+/// pre-serialised state-tree proof-of-inclusion) need shapes that belong to
+/// the state-trees workstream, not yet exposed here — the other seven Channel
+/// tags need only scalars and encoded strings and build normally. Every other
+/// one of the 26 tags — including `GaMetaTx`/`PayingForTx`, whose nested `tx`
+/// field is itself a `Transaction`-kind field and accepts a plain `encoded`
+/// `tx_...`/`sg_...` string on the wire — goes through `build`/`unpack`
+/// as-is.
+interface tx {
+  use types.{tx-field};
+
+  /// Serialise `fields` under `tag`'s schema (its reference name, e.g.
+  /// `"SpendTx"`) to a `tx_...` string. `version` pins the schema version;
+  /// omit it for the tag's default. Every field the schema calls for must be
+  /// present — there is no fee model behind this boundary, so `fee` /
+  /// `gasLimit` / `nameFee` are the caller's numbers, not computed here.
+  build: func(tag: string, version: option<u32>, fields: list<tx-field>) -> result<string, string>;
+
+  /// Parse a `tx_...` string back to its tag, version and fields. A nested
+  /// transaction field (`GaMetaTx.tx`, `PayingForTx.tx`) comes back as its own
+  /// `field-value::encoded` `tx_...` string — call `unpack` again on it to
+  /// look further inside, rather than the wire type nesting itself.
+  unpack: func(encoded-tx: string) -> result<tuple<string, u32, list<tx-field>>, string>;
+
+  /// The `th_...` hash of a signed transaction.
+  transaction-hash: func(encoded-tx: string) -> result<string, string>;
+
+  /// Wrap a built transaction and its raw signatures into a `SignedTx`,
+  /// `tx_...` — the form a node accepts.
+  wrap-signed: func(signatures: list<list<u8>>, encoded-tx: string) -> result<string, string>;
+
+  /// Unwrap a `SignedTx`: its raw signatures and the inner transaction as its
+  /// own `tx_...` string.
+  unpack-signed: func(encoded-tx: string) -> result<tuple<list<list<u8>>, string>, string>;
+}
+
+/// `ae_core::aens` — name hashing, commitments and the name fee.
+interface aens {
+  is-name: func(name: string) -> bool;
+  produce-name-id: func(name: string) -> result<string, string>;
+  /// `salt` is a decimal-string `u256`, matching `field-value::uint`.
+  commitment-hash: func(name: string, salt: string) -> result<string, string>;
+  /// The minimum `NameClaimTx` fee for `name`, in aettos, as a decimal string.
+  minimum-name-fee: func(name: string) -> result<string, string>;
+  build-contract-id: func(owner: string, nonce: string) -> result<string, string>;
+  oracle-query-id: func(sender: string, nonce: string, oracle: string) -> result<string, string>;
+}
+
+/// `ae_core::fee` — the gas and fee model, minus its one generic member.
+///
+/// `calculate_min_fee` is not here: it takes the transaction rebuild as a
+/// `RebuildTx` callback, re-invoked until the size/fee fixed point converges,
+/// and a callback crossing the component boundary on every round is not a
+/// shape this pass takes on. A caller runs the same fixed point by hand: call
+/// `tx.build` with a candidate `fee`, measure the result's decoded length,
+/// call `estimate-gas` and `fee-for-gas`, and rebuild — converging in the same
+/// "handful of rounds" the Rust version documents. Only one protocol version
+/// exists (`Ceres`), so no version parameter is threaded through.
+interface fee {
+  /// `tag` is the schema name, as in `tx.build`. `size` is the transaction's
+  /// serialised length in bytes (`encoding.decode` the built `tx_...` and take
+  /// its length). `relative-ttl` matters only for oracle tags (1 otherwise);
+  /// `inner-tx-size` only for `GaMetaTx`/`PayingForTx` (0 otherwise).
+  estimate-gas: func(tag: string, size: u32, relative-ttl: u64, inner-tx-size: u32) -> result<u64, string>;
+  /// The fee, in aettos, that `gas` costs at the protocol minimum gas price —
+  /// a decimal string.
+  fee-for-gas: func(gas: u64) -> string;
+  /// The smallest bid, in aettos, that raises an AENS auction standing at
+  /// `current-fee` (both decimal strings).
+  minimum-bid-fee: func(current-fee: string) -> result<string, string>;
+  auction-end-height: func(label-length: u32, claim-height: u64) -> u64;
+  is-auction-name: func(label-length: u32) -> bool;
+}
+
 world harness {
-  export ping: func() -> string;
+  export encoding;
+  export hash;
+  export keys;
+  export tx;
+  export aens;
+  export fee;
 }

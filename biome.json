@@ -7,6 +7,7 @@
       "tsconfig.base.json",
       "crates/target/**",
       "crates/**/tests/vectors/**",
+      "crates/ae-parity/matrix*.json",
       "bindings/wasm-js/generated/**",
       "bindings/wasm-js/placeholder-core/target/**",
       "bindings/python/target/**",

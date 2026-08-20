@@ -1,8 +1,25 @@
 name: CI
 
+# `agent/**` is on `push` so a feature branch gates itself before a pull
+# request exists. Without it a branch gets no CI from either trigger — the
+# `pull_request` filter matches the BASE branch, so it fires only once a PR is
+# open — and work arrives at review with nothing to point at but a local run on
+# the author's own host.
+#
+# While a PR is open both triggers fire on the same commit, and that duplicate
+# is deliberate. The usual fix, a `concurrency` group with
+# `cancel-in-progress`, collapses them by cancelling one — and a cancelled
+# check on a pull request reads as not-green to whoever is holding the merge
+# gate. A run too many is cheaper than a verdict that has to be explained.
+# Actions minutes are free on this repository, so the cost here is wall-clock
+# and noise, not money.
+#
+# The release workflows are deliberately not in this list: `release.yml` is
+# `push` to `main` and `release-branch.yml` is `workflow_dispatch`. Neither is
+# a gate and neither should ever fire from a feature branch.
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'agent/**']
   pull_request:
     branches: [main, develop]
 
