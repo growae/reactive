@@ -1721,6 +1721,14 @@
       "hex": "2f03030423020200130402"
     },
     {
+      "name": "node-order/map/utf8-string-keys",
+      "hex": "2f0a0978790209c3a4000d5553440e0de282ac0c116162636412116e616d650a11756265720611f09f9a801015636166c3a90419e5908de5898d08"
+    },
+    {
+      "name": "node-order/map/negative-bits-keys",
+      "hex": "2f084f000a4f010c4f070ecf81ff08cf4006cf0504cf0202cf0100"
+    },
+    {
       "name": "sweep/variant/1-0",
       "hex": "af00003f"
     },

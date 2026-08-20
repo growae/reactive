@@ -7,12 +7,18 @@
 //! weaker property that catches the cases nobody thought of — that this crate
 //! reads what the reference writes and writes back the identical bytes.
 //!
-//! A failure here is a divergence, not a typo in a twin. Two exclusions are
-//! baked into the corpus and documented in `vectors/generate-sweep.mjs`: map
-//! keys that are non-ASCII strings, and map keys that are negative bit fields.
-//! Both are known divergences where this crate deliberately follows the node
-//! rather than the reference, so including them would assert the disagreement
-//! away. Everything else the reference can produce is in.
+//! A failure here is a divergence, not a typo in a twin. Everything the
+//! reference can produce is in.
+//!
+//! Two cases are named `node-order/…` rather than `sweep/…` because the
+//! reference *cannot* produce them: they are maps keyed by non-ASCII strings and
+//! by negative bit fields, the two places where its ordering disagrees with the
+//! node's, so asking it to write them would produce bytes the chain rejects.
+//! Their key order is stated by hand from `aeb_fate_data:lt/2` instead of
+//! measured, which makes them weaker evidence than the rest — a mistake in the
+//! ordering rule could pass here, where a mistake in any element could not,
+//! since every key and value in them is still serialised by the reference.
+//! `tests/divergence.rs` is where that rule is cited against the node's source.
 
 use ae_fate::{deserialize, serialize};
 
@@ -58,8 +64,11 @@ fn re_encodes_everything_the_reference_writes() {
     for (name, expected) in &corpus {
         let value = match deserialize(expected) {
             Ok(value) => value,
+            // Not always "reference output": the `node-order/…` cases are
+            // assembled here rather than written by the reference, so the
+            // message says which corpus the bytes came from.
             Err(error) => panic!(
-                "{name}: reference output rejected — {error} — {}",
+                "{name}: corpus bytes rejected — {error} — {}",
                 hex(expected)
             ),
         };
@@ -73,7 +82,7 @@ fn re_encodes_everything_the_reference_writes() {
     // A corpus that silently shrank would pass every assertion above. This is
     // the count at the reference version named in the file; regenerating
     // against a new one is expected to move it, deliberately and in the diff.
-    assert_eq!(corpus.len(), 521, "sweep corpus changed size");
+    assert_eq!(corpus.len(), 523, "sweep corpus changed size");
 }
 
 /// The sweep would still pass if `deserialize` were lenient in a way the
