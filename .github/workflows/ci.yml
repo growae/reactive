@@ -108,7 +108,36 @@ jobs:
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main'
+    # A standing gate, not an opt-in. Every pull request into `develop` or
+    # `main`, and every push to those two branches.
+    #
+    # The `integration` label is gone. Once the job is unconditional on pull
+    # requests a label can only ever select which pull requests SKIP the gate,
+    # and `pull_request` here carries no `types:`, so `labeled` never fires and
+    # a label added to an already-open pull request would not have started the
+    # job anyway. It was an opt-in wearing the costume of a gate.
+    #
+    # Nothing is excluded by author or by path. A dependency-only pull request
+    # is not a cheap one to skip — a batched `pnpm-lock.yaml` sweep rewires
+    # every transitive JS dependency at once and is the change most likely to
+    # break against the devnet, so any filter keyed on "it only touched the
+    # lockfile" goes green exactly where the gate earns its keep. The job costs
+    # ~70s and Actions minutes are free on this repository; that is not a price
+    # worth buying a blind spot with.
+    #
+    # `push` to the two integration branches is included deliberately. Merges
+    # into `develop` are made locally with `--no-ff`, so whenever `develop`
+    # moved under a branch the merge commit is a tree no pull request ever
+    # tested. Without this, "CI is green on `develop`" says nothing at all
+    # about integration — which is the one claim a release candidate needs it
+    # to make.
+    #
+    # `agent/**` pushes stay excluded: this is a merge gate, and a branch with
+    # no pull request open is not yet asking to merge.
+    if: >-
+      github.event_name == 'pull_request'
+      || github.ref == 'refs/heads/develop'
+      || github.ref == 'refs/heads/main'
     needs: build
     timeout-minutes: 15
     # The devnet is started from docker-compose.yml, not as a `services:`
