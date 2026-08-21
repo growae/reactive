@@ -73,34 +73,93 @@ type Outcome = {
  * the call failed. The node's call object carries the answer; it is read back
  * off the chain here, because without it this exercise would only establish
  * that *something* went wrong.
+ *
+ * Every read below is of **one named transaction** and waits for that
+ * transaction to be included. The first version of this helper took instead the
+ * most recent `ContractCallTx` by this caller off the top of the chain, which
+ * is a *different* transaction for as long as the node has not included the one
+ * just posted: it answered with the previous call's result, in tens of
+ * milliseconds against the seconds a real read takes, and failed the suite
+ * about one run in five.
  */
-async function latestCallInfo(caller: string): Promise<CallInfo | undefined> {
-  const status = await (await fetch(`${DEVNET_URL}/v3/status`)).json()
-  for (let height = status.top_block_height; height > 0; height--) {
-    const generation = await (
-      await fetch(`${DEVNET_URL}/v3/generations/height/${height}`)
-    ).json()
-    for (const micro of [...(generation.micro_blocks ?? [])].reverse()) {
-      const { transactions } = await (
-        await fetch(`${DEVNET_URL}/v3/micro-blocks/hash/${micro}/transactions`)
+
+const INCLUSION_TIMEOUT_MS = 60_000
+const POLL_INTERVAL_MS = 100
+/** A transaction posted moments ago sits at the top of the chain, not deep in it. */
+const GENERATIONS_SEARCHED = 20
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * The call object of one transaction, polled until the node has included it.
+ * `/info` answers `404` while the transaction is still in the mempool, so an
+ * unsuccessful read here is "not yet", never "no such call".
+ */
+async function callInfoByHash(hash: string): Promise<CallInfo | undefined> {
+  const deadline = Date.now() + INCLUSION_TIMEOUT_MS
+  do {
+    const response = await fetch(`${DEVNET_URL}/v3/transactions/${hash}/info`)
+    if (response.ok) {
+      const info = await response.json()
+      if (info?.call_info)
+        return {
+          returnType: info.call_info.return_type,
+          returnValue: info.call_info.return_value,
+          gasUsed: info.call_info.gas_used,
+        }
+    }
+    await sleep(POLL_INTERVAL_MS)
+  } while (Date.now() < deadline)
+  return undefined
+}
+
+/** The nonce the next transaction this account posts will carry. */
+async function nextNonce(account: string): Promise<number> {
+  const { next_nonce } = await (
+    await fetch(`${DEVNET_URL}/v3/accounts/${account}/next-nonce`)
+  ).json()
+  return next_nonce
+}
+
+/**
+ * The hash of the contract call this caller posted with `nonce`.
+ *
+ * Needed only on the failure path, where the sdk throws without the hash.
+ * `(caller, nonce)` names exactly one transaction that can ever reach this
+ * chain, so this is the same "that transaction, not the latest one" read as
+ * `callInfoByHash` — it just has to find the hash first.
+ */
+async function callHashByNonce(
+  caller: string,
+  nonce: number,
+): Promise<string | undefined> {
+  const deadline = Date.now() + INCLUSION_TIMEOUT_MS
+  do {
+    const status = await (await fetch(`${DEVNET_URL}/v3/status`)).json()
+    const floor = Math.max(1, status.top_block_height - GENERATIONS_SEARCHED)
+    for (let height = status.top_block_height; height >= floor; height--) {
+      const generation = await (
+        await fetch(`${DEVNET_URL}/v3/generations/height/${height}`)
       ).json()
-      const call = [...transactions]
-        .reverse()
-        .find(
-          (t: any) =>
-            t.tx?.type === 'ContractCallTx' && t.tx?.caller_id === caller,
-        )
-      if (!call) continue
-      const info = await (
-        await fetch(`${DEVNET_URL}/v3/transactions/${call.hash}/info`)
-      ).json()
-      return {
-        returnType: info?.call_info?.return_type,
-        returnValue: info?.call_info?.return_value,
-        gasUsed: info?.call_info?.gas_used,
+      for (const micro of [...(generation.micro_blocks ?? [])].reverse()) {
+        const { transactions } = await (
+          await fetch(
+            `${DEVNET_URL}/v3/micro-blocks/hash/${micro}/transactions`,
+          )
+        ).json()
+        const call = [...transactions]
+          .reverse()
+          .find(
+            (t: any) =>
+              t.tx?.type === 'ContractCallTx' &&
+              t.tx?.caller_id === caller &&
+              t.tx?.nonce === nonce,
+          )
+        if (call) return call.hash
       }
     }
-  }
+    await sleep(POLL_INTERVAL_MS)
+  } while (Date.now() < deadline)
   return undefined
 }
 
@@ -179,6 +238,9 @@ describe.skipIf(!process.env.INTEGRATION)(
     }, 180_000)
 
     async function call(method: string, args: unknown[]): Promise<Outcome> {
+      // Read before posting: on the failure path this is the only handle left
+      // on the transaction the call is about to make.
+      const nonce = await nextNonce(caller)
       try {
         const result = await callContract(config, {
           address,
@@ -190,13 +252,14 @@ describe.skipIf(!process.env.INTEGRATION)(
         return {
           ok: true,
           decoded: result.decodedResult,
-          info: await latestCallInfo(caller),
+          info: await callInfoByHash(result.hash),
         }
       } catch (error: any) {
+        const hash = await callHashByNonce(caller, nonce)
         return {
           ok: false,
           error: String(error?.message ?? error),
-          info: await latestCallInfo(caller),
+          info: hash ? await callInfoByHash(hash) : undefined,
         }
       }
     }
@@ -321,9 +384,7 @@ describe.skipIf(!process.env.INTEGRATION)(
         const tx = await buildTransaction(config, {
           tag: 43, // Tag.ContractCallTx
           callerId: caller,
-          nonce:
-            (await (await fetch(`${DEVNET_URL}/v3/accounts/${caller}`)).json())
-              .nonce + 1,
+          nonce: await nextNonce(caller),
           contractId: address,
           abiVersion: 3,
           amount: 0,
@@ -332,8 +393,12 @@ describe.skipIf(!process.env.INTEGRATION)(
           callData: encodeContractBytearray(hex),
         })
         const signed = await signTransaction(config, { tx })
-        await sendTransaction(config, { tx: signed })
-        const info = await latestCallInfo(caller)
+        // `sendTransaction` returns as soon as the node has accepted the
+        // transaction into its mempool, so the call object does not exist yet.
+        // Both halves of this loop post from the same account, and reading
+        // anything other than this hash reads the previous iteration's result.
+        const { hash } = await sendTransaction(config, { tx: signed })
+        const info = await callInfoByHash(hash)
         console.log(
           `  ${label.padEnd(30)}  return_type=${info?.returnType} gas_used=${info?.gasUsed}`,
         )
