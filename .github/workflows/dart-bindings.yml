@@ -29,7 +29,7 @@ jobs:
       run:
         working-directory: bindings/dart
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Pinned to match python-bindings.yml, same reasoning: a floating
       # toolchain turns an unrelated Rust release into a red gate on an
@@ -77,7 +77,7 @@ jobs:
       run:
         working-directory: bindings/dart/rust
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@1.97.1
 
@@ -104,7 +104,7 @@ jobs:
       run:
         working-directory: bindings/dart
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@1.97.1
 
