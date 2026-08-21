@@ -111,18 +111,13 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main'
     needs: build
     timeout-minutes: 15
-    services:
-      aeternity-node:
-        image: aeternity/aeternity:v7.2.0
-        ports:
-          - 3013:3013
-          - 3113:3113
-          - 3014:3014
-        options: >-
-          --health-cmd "curl -f http://localhost:3013/v3/status || exit 1"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 20
+    # The devnet is started from docker-compose.yml, not as a `services:`
+    # container. A service container is created before the first step runs, so
+    # `actions/checkout` has not yet put test/config/aeternity.yaml on the
+    # runner when its bind mount is resolved — Docker then creates an empty
+    # directory at the mount target and the node silently boots ae_mainnet
+    # instead of the ae_devnet the suite pins. That failure is silent: the node
+    # is healthy and answers /v3/status, it is just the wrong chain.
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -132,4 +127,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Start devnet
+        run: docker compose up -d --wait
       - run: pnpm test:integration
+      - name: Stop devnet
+        if: always()
+        run: docker compose down -v
