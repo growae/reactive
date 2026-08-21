@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Pinned to the exact patch, matching core-component/rust-toolchain.toml
       # rather than left floating — std's panic-location prefix moves with the

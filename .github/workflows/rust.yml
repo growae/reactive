@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Pinned to the exact version, not `stable` and not a minor: clippy's lint
       # set changes with the release and the workspace denies warnings below, so
