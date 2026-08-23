@@ -14,8 +14,8 @@
     "@growae/reactive-connectors": "latest"
   },
   "devDependencies": {
-    "nuxt": "^4.5.2",
-    "typescript": "^7.0.2",
+    "nuxt": "^3.14.0",
+    "typescript": "^5.7.0",
     "@tanstack/vue-query": "^5.101.4"
   },
   "overrides": {
