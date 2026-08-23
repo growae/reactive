@@ -42,7 +42,7 @@ jobs:
       # patch, and the committed core-harness.js/.d.ts (deterministic; see the
       # drift check below) have to byte-match a build made with this exact
       # toolchain.
-      - uses: dtolnay/rust-toolchain@1.100.0
+      - uses: dtolnay/rust-toolchain@1.97.1
         with:
           targets: wasm32-unknown-unknown
 
