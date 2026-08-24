@@ -35,7 +35,7 @@ jobs:
       # Pinned to match crates/rust-toolchain.toml, same reasoning as rust.yml:
       # a floating toolchain turns an unrelated Rust release into a red gate on
       # an untouched branch.
-      - uses: dtolnay/rust-toolchain@1.97.1
+      - uses: dtolnay/rust-toolchain@1.100.0
         with:
           components: rustfmt, clippy
 
@@ -77,7 +77,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: dtolnay/rust-toolchain@1.97.1
+      - uses: dtolnay/rust-toolchain@1.100.0
 
       - uses: actions/setup-python@v7
         with:
@@ -104,7 +104,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: dtolnay/rust-toolchain@1.97.1
+      - uses: dtolnay/rust-toolchain@1.100.0
 
       - uses: actions/setup-python@v7
         with:
