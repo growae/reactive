@@ -11,7 +11,8 @@
   "dependencies": {
     "@growae/reactive-vue": "latest",
     "@growae/reactive": "latest",
-    "@growae/reactive-connectors": "latest"
+    "@growae/reactive-connectors": "latest",
+    "vue": "^3.5.41"
   },
   "devDependencies": {
     "nuxt": "^3.14.0",
