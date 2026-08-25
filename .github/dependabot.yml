@@ -152,3 +152,14 @@ updates:
     groups:
       github-actions-minor-patch:
         update-types: ['minor', 'patch']
+    ignore:
+      # dtolnay/rust-toolchain is pinned by version comment in five workflow
+      # files (rust.yml, parity.yml, wasm-bindings.yml, python-bindings.yml,
+      # dart-bindings.yml) and must move in lockstep with the channel pinned
+      # in crates/rust-toolchain.toml and
+      # bindings/wasm-js/core-component/rust-toolchain.toml. The
+      # github-actions ecosystem can't see those .toml files, so it proposes
+      # a split PR — five workflows bumped, both toolchain files untouched —
+      # that fails rust.yml's own drift check every week. The toolchain moves
+      # only via a deliberate one-line change across all seven files at once.
+      - dependency-name: 'dtolnay/rust-toolchain'
