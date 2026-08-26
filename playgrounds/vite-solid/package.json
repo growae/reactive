@@ -11,12 +11,12 @@
     "@growae/reactive-solid": "workspace:*",
     "@growae/reactive": "workspace:*",
     "@growae/reactive-connectors": "workspace:*",
-    "@tanstack/solid-query": "^5.50.0",
-    "solid-js": "^1.9.0"
+    "@tanstack/solid-query": "^5.102.0",
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
-    "vite-plugin-solid": "^2.10.0"
+    "vite-plugin-solid": "^2.11.14"
   }
 }
