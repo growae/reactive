@@ -47,7 +47,7 @@ jobs:
 
       - run: git diff --exit-code -- ae-parity/MATRIX.md ae-parity/matrix.json
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: parity-matrix
