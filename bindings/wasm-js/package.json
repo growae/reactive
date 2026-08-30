@@ -11,7 +11,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@bytecodealliance/jco": "1.29.0",
+    "@bytecodealliance/jco": "1.31.0",
     "vitest": "^3.2.7"
   }
 }

@@ -12,14 +12,14 @@
     "@growae/reactive": "workspace:*",
     "@growae/reactive-connectors": "workspace:*",
     "@growae/reactive-react": "workspace:*",
-    "@tanstack/react-query": "^5.50.0",
+    "@tanstack/react-query": "^5.102.0",
     "next": "^15.5.23",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
     "typescript": "^5.7.0"
   }
 }

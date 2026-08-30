@@ -44,7 +44,7 @@
   "dependencies": {
     "@aeternity/aepp-sdk": "^14.0.0",
     "eventemitter3": "^5.0.0",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.15"
   },
   "peerDependencies": {
     "@growae/reactive-connectors": "workspace:*",
@@ -63,7 +63,7 @@
     }
   },
   "devDependencies": {
-    "@tanstack/query-core": "^5.95.2"
+    "@tanstack/query-core": "^5.102.0"
   },
   "publishConfig": {
     "access": "public"
