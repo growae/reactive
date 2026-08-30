@@ -14,8 +14,12 @@ export type UseConfigReturnType<config extends Config = Config> = config
 export function useConfig<config extends Config = Config>(
   parameters: UseConfigParameters<config> = {},
 ): UseConfigReturnType<config> {
-  // biome-ignore lint/correctness/useHookAtTopLevel: pre-existing conditional useContext call, flagged by the biome 2.x upgrade — needs a Core Engineer fix, not touched here
-  const config = parameters.config ?? useContext(ReactiveContext)
+  // useContext is called unconditionally. Reading it inside `??` would skip the
+  // hook whenever a config is passed explicitly, so a caller whose `config`
+  // parameter changes between renders would change this component's hook count
+  // and React would throw. Every hook taking an optional `config` reaches here.
+  const contextConfig = useContext(ReactiveContext)
+  const config = parameters.config ?? contextConfig
   if (!config) throw new ReactiveProviderNotFoundError()
   return config as UseConfigReturnType<config>
 }

@@ -41,6 +41,6 @@
     "*": "biome check --write --no-errors-on-unmatched"
   },
   "engines": {
-    "node": ">=18.19"
+    "node": ">=22.12"
   }
 }

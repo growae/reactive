@@ -7,9 +7,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 
 import { createConfig, mock, testnet } from '@growae/reactive'
 import { renderHook } from '@testing-library/react'
-import { createElement } from 'react'
+import { createElement, useState } from 'react'
 import { ReactiveProvider } from '../context'
-import { useConfig } from './useConfig'
+import { type UseConfigParameters, useConfig } from './useConfig'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
@@ -47,5 +47,46 @@ describe('useConfig', () => {
     const config = createTestConfig()
     const { result } = renderHook(() => useConfig({ config }))
     expect(result.current).toBe(config)
+  })
+
+  // useContext must not sit behind `??`. React reports a skipped hook as a
+  // console.error rather than throwing, so asserting on the render result alone
+  // passes against the broken form — the spy is what makes this a regression test.
+  it('should keep a stable hook order when the config parameter changes', () => {
+    const errors: unknown[][] = []
+    const spy = vi
+      .spyOn(console, 'error')
+      .mockImplementation((...args: unknown[]) => {
+        errors.push(args)
+      })
+    const config = createTestConfig()
+    const { result, rerender } = renderHook(
+      ({ parameters }) => {
+        const resolved = useConfig(parameters)
+        const [marker] = useState('after')
+        return { resolved, marker }
+      },
+      {
+        initialProps: {
+          parameters: { config } as UseConfigParameters,
+        },
+        wrapper: ({ children }) =>
+          createElement(
+            ReactiveProvider,
+            { config, reconnectOnMount: false },
+            children,
+          ),
+      },
+    )
+    expect(result.current.resolved).toBe(config)
+
+    rerender({ parameters: {} })
+    spy.mockRestore()
+
+    expect(result.current.resolved).toBe(config)
+    expect(result.current.marker).toBe('after')
+    expect(
+      errors.filter((args) => String(args[0]).includes('order of Hooks')),
+    ).toEqual([])
   })
 })
