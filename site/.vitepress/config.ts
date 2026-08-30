@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitepress'
 import type { DefaultTheme } from 'vitepress'
+import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'Reactive',

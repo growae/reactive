@@ -1,7 +1,7 @@
 import {
   type BuildTransactionParameters,
-  type Config,
   buildTransaction,
+  type Config,
 } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'

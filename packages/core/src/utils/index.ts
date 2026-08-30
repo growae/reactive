@@ -6,11 +6,11 @@ export {
   type EncodingPrefix,
   isValidAddress,
   isValidContractAddress,
-  isValidTxHash,
   isValidName,
+  isValidTxHash,
 } from './encoding'
 
-export { toAe, toAettos, formatAmount } from './formatAmount'
+export { formatAmount, toAe, toAettos } from './formatAmount'
 
 export { getAction } from './getAction'
 

@@ -1,7 +1,7 @@
 import { BrowserWindowMessageConnection } from '@aeternity/aepp-sdk'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { walletDetect } from './walletDetect'
 import type { DetectedWallet } from './walletDetect'
+import { walletDetect } from './walletDetect'
 
 const mockDisconnect = vi.fn()
 
@@ -10,9 +10,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   walletDetector: vi.fn(
     (
       _connection: unknown,
-      onDetected: (data: {
-        newWallet: { info: DetectedWallet }
-      }) => void,
+      onDetected: (data: { newWallet: { info: DetectedWallet } }) => void,
     ) => {
       setTimeout(() => {
         onDetected({

@@ -1,9 +1,9 @@
 export {
-  createConnector,
   type ConnectorEventMap,
   type CreateConnectorFn,
+  createConnector,
 } from './createConnector'
 
-export { memory, type MemoryParameters } from './memory'
+export { type MemoryParameters, memory } from './memory'
 
-export { mock, type MockParameters } from './mock'
+export { type MockParameters, mock } from './mock'

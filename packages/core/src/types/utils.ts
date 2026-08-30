@@ -4,16 +4,17 @@ export type ExactPartial<type> = {
   [key in keyof type]?: type[key] | undefined
 }
 
-export type IsNarrowable<type, type2> = IsUnknown<type> extends true
-  ? false
-  : undefined extends type
+export type IsNarrowable<type, type2> =
+  IsUnknown<type> extends true
     ? false
-    : IsNever<
-          (type extends type2 ? true : false) &
-            (type2 extends type ? false : true)
-        > extends true
+    : undefined extends type
       ? false
-      : true
+      : IsNever<
+            (type extends type2 ? true : false) &
+              (type2 extends type ? false : true)
+          > extends true
+        ? false
+        : true
 
 export type IsNever<type> = [type] extends [never] ? true : false
 

@@ -1,5 +1,5 @@
-import { watchHeight } from '@growae/reactive'
 import type { Compute } from '@growae/reactive'
+import { watchHeight } from '@growae/reactive'
 import { type MaybeRef, onScopeDispose, ref, toValue, watch } from 'vue'
 import type { ConfigParameter } from '../types/properties'
 import { useConfig } from './useConfig'

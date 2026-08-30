@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { getBalance } from '../../packages/core/src/actions/getBalance'
 import {
-  FAUCET_PUBLIC_KEY,
   createTestConfig,
+  FAUCET_PUBLIC_KEY,
   waitForNode,
 } from '../setup/integration'
 

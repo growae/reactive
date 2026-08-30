@@ -19,11 +19,11 @@
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import {
-  Encoding,
-  Tag,
   buildTx,
+  Encoding,
   encode,
   produceNameId,
+  Tag,
   unpackTx,
 } from '@aeternity/aepp-sdk'
 

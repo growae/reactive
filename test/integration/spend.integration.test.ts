@@ -2,8 +2,8 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { connect } from '../../packages/core/src/actions/connect'
 import { spend } from '../../packages/core/src/actions/spend'
 import {
-  FAUCET_PUBLIC_KEY,
   createTestConfig,
+  FAUCET_PUBLIC_KEY,
   waitForNode,
 } from '../setup/integration'
 

@@ -1,6 +1,6 @@
 import { createConfig } from '@growae/reactive'
-import { ReactiveProvider } from '@growae/reactive-solid'
 import { testnet } from '@growae/reactive/networks'
+import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { render } from 'solid-js/web'
 

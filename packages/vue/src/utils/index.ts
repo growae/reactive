@@ -1,9 +1,9 @@
 export { deepUnref } from './cloneDeep'
 export {
-  useQuery,
-  useMutation,
-  type UseQueryParameters,
-  type UseQueryReturnType,
   type UseMutationParameters,
   type UseMutationReturnType,
+  type UseQueryParameters,
+  type UseQueryReturnType,
+  useMutation,
+  useQuery,
 } from './query'

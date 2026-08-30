@@ -1,30 +1,30 @@
 export {
-  registerOracle,
-  type RegisterOracleParameters,
-  type RegisterOracleReturnType,
-} from './registerOracle'
-export {
-  extendOracle,
   type ExtendOracleParameters,
   type ExtendOracleReturnType,
+  extendOracle,
 } from './extendOracle'
 export {
-  queryOracle,
-  type QueryOracleParameters,
-  type QueryOracleReturnType,
-} from './queryOracle'
-export {
-  respondToQuery,
-  type RespondToQueryParameters,
-  type RespondToQueryReturnType,
-} from './respondToQuery'
-export {
-  getOracleState,
-  type GetOracleStateParameters,
-  type GetOracleStateReturnType,
-} from './getOracleState'
-export {
-  getOracleQueries,
   type GetOracleQueriesParameters,
   type GetOracleQueriesReturnType,
+  getOracleQueries,
 } from './getOracleQueries'
+export {
+  type GetOracleStateParameters,
+  type GetOracleStateReturnType,
+  getOracleState,
+} from './getOracleState'
+export {
+  type QueryOracleParameters,
+  type QueryOracleReturnType,
+  queryOracle,
+} from './queryOracle'
+export {
+  type RegisterOracleParameters,
+  type RegisterOracleReturnType,
+  registerOracle,
+} from './registerOracle'
+export {
+  type RespondToQueryParameters,
+  type RespondToQueryReturnType,
+  respondToQuery,
+} from './respondToQuery'

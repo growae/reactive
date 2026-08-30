@@ -1,7 +1,7 @@
 import type { Config } from '@growae/reactive'
 import { ReactivePlugin } from '@growae/reactive-vue'
-import { defineNuxtPlugin } from 'nuxt/app'
 import type { NuxtApp } from 'nuxt/app'
+import { defineNuxtPlugin } from 'nuxt/app'
 
 type ReactiveNuxtInject = { config?: Config }
 

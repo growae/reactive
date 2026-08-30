@@ -1,4 +1,4 @@
-import { Tag, buildTx } from '@aeternity/aepp-sdk'
+import { buildTx, Tag } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants'
 import type { Config } from '../createConfig'
 import type { BaseErrorType, ErrorType } from '../errors/base'

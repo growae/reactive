@@ -1,11 +1,11 @@
 'use client'
 
+import type { Compute } from '@growae/reactive'
 import {
   type ReadContractsParameters,
   type ReadContractsReturnType,
   readContracts,
 } from '@growae/reactive'
-import type { Compute } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties'
 import { type UseQueryReturnType, useQuery } from '../utils/query'
 import { useConfig } from './useConfig'

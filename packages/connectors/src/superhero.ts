@@ -8,8 +8,8 @@ import {
 } from '@aeternity/aepp-sdk'
 import {
   ConnectorNotConnectedError,
-  ProviderNotFoundError,
   createConnector,
+  ProviderNotFoundError,
 } from '@growae/reactive'
 
 export type SuperheroParameters = {

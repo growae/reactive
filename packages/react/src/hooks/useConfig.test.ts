@@ -5,9 +5,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '@growae/reactive'
-import { testnet } from '@growae/reactive'
-import { mock } from '@growae/reactive'
+import { createConfig, mock, testnet } from '@growae/reactive'
 import { renderHook } from '@testing-library/react'
 import { createElement } from 'react'
 import { ReactiveProvider } from '../context'

@@ -11,8 +11,8 @@ import { memory } from '../../packages/core/src/connectors/memory'
 import { createConfig } from '../../packages/core/src/createConfig'
 import {
   DEVNET_URL,
-  FAUCET_SECRET_KEY,
   devnet,
+  FAUCET_SECRET_KEY,
   waitForNode,
 } from '../setup/integration'
 

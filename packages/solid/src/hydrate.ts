@@ -1,6 +1,6 @@
-import { hydrate } from '@growae/reactive'
 import type { Config, State } from '@growae/reactive'
-import { type ParentProps, mergeProps, onMount } from 'solid-js'
+import { hydrate } from '@growae/reactive'
+import { mergeProps, onMount, type ParentProps } from 'solid-js'
 
 export type HydrateProps = {
   config: Config

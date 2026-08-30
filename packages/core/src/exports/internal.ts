@@ -37,8 +37,8 @@ export type {
 ////////////////////////////////////////////////////////////////////////////////
 
 export { deepEqual } from '../utils/deepEqual'
-export { uid } from '../utils/uid'
+export { deserialize } from '../utils/deserialize'
 export { getAction } from '../utils/getAction'
 export { getVersion } from '../utils/getVersion'
 export { serialize } from '../utils/serialize'
-export { deserialize } from '../utils/deserialize'
+export { uid } from '../utils/uid'

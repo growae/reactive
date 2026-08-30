@@ -1,9 +1,9 @@
 import type { Config, State } from '@growae/reactive'
 import {
-  type ParentProps,
   createComponent,
   createContext,
   mergeProps,
+  type ParentProps,
 } from 'solid-js'
 import { Hydrate } from './hydrate'
 

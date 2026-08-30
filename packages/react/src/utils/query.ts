@@ -11,11 +11,11 @@ import {
   type DefaultError,
   type MutateFunction,
   type QueryKey,
+  useQuery as tanstack_useQuery,
   type UseMutationOptions,
   type UseMutationResult,
   type UseQueryOptions,
   type UseQueryResult,
-  useQuery as tanstack_useQuery,
   useMutation,
 } from '@tanstack/react-query'
 

@@ -1,7 +1,7 @@
 'use client'
 
-import { hydrate } from '@growae/reactive'
 import type { Config, State } from '@growae/reactive'
+import { hydrate } from '@growae/reactive'
 import { type ReactElement, useEffect, useRef } from 'react'
 
 export type HydrateProps = {

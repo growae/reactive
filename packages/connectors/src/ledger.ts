@@ -1,9 +1,9 @@
 import { AccountLedgerFactory } from '@aeternity/aepp-sdk'
 import {
   ConnectorNotConnectedError,
+  createConnector,
   NetworkNotConfiguredError,
   ProviderNotFoundError,
-  createConnector,
 } from '@growae/reactive'
 
 export type LedgerParameters = {

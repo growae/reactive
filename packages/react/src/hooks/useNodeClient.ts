@@ -1,12 +1,12 @@
 'use client'
 
+import type { Compute } from '@growae/reactive'
 import {
   type GetNodeClientParameters,
   type GetNodeClientReturnType,
   getNodeClient,
   watchNodeClient,
 } from '@growae/reactive'
-import type { Compute } from '@growae/reactive'
 import { useSyncExternalStore } from 'react'
 import type { ConfigParameter } from '../types/properties'
 import { useConfig } from './useConfig'

@@ -1,13 +1,13 @@
 import { Node } from '@aeternity/aepp-sdk'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
-import { type Mutate, type StoreApi, createStore } from 'zustand/vanilla'
+import { createStore, type Mutate, type StoreApi } from 'zustand/vanilla'
 
 import type {
   ConnectorEventMap,
   CreateConnectorFn,
 } from './connectors/createConnector'
-import { type Emitter, type EventData, createEmitter } from './createEmitter'
-import { type Storage, createStorage, getDefaultStorage } from './createStorage'
+import { createEmitter, type Emitter, type EventData } from './createEmitter'
+import { createStorage, getDefaultStorage, type Storage } from './createStorage'
 import { NetworkNotConfiguredError } from './errors/config'
 import type { Network } from './types/network'
 import type { Compute, ExactPartial, RemoveUndefined } from './types/utils'
@@ -429,9 +429,7 @@ export type Config<
       | undefined,
   ): () => void
 
-  getNodeClient(parameters?: {
-    networkId?: string | undefined
-  }): Node
+  getNodeClient(parameters?: { networkId?: string | undefined }): Node
 
   _internal: Internal<networks>
 }

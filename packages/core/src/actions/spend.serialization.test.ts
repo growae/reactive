@@ -18,11 +18,11 @@ vi.mock('@aeternity/aepp-sdk', async (importOriginal) => {
 })
 
 import {
+  decode,
   type Encoded,
   Encoding,
-  Tag,
-  decode,
   encode,
+  Tag,
   unpackTx,
 } from '@aeternity/aepp-sdk'
 import { mock } from '../connectors/mock'

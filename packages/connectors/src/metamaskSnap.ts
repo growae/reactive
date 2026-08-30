@@ -1,8 +1,8 @@
 import {
   ConnectorNotConnectedError,
+  createConnector,
   NetworkNotConfiguredError,
   ProviderNotFoundError,
-  createConnector,
 } from '@growae/reactive'
 
 export type MetaMaskSnapParameters = {
@@ -17,10 +17,7 @@ export type MetaMaskSnapParameters = {
 }
 
 type EthereumProvider = {
-  request<T = unknown>(args: {
-    method: string
-    params?: unknown
-  }): Promise<T>
+  request<T = unknown>(args: { method: string; params?: unknown }): Promise<T>
 }
 
 metamaskSnap.type = 'metamaskSnap' as const

@@ -1,17 +1,18 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "ignore": [
-      "CHANGELOG.md",
-      "pnpm-lock.yaml",
-      "tsconfig.base.json",
-      "crates/target/**",
-      "crates/**/tests/vectors/**",
-      "crates/ae-parity/matrix*.json",
-      "bindings/wasm-js/generated/**",
-      "bindings/wasm-js/placeholder-core/target/**",
-      "bindings/python/target/**",
-      "bindings/python/.venv/**"
+    "includes": [
+      "**",
+      "!**/CHANGELOG.md",
+      "!**/pnpm-lock.yaml",
+      "!**/tsconfig.base.json",
+      "!**/crates/target",
+      "!**/crates/**/tests/vectors",
+      "!**/crates/ae-parity/matrix*.json",
+      "!**/bindings/wasm-js/generated",
+      "!**/bindings/wasm-js/placeholder-core/target",
+      "!**/bindings/python/target",
+      "!**/bindings/python/.venv"
     ]
   },
   "formatter": {
@@ -22,10 +23,10 @@
     "lineWidth": 80
   },
   "linter": {
-    "ignore": ["packages/create-reactive/templates/**"],
+    "includes": ["**", "!**/packages/create-reactive/templates/**"],
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedVariables": "error",
         "useExhaustiveDependencies": "error"
@@ -75,12 +76,10 @@
       "semicolons": "asNeeded"
     }
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "overrides": [
     {
-      "include": ["**/*.vue"],
+      "includes": ["**/*.vue"],
       "linter": {
         "rules": {
           "correctness": {
@@ -91,7 +90,7 @@
       }
     },
     {
-      "include": ["playgrounds/**"],
+      "includes": ["**/playgrounds/**"],
       "linter": {
         "rules": {
           "style": {

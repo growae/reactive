@@ -1,12 +1,12 @@
 'use client'
 
+import type { Compute } from '@growae/reactive'
 import {
   type ConnectErrorType,
   type ConnectParameters,
   type ConnectReturnType,
   connect,
 } from '@growae/reactive'
-import type { Compute } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { ConfigParameter } from '../types/properties'
