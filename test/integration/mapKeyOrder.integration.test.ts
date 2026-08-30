@@ -2,7 +2,10 @@ import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { buildTransaction } from '../../packages/core/src/actions/buildTransaction'
-import { callContract } from '../../packages/core/src/actions/callContract'
+import {
+  CallContractMapKeyOrderError,
+  callContract,
+} from '../../packages/core/src/actions/callContract'
 import { connect } from '../../packages/core/src/actions/connect'
 import { deployContract } from '../../packages/core/src/actions/deployContract'
 import { sendTransaction } from '../../packages/core/src/actions/sendTransaction'
@@ -39,7 +42,22 @@ import {
  * cause on the ordering rather than on the non-ASCII content.
  *
  * The path under test is the shipping one: `callContract` → `Contract.$call` →
- * `AciContractCallEncoder`, i.e. `packages/core/src/actions/callContract.ts:63`.
+ * `AciContractCallEncoder`, i.e. `packages/core/src/actions/callContract.ts`.
+ *
+ * **`callContract` now refuses the trigger arguments before it builds
+ * anything**, so the trigger rows below no longer reach the chain: they assert
+ * a `CallContractMapKeyOrderError` and that the caller's next nonce did not
+ * move, which is the whole of what the guard buys — the same call, at no gas
+ * and with a legible name. The controls still go all the way to the chain, the
+ * decode side is untouched, and the byte-order test at the end still posts the
+ * encoder's exact bytes and the node's, so what the node does with each of them
+ * is still measured here rather than assumed.
+ *
+ * One row is no longer measured live: the `map(bits, _)` trigger reached the
+ * node only through the encoder, and there is no hand-written calldata for
+ * `bulk_bits` the way there is for `bulk`. Its on-node evidence stays in
+ * `MAP-ORDER.md` and is reproducible with `mapOrderDryRun.mjs`, which posts
+ * through the sdk directly and is not affected by the guard.
  */
 
 const COMPILER_URL =
@@ -64,6 +82,10 @@ type Outcome = {
   ok: boolean
   decoded?: unknown
   error?: string
+  /** Refused by the guard in `packages/core`, before anything was built. */
+  refusedLocally?: boolean
+  /** Whether the caller's next nonce moved — i.e. whether anything was posted. */
+  posted?: boolean
   info?: CallInfo | undefined
 }
 
@@ -175,11 +197,18 @@ function render(value: unknown): string {
 
 function report(label: string, outcome: Outcome) {
   const info = outcome.info
-  const tail = info
-    ? `return_type=${info.returnType} return_value=${info.returnValue} gas_used=${info.gasUsed}`
-    : 'no call object on chain'
+  const tail = outcome.refusedLocally
+    ? `nothing posted=${outcome.posted === false} gas_used=0`
+    : info
+      ? `return_type=${info.returnType} return_value=${info.returnValue} gas_used=${info.gasUsed}`
+      : 'no call object on chain'
+  const verdict = outcome.refusedLocally
+    ? 'REFUSED'
+    : outcome.ok
+      ? 'ACCEPTED'
+      : 'REJECTED'
   console.log(
-    `  ${(outcome.ok ? 'ACCEPTED' : 'REJECTED').padEnd(8)}  ${label.padEnd(30)}  ${
+    `  ${verdict.padEnd(8)}  ${label.padEnd(30)}  ${
       outcome.ok ? `→ ${render(outcome.decoded)}  ` : ''
     }${tail}`,
   )
@@ -255,6 +284,18 @@ describe.skipIf(!process.env.INTEGRATION)(
           info: await callInfoByHash(result.hash),
         }
       } catch (error: any) {
+        // Refused in `packages/core` before a transaction existed. There is no
+        // hash to look for and searching for one would only time out, so the
+        // check here is the one that matters: the caller's next nonce must not
+        // have moved.
+        if (error instanceof CallContractMapKeyOrderError) {
+          return {
+            ok: false,
+            refusedLocally: true,
+            posted: (await nextNonce(caller)) !== nonce,
+            error: String(error?.message ?? error),
+          }
+        }
         const hash = await callHashByNonce(caller, nonce)
         return {
           ok: false,
@@ -264,7 +305,7 @@ describe.skipIf(!process.env.INTEGRATION)(
       }
     }
 
-    it('string keys: an all-ASCII map is accepted, a non-ASCII one is not', async () => {
+    it('string keys: an all-ASCII map is accepted, a non-ASCII one is refused locally', async () => {
       console.log('map(string, int):')
       const control = await call('bulk', [
         new Map([
@@ -294,13 +335,16 @@ describe.skipIf(!process.env.INTEGRATION)(
 
       expect(control.ok).toBe(true)
       expect(control.info?.returnType).toBe('ok')
-      expect(trigger.ok).toBe(false)
-      expect(trigger.info?.returnType).toBe('error')
-      expect(reversed.ok).toBe(false)
-      expect(reversed.info?.returnType).toBe('error')
+      // Both orderings are refused, and neither leaves the host: the encoder
+      // sorts, so insertion order is not a lever for the caller and must not be
+      // one for the guard either.
+      expect(trigger.refusedLocally).toBe(true)
+      expect(trigger.posted).toBe(false)
+      expect(reversed.refusedLocally).toBe(true)
+      expect(reversed.posted).toBe(false)
     }, 180_000)
 
-    it('bits keys: two non-negative keys are accepted, two negative ones are not', async () => {
+    it('bits keys: two non-negative keys are accepted, two negative ones are refused locally', async () => {
       console.log('map(bits, int):')
       const control = await call('bulk_bits', [
         new Map([
@@ -320,8 +364,8 @@ describe.skipIf(!process.env.INTEGRATION)(
 
       expect(control.ok).toBe(true)
       expect(control.info?.returnType).toBe('ok')
-      expect(trigger.ok).toBe(false)
-      expect(trigger.info?.returnType).toBe('error')
+      expect(trigger.refusedLocally).toBe(true)
+      expect(trigger.posted).toBe(false)
     }, 180_000)
 
     it('the decode side returns the node order, and feeding it back fails', async () => {
@@ -350,12 +394,14 @@ describe.skipIf(!process.env.INTEGRATION)(
 
       // The round trip is the shape an application actually writes: read a map
       // off the chain, hand it back to a call. Re-encoding runs through the
-      // same encoder, so the value having come from the chain buys nothing.
+      // same encoder, so the value having come from the chain buys nothing —
+      // and the guard has to see that too, since a map that arrived in the
+      // node's order is exactly the one a caller has least reason to suspect.
       console.log('round trip — the decoded map handed straight back:')
       const roundTrip = await call('bulk', [strings.decoded])
       report('bulk(emit_string_map())', roundTrip)
-      expect(roundTrip.ok).toBe(false)
-      expect(roundTrip.info?.returnType).toBe('error')
+      expect(roundTrip.refusedLocally).toBe(true)
+      expect(roundTrip.posted).toBe(false)
     }, 180_000)
 
     it('the same two entries in the node byte order are accepted', async () => {
