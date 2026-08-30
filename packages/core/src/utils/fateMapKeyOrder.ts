@@ -77,6 +77,15 @@ export function compareBitsKeysAsNode(a: bigint, b: bigint): number {
 // A transcription of `FateComparator` at `@aeternity/aepp-calldata` 1.9.1, not
 // a description of it: the quirks below are reproduced rather than corrected,
 // because the question this module asks is what that file will actually do.
+//
+// The transcription is pinned to the installed library by
+// `fateMapKeyOrder.reference.test.ts`, which encodes with it and reads the key
+// order back out of the bytes. That package is transitive — it arrives through
+// `@aeternity/aepp-sdk` — so an upstream fix lands on a lockfile refresh with
+// no manifest change to review, and would leave these two functions describing
+// an encoder that no longer exists. They would then refuse calls the node had
+// started accepting. Any edit here that is not also true of the installed
+// library fails that test.
 
 /**
  * `listComparator` applied to two byte arrays, which is how the reference

@@ -151,6 +151,12 @@ describe('fateMapKeyOrder — twinned against the committed node-order vectors',
 })
 
 describe('fateMapKeyOrder — the encoder half, against measured output', () => {
+  // These are constants measured from `@aeternity/aepp-calldata` once and
+  // written down, so on their own they check the transcription against the
+  // notes it was transcribed from. The same two shapes are asserted against
+  // the installed library itself in `fateMapKeyOrder.reference.test.ts`, which
+  // is what makes an upstream fix fail rather than pass silently.
+
   // `@aeternity/aepp-calldata` 1.9.1 writes `{"ä" → 1, "xy" → 2}` as
   // `2f0209c3a40209787904` — `"ä"` first. Measured on the node in
   // `test/integration/MAP-ORDER.md` and asserted from the other side in
