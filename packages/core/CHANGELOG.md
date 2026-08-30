@@ -52,6 +52,49 @@
   `@aeternity/aepp-sdk` → `@metamask/providers` → `@metamask/utils` → `uuid`
   `<11.1.1` (moderate, missing buffer bounds check), pinned to `^11.1.1`.
 
+- **`callContract()` refuses a `map` argument the node would reject, instead of
+  spending the gas limit finding out.** `@aeternity/aepp-calldata` sorts a map's
+  entries itself, and for `map(string, _)` and `map(bits, _)` its order is not
+  the one the node's decoder requires — it orders string keys by UTF-16 length
+  where the node orders them by UTF-8 byte length, and it inverts the negative
+  half of the `bits` order. The node then refuses the call inside its decoder,
+  after the transaction is mined and after the whole `gasLimit` has been
+  charged for it, with no reason and no hash reaching you.
+
+  `callContract()` now checks the two orders for the keys you actually passed
+  and throws `CallContractMapKeyOrderError` before building or posting
+  anything, listing both orders per offending argument.
+
+  **This is not a fix and does not make the call work.** The encoder sorts the
+  entries, so no insertion order avoids it and there is nothing to change on
+  your side — the call cannot be made until the encoding is fixed upstream.
+  What changed is that it costs nothing instead of the gas limit, and that the
+  refusal has a name you can catch. Only the keys present are compared, so a
+  map whose keys the two implementations happen to agree about — `{"ä" → 1,
+  "ö" → 2}`, or any all-ASCII key set — is unaffected and still goes out.
+
+  `deployContract()`, `simulateContract()`, `readContract()` and
+  `readContracts()` reach the same encoder and are not guarded yet.
+
+- **`callContract()` now throws `CallContractInvocationError` where it
+  previously let `NodeInvocationError` through.** `@aeternity/aepp-sdk` reports
+  a call the node executed and refused as `NodeInvocationError`, which carries
+  the node's reason nowhere but its own message and sets its `transaction`
+  property only on the static path — so an on-chain failure arrived with
+  neither the reason legible nor a hash to look the call up by. The new error
+  carries both, as `reason` and `transactionHash`.
+
+  **If you catch `NodeInvocationError` from `callContract()` today, that
+  `instanceof` stops matching.** The original is preserved unchanged as
+  `cause`, so `catch (error) { if (error.cause instanceof NodeInvocationError)
+  … }` is the migration; matching on `CallContractInvocationError` is the
+  replacement. Nothing else about the call path changed, and no other action
+  wraps it.
+
+  `CallContractMapKeyOrderError`, `CallContractInvocationError` and their
+  `…Type` aliases are exported from the package root. Both are members of the
+  `CallContractErrorType` union, which never named `NodeInvocationError`.
+
 - Updated dependencies
   - @growae/reactive-connectors@0.0.6
 
