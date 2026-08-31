@@ -49,10 +49,10 @@
   },
   "devDependencies": {
     "@nuxt/kit": "^3.21.11",
-    "@tanstack/vue-query": "^5.102.0",
-    "@vue/test-utils": "^2.4.11",
+    "@tanstack/vue-query": "^5.102.8",
+    "@vue/test-utils": "^2.5.0",
     "nuxt": "^3.21.11",
-    "vue": "^3.5.0"
+    "vue": "^3.5.42"
   },
   "publishConfig": {
     "access": "public"
