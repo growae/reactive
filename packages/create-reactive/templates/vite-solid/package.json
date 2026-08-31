@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@growae/reactive-solid": "latest",
-    "@tanstack/solid-query": "^5.101.4",
+    "@tanstack/solid-query": "^5.102.8",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
