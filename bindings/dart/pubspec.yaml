@@ -10,7 +10,7 @@ environment:
   sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
-  flutter_rust_bridge: 2.12.0
+  flutter_rust_bridge: 2.13.0
 
 dev_dependencies:
   ffigen: ^21.0.0
