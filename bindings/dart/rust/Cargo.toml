@@ -15,7 +15,7 @@ crate-type = ["cdylib", "staticlib"]
 # as bindings/python/Cargo.toml.
 [dependencies]
 ae-core = { path = "../../../crates/ae-core" }
-flutter_rust_bridge = "=2.12.0"
+flutter_rust_bridge = "=2.13.0"
 
 [profile.release]
 lto = true
