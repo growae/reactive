@@ -15,7 +15,7 @@ ae-core = { path = "ae-core" }
 ae-fate = { path = "ae-fate" }
 bs58 = "0.5"
 base64 = "0.23"
-blake2 = "0.10"
+blake2 = "0.11"
 sha2 = "0.10"
 ed25519-dalek = { version = "3", features = ["rand_core"] }
 rand_core = { version = "0.6", features = ["getrandom"] }
