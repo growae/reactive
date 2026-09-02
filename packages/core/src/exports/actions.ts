@@ -213,6 +213,7 @@ export {
   signTypedData,
 } from '../actions/signTypedData'
 export {
+  type SimulateContractErrorType,
   type SimulateContractParameters,
   type SimulateContractReturnType,
   simulateContract,
