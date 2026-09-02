@@ -402,10 +402,10 @@ function renderKey(key: FateMapKey): string {
 /**
  * The two orders of every defect, rendered for an error's `metaMessages`.
  *
- * `callContract` and `deployContract` refuse on the same predicate and have to
- * say the same thing about it, so the wording is written once here: two
- * messages a reader compares are then describing the same defect in the same
- * words, and neither can drift while the other does not.
+ * `callContract`, `deployContract` and `simulateContract` refuse on the same
+ * predicate and have to say the same thing about it, so the wording is written
+ * once here: messages a reader compares are then describing the same defect in
+ * the same words, and none can drift while the others do not.
  */
 export function describeMapKeyOrderDefects(
   defects: readonly MapKeyOrderDefect[],
