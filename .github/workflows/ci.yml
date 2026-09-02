@@ -88,10 +88,13 @@ jobs:
       fail-fast: false
       matrix:
         nuxt-major: [3, 4]
-    # `packages/vue` claims `nuxt: '>=3.0.0'` and the module sets
-    # `compatibility.nuxt: '>=3.0.0'`, but the only test that exercised the
-    # module was `expect(typeof mod).toBe('function')` — evidence about
-    # neither major. Each leg here packs @growae/reactive and
+    # `packages/vue` declares `nuxt: '>=3.0.0 <5.0.0'` and the module sets the
+    # same `compatibility.nuxt`. This job is what that range rests on: before
+    # it, the only test exercising the module was
+    # `expect(typeof mod).toBe('function')` — evidence about neither major.
+    # The cap and this matrix move together; widening one without the other
+    # puts the claim back ahead of the evidence. Each leg packs
+    # @growae/reactive and
     # @growae/reactive-vue into real tarballs (never a workspace `link:` —
     # Nuxt resolves `nuxt`/`@nuxt/kit`/`nuxt/app` relative to the consuming
     # app's own node_modules, and a `link:` dependency carries this
