@@ -48,6 +48,46 @@ export function emptyDir(dir: string) {
   }
 }
 
+export type PkgManager = 'bun' | 'npm' | 'pnpm' | 'yarn'
+
+// uuid <11.1.1, pulled in transitively via `@metamask/utils` (a dependency
+// of `@growae/reactive-connectors`), carries a known advisory. Each package
+// manager reads a different override mechanism, and pnpm and yarn's
+// grammars are mutually exclusive within a single field, so the generated
+// project must carry only the one key its own package manager reads.
+const UUID_OVERRIDE_SELECTOR = 'uuid@<11.1.1'
+const UUID_OVERRIDE_RANGE = '^11.1.1'
+// pnpm's own path-selector grammar (`**/@metamask/utils/uuid`) is rejected
+// with ERR_PNPM_INVALID_SELECTOR under `resolutions`, and yarn's path
+// selector without `**/` only partially resolves — this is the one key
+// verified to fully protect yarn 1.x without depending on pnpm ever reading
+// the same field.
+const YARN_UUID_RESOLUTION_KEY = '**/@metamask/utils/uuid'
+
+/**
+ * Mutates `pkg` in place with the uuid override npm, bun and yarn read
+ * directly from `package.json`. Returns the `pnpm-workspace.yaml` contents
+ * to write alongside it for pnpm, since pnpm 11 dropped the `pnpm.overrides`
+ * package.json field pnpm 10 used to read and moved it to a workspace file
+ * that both majors honour outside an actual multi-package workspace.
+ */
+export function applyUuidOverride(
+  pkg: Record<string, unknown>,
+  pkgManager: PkgManager,
+): string | undefined {
+  switch (pkgManager) {
+    case 'npm':
+    case 'bun':
+      pkg.overrides = { [UUID_OVERRIDE_SELECTOR]: UUID_OVERRIDE_RANGE }
+      return undefined
+    case 'yarn':
+      pkg.resolutions = { [YARN_UUID_RESOLUTION_KEY]: UUID_OVERRIDE_RANGE }
+      return undefined
+    case 'pnpm':
+      return `overrides:\n  '${UUID_OVERRIDE_SELECTOR}': '${UUID_OVERRIDE_RANGE}'\n`
+  }
+}
+
 export function pkgFromUserAgent(userAgent: string | undefined) {
   if (!userAgent) return undefined
   const pkgSpec = userAgent.split(' ')[0]!
