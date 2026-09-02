@@ -79,6 +79,46 @@ jobs:
           name: coverage-report
           path: coverage/
 
+  vue-nuxt-compat:
+    name: Vue Nuxt Compat (nuxt ${{ matrix.nuxt-major }})
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        nuxt-major: [3, 4]
+    # `packages/vue` declares `nuxt: '>=3.0.0 <5.0.0'` and the module sets the
+    # same `compatibility.nuxt`. This job is what that range rests on: before
+    # it, the only test exercising the module was
+    # `expect(typeof mod).toBe('function')` — evidence about neither major.
+    # The cap and this matrix move together; widening one without the other
+    # puts the claim back ahead of the evidence. Each leg packs
+    # @growae/reactive and
+    # @growae/reactive-vue into real tarballs (never a workspace `link:` —
+    # Nuxt resolves `nuxt`/`@nuxt/kit`/`nuxt/app` relative to the consuming
+    # app's own node_modules, and a `link:` dependency carries this
+    # monorepo's devDependency resolution with it, silently testing nuxt 3
+    # regardless of what the fixture declares) and runs a real `nuxt build`
+    # against a fixture app pinned to that major.
+    #
+    # The fixture's own pnpm-lock.yaml is intentionally never committed: this
+    # gate always resolves against currently-published nuxt/@nuxt/kit at the
+    # exact pinned version in the fixture's package.json, so it is a compat
+    # smoke check against the live ecosystem, not a byte-frozen build like
+    # the rest of this repo's gates. A failure here can mean nuxt's own
+    # transitive dependencies moved, not that this PR broke anything — read
+    # the log before assuming the change under test is at fault.
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @growae/reactive-vue run test:nuxt-compat nuxt${{ matrix.nuxt-major }}-app
+
   coverage-badge:
     name: Coverage Badge
     runs-on: ubuntu-latest

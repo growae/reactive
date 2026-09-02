@@ -25,14 +25,15 @@
     "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
-    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch",
+    "test:nuxt-compat": "node scripts/test-nuxt-compat.mjs"
   },
   "dependencies": {
     "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
     "@tanstack/vue-query": ">=5.0.0",
-    "nuxt": ">=3.0.0",
+    "nuxt": ">=3.0.0 <5.0.0",
     "typescript": ">=5.7.0",
     "vue": ">=3.0.0"
   },
