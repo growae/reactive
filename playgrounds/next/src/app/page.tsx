@@ -432,7 +432,7 @@ function SpendTab() {
   const handleSpend = () => {
     reset()
     spendAsync({
-      recipientId: recipient,
+      recipient,
       amount,
       payload: payload || undefined,
     })
