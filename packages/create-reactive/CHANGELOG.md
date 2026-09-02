@@ -38,10 +38,12 @@
   caret-pinned. `@growae/*` entries stay on `latest` — they track this
   repository's own releases.
 
-  `vite` is pinned to `^8.2.1`, clearing four open advisories. `typescript` is
-  held at `^5.7.0` rather than the current major: `vue-tsc@3.3.10` crashes under
-  TypeScript 7 with `ERR_PACKAGE_PATH_NOT_EXPORTED`, so one floor keeps all six
-  templates on a line verified to work.
+  `vite` is pinned to `^8.2.2`, clearing four open advisories. `typescript` is
+  held at `^5.7.0` in the four templates whose toolchain cannot take the current
+  major — `next`, `nuxt`, `vite-react` and `vite-vue` — because `vue-tsc`
+  crashes under TypeScript 7 with `ERR_PACKAGE_PATH_NOT_EXPORTED`. The two
+  templates with no such constraint, `vite-solid` and `vite-vanilla`, are on
+  `^7.0.2`.
 
 - The templates' `uuid` override is scoped to the vulnerable range
   (`uuid@<11.1.1`) instead of being unbounded, so it no longer force-upgrades
@@ -53,6 +55,11 @@
   `overrides` and `pnpm.overrides` cover npm and pnpm. **Yarn users:** you lose
   this override and `yarn audit` will surface one moderate `uuid` finding via
   `@metamask/utils`; install and resolution are otherwise identical.
+
+- Template tooling floors moved again before this candidate: `next` `^16.3.2`,
+  `vite` `^8.2.2`, `@vitejs/plugin-react` `^6.1.0` and `vue-tsc` `^3.3.11`. All
+  within-major, and they change only what a *new* scaffold installs — nothing
+  is upgraded in a project you already generated.
 
 - The manifest now declares `"license": "MIT"`. The licence has not changed, but
   no `license` field reached npm for 0.0.5, so registry metadata showed the
