@@ -95,6 +95,11 @@
   `…Type` aliases are exported from the package root. Both are members of the
   `CallContractErrorType` union, which never named `NodeInvocationError`.
 
+- The `zustand` dependency range moves from `^5.0.0` to `^5.0.15`. Same major,
+  no API change on our side; it raises the minimum zustand your install
+  resolves. If you pin zustand yourself, a pin below `5.0.15` no longer
+  satisfies this package.
+
 - Updated dependencies
   - @growae/reactive-connectors@0.0.6
 
