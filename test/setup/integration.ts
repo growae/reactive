@@ -88,3 +88,70 @@ export async function waitForNode(
     `Node at ${url} did not become ready within ${maxRetries * intervalMs}ms`,
   )
 }
+
+/**
+ * The Sophia compiler the integration exercises compile against. A local
+ * `aesophia_http` is faster and works offline; the public one is the default so
+ * that `docker compose up` plus `pnpm test:integration` is all a re-run needs.
+ */
+export const COMPILER_URL =
+  process.env.AE_COMPILER_URL ?? 'https://v8.compiler.aepps.com'
+
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms))
+
+/** How long a posted transaction is given to be included before a read gives up. */
+export const INCLUSION_TIMEOUT_MS = 60_000
+const POLL_INTERVAL_MS = 100
+
+export type CallInfo = {
+  returnType?: string
+  returnValue?: string
+  gasUsed?: number
+}
+
+/**
+ * The call object of **one named transaction**, polled until the node has
+ * included it.
+ *
+ * The sdk reports a failed contract call as `Invocation failed: ""` and the
+ * node's call object is where the answer actually is, so this read is what
+ * turns "something went wrong" into a return type and a gas figure.
+ *
+ * `/info` answers `404` while the transaction is still in the mempool, so an
+ * unsuccessful read here is "not yet", never "no such call". Reading by hash
+ * rather than by taking the most recent transaction off the top of the chain is
+ * deliberate: the latter is a *different* transaction for as long as the node
+ * has not included the one just posted.
+ */
+export async function callInfoByHash(
+  hash: string,
+  url = DEVNET_URL,
+): Promise<CallInfo | undefined> {
+  const deadline = Date.now() + INCLUSION_TIMEOUT_MS
+  do {
+    const response = await fetch(`${url}/v3/transactions/${hash}/info`)
+    if (response.ok) {
+      const info = await response.json()
+      if (info?.call_info)
+        return {
+          returnType: info.call_info.return_type,
+          returnValue: info.call_info.return_value,
+          gasUsed: info.call_info.gas_used,
+        }
+    }
+    await sleep(POLL_INTERVAL_MS)
+  } while (Date.now() < deadline)
+  return undefined
+}
+
+/** The nonce the next transaction this account posts will carry. */
+export async function nextNonce(
+  account: string,
+  url = DEVNET_URL,
+): Promise<number> {
+  const { next_nonce } = await (
+    await fetch(`${url}/v3/accounts/${account}/next-nonce`)
+  ).json()
+  return next_nonce
+}

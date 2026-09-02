@@ -1,12 +1,18 @@
-import { buildTxHash, Contract, NodeInvocationError } from '@aeternity/aepp-sdk'
+import { Contract } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants'
 import type { Config } from '../createConfig'
 import { BaseError } from '../errors/base'
-import type { FateMapKey } from '../utils/fateMapKeyOrder'
 import {
+  describeMapKeyOrderDefects,
   findMapKeyOrderDefects,
   type MapKeyOrderDefect,
 } from '../utils/mapArgumentGuard'
+import {
+  invocationReason,
+  isNodeInvocationError,
+  observeSigning,
+  transactionHashOf,
+} from '../utils/nodeInvocation'
 
 export type CallContractParameters = {
   address: string
@@ -46,10 +52,6 @@ export class CallContractNoAccountError extends BaseError {
   }
 }
 
-function renderKey(key: FateMapKey): string {
-  return typeof key === 'string' ? JSON.stringify(key) : `${key}`
-}
-
 export type CallContractMapKeyOrderErrorType = CallContractMapKeyOrderError & {
   name: 'CallContractMapKeyOrderError'
 }
@@ -77,11 +79,7 @@ export class CallContractMapKeyOrderError extends BaseError {
       `Contract call "${method}" would be rejected by the node: a map argument is serialised in a key order the node's decoder refuses.`,
       {
         metaMessages: [
-          ...defects.flatMap((defect) => [
-            `Argument "${defect.path}" — map(${defect.keyType}, _):`,
-            `  the node accepts    ${defect.nodeOrder.map(renderKey).join(', ')}`,
-            `  the encoder writes  ${defect.encoderOrder.map(renderKey).join(', ')}`,
-          ]),
+          ...describeMapKeyOrderDefects(defects),
           'The encoder sorts the entries, so no insertion order avoids this. Posting it anyway would be mined, refused inside the decoder, and charged the whole gas limit.',
         ],
       },
@@ -141,57 +139,6 @@ export class CallContractInvocationError extends BaseError {
   }
 }
 
-/**
- * The node's reason out of `NodeInvocationError`, which stores it nowhere but
- * its own message. Pinned to the constructor of `@aeternity/aepp-sdk` 14.1.1 by
- * `callContract.test.ts`, so a change upstream fails a test rather than
- * silently emptying the field.
- */
-const INVOCATION_MESSAGE = /^Invocation failed(?:: "([\s\S]*)")?$/
-
-function invocationReason(error: Error): string | undefined {
-  const reason = INVOCATION_MESSAGE.exec(error.message)?.[1]
-  return reason ? reason : undefined
-}
-
-function txHash(transaction: string | undefined): string | undefined {
-  if (transaction == null) return undefined
-  try {
-    return buildTxHash(transaction as `tx_${string}`)
-  } catch {
-    return undefined
-  }
-}
-
-/**
- * The account, plus the last transaction it signed.
- *
- * `NodeInvocationError.transaction` is populated only on the static path — the
- * on-chain path reads the call result back by hash inside the sdk and throws
- * without it — so the signed transaction is observed on the way past instead.
- * Reads go to the real account so that a connector holding private state is
- * unaffected.
- */
-function observeSigning<account extends object>(
-  account: account,
-): { account: account; signed: () => string | undefined } {
-  let last: string | undefined
-  const proxy = new Proxy(account, {
-    get(target, property) {
-      const value = Reflect.get(target, property, target)
-      if (property === 'signTransaction' && typeof value === 'function') {
-        return async (...args: unknown[]) => {
-          const signed = await value.apply(target, args)
-          if (typeof signed === 'string') last = signed
-          return signed
-        }
-      }
-      return typeof value === 'function' ? value.bind(target) : value
-    },
-  })
-  return { account: proxy, signed: () => last }
-}
-
 export async function callContract(
   config: Config,
   parameters: CallContractParameters,
@@ -242,18 +189,14 @@ export async function callContract(
       ttl: txOptions.ttl ?? DEFAULT_TTL,
     } as any)
   } catch (error) {
-    if (
-      error instanceof NodeInvocationError ||
-      (error instanceof Error && error.name === 'NodeInvocationError')
-    ) {
-      const transaction =
-        signing?.signed() ?? (error as NodeInvocationError).transaction
+    if (isNodeInvocationError(error)) {
+      const transaction = signing?.signed() ?? error.transaction
       throw new CallContractInvocationError({
         method,
-        reason: invocationReason(error as Error),
+        reason: invocationReason(error),
         transaction,
-        transactionHash: txHash(transaction),
-        cause: error as Error,
+        transactionHash: transactionHashOf(transaction),
+        cause: error,
       })
     }
     throw error

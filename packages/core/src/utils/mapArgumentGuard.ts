@@ -394,3 +394,25 @@ export function findMapKeyOrderDefects(
   })
   return walk.defects
 }
+
+function renderKey(key: FateMapKey): string {
+  return typeof key === 'string' ? JSON.stringify(key) : `${key}`
+}
+
+/**
+ * The two orders of every defect, rendered for an error's `metaMessages`.
+ *
+ * `callContract` and `deployContract` refuse on the same predicate and have to
+ * say the same thing about it, so the wording is written once here: two
+ * messages a reader compares are then describing the same defect in the same
+ * words, and neither can drift while the other does not.
+ */
+export function describeMapKeyOrderDefects(
+  defects: readonly MapKeyOrderDefect[],
+): string[] {
+  return defects.flatMap((defect) => [
+    `Argument "${defect.path}" — map(${defect.keyType}, _):`,
+    `  the node accepts    ${defect.nodeOrder.map(renderKey).join(', ')}`,
+    `  the encoder writes  ${defect.encoderOrder.map(renderKey).join(', ')}`,
+  ])
+}
