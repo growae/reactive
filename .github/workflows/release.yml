@@ -34,46 +34,43 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
-      - name: Check for publishable packages
-        id: check
-        run: |
-          OUTPUT=$(pnpm changeset status --since=origin/main 2>&1 || true)
-          if echo "$OUTPUT" | grep -q "No changesets present"; then
-            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Publish to npm
         id: publish
+        shell: bash
         run: |
-          pnpm changeset publish 2>&1 | tee /tmp/publish-output.txt
-          TAGS=$(grep -oP 'New tag:\s+\K\S+' /tmp/publish-output.txt || true)
-          echo "tags<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$TAGS" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-          if [ -n "$TAGS" ]; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          if pnpm changeset publish 2>&1 | tee /tmp/publish-output.txt; then
+            TAGS=$(grep -oP 'New tag:\s+\K\S+' /tmp/publish-output.txt || true)
+            echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$TAGS" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+            if [ -n "$TAGS" ]; then
+              echo "result=published" >> "$GITHUB_OUTPUT"
+            else
+              echo "result=none" >> "$GITHUB_OUTPUT"
+            fi
           else
-            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "result=failed" >> "$GITHUB_OUTPUT"
+            echo "changeset publish exited non-zero; nothing reached the registry." >&2
+            exit 1
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push tags
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         run: git push --follow-tags
 
       - name: Get release version
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         id: version
         run: |
           VERSION=$(node -p "require('./packages/core/package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Generate release notes
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         id: notes
         run: |
           NOTES="## Published Packages\n\n"
@@ -90,7 +87,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -101,15 +98,22 @@ jobs:
             --latest
 
       - name: Summary
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         run: |
           echo "### Released v${{ steps.version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "${{ steps.notes.outputs.notes }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: No release needed
-        if: steps.publish.outputs.published == 'false'
+        if: steps.publish.outputs.result == 'none'
         run: echo "No new versions to publish." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish failed
+        if: always() && steps.publish.outputs.result == 'failed'
+        run: |
+          echo "### Publish failed" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`changeset publish\` exited non-zero. Nothing reached the registry — read the publish step log." >> "$GITHUB_STEP_SUMMARY"
 
   back-merge:
     name: Back-merge to develop
@@ -124,8 +128,8 @@ jobs:
 
       - name: Merge main into develop
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Badi Ifaoui"
+          git config user.email "badi.ifaoui@zixdev.com"
           git fetch origin main
           git merge origin/main --no-edit -m "chore: back-merge main into develop"
           git push origin develop
