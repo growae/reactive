@@ -128,8 +128,8 @@ jobs:
         if: ${{ !inputs.dry_run }}
         run: |
           BRANCH="release/v${{ steps.version.outputs.version }}"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Badi Ifaoui"
+          git config user.email "badi.ifaoui@zixdev.com"
           git checkout -b "$BRANCH"
           git add -A
           git commit -m "chore: version packages for v${{ steps.version.outputs.version }}"
