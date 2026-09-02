@@ -10,9 +10,9 @@ import {
   type MutateFunction,
   type QueryKey,
   type SolidMutationOptions,
+  createQuery as tanstack_useQuery,
   type CreateMutationResult as UseMutationResult,
   type CreateQueryResult as UseQueryResult,
-  createQuery as tanstack_useQuery,
   createMutation as useMutation,
 } from '@tanstack/solid-query'
 import { type Accessor, mergeProps } from 'solid-js'

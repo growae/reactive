@@ -14,3 +14,42 @@ packages/*/src/**/*.js
 packages/*/src/**/*.js.map
 packages/*/src/**/*.d.ts
 packages/*/src/**/*.d.ts.map
+
+# Rust build output — the compiled .wasm and jco-transpiled JS glue in
+# bindings/wasm-js/generated/ are committed as the actual binding artifact,
+# not this
+bindings/wasm-js/core-component/target/
+bindings/wasm-js/core-component/src/bindings.rs
+
+# Rust build artifacts — one workspace, one target directory
+/crates/target/
+
+# Python binding — Rust build output, the maturin-managed venv, Python's own
+# caches, and the compiled extension `maturin develop` copies into the
+# package directory for editable installs. Wheels land under dist/, already
+# ignored above.
+bindings/python/target/
+bindings/python/.venv/
+bindings/python/**/__pycache__/
+bindings/python/.pytest_cache/
+bindings/python/python/ae_core/*.so
+bindings/python/python/ae_core/*.pyd
+
+# Dart binding — Rust build output (the compiled native library a consumer's
+# own build step produces; `rust/target/release/libae_core_dart.*` is not
+# committed, same reasoning as the Python binding above), `.dart_tool/`'s
+# caches, and `pubspec.lock`, which a Dart package does not commit — only a
+# Dart *application* pins its own lockfile.
+bindings/dart/rust/target/
+bindings/dart/.dart_tool/
+bindings/dart/pubspec.lock
+bindings/dart/example/.dart_tool/
+bindings/dart/example/pubspec.lock
+
+# Outputs of the on-node exercise. Generated per run, never committed: one
+# carries a freshly generated signing key and the other is a record of a network
+# round trip, and neither is reproducible from a checkout.
+crates/ae-parity/signed.json
+crates/ae-parity/node.json
+crates/ae-parity/matrix-with-node.json
+crates/ae-parity/MATRIX-with-node.md

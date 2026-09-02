@@ -57,3 +57,48 @@ export function pkgFromUserAgent(userAgent: string | undefined) {
     version: pkgSpecArr[1],
   }
 }
+
+function parseVersionParts(version: string): number[] {
+  return version.split('.').map((part) => {
+    const n = Number.parseInt(part, 10)
+    return Number.isNaN(n) ? 0 : n
+  })
+}
+
+function compareVersionParts(a: number[], b: number[]): number {
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const diff = (a[i] ?? 0) - (b[i] ?? 0)
+    if (diff !== 0) return diff
+  }
+  return 0
+}
+
+/**
+ * Minimal `engines`-style range check: space-separated comparators
+ * (`>=`, `>`, `<=`, `<`, `=`), ANDed together — enough for floors like
+ * `">=11"`, not a full semver range implementation.
+ */
+export function satisfiesEngineRange(version: string, range: string): boolean {
+  const current = parseVersionParts(version)
+  return range
+    .trim()
+    .split(/\s+/)
+    .every((comparator) => {
+      const match = comparator.match(/^(>=|<=|>|<|=)?(.+)$/)
+      if (!match) return true
+      const [, op = '>=', rawVersion] = match
+      const cmp = compareVersionParts(current, parseVersionParts(rawVersion!))
+      switch (op) {
+        case '>=':
+          return cmp >= 0
+        case '<=':
+          return cmp <= 0
+        case '>':
+          return cmp > 0
+        case '<':
+          return cmp < 0
+        default:
+          return cmp === 0
+      }
+    })
+}

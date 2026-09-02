@@ -1,0 +1,9 @@
+# Pinned to the exact patch that must match wasm-bindings.yml's
+# dtolnay/rust-toolchain step. std's `/rustc/<hash>/...` panic-location prefix
+# moves with the patch, and the committed generated/core-harness.core.wasm has
+# to byte-match a build made with this exact toolchain — a floating "1.97"
+# would let a later 1.97.z quietly break the drift check again.
+[toolchain]
+channel = "1.97.1"
+targets = ["wasm32-unknown-unknown"]
+profile = "minimal"

@@ -1,5 +1,5 @@
 import { expectTypeOf, test } from 'vitest'
-import { type Network, mainnet, testnet } from './network'
+import { mainnet, type Network, testnet } from './network'
 
 test('mainnet is of type Network', () => {
   expectTypeOf(mainnet).toMatchTypeOf<Network>()

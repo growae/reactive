@@ -1,0 +1,165 @@
+version: 2
+
+updates:
+  # The pnpm workspace: packages/*, site, playgrounds/*, bindings/* — every
+  # member pnpm-workspace.yaml globs in, sharing the root pnpm-lock.yaml.
+  # Does NOT reach packages/create-reactive/templates/*, which the workspace
+  # globs exclude on purpose (see the template entries below).
+  - package-ecosystem: 'npm'
+    directory: '/'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    open-pull-requests-limit: 10
+    groups:
+      workspace-minor-patch:
+        update-types: ['minor', 'patch']
+    # Major bumps stay ungrouped and land as individual PRs — a major here,
+    # especially on @aeternity/aepp-sdk, is a compatibility decision, not
+    # hygiene, and grouping would bury it.
+
+  # The six create-reactive scaffold templates. None carries a lockfile, so
+  # each is its own directory and Dependabot reads it off the manifest's
+  # declared ranges only — it cannot see the resolved transitive tree the way
+  # the root pnpm-lock.yaml lets it. A range that spans a since-patched
+  # version will not surface here the way a lockfile-backed scan would.
+  - package-ecosystem: 'npm'
+    directory: '/packages/create-reactive/templates/next'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      next-template-minor-patch:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/create-reactive/templates/nuxt'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      nuxt-template-minor-patch:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/create-reactive/templates/vite-react'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      vite-react-template-minor-patch:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/create-reactive/templates/vite-solid'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      vite-solid-template-minor-patch:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/create-reactive/templates/vite-vanilla'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      vite-vanilla-template-minor-patch:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: 'npm'
+    directory: '/packages/create-reactive/templates/vite-vue'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      vite-vue-template-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # Three independent Rust crate trees, each with its own Cargo.lock.
+  - package-ecosystem: 'cargo'
+    directory: '/crates'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      crates-minor-patch:
+        update-types: ['minor', 'patch']
+
+  - package-ecosystem: 'cargo'
+    directory: '/bindings/wasm-js/core-component'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      wasm-bindings-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # The PyO3 binding is a third tree, not a member of the crates/ workspace —
+  # it carries its own Cargo.lock and pins pyo3 independently.
+  - package-ecosystem: 'cargo'
+    directory: '/bindings/python'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      python-bindings-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # The flutter_rust_bridge binding is a fourth tree, same shape as the
+  # PyO3 one above — its own Cargo.lock, pins flutter_rust_bridge
+  # independently.
+  - package-ecosystem: 'cargo'
+    directory: '/bindings/dart/rust'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      dart-bindings-rust-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # The Dart package side of the same binding — pubspec.yaml/pubspec.lock,
+  # not part of the pnpm workspace above.
+  - package-ecosystem: 'pub'
+    directory: '/bindings/dart'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      dart-bindings-pub-minor-patch:
+        update-types: ['minor', 'patch']
+
+  # Actions referenced across .github/workflows/*.yml.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    target-branch: 'develop'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    groups:
+      github-actions-minor-patch:
+        update-types: ['minor', 'patch']
+    ignore:
+      # dtolnay/rust-toolchain is pinned by version comment in five workflow
+      # files (rust.yml, parity.yml, wasm-bindings.yml, python-bindings.yml,
+      # dart-bindings.yml) and must move in lockstep with the channel pinned
+      # in crates/rust-toolchain.toml and
+      # bindings/wasm-js/core-component/rust-toolchain.toml. The
+      # github-actions ecosystem can't see those .toml files, so it proposes
+      # a split PR — five workflows bumped, both toolchain files untouched —
+      # that fails rust.yml's own drift check every week. The toolchain moves
+      # only via a deliberate one-line change across all seven files at once.
+      - dependency-name: 'dtolnay/rust-toolchain'

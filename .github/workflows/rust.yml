@@ -1,0 +1,51 @@
+name: Rust
+
+# `agent/**` so a feature branch gates itself before a pull request exists —
+# full reasoning, including why the duplicate run while a PR is open is
+# deliberate, in ci.yml.
+on:
+  push:
+    branches: [main, develop, 'agent/**']
+    paths:
+      - 'crates/**'
+      - '.github/workflows/rust.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'crates/**'
+      - '.github/workflows/rust.yml'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: crates
+
+jobs:
+  rust:
+    name: Rust
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      # Pinned to the exact version, not `stable` and not a minor: clippy's lint
+      # set changes with the release and the workspace denies warnings below, so
+      # a floating toolchain turns an unrelated Rust release into a red gate on
+      # an untouched branch. This must stay equal to `crates/rust-toolchain.toml`
+      # — rustup reads that file inside `crates/`, so a disagreement here means
+      # the runner installs one toolchain and cargo silently fetches another.
+      - uses: dtolnay/rust-toolchain@1.97.1
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates
+
+      - run: cargo fmt --all -- --check
+
+      - run: cargo clippy --locked --all-targets -- -D warnings
+
+      - run: cargo test --locked

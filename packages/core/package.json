@@ -1,6 +1,7 @@
 {
   "name": "@growae/reactive",
-  "version": "0.0.5",
+  "version": "0.0.6",
+  "license": "MIT",
   "type": "module",
   "main": "dist/esm/exports/index.js",
   "types": "dist/types/exports/index.d.ts",
@@ -43,7 +44,7 @@
   "dependencies": {
     "@aeternity/aepp-sdk": "^14.0.0",
     "eventemitter3": "^5.0.0",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.15"
   },
   "peerDependencies": {
     "@growae/reactive-connectors": "workspace:*",
@@ -62,7 +63,7 @@
     }
   },
   "devDependencies": {
-    "@tanstack/query-core": "^5.95.2"
+    "@tanstack/query-core": "^5.102.0"
   },
   "publishConfig": {
     "access": "public"

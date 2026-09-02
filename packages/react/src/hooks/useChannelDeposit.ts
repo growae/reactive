@@ -1,11 +1,11 @@
 'use client'
 
+import type { Compute } from '@growae/reactive'
 import {
   type ChannelDepositParameters,
   type ChannelDepositReturnType,
   channelDeposit,
 } from '@growae/reactive'
-import type { Compute } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties'
 import type { UseMutationReturnType } from '../utils/query'

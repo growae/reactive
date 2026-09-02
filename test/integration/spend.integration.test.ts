@@ -1,7 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { connect } from '../../packages/core/src/actions/connect'
 import { spend } from '../../packages/core/src/actions/spend'
-import { createTestConfig, waitForNode } from '../setup/integration'
+import {
+  createTestConfig,
+  FAUCET_PUBLIC_KEY,
+  waitForNode,
+} from '../setup/integration'
 
 describe.skipIf(!process.env.INTEGRATION)('spend (integration)', () => {
   beforeAll(async () => {
@@ -14,7 +18,7 @@ describe.skipIf(!process.env.INTEGRATION)('spend (integration)', () => {
     await connect(config, { connector })
 
     const result = await spend(config, {
-      recipient: 'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU',
+      recipient: FAUCET_PUBLIC_KEY,
       amount: '1000000000000000000',
     })
 

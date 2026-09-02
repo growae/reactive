@@ -21,7 +21,7 @@ function isPlainObject(value: any): value is object {
   const prot = ctor.prototype
   if (!hasObjectPrototype(prot)) return false
 
-  if (!Object.prototype.hasOwnProperty.call(prot, 'isPrototypeOf')) return false
+  if (!Object.hasOwn(prot, 'isPrototypeOf')) return false
 
   return true
 }

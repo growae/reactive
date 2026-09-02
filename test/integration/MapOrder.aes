@@ -1,0 +1,22 @@
+@compiler >= 8
+
+contract MapOrder =
+  record state = { count : int }
+
+  entrypoint init() = { count = 0 }
+
+  stateful entrypoint bulk(entries : map(string, int)) : int =
+    let n = Map.size(entries)
+    put(state{ count = n })
+    n
+
+  stateful entrypoint bulk_bits(entries : map(bits, int)) : int =
+    let n = Map.size(entries)
+    put(state{ count = n })
+    n
+
+  entrypoint emit_string_map() : map(string, int) =
+    {["ä"] = 1, ["xy"] = 2}
+
+  entrypoint emit_bits_map() : map(bits, int) =
+    {[Bits.all] = 1, [Bits.clear(Bits.all, 0)] = 2}

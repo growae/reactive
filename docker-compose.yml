@@ -1,16 +1,24 @@
-version: '3'
 services:
   aeternity-node:
     image: aeternity/aeternity:v7.2.0
     hostname: node
+    # 3013 is the æternity default, so a host already running a node has it
+    # taken. Move the published ports with AE_DEVNET_PORT and point the suite at
+    # them with AE_DEVNET_URL; the container-side ports are fixed by
+    # test/config/aeternity.yaml and do not move.
     ports:
-      - '3013:3013'
-      - '3113:3113'
-      - '3014:3014'
+      - '${AE_DEVNET_PORT:-3013}:3013'
+      - '${AE_DEVNET_INTERNAL_PORT:-3113}:3113'
+      - '${AE_DEVNET_CHANNEL_PORT:-3014}:3014'
     environment:
       AETERNITY_CONFIG: /home/aeternity/aeternity.yaml
     volumes:
       - ./test/config/aeternity.yaml:/home/aeternity/aeternity.yaml
+      # Pre-fund the suite's disposable account at genesis rather than mining to
+      # it. Mining rewards only land after `beneficiary_reward_delay` key blocks,
+      # and the bundled cuckoo miner does not run on every host, so a suite that
+      # waits for a block is slow where it works and hangs where it does not.
+      - ./test/config/accounts.json:/home/aeternity/node/data/aecore/.genesis/accounts_test.json
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3013/v3/status']
       interval: 5s

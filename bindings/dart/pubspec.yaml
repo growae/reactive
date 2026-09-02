@@ -1,0 +1,18 @@
+name: ae_core
+description: >-
+  aeternity protocol primitives — transaction serialisation, addresses and
+  signing — through flutter_rust_bridge over the ae-core Rust crate.
+version: 0.1.0
+homepage: https://github.com/growae/reactive
+publish_to: none
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter_rust_bridge: 2.12.0
+
+dev_dependencies:
+  ffigen: ^21.0.0
+  lints: ^6.1.0
+  test: ^1.25.0

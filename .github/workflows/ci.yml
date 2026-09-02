@@ -1,8 +1,25 @@
 name: CI
 
+# `agent/**` is on `push` so a feature branch gates itself before a pull
+# request exists. Without it a branch gets no CI from either trigger — the
+# `pull_request` filter matches the BASE branch, so it fires only once a PR is
+# open — and work arrives at review with nothing to point at but a local run on
+# the author's own host.
+#
+# While a PR is open both triggers fire on the same commit, and that duplicate
+# is deliberate. The usual fix, a `concurrency` group with
+# `cancel-in-progress`, collapses them by cancelling one — and a cancelled
+# check on a pull request reads as not-green to whoever is holding the merge
+# gate. A run too many is cheaper than a verdict that has to be explained.
+# Actions minutes are free on this repository, so the cost here is wall-clock
+# and noise, not money.
+#
+# The release workflows are deliberately not in this list: `release.yml` is
+# `push` to `main` and `release-branch.yml` is `workflow_dispatch`. Neither is
+# a gate and neither should ever fire from a feature branch.
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'agent/**']
   pull_request:
     branches: [main, develop]
 
@@ -15,9 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -31,9 +48,9 @@ jobs:
     needs: check
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
@@ -48,15 +65,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:cov
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-report
@@ -70,13 +87,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           name: coverage-report
           path: coverage/
       - name: Generate badge
-        uses: jaywcjlove/coverage-badges-cli@v2.2.0
+        uses: jaywcjlove/coverage-badges-cli@v2.3.0
         with:
           source: coverage/coverage-summary.json
           output: coverage/badge.svg
@@ -91,28 +108,63 @@ jobs:
   integration:
     name: Integration Tests
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'integration') || github.ref == 'refs/heads/main'
+    # A standing gate, not an opt-in. Every pull request into `develop` or
+    # `main`, and every push to those two branches.
+    #
+    # The `integration` label is gone. Once the job is unconditional on pull
+    # requests a label can only ever select which pull requests SKIP the gate,
+    # and `pull_request` here carries no `types:`, so `labeled` never fires and
+    # a label added to an already-open pull request would not have started the
+    # job anyway. It was an opt-in wearing the costume of a gate.
+    #
+    # Nothing is excluded by author or by path. A dependency-only pull request
+    # is not a cheap one to skip — a batched `pnpm-lock.yaml` sweep rewires
+    # every transitive JS dependency at once and is the change most likely to
+    # break against the devnet, so any filter keyed on "it only touched the
+    # lockfile" goes green exactly where the gate earns its keep. The job costs
+    # ~70s and Actions minutes are free on this repository; that is not a price
+    # worth buying a blind spot with.
+    #
+    # `push` to the two integration branches is included deliberately. Merges
+    # into `develop` are made locally with `--no-ff`, so whenever `develop`
+    # moved under a branch the merge commit is a tree no pull request ever
+    # tested. Without this, "CI is green on `develop`" says nothing at all
+    # about integration — which is the one claim a release candidate needs it
+    # to make.
+    #
+    # `agent/**` pushes stay excluded: this is a merge gate, and a branch with
+    # no pull request open is not yet asking to merge.
+    if: >-
+      github.event_name == 'pull_request'
+      || github.ref == 'refs/heads/develop'
+      || github.ref == 'refs/heads/main'
     needs: build
     timeout-minutes: 15
-    services:
-      aeternity-node:
-        image: aeternity/aeternity:v7.2.0
-        ports:
-          - 3013:3013
-          - 3113:3113
-          - 3014:3014
-        options: >-
-          --health-cmd "curl -f http://localhost:3013/v3/status || exit 1"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 20
+    # The devnet is started from docker-compose.yml, not as a `services:`
+    # container. A service container is created before the first step runs, so
+    # `actions/checkout` has not yet put test/config/aeternity.yaml on the
+    # runner when its bind mount is resolved — Docker then creates an empty
+    # directory at the mount target and the node silently boots ae_mainnet
+    # instead of the ae_devnet the suite pins. That failure is silent: the node
+    # is healthy and answers /v3/status, it is just the wrong chain.
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      # Node 22, matching Check / Build / Test and the root engines floor. This
+      # job installs the same workspace they do, and the dev toolchain now needs
+      # Node 22 outright (jsdom, @changesets/cli). Leaving it on 20 meant the one
+      # job running the devnet was the one job running a Node the repo does not
+      # support — a gate is worth less than nothing when it runs a tree nobody
+      # else runs.
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+      - name: Start devnet
+        run: docker compose up -d --wait
       - run: pnpm test:integration
+      - name: Stop devnet
+        if: always()
+        run: docker compose down -v

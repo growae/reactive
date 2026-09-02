@@ -1,41 +1,41 @@
 export {
-  preclaimName,
-  type PreclaimNameParameters,
-  type PreclaimNameReturnType,
-} from './preclaimName'
-export {
-  claimName,
-  type ClaimNameParameters,
-  type ClaimNameReturnType,
-} from './claimName'
-export {
-  updateName,
-  type UpdateNameParameters,
-  type UpdateNameReturnType,
-  type NamePointer,
-} from './updateName'
-export {
-  transferName,
-  type TransferNameParameters,
-  type TransferNameReturnType,
-} from './transferName'
-export {
-  revokeName,
-  type RevokeNameParameters,
-  type RevokeNameReturnType,
-} from './revokeName'
-export {
-  bidName,
   type BidNameParameters,
   type BidNameReturnType,
+  bidName,
 } from './bidName'
 export {
-  getNameEntry,
+  type ClaimNameParameters,
+  type ClaimNameReturnType,
+  claimName,
+} from './claimName'
+export {
   type GetNameEntryParameters,
   type GetNameEntryReturnType,
+  getNameEntry,
 } from './getNameEntry'
 export {
-  resolveName,
+  type PreclaimNameParameters,
+  type PreclaimNameReturnType,
+  preclaimName,
+} from './preclaimName'
+export {
   type ResolveNameParameters,
   type ResolveNameReturnType,
+  resolveName,
 } from './resolveName'
+export {
+  type RevokeNameParameters,
+  type RevokeNameReturnType,
+  revokeName,
+} from './revokeName'
+export {
+  type TransferNameParameters,
+  type TransferNameReturnType,
+  transferName,
+} from './transferName'
+export {
+  type NamePointer,
+  type UpdateNameParameters,
+  type UpdateNameReturnType,
+  updateName,
+} from './updateName'

@@ -1,7 +1,6 @@
 import { BrowserWindowMessageConnection } from '@aeternity/aepp-sdk'
+import type { ConnectorEventMap, Network } from '@growae/reactive'
 import { createEmitter } from '@growae/reactive'
-import type { ConnectorEventMap } from '@growae/reactive'
-import type { Network } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { iframe } from './iframe'
 

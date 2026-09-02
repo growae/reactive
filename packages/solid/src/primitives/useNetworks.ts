@@ -3,8 +3,8 @@ import {
   type GetNetworksReturnType,
   getNetworks,
 } from '@growae/reactive'
-import { createMemo } from 'solid-js'
 import type { Accessor } from 'solid-js'
+import { createMemo } from 'solid-js'
 import { useConfig } from './useConfig'
 
 export type UseNetworksParameters = Accessor<{

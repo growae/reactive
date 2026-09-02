@@ -1,4 +1,4 @@
-import { Tag, buildTx, commitmentHash, genSalt } from '@aeternity/aepp-sdk'
+import { buildTx, commitmentHash, genSalt, Tag } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig'
 import type { BaseErrorType, ErrorType } from '../errors/base'
 

@@ -1,4 +1,4 @@
-import { Tag, buildTxAsync } from '@aeternity/aepp-sdk'
+import { buildTxAsync, Tag } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants'
 import type { Config, Connector } from '../createConfig'
 import type { BaseErrorType, ErrorType } from '../errors/base'

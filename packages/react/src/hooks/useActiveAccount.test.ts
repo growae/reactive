@@ -1,7 +1,5 @@
 // @vitest-environment jsdom
-import { createConfig } from '@growae/reactive'
-import { mainnet } from '@growae/reactive'
-import { mock } from '@growae/reactive'
+import { createConfig, mainnet, mock } from '@growae/reactive'
 import { renderHook } from '@testing-library/react'
 import { createElement } from 'react'
 import { describe, expect, it } from 'vitest'

@@ -1,4 +1,4 @@
-import { Tag, buildTx } from '@aeternity/aepp-sdk'
+import { buildTx, Tag } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants'
 import type { Config } from '../createConfig'
 import type { BaseErrorType, ErrorType } from '../errors/base'
@@ -52,7 +52,9 @@ export async function spend(
     senderId,
     recipientId: recipient,
     amount: BigInt(amount),
-    payload: payload ?? '',
+    // The SDK rejects `''` as an encoded bytearray but defaults the field to an
+    // empty payload when it is absent, so omit it rather than coercing.
+    ...(payload ? { payload } : {}),
     fee: txOptions.fee ? BigInt(txOptions.fee) : undefined,
     ttl: txOptions.ttl ?? DEFAULT_TTL,
     nonce,

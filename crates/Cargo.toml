@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = ["ae-core", "ae-fate", "ae-parity"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.82"
+license = "MIT"
+repository = "https://github.com/growae/reactive"
+publish = false
+
+[workspace.dependencies]
+ae-core = { path = "ae-core" }
+ae-fate = { path = "ae-fate" }
+bs58 = "0.5"
+base64 = "0.23"
+blake2 = "0.10"
+sha2 = "0.10"
+ed25519-dalek = { version = "3", features = ["rand_core"] }
+rand_core = { version = "0.6", features = ["getrandom"] }
+num-bigint = "0.5"
+thiserror = "2"
+hex = "0.4"
+serde_json = "1"
+
+# Inherited by every member with `[lints] workspace = true`, so the bar is set
+# once rather than per crate. `missing_docs` is a deny rather than a warn: a
+# public item on a protocol surface that nobody described is a defect, and the
+# whole value of this layer to a consumer is that its types are right.
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "deny"
+
+[workspace.lints.clippy]
+all = "deny"

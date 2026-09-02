@@ -3,10 +3,10 @@ export { hashFn } from '@growae/reactive/query'
 
 // Re-export Vue query wrappers
 export {
-  useQuery,
-  useMutation,
-  type UseQueryParameters,
-  type UseQueryReturnType,
   type UseMutationParameters,
   type UseMutationReturnType,
+  type UseQueryParameters,
+  type UseQueryReturnType,
+  useMutation,
+  useQuery,
 } from '../utils/query'

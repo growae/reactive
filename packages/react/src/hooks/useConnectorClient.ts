@@ -1,14 +1,14 @@
 'use client'
 
+import type { Compute } from '@growae/reactive'
 import {
   type GetConnectionReturnType,
   type GetNodeClientParameters,
   getConnection,
 } from '@growae/reactive'
-import type { Compute } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties'
-import { useQuery } from '../utils/query'
 import type { UseQueryReturnType } from '../utils/query'
+import { useQuery } from '../utils/query'
 import { useConfig } from './useConfig'
 import { useConnection } from './useConnection'
 import { useNetworkId } from './useNetworkId'

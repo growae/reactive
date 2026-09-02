@@ -1,12 +1,12 @@
 'use client'
 
+import type { Compute } from '@growae/reactive'
 import {
   type GetNameEntryErrorType,
   type GetNameEntryParameters,
   type GetNameEntryReturnType,
   getNameEntry,
 } from '@growae/reactive'
-import type { Compute } from '@growae/reactive'
 import type { ConfigParameter } from '../types/properties'
 import { type UseQueryReturnType, useQuery } from '../utils/query'
 import { useConfig } from './useConfig'

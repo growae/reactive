@@ -1,5 +1,5 @@
-import { type Config, watchConnection } from '@growae/reactive'
 import type { Connection } from '@growae/reactive'
+import { type Config, watchConnection } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createEffect, onCleanup } from 'solid-js'
 import { useConfig } from './useConfig'

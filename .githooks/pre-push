@@ -1,0 +1,72 @@
+#!/bin/sh
+# Repo-local pre-push hook.
+#
+# This repository points core.hooksPath at .githooks (see the "prepare" script
+# in package.json, which runs on every install). core.hooksPath is
+# all-or-nothing: it replaces the hook directory outright instead of merging
+# with a host-wide one, so any hook name this directory does not define is not
+# run at all. Without this file, a machine that installs its own global
+# pre-push hook loses it in every clone of this repository, silently.
+#
+# So this file carries no policy of its own. It resolves the machine's global
+# hook directory at run time and delegates to the pre-push hook found there,
+# forwarding the hook arguments and standard input and propagating the exit
+# code unchanged. A machine with no global pre-push hook is left alone.
+#
+# Portable /bin/sh only.
+
+set -u
+
+hook_name=pre-push
+
+warn() {
+  printf '%s\n' "$hook_name: $1" >&2
+}
+
+refuse() {
+  printf '%s\n' "$hook_name: refusing push" >&2
+  printf '%s\n' "reason: $1" >&2
+  exit 1
+}
+
+# Read core.hooksPath from the global, then the system, scope only. The
+# repository scope is deliberately skipped: that is the value pointing here,
+# and honouring it would make this hook call itself. --path expands a leading
+# "~" the way Git itself does.
+global_hooks_dir=''
+for scope in --global --system; do
+  global_hooks_dir=$(git config "$scope" --path --get core.hooksPath 2>/dev/null) || global_hooks_dir=''
+  [ -n "$global_hooks_dir" ] && break
+done
+
+if [ -z "$global_hooks_dir" ]; then
+  warn "no global core.hooksPath is configured; nothing to delegate to."
+  exit 0
+fi
+
+# A relative core.hooksPath is resolved against the top of the working tree,
+# which is also the directory Git runs this hook from.
+case "$global_hooks_dir" in
+  /*) ;;
+  *)
+    top_level=$(git rev-parse --show-toplevel 2>/dev/null) ||
+      refuse "core.hooksPath is set to the relative path $global_hooks_dir but the working tree root could not be resolved"
+    global_hooks_dir="$top_level/$global_hooks_dir"
+    ;;
+esac
+
+global_hook="$global_hooks_dir/$hook_name"
+
+if [ ! -e "$global_hook" ]; then
+  warn "no $hook_name hook in $global_hooks_dir; nothing to delegate to."
+  exit 0
+fi
+
+# Installed but unrunnable is the one case that is not left alone. Skipping
+# here would turn a broken install into a way around a hook the machine's
+# owner asked for, which is worse than a push that stops and says so.
+if [ ! -x "$global_hook" ]; then
+  refuse "$global_hook exists but is not executable; fix the global hook install rather than pushing past it"
+fi
+
+exec "$global_hook" "$@"

@@ -1,8 +1,5 @@
 export type { Network } from './network'
 export { mainnet, testnet } from './network'
-
-export type { Register, ResolvedRegister } from './register'
-
 export type {
   AccountParameter,
   ConfigParameter,
@@ -12,13 +9,13 @@ export type {
   ScopeKeyParameter,
   SyncConnectedNetworkParameter,
 } from './properties'
-
 export type {
   MutationParameter,
   QueryOptions,
   QueryParameter,
   RequiredQueryOptions,
 } from './query'
+export type { Register, ResolvedRegister } from './register'
 
 export type {
   Compute,

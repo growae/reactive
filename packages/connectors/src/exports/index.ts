@@ -1,13 +1,12 @@
-export { superhero, type SuperheroParameters } from '../superhero'
-export { iframe, type IframeParameters } from '../iframe'
-export { webExtension, type WebExtensionParameters } from '../webExtension'
-export { ledger, type LedgerParameters } from '../ledger'
-export { metamaskSnap, type MetaMaskSnapParameters } from '../metamaskSnap'
+export { createConnector, memory, mock } from '@growae/reactive'
+export { type IframeParameters, iframe } from '../iframe'
+export { type LedgerParameters, ledger } from '../ledger'
+export { type MetaMaskSnapParameters, metamaskSnap } from '../metamaskSnap'
+export { type SuperheroParameters, superhero } from '../superhero'
+export { version } from '../version'
 export {
-  walletDetect,
   type DetectedWallet,
   type WalletDetectResult,
+  walletDetect,
 } from '../walletDetect'
-export { version } from '../version'
-
-export { createConnector, mock, memory } from '@growae/reactive'
+export { type WebExtensionParameters, webExtension } from '../webExtension'

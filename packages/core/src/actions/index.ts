@@ -1,223 +1,194 @@
 // Connection actions
+
 export {
-  connect,
+  type BuildTransactionErrorType,
+  type BuildTransactionParameters,
+  type BuildTransactionReturnType,
+  buildTransaction,
+} from './buildTransaction'
+export {
+  type ConnectErrorType,
   type ConnectParameters,
   type ConnectReturnType,
-  type ConnectErrorType,
+  connect,
 } from './connect'
-
 export {
-  disconnect,
+  type DisconnectErrorType,
   type DisconnectParameters,
   type DisconnectReturnType,
-  type DisconnectErrorType,
+  disconnect,
 } from './disconnect'
-
 export {
-  reconnect,
-  type ReconnectParameters,
-  type ReconnectReturnType,
-  type ReconnectErrorType,
-} from './reconnect'
-
+  type EstimateGasErrorType,
+  type EstimateGasParameters,
+  type EstimateGasReturnType,
+  estimateGas,
+} from './estimateGas'
 export {
-  getConnectors,
-  type GetConnectorsReturnType,
-} from './getConnectors'
-
-export {
-  getConnection,
-  type GetConnectionReturnType,
-} from './getConnection'
-
-export {
-  getConnections,
-  type GetConnectionsReturnType,
-} from './getConnections'
-
-export {
-  switchConnection,
-  type SwitchConnectionParameters,
-  type SwitchConnectionReturnType,
-  type SwitchConnectionErrorType,
-} from './switchConnection'
-
-export {
-  getNetworkId,
-  type GetNetworkIdReturnType,
-} from './getNetworkId'
-
-export {
-  getNetworks,
-  type GetNetworksReturnType,
-} from './getNetworks'
-
-export {
-  switchNetwork,
-  type SwitchNetworkParameters,
-  type SwitchNetworkReturnType,
-  type SwitchNetworkErrorType,
-} from './switchNetwork'
-
-export {
-  getNodeClient,
-  type GetNodeClientParameters,
-  type GetNodeClientReturnType,
-} from './getNodeClient'
-
-// Chain read actions
-export {
-  getBalance,
-  type GetBalanceParameters,
-  type GetBalanceReturnType,
-  type GetBalanceErrorType,
-} from './getBalance'
-
-export {
-  getHeight,
-  type GetHeightParameters,
-  type GetHeightReturnType,
-  type GetHeightErrorType,
-} from './getHeight'
-
-export {
-  getAccount,
+  type GetAccountErrorType,
   type GetAccountParameters,
   type GetAccountReturnType,
-  type GetAccountErrorType,
+  getAccount,
 } from './getAccount'
-
+// Chain read actions
 export {
-  getBlock,
+  type GetBalanceErrorType,
+  type GetBalanceParameters,
+  type GetBalanceReturnType,
+  getBalance,
+} from './getBalance'
+export {
+  type GetBlockErrorType,
   type GetBlockParameters,
   type GetBlockReturnType,
-  type GetBlockErrorType,
+  getBlock,
 } from './getBlock'
-
 export {
-  getMicroBlock,
+  type GetConnectionReturnType,
+  getConnection,
+} from './getConnection'
+export {
+  type GetConnectionsReturnType,
+  getConnections,
+} from './getConnections'
+export {
+  type GetConnectorsReturnType,
+  getConnectors,
+} from './getConnectors'
+export {
+  type GetContractBytecodeErrorType,
+  type GetContractBytecodeParameters,
+  type GetContractBytecodeReturnType,
+  getContractBytecode,
+} from './getContractBytecode'
+export {
+  type GetHeightErrorType,
+  type GetHeightParameters,
+  type GetHeightReturnType,
+  getHeight,
+} from './getHeight'
+export {
+  type GetMicroBlockErrorType,
   type GetMicroBlockParameters,
   type GetMicroBlockReturnType,
-  type GetMicroBlockErrorType,
+  getMicroBlock,
 } from './getMicroBlock'
+export {
+  type GetNetworkIdReturnType,
+  getNetworkId,
+} from './getNetworkId'
+export {
+  type GetNetworksReturnType,
+  getNetworks,
+} from './getNetworks'
+export {
+  type GetNodeClientParameters,
+  type GetNodeClientReturnType,
+  getNodeClient,
+} from './getNodeClient'
 
 export {
-  getTransaction,
+  type GetTransactionErrorType,
   type GetTransactionParameters,
   type GetTransactionReturnType,
-  type GetTransactionErrorType,
+  getTransaction,
 } from './getTransaction'
 
 export {
-  getTransactionCount,
+  type GetTransactionCountErrorType,
   type GetTransactionCountParameters,
   type GetTransactionCountReturnType,
-  type GetTransactionCountErrorType,
+  getTransactionCount,
 } from './getTransactionCount'
-
 export {
-  waitForTransaction,
-  type WaitForTransactionParameters,
-  type WaitForTransactionReturnType,
-  type WaitForTransactionErrorType,
-} from './waitForTransaction'
-
-export {
-  waitForTransactionConfirm,
-  type WaitForTransactionConfirmParameters,
-  type WaitForTransactionConfirmReturnType,
-  type WaitForTransactionConfirmErrorType,
-} from './waitForTransactionConfirm'
-
-export {
-  getContractBytecode,
-  type GetContractBytecodeParameters,
-  type GetContractBytecodeReturnType,
-  type GetContractBytecodeErrorType,
-} from './getContractBytecode'
-
-export {
-  estimateGas,
-  type EstimateGasParameters,
-  type EstimateGasReturnType,
-  type EstimateGasErrorType,
-} from './estimateGas'
-
-// Transaction actions
-export {
-  sendTransaction,
-  type SendTransactionParameters,
-  type SendTransactionReturnType,
-  type SendTransactionErrorType,
-} from './sendTransaction'
-
-export {
-  buildTransaction,
-  type BuildTransactionParameters,
-  type BuildTransactionReturnType,
-  type BuildTransactionErrorType,
-} from './buildTransaction'
-
-export {
-  spend,
-  type SpendParameters,
-  type SpendReturnType,
-  type SpendErrorType,
-} from './spend'
-
-export {
-  transferFunds,
-  type TransferFundsParameters,
-  type TransferFundsReturnType,
-  type TransferFundsErrorType,
-} from './transferFunds'
-
-export {
-  payForTransaction,
+  type PayForTransactionErrorType,
   type PayForTransactionParameters,
   type PayForTransactionReturnType,
-  type PayForTransactionErrorType,
+  payForTransaction,
 } from './payForTransaction'
-
-// Signing actions
 export {
-  signMessage,
-  type SignMessageParameters,
-  type SignMessageReturnType,
-  type SignMessageErrorType,
-} from './signMessage'
-
+  type ReconnectErrorType,
+  type ReconnectParameters,
+  type ReconnectReturnType,
+  reconnect,
+} from './reconnect'
+// Transaction actions
 export {
-  signTypedData,
-  type SignTypedDataParameters,
-  type SignTypedDataReturnType,
-  type SignTypedDataErrorType,
-} from './signTypedData'
-
+  type SendTransactionErrorType,
+  type SendTransactionParameters,
+  type SendTransactionReturnType,
+  sendTransaction,
+} from './sendTransaction'
 export {
-  signTransaction,
-  type SignTransactionParameters,
-  type SignTransactionReturnType,
-  type SignTransactionErrorType,
-} from './signTransaction'
-
-export {
-  verifyMessage,
-  type VerifyMessageParameters,
-  type VerifyMessageReturnType,
-  type VerifyMessageErrorType,
-} from './verifyMessage'
-
-export {
-  verifyTypedData,
-  type VerifyTypedDataParameters,
-  type VerifyTypedDataReturnType,
-  type VerifyTypedDataErrorType,
-} from './verifyTypedData'
-
-export {
-  signDelegation,
+  type SignDelegationErrorType,
   type SignDelegationParameters,
   type SignDelegationReturnType,
-  type SignDelegationErrorType,
+  signDelegation,
 } from './signDelegation'
+// Signing actions
+export {
+  type SignMessageErrorType,
+  type SignMessageParameters,
+  type SignMessageReturnType,
+  signMessage,
+} from './signMessage'
+export {
+  type SignTransactionErrorType,
+  type SignTransactionParameters,
+  type SignTransactionReturnType,
+  signTransaction,
+} from './signTransaction'
+export {
+  type SignTypedDataErrorType,
+  type SignTypedDataParameters,
+  type SignTypedDataReturnType,
+  signTypedData,
+} from './signTypedData'
+export {
+  type SpendErrorType,
+  type SpendParameters,
+  type SpendReturnType,
+  spend,
+} from './spend'
+export {
+  type SwitchConnectionErrorType,
+  type SwitchConnectionParameters,
+  type SwitchConnectionReturnType,
+  switchConnection,
+} from './switchConnection'
+export {
+  type SwitchNetworkErrorType,
+  type SwitchNetworkParameters,
+  type SwitchNetworkReturnType,
+  switchNetwork,
+} from './switchNetwork'
+export {
+  type TransferFundsErrorType,
+  type TransferFundsParameters,
+  type TransferFundsReturnType,
+  transferFunds,
+} from './transferFunds'
+export {
+  type VerifyMessageErrorType,
+  type VerifyMessageParameters,
+  type VerifyMessageReturnType,
+  verifyMessage,
+} from './verifyMessage'
+export {
+  type VerifyTypedDataErrorType,
+  type VerifyTypedDataParameters,
+  type VerifyTypedDataReturnType,
+  verifyTypedData,
+} from './verifyTypedData'
+export {
+  type WaitForTransactionErrorType,
+  type WaitForTransactionParameters,
+  type WaitForTransactionReturnType,
+  waitForTransaction,
+} from './waitForTransaction'
+export {
+  type WaitForTransactionConfirmErrorType,
+  type WaitForTransactionConfirmParameters,
+  type WaitForTransactionConfirmReturnType,
+  waitForTransactionConfirm,
+} from './waitForTransactionConfirm'

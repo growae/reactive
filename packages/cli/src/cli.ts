@@ -1,9 +1,8 @@
 import { cac } from 'cac'
-
-import { generate } from './commands/generate'
 import type { GenerateOptions } from './commands/generate'
-import { init } from './commands/init'
+import { generate } from './commands/generate'
 import type { InitOptions } from './commands/init'
+import { init } from './commands/init'
 import { version } from './version'
 
 const cli = cac('reactive')

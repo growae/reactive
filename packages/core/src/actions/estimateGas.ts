@@ -43,7 +43,7 @@ export async function estimateGas(
   })
 
   const result = dryRunResult.results[0]
-  if (!result || result.result !== 'ok') {
+  if (result?.result !== 'ok') {
     const reason = result?.reason ?? 'Unknown dry-run error'
     throw new Error(`Dry-run failed: ${reason}`)
   }

@@ -1,19 +1,16 @@
 export {
+  AccountNotConnectedError,
+  type AccountNotConnectedErrorType,
+  AccountNotFoundError,
+  type AccountNotFoundErrorType,
+} from './account'
+export {
   BaseError,
   type BaseErrorType,
   type ErrorType,
 } from './base'
 
 export {
-  AccountNotFoundError,
-  type AccountNotFoundErrorType,
-  AccountNotConnectedError,
-  type AccountNotConnectedErrorType,
-} from './account'
-
-export {
-  NetworkNotConfiguredError,
-  type NetworkNotConfiguredErrorType,
   ConnectorAlreadyConnectedError,
   type ConnectorAlreadyConnectedErrorType,
   ConnectorNotConnectedError,
@@ -22,6 +19,8 @@ export {
   type ConnectorNotFoundErrorType,
   ConnectorUnavailableReconnectingError,
   type ConnectorUnavailableReconnectingErrorType,
+  NetworkNotConfiguredError,
+  type NetworkNotConfiguredErrorType,
 } from './config'
 
 export {
@@ -32,8 +31,8 @@ export {
 } from './connector'
 
 export {
-  NodeNotFoundError,
-  type NodeNotFoundErrorType,
   NodeConnectionError,
   type NodeConnectionErrorType,
+  NodeNotFoundError,
+  type NodeNotFoundErrorType,
 } from './node'

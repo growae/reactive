@@ -1,13 +1,11 @@
-export { defineConfig } from './config'
 export type {
-  ReactiveConfig,
   ContractConfig,
   Plugin,
+  ReactiveConfig,
   ResolvedContract,
 } from './config'
-
-export { aci } from './plugins/aci'
+export { defineConfig } from './config'
 export type { AciConfig } from './plugins/aci'
-
-export { compiler } from './plugins/compiler'
+export { aci } from './plugins/aci'
 export type { CompilerConfig } from './plugins/compiler'
+export { compiler } from './plugins/compiler'

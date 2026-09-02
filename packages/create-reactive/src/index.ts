@@ -1,7 +1,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { green, reset } from 'kolorist'
+import { green, reset, yellow } from 'kolorist'
 import prompts from 'prompts'
 
 import { type Framework, frameworks } from './frameworks'
@@ -12,6 +12,7 @@ import {
   isEmpty,
   isValidPackageName,
   pkgFromUserAgent,
+  satisfiesEngineRange,
   toValidPackageName,
 } from './utils'
 
@@ -188,6 +189,18 @@ export async function createReactive(
 
   write('package.json', `${JSON.stringify(pkg, null, 2)}\n`)
 
+  const engines = pkg.engines as Record<string, string> | undefined
+  const requiredNpmRange = engines?.npm
+  const currentNpmVersion =
+    pkgManager === 'npm' && pkgInfo?.name === 'npm'
+      ? pkgInfo.version
+      : undefined
+  const npmEngineUnmet = Boolean(
+    requiredNpmRange &&
+      currentNpmVersion &&
+      !satisfiesEngineRange(currentNpmVersion, requiredNpmRange),
+  )
+
   const cdProjectName = path.relative(cwd, root)
   console.log(green('\nDone. Now run:\n'))
   if (root !== cwd) {
@@ -198,14 +211,27 @@ export async function createReactive(
     )
   }
 
+  if (npmEngineUnmet) {
+    console.log(
+      yellow(
+        `\nWarning: this template requires npm ${requiredNpmRange}, but the active npm is ${currentNpmVersion}.\nnpm versions below that floor are known to crash while resolving this template's dependencies (an upstream arborist bug, not a problem with your setup) rather than failing with a clear error.\nUpgrade npm (npm install -g npm@latest) or use pnpm instead.\n`,
+      ),
+    )
+  }
+
   switch (pkgManager) {
     case 'yarn':
       console.log('  yarn')
       console.log('  yarn dev')
       break
     default:
-      console.log(`  ${pkgManager} install`)
-      console.log(`  ${pkgManager} run dev`)
+      if (pkgManager === 'npm' && npmEngineUnmet) {
+        console.log('  pnpm install')
+        console.log('  pnpm run dev')
+      } else {
+        console.log(`  ${pkgManager} install`)
+        console.log(`  ${pkgManager} run dev`)
+      }
       break
   }
   console.log()

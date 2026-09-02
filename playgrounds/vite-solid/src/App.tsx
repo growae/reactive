@@ -20,8 +20,8 @@ import {
   useSwitchNetwork,
   useVerifyMessage,
 } from '@growae/reactive-solid'
-import { For, Show, createSignal } from 'solid-js'
 import type { JSX } from 'solid-js'
+import { createSignal, For, Show } from 'solid-js'
 
 // ─── Styles ─────────────────────────────────────────────────────
 
