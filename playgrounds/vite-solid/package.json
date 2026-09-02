@@ -11,7 +11,7 @@
     "@growae/reactive-solid": "workspace:*",
     "@growae/reactive": "workspace:*",
     "@growae/reactive-connectors": "workspace:*",
-    "@tanstack/solid-query": "^5.102.0",
+    "@tanstack/solid-query": "^5.102.8",
     "solid-js": "^1.9.15"
   },
   "devDependencies": {
