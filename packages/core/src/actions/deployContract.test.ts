@@ -192,7 +192,7 @@ describe('deployContract — the map key order guard', () => {
     expect(error.message).toContain('map(string, _)')
     expect(error.message).toContain('the node accepts    "xy", "ä"')
     expect(error.message).toContain('the encoder writes  "ä", "xy"')
-    expect(error.message).toContain('no contract would be created')
+    expect(error.message).toContain('never includes')
   })
 
   it('lets through init arguments the encoder gets right', async () => {
@@ -215,7 +215,8 @@ describe('deployContract — the map key order guard', () => {
   it('is a miss for a map behind a variant, as the call guard is', async () => {
     // A variant's JavaScript shape is not fixed by the ACI, so the walk stops
     // there rather than risk reading a caller's object as something it is not.
-    // The deployment goes out and the invocation wrap is what names it.
+    // The deployment goes out; `mapKeyOrderDeploy.integration.test.ts` measures
+    // what the node then does with it.
     const config = {
       getNodeClient: vi.fn(() => ({})),
       state: { current: undefined, connections: new Map() },

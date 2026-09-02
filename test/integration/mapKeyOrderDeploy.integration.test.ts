@@ -3,7 +3,6 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { callContract } from '../../packages/core/src/actions/callContract'
 import { connect } from '../../packages/core/src/actions/connect'
 import {
-  DeployContractInvocationError,
   DeployContractMapKeyOrderError,
   deployContract,
 } from '../../packages/core/src/actions/deployContract'
@@ -25,34 +24,39 @@ import {
  * `mapKeyOrder.integration.test.ts` measures it on `callContract`. This file
  * measures it on `deployContract`, where the same `@aeternity/aepp-calldata`
  * encoder is reached through `Contract.$deploy` — which builds a
- * `ContractCreateTx` whose call data is `encode(contract, "init", args)` — and
- * where an argument the two implementations order differently is not merely
- * refused but refused *after* being mined and charged.
+ * `ContractCreateTx` whose call data is `encode(contract, "init", args)`.
  *
- * Three rows, and the third is the one that matters:
+ * **The node does not treat the two transactions alike, and that is the finding
+ * this file exists to record.** Against the same node v7.2.0, in the same run:
  *
- *   1. a control map in `init`, which deploys and runs;
- *   2. a triggering map in `init`, which `deployContract` now refuses locally,
- *      at no gas and with the caller's next nonce unmoved;
- *   3. the same triggering map behind a `variant`, which the guard deliberately
- *      does not descend into. That deployment goes to the chain exactly as it
- *      did before the guard existed, and the assertions on it are the
- *      measurement this exercise exists for: mined, `return_type=error`, and
- *      **the whole gas limit charged for a contract that was never created**.
+ *   - a `ContractCallTx` carrying a disagreeing map is *mined*, comes back
+ *     `return_type=error`, and is charged the whole gas limit — the sibling
+ *     file's last row measures `gas_used=200000` of a 200000 limit;
+ *   - a `ContractCreateTx` carrying one in its init arguments is accepted into
+ *     the mempool — the node logs `Tx pool events hashes: [th_…]` for it — and
+ *     is then *never included*. Every micro block after it carries zero
+ *     transactions, the node logs no error, no gas is charged, no contract is
+ *     created, and the caller's nonce does not advance. The deployment fails
+ *     only when the sdk gives up polling, with `Transaction not found` naming a
+ *     hash the node answers `404` for. The nonce slot is reusable afterwards.
  *
- * Row 3 is also what the invocation wrap buys. The sdk throws
- * `Invocation failed: ""` with no transaction attached on the on-chain path, so
- * without the wrap there is no hash to read that call object back by — the test
- * below could not make its own measurement.
+ * So on this path the defect is not expensive, it is invisible, and what the
+ * guard in `packages/core` buys is a named local error in place of a
+ * transaction that disappears.
+ *
+ * Three rows: a control that deploys and runs, a triggering map the guard sees
+ * and refuses, and the same map behind a `variant` — the shape the guard
+ * deliberately does not descend into — which is how the node's behaviour is
+ * measured through the shipping code path rather than asserted.
  *
  * `gasLimit` is given on every deployment here, as in the call exercise, so the
  * sdk never falls back to estimating gas through `/v3/dry-run`, which the
- * devnet in `docker-compose.yml` serves only on its internal interface. That is
- * also the shape in which the defect costs money: `Contract.$deploy` builds its
- * `gasLimit` as `opt.gasLimit ?? await this._estimateGas('init', …)`, so a
- * caller who leaves it out has the estimate's dry run refuse the deployment
- * first, for nothing. Read off the sdk, not measured here — this devnet cannot
- * serve that dry run.
+ * devnet in `docker-compose.yml` serves only on its internal interface.
+ *
+ * This file and the call exercise post from the same devnet account and both
+ * read its next nonce as evidence that nothing was posted, so they cannot run
+ * concurrently — `pnpm test:integration` passes `--no-file-parallelism` for
+ * exactly this reason. Run a single file directly and the flag does not matter.
  */
 
 const FUNDER_SECRET_KEY = process.env.AE_DEVNET_FUNDER_SK ?? FAUCET_SECRET_KEY
@@ -77,6 +81,19 @@ const CONTROL = () =>
     ['ä', 1n],
     ['ö', 2n],
   ])
+
+/**
+ * The hash out of the sdk's poll failure.
+ *
+ * There is nothing else to take it from: the transaction never reaches a block,
+ * so `deployContract` has no return value, and the sdk raises a transport error
+ * rather than anything carrying the hash as a field. Reading it out of the
+ * message is exactly as fragile as it looks — which is the point, and is why
+ * the row below asserts on the node's answer rather than on this error.
+ */
+function hashInMessage(error: unknown): string | undefined {
+  return /th_[1-9A-HJ-NP-Za-km-z]+/.exec(String((error as Error)?.message))?.[0]
+}
 
 describe.skipIf(!process.env.INTEGRATION)(
   'map key ordering on deployment (integration)',
@@ -115,13 +132,17 @@ describe.skipIf(!process.env.INTEGRATION)(
       console.log(`\nnode     ${DEVNET_URL}\nowner    ${owner}\n`)
     }, 180_000)
 
-    it('deploys with init arguments the encoder gets right', async () => {
-      const deployed = await deployContract(config, {
+    async function deploy(initArgs: unknown[]) {
+      return deployContract(config, {
         bytecode,
         aci,
-        initArgs: [CONTROL(), { Wrapped: [CONTROL()] }],
+        initArgs,
         options: { gasLimit: GAS_LIMIT },
       })
+    }
+
+    it('deploys with init arguments the encoder gets right', async () => {
+      const deployed = await deploy([CONTROL(), { Wrapped: [CONTROL()] }])
 
       expect(deployed.address).toMatch(/^ct_/)
       const info = await callInfoByHash(deployed.txHash)
@@ -130,12 +151,14 @@ describe.skipIf(!process.env.INTEGRATION)(
       )
       expect(info?.returnType).toBe('ok')
 
-      // The contract is not merely created, it ran: `init` summed both maps.
+      // The contract is not merely created, it ran: `init` summed both maps and
+      // put the total in the state. Called on chain rather than statically,
+      // because this devnet does not serve `/v3/dry-run` externally.
       const size = await callContract(config, {
         address: deployed.address,
         aci,
         method: 'size',
-        options: { callStatic: true },
+        options: { gasLimit: GAS_LIMIT },
       })
       expect(size.decodedResult).toBe(4n)
     }, 180_000)
@@ -143,12 +166,9 @@ describe.skipIf(!process.env.INTEGRATION)(
     it('refuses a triggering init map locally, at no gas', async () => {
       const before = await nextNonce(owner)
 
-      const error = await deployContract(config, {
-        bytecode,
-        aci,
-        initArgs: [TRIGGER(), { Wrapped: [CONTROL()] }],
-        options: { gasLimit: GAS_LIMIT },
-      }).catch((e) => e)
+      const error = await deploy([TRIGGER(), { Wrapped: [CONTROL()] }]).catch(
+        (e) => e,
+      )
 
       expect(error).toBeInstanceOf(DeployContractMapKeyOrderError)
       expect(error.defects).toEqual([
@@ -167,34 +187,41 @@ describe.skipIf(!process.env.INTEGRATION)(
       )
     }, 180_000)
 
-    it('charges the whole gas limit for a deployment the guard cannot see', async () => {
+    it('a deployment the guard cannot see is accepted and then never included', async () => {
       // The same triggering map, behind the `variant` the guard stops
       // descending into. This is what every map-in-init deployment did before
       // the guard, and what the shapes the guard misses still do.
       const before = await nextNonce(owner)
 
-      const error = await deployContract(config, {
-        bytecode,
-        aci,
-        initArgs: [CONTROL(), { Wrapped: [TRIGGER()] }],
-        options: { gasLimit: GAS_LIMIT },
-      }).catch((e) => e)
-
-      expect(error).toBeInstanceOf(DeployContractInvocationError)
-      // The sdk reports this as `Invocation failed: ""` with no transaction —
-      // the hash below exists only because the wrap observed the signing.
-      expect(error.transactionHash).toMatch(/^th_/)
-
-      const info = await callInfoByHash(error.transactionHash)
-      console.log(
-        `  REJECTED  trigger init in variant  return_type=${info?.returnType} gas_used=${info?.gasUsed} of ${GAS_LIMIT}`,
+      const error = await deploy([CONTROL(), { Wrapped: [TRIGGER()] }]).catch(
+        (e) => e,
       )
 
-      // Mined — the nonce moved — refused inside the decoder, and charged the
-      // whole gas limit for a contract that does not exist.
+      // Not the guard — this row exists to measure the miss.
+      expect(error).not.toBeInstanceOf(DeployContractMapKeyOrderError)
+
+      const hash = hashInMessage(error)
+      const onChain = hash
+        ? await fetch(`${DEVNET_URL}/v3/transactions/${hash}`)
+        : undefined
+      console.log(
+        `  LOST      trigger init in variant  error=${(error as Error)?.name} tx=${hash} node_says=${onChain?.status}`,
+      )
+
+      // The node took the transaction and then dropped it. Nothing is on chain
+      // under that hash, nothing was charged, and the nonce never moved — so
+      // unlike the call path there is no gas bill, and unlike the row above
+      // there is no name for what went wrong.
+      expect(hash).toBeDefined()
+      expect(onChain?.status).toBe(404)
+      expect(await nextNonce(owner)).toBe(before)
+
+      // And the slot is reusable: the very next deployment takes the nonce the
+      // lost one was signed with. That is what makes this cheap and invisible
+      // rather than expensive and loud.
+      const recovered = await deploy([CONTROL(), { Wrapped: [CONTROL()] }])
+      expect(recovered.address).toMatch(/^ct_/)
       expect(await nextNonce(owner)).toBe(before + 1)
-      expect(info?.returnType).toBe('error')
-      expect(info?.gasUsed).toBe(GAS_LIMIT)
     }, 180_000)
   },
 )

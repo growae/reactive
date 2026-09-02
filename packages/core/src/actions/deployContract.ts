@@ -84,12 +84,18 @@ export type DeployContractMapKeyOrderErrorType =
  * is no insertion order a caller can pass that avoids it, so this is not a hint
  * about how to reorder the argument.
  *
- * What it costs differs from a call by one detail. With `gasLimit` given the
- * sdk skips its dry-run estimate and posts the `ContractCreateTx` outright: it
- * is mined, refused inside the decoder, and charged the whole gas limit, and no
- * contract is created for the money. Without `gasLimit` the estimate's dry run
- * refuses it first and nothing is charged — so the price of the defect is paid
- * exactly by the callers who took the trouble to set a gas limit.
+ * **What the node does with it is not what it does with a call, and the
+ * difference is measured, not reasoned.** A `ContractCallTx` carrying a
+ * disagreeing map is mined, refused inside the decoder, and charged the whole
+ * gas limit. A `ContractCreateTx` carrying one in its init arguments is
+ * accepted into the mempool and then never included: no gas is charged, the
+ * caller's nonce does not advance, the node logs nothing, and the deployment
+ * fails only when the sdk gives up polling for a transaction the node answers
+ * `404` for. Both halves are posted against the same node v7.2.0 in
+ * `test/integration/mapKeyOrderDeploy.integration.test.ts`.
+ *
+ * So this guard buys legibility rather than gas: without it a deployment
+ * disappears, and the error names a transaction hash the node denies having.
  */
 export class DeployContractMapKeyOrderError extends BaseError {
   override name = 'DeployContractMapKeyOrderError'
@@ -102,7 +108,7 @@ export class DeployContractMapKeyOrderError extends BaseError {
       {
         metaMessages: [
           ...describeMapKeyOrderDefects(defects),
-          'The encoder sorts the entries, so no insertion order avoids this. Deploying it anyway with a gasLimit set would be mined, refused inside the decoder, and charged the whole gas limit, and no contract would be created.',
+          'The encoder sorts the entries, so no insertion order avoids this. Deploying it anyway would post a transaction the node accepts into its mempool and then never includes: no contract, no gas charged, and a failure that names a transaction hash the node answers 404 for.',
         ],
       },
     )
@@ -121,9 +127,13 @@ export type DeployContractInvocationErrorType =
  * `Contract.$deploy` runs the contract's `init` on chain like any other call
  * and reports a refusal the same way `$call` does — as a `NodeInvocationError`
  * carrying the node's reason only inside its message, and, on the on-chain
- * path, no transaction at all. This carries the reason and a hash, so a
- * deployment that the guard above did not catch is at least one a caller can
- * look up.
+ * path, no transaction at all. This carries the reason and a hash, so an `init`
+ * that aborted is a deployment the caller can actually look up.
+ *
+ * It is **not** what the map-ordering defect above reaches. That transaction is
+ * never included, so there is no call result for the sdk to read and no
+ * `NodeInvocationError` to wrap; the sdk fails polling for it instead. The two
+ * failures are different and are named differently on purpose.
  */
 export class DeployContractInvocationError extends BaseError {
   override name = 'DeployContractInvocationError'
@@ -182,7 +192,8 @@ export async function deployContract(
   // guard refuses cannot be made, and refusing it here costs nothing. It is a
   // miss rather than a refusal when `aci` is absent — a source-only deployment
   // has the sdk compile one, and there is nothing here to read the init
-  // argument types off. The invocation wrap below is what that case gets.
+  // argument types off; a miss costs today's behaviour, and guessing at the
+  // types would risk refusing a deployment the node accepts.
   const defects = findMapKeyOrderDefects(aci, INIT, initArgs)
   if (defects.length > 0) {
     throw new DeployContractMapKeyOrderError({ defects })
