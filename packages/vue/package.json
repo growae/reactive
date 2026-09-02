@@ -25,7 +25,8 @@
     "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
-    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch",
+    "test:nuxt-compat": "node scripts/test-nuxt-compat.mjs"
   },
   "dependencies": {
     "@growae/reactive": "workspace:*"
