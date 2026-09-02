@@ -49,12 +49,13 @@
   (`uuid@<11.1.1`) instead of being unbounded, so it no longer force-upgrades
   `uuid` for every dependency your generated app adds later.
 
-  The `resolutions` key is gone. pnpm and yarn read that field with mutually
-  exclusive selector grammars — a yarn-shaped key hard-fails `pnpm install` and
-  a pnpm-shaped key hard-fails `yarn install`, and no key satisfies both.
-  `overrides` and `pnpm.overrides` cover npm and pnpm. **Yarn users:** you lose
-  this override and `yarn audit` will surface one moderate `uuid` finding via
-  `@metamask/utils`; install and resolution are otherwise identical.
+  The mechanism is now generated per package manager instead of shipped as one
+  static key: `overrides` in `package.json` for npm and bun, a
+  `pnpm-workspace.yaml` override for pnpm (both 10 and 11 — pnpm 11 dropped the
+  `pnpm.overrides` package.json field pnpm 10 used to read), and a `resolutions`
+  path selector for yarn. Every generated project carries only its own
+  manager's key, so the mutually exclusive pnpm/yarn selector grammars never
+  collide, and yarn users keep the override.
 
 - Template tooling floors moved again before this candidate: `next` `^16.3.2`,
   `vite` `^8.2.2`, `@vitejs/plugin-react` `^6.1.0` and `vue-tsc` `^3.3.11`. All
