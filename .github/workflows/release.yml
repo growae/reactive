@@ -34,18 +34,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
+      # Pinned to @changesets/cli 3.0.1. Two behaviours are relied on, neither of
+      # them log prose: a non-zero exit means nothing reached the registry, and a
+      # successful publish creates one local git tag per published package. The
+      # "no tags but the log says it published" branch below is the tripwire — if a
+      # changesets upgrade stops tagging, this job goes red instead of silently
+      # classifying a real release as "nothing to do".
       - name: Publish to npm
         id: publish
         shell: bash
         run: |
           set -euo pipefail
+          git tag --list | LC_ALL=C sort > /tmp/tags-before.txt
           if pnpm changeset publish 2>&1 | tee /tmp/publish-output.txt; then
-            TAGS=$(grep -oP 'New tag:\s+\K\S+' /tmp/publish-output.txt || true)
+            git tag --list | LC_ALL=C sort > /tmp/tags-after.txt
+            TAGS=$(comm -13 /tmp/tags-before.txt /tmp/tags-after.txt)
             echo "tags<<EOF" >> "$GITHUB_OUTPUT"
             echo "$TAGS" >> "$GITHUB_OUTPUT"
             echo "EOF" >> "$GITHUB_OUTPUT"
             if [ -n "$TAGS" ]; then
               echo "result=published" >> "$GITHUB_OUTPUT"
+            elif grep -Eiq 'successfully published|packages published successfully' /tmp/publish-output.txt; then
+              echo "result=failed" >> "$GITHUB_OUTPUT"
+              echo "changeset publish reported published packages but created no git tags." >&2
+              echo "The registry may have been written to. Do not re-run blind: reconcile the" >&2
+              echo "registry against this workflow's tag assumption before the next release." >&2
+              exit 1
             else
               echo "result=none" >> "$GITHUB_OUTPUT"
             fi
@@ -58,9 +72,25 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # changesets creates lightweight tags, which `git push --follow-tags` ignores.
       - name: Push tags
         if: steps.publish.outputs.result == 'published'
-        run: git push --follow-tags
+        shell: bash
+        env:
+          NEW_TAGS: ${{ steps.publish.outputs.tags }}
+        run: |
+          set -euo pipefail
+          TAGS=()
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            TAGS+=("$tag")
+          done < <(printf '%s\n' "$NEW_TAGS")
+          if [ "${#TAGS[@]}" -eq 0 ]; then
+            echo "publish reported 'published' with an empty tag list." >&2
+            exit 1
+          fi
+          printf 'pushing %d tag(s): %s\n' "${#TAGS[@]}" "${TAGS[*]}"
+          git push origin "${TAGS[@]}"
 
       - name: Get release version
         if: steps.publish.outputs.result == 'published'
@@ -113,7 +143,7 @@ jobs:
         run: |
           echo "### Publish failed" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "\`changeset publish\` exited non-zero. Nothing reached the registry — read the publish step log." >> "$GITHUB_STEP_SUMMARY"
+          echo "Either \`changeset publish\` exited non-zero and nothing reached the registry, or it published without creating git tags. Read the publish step log before re-running." >> "$GITHUB_STEP_SUMMARY"
 
   back-merge:
     name: Back-merge to develop
