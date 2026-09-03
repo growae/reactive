@@ -1,0 +1,59 @@
+name: Playgrounds
+
+# The four playgrounds are the only place the framework bindings are exercised
+# the way a consumer uses them — through a real bundler, against the public
+# entry points. Nothing else in this repository does that: `check:types` filters
+# to `./packages/**`, and the unit suites import from source. Without this gate
+# a playground break is invisible until somebody opens one by hand.
+#
+# `pull_request` only, and filtered. A playground can only break from a change
+# under `playgrounds/`, a change under `packages/` it consumes, or a dependency
+# move in the lockfile, so anything else — `crates/`, `bindings/`, docs — does
+# not pay for this job. There is deliberately no `push` trigger: the `agent/**`
+# push leg in ci.yml exists so a branch gates itself before a pull request is
+# open, and duplicating that here would pay twice for the same commit on every
+# pull request. There is no `schedule:` — nothing reads a nightly result.
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'playgrounds/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/playgrounds.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Playgrounds
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The packages have to be built first even though the three Vite
+      # playgrounds alias `@growae/reactive*` straight at `packages/*/src`:
+      # their `tsc`/`vue-tsc` step has no such alias and resolves the types
+      # through the published `exports` map into `dist/types`, and the Next
+      # playground resolves both types and runtime that way. A playground built
+      # against unbuilt packages fails on missing declarations, which says
+      # nothing about the change under test.
+      - run: pnpm build
+      # One job, sequentially, rather than a matrix leg per playground: a matrix
+      # would pay for four checkouts, four installs and four `pnpm build`s to
+      # parallelise ~40s of actual playground building.
+      - run: pnpm build:playgrounds
+      # `next build` rewrites `playgrounds/next/next-env.d.ts` and
+      # `playgrounds/next/tsconfig.json`, both tracked. Both are committed in
+      # the exact state Next writes, so the build leaves them alone — this step
+      # is what keeps that true. If it fails, run `pnpm build:playgrounds`
+      # locally and commit what Next produced; do not hand-edit the files back.
+      - name: Generated files are unchanged
+        run: git diff --exit-code -- playgrounds/next
