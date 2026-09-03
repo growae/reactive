@@ -73,7 +73,7 @@
         <div :style="card">
           <strong>Chain Info</strong>
           <p style="margin: 0.25rem 0 0; font-size: 0.9rem; color: #475569">
-            Network: {{ networkId ?? '…' }} &nbsp;|&nbsp; Height: {{ height.data?.toString() ?? '…' }}
+            Network: {{ networkId ?? '…' }} &nbsp;|&nbsp; Height: {{ heightData?.toString() ?? '…' }}
           </p>
         </div>
 
@@ -81,12 +81,12 @@
           <strong>Balance</strong>
           <span :style="badge">active account</span>
           <p style="margin: 0.5rem 0 0; font-size: 0.9rem; color: #475569">
-            {{ balance.isLoading
+            {{ balanceLoading
               ? '…'
-              : balance.error
+              : balanceError
                 ? 'error fetching'
-                : balance.data != null
-                  ? `${balance.data} aettos (${toAe(balance.data)} AE)`
+                : balanceData != null
+                  ? `${balanceData} aettos (${toAe(balanceData)} AE)`
                   : 'n/a' }}
           </p>
         </div>
@@ -129,15 +129,15 @@
             <button
               type="button"
               :style="btnPrimary"
-              :disabled="spendMutation.isPending || !recipient || !amount"
+              :disabled="spendPending || !recipient || !amount"
               @click="handleSpend"
             >
-              {{ spendMutation.isPending ? 'Sending…' : 'Send' }}
+              {{ spendPending ? 'Sending…' : 'Send' }}
             </button>
           </div>
 
-          <div v-if="spendMutation.error" :style="errorBox">{{ spendMutation.error.message || String(spendMutation.error) }}</div>
-          <div v-else-if="spendMutation.data != null" :style="successBox">{{ formatData(spendMutation.data) }}</div>
+          <div v-if="spendError" :style="errorBox">{{ spendError.message || String(spendError) }}</div>
+          <div v-else-if="spendResult != null" :style="successBox">{{ formatData(spendResult) }}</div>
         </div>
       </template>
 
@@ -155,21 +155,21 @@
             <button
               type="button"
               :style="btnPrimary"
-              :disabled="signMsgMutation.isPending || !signMsg"
+              :disabled="signMsgPending || !signMsg"
               @click="handleSignMessage"
             >
-              {{ signMsgMutation.isPending ? 'Signing…' : 'Sign Message' }}
+              {{ signMsgPending ? 'Signing…' : 'Sign Message' }}
             </button>
           </div>
 
-          <div v-if="signMsgMutation.error" :style="errorBox">{{ signMsgMutation.error.message || String(signMsgMutation.error) }}</div>
-          <div v-else-if="signMsgMutation.data != null" :style="successBox">{{ formatData(signMsgMutation.data) }}</div>
+          <div v-if="signMsgError" :style="errorBox">{{ signMsgError.message || String(signMsgError) }}</div>
+          <div v-else-if="signMsgResult != null" :style="successBox">{{ formatData(signMsgResult) }}</div>
 
-          <div v-if="signMsgMutation.data" style="margin-top: 0.5rem">
+          <div v-if="signMsgResult" style="margin-top: 0.5rem">
             <strong style="font-size: 0.85rem">Verification</strong>
-            <div v-if="verification.isLoading" :style="resultBox">Loading…</div>
-            <div v-else-if="verification.error" :style="errorBox">{{ verification.error.message || String(verification.error) }}</div>
-            <div v-else-if="verification.data != null" :style="successBox">{{ formatData({ verified: verification.data }) }}</div>
+            <div v-if="verifyLoading" :style="resultBox">Loading…</div>
+            <div v-else-if="verifyError" :style="errorBox">{{ verifyError.message || String(verifyError) }}</div>
+            <div v-else-if="verifyResult != null" :style="successBox">{{ formatData({ verified: verifyResult }) }}</div>
           </div>
         </div>
 
@@ -191,15 +191,15 @@
             <button
               type="button"
               :style="btnPrimary"
-              :disabled="signTypedMutation.isPending"
+              :disabled="signTypedPending"
               @click="handleSignTypedData"
             >
-              {{ signTypedMutation.isPending ? 'Signing…' : 'Sign Typed Data' }}
+              {{ signTypedPending ? 'Signing…' : 'Sign Typed Data' }}
             </button>
           </div>
 
-          <div v-if="signTypedMutation.error" :style="errorBox">{{ signTypedMutation.error.message || String(signTypedMutation.error) }}</div>
-          <div v-else-if="signTypedMutation.data != null" :style="successBox">{{ formatData(signTypedMutation.data) }}</div>
+          <div v-if="signTypedError" :style="errorBox">{{ signTypedError.message || String(signTypedError) }}</div>
+          <div v-else-if="signTypedResult != null" :style="successBox">{{ formatData(signTypedResult) }}</div>
         </div>
       </template>
 
@@ -245,15 +245,15 @@
             <button
               type="button"
               :style="btnPrimary"
-              :disabled="deployMutation.isPending || !compiledResult"
+              :disabled="deployPending || !compiledResult"
               @click="handleDeploy"
             >
-              {{ deployMutation.isPending ? 'Deploying…' : 'Deploy' }}
+              {{ deployPending ? 'Deploying…' : 'Deploy' }}
             </button>
           </div>
 
-          <div v-if="deployMutation.error" :style="errorBox">{{ deployMutation.error.message || String(deployMutation.error) }}</div>
-          <div v-else-if="deployMutation.data != null" :style="successBox">{{ formatData(deployMutation.data) }}</div>
+          <div v-if="deployError" :style="errorBox">{{ deployError.message || String(deployError) }}</div>
+          <div v-else-if="deployResult != null" :style="successBox">{{ formatData(deployResult) }}</div>
           <p v-if="contractAddress" :style="{ ...muted, marginTop: '0.5rem' }">
             <strong>Address:</strong> {{ contractAddress }}
           </p>
@@ -277,15 +277,15 @@
             <button
               type="button"
               :style="btnPrimary"
-              :disabled="callMutation.isPending || !contractAddress || !compiledResult?.aci"
+              :disabled="callPending || !contractAddress || !compiledResult?.aci"
               @click="handleCall"
             >
-              {{ callMutation.isPending ? 'Calling…' : 'Call' }}
+              {{ callPending ? 'Calling…' : 'Call' }}
             </button>
           </div>
 
-          <div v-if="callMutation.error" :style="errorBox">{{ callMutation.error.message || String(callMutation.error) }}</div>
-          <div v-else-if="callMutation.data != null" :style="successBox">{{ formatData(callMutation.data) }}</div>
+          <div v-if="callError" :style="errorBox">{{ callError.message || String(callError) }}</div>
+          <div v-else-if="callResult != null" :style="successBox">{{ formatData(callResult) }}</div>
         </div>
 
         <!-- Read (dry-run) -->
@@ -299,9 +299,9 @@
           <div :style="labelStyle">Arguments (JSON array)</div>
           <input :style="inputStyle" v-model="readArgs" placeholder="[8]" />
 
-          <div v-if="readResult.isLoading" :style="resultBox">Loading…</div>
-          <div v-else-if="readResult.error" :style="errorBox">{{ readResult.error.message || String(readResult.error) }}</div>
-          <div v-else-if="readResult.data != null" :style="successBox">{{ formatData(readResult.data) }}</div>
+          <div v-if="readLoading" :style="resultBox">Loading…</div>
+          <div v-else-if="readError" :style="errorBox">{{ readError.message || String(readError) }}</div>
+          <div v-else-if="readData != null" :style="successBox">{{ formatData(readData) }}</div>
         </div>
       </template>
     </template>
@@ -329,25 +329,59 @@ import {
   useSwitchNetwork,
   useVerifyMessage,
 } from '@growae/reactive-vue'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 // ─── Composables ─────────────────────────────────────────────
 
 const config = useConfig()
 const networkId = useNetworkId()
-const height = useHeight()
-const balance = useBalance()
+const { data: heightData } = useHeight()
+const {
+  data: balanceData,
+  isLoading: balanceLoading,
+  error: balanceError,
+} = useBalance()
 const { connect, connectors, isPending: isConnecting } = useConnect()
 const { disconnect } = useDisconnect()
 const activeAccount = useActiveAccount()
 const { switchActiveAccount } = useSwitchActiveAccount()
 const { switchNetwork, networks, isPending: switching } = useSwitchNetwork()
 
-const spendMutation = useSpend()
-const signMsgMutation = useSignMessage()
-const signTypedMutation = useSignTypedData()
-const deployMutation = useDeployContract()
-const callMutation = useCallContract()
+const {
+  reset: resetSpend,
+  spendAsync,
+  isPending: spendPending,
+  error: spendError,
+  data: spendResult,
+} = useSpend()
+const {
+  reset: resetSignMsg,
+  signMessageAsync,
+  isPending: signMsgPending,
+  error: signMsgError,
+  data: signMsgResult,
+} = useSignMessage()
+const {
+  reset: resetSignTyped,
+  signTypedDataAsync,
+  isPending: signTypedPending,
+  error: signTypedError,
+  data: signTypedResult,
+} = useSignTypedData()
+const {
+  reset: resetDeploy,
+  deployContractAsync,
+  isPending: deployPending,
+  error: deployError,
+  data: deployResult,
+} = useDeployContract()
+const {
+  reset: resetCall,
+  callContractAsync,
+  isPending: callPending,
+  error: callError,
+  data: callResult,
+} = useCallContract()
 
 // ─── Tabs ────────────────────────────────────────────────────
 
@@ -365,7 +399,7 @@ const activeTab = ref<Tab>('basic')
 // ─── Spend State ─────────────────────────────────────────────
 
 const recipient = ref(
-  activeAccount.addresses?.find((_a: string, i: number) => i > 0) ?? '',
+  activeAccount.value.addresses?.find((_a: string, i: number) => i > 0) ?? '',
 )
 const amount = ref('1000000000000000000')
 const payload = ref('')
@@ -379,9 +413,9 @@ const amountInAe = computed(() => {
 })
 
 function handleSpend() {
-  spendMutation.reset()
-  spendMutation.spendAsync({
-    recipientId: recipient.value,
+  resetSpend()
+  spendAsync({
+    recipient: recipient.value,
     amount: amount.value,
     payload: payload.value || undefined,
   })
@@ -392,17 +426,23 @@ function handleSpend() {
 const signMsg = ref('Hello, Aeternity!')
 
 function handleSignMessage() {
-  signMsgMutation.reset()
-  signMsgMutation.signMessageAsync({ message: signMsg.value })
+  resetSignMsg()
+  signMessageAsync({ message: signMsg.value })
 }
 
-const verification = useVerifyMessage(
-  computed(() => ({
-    message: signMsg.value,
-    signature: signMsgMutation.data?.signature ?? '',
-    address: activeAccount.address ?? '',
-    enabled: !!signMsgMutation.data?.signature && !!activeAccount.address,
-  })),
+const {
+  isLoading: verifyLoading,
+  error: verifyError,
+  data: verifyResult,
+} = useVerifyMessage(
+  reactive({
+    message: signMsg,
+    signature: computed(() => signMsgResult.value?.signature ?? ''),
+    address: computed(() => activeAccount.value.address ?? ''),
+    enabled: computed(
+      () => !!signMsgResult.value?.signature && !!activeAccount.value.address,
+    ),
+  }),
 )
 
 // ─── Sign Typed Data State ───────────────────────────────────
@@ -412,9 +452,9 @@ const typedAci = ref('{"functions":[]}')
 const typedData = ref('"hello world"')
 
 function handleSignTypedData() {
-  signTypedMutation.reset()
+  resetSignTyped()
   try {
-    signTypedMutation.signTypedDataAsync({
+    signTypedDataAsync({
       domain: JSON.parse(typedDomain.value),
       aci: JSON.parse(typedAci.value),
       data: JSON.parse(typedData.value),
@@ -463,9 +503,9 @@ async function handleCompile() {
 
 async function handleDeploy() {
   if (!compiledResult.value) return
-  deployMutation.reset()
+  resetDeploy()
   try {
-    const result = await deployMutation.deployContractAsync({
+    const result = await deployContractAsync({
       bytecode: compiledResult.value.bytecode,
       aci: compiledResult.value.aci,
       initArgs: JSON.parse(`[${initArg.value}]`),
@@ -478,9 +518,9 @@ async function handleDeploy() {
 
 function handleCall() {
   if (!contractAddress.value || !compiledResult.value?.aci) return
-  callMutation.reset()
+  resetCall()
   try {
-    callMutation.callContractAsync({
+    callContractAsync({
       address: contractAddress.value,
       aci: compiledResult.value.aci,
       method: callMethod.value,
@@ -499,17 +539,23 @@ const parsedReadArgs = computed(() => {
   }
 })
 
-const readResult = useReadContract(
-  computed(() => ({
-    address: contractAddress.value || ('_' as any),
-    aci: compiledResult.value?.aci ?? {},
-    method: readMethod.value || '_',
-    args: parsedReadArgs.value,
-    enabled:
-      !!contractAddress.value &&
-      !!compiledResult.value?.aci &&
-      !!readMethod.value,
-  })),
+const {
+  isLoading: readLoading,
+  error: readError,
+  data: readData,
+} = useReadContract(
+  reactive({
+    address: computed(() => contractAddress.value || ('_' as any)),
+    aci: computed(() => compiledResult.value?.aci ?? {}),
+    method: computed(() => readMethod.value || '_'),
+    args: parsedReadArgs,
+    enabled: computed(
+      () =>
+        !!contractAddress.value &&
+        !!compiledResult.value?.aci &&
+        !!readMethod.value,
+    ),
+  }),
 )
 
 // ─── Helpers ─────────────────────────────────────────────────

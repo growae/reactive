@@ -243,6 +243,9 @@ importers:
 
   playgrounds/vite-react:
     dependencies:
+      '@aeternity/aepp-sdk':
+        specifier: ^14.0.0
+        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core
@@ -280,6 +283,9 @@ importers:
 
   playgrounds/vite-solid:
     dependencies:
+      '@aeternity/aepp-sdk':
+        specifier: ^14.0.0
+        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core
@@ -308,6 +314,9 @@ importers:
 
   playgrounds/vite-vue:
     dependencies:
+      '@aeternity/aepp-sdk':
+        specifier: ^14.0.0
+        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core
