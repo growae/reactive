@@ -1,7 +1,9 @@
 # Pinned to the exact patch that must match wasm-bindings.yml's
 # dtolnay/rust-toolchain step. std's `/rustc/<hash>/...` panic-location prefix
-# moves with the patch, and the committed generated/core-harness.core.wasm has
-# to byte-match a build made with this exact toolchain — a floating "1.97"
+# moves with the patch, and the committed generated/core-harness.js and
+# .d.ts files have to byte-match a build made with this exact toolchain —
+# core-harness.core.wasm itself is deliberately NOT byte-compared (see
+# wasm-bindings.yml) and is instead checked functionally — a floating "1.97"
 # would let a later 1.97.z quietly break the drift check again.
 [toolchain]
 channel = "1.97.1"
