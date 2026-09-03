@@ -23,7 +23,10 @@ before building anything on top of it.
 - `generated/` — the `jco transpile` output (`.core.wasm` + `.js` + `.d.ts`).
   **Committed**, not gitignored, so the component can be loaded and inspected
   without a Rust toolchain. Regenerate with `pnpm build` after any `wit/` or
-  `core-component/` change and commit the result.
+  `core-component/` change and commit the result. A `@bytecodealliance/jco`
+  bump changes this output too — the runtime shim is emitted inline, so the
+  regeneration belongs in the same commit as the bump, or the gate below goes
+  red and stays red.
   `.github/workflows/wasm-bindings.yml` gates it in two parts, because only
   one of them is byte-reproducible: `core-harness.js` and the `.d.ts` files
   are compared byte-exact, while `core-harness.core.wasm` has its currency
@@ -33,10 +36,13 @@ before building anything on top of it.
   dependency's monomorphized code is not reproducible across checkout
   directories, and no remap flag available here closes it.
 
-### Pinned toolchain — unchanged from Phase 1
+### Pinned toolchain
 
 - Target: `wasm32-unknown-unknown`, **not** `wasm32-wasip2`.
-- `jco` `1.29.0`, `cargo-component` `0.21.1`, `wit-bindgen-rt` `0.41.0`.
+- Rust `1.97.1` (`core-component/rust-toolchain.toml`, matched by the
+  workflow), `cargo-component` `0.21.1`, `wit-bindgen-rt` `0.44`, `jco`
+  `1.32.1` — the last is the only one that has moved since Phase 1, and every
+  move regenerates `generated/core-harness.js`.
 - No `generate()` in the `keys` interface: `SecretKey::generate()` reads OS
   randomness through `rand_core::OsRng`, and `getrandom` has no
   `wasm32-unknown-unknown` backend that does not pull in `wasm-bindgen`'s ABI
@@ -111,10 +117,13 @@ of any future attempt, and the reopen bar below is falsifiable rather than
 rhetorical. It is **not** on the mirror-duty list: when `ae-core`'s public
 surface changes, `wit/world.wit` and `core-component/` are allowed to go
 stale, and whoever next has a reason to touch this directory brings it current
-as part of that work. The CI job is path-filtered to `bindings/wasm-js/**`, so
-a core change does not fire it — that is deliberate, and it is why the staleness
-costs nothing. Do not read a green history here as evidence the binding matches
-today's core.
+as part of that work. The CI job's path filter is `bindings/wasm-js/**` **and**
+`crates/**`, so a core change does fire it: the component is rebuilt and its
+tests run against today's core on every `crates/` change, and a core change
+that breaks the link breaks this job. What the job does not check is whether
+`wit/world.wit` still *covers* the core's surface — a new or widened export
+simply goes unmirrored, silently and permissibly. Do not read a green history
+here as evidence the binding matches today's core.
 
 It never enters `packages/`, and it never publishes.
 
