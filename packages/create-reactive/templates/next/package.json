@@ -10,7 +10,7 @@
   "dependencies": {
     "@growae/reactive-react": "latest",
     "@tanstack/react-query": "^5.102.8",
-    "next": "^16.3.2",
+    "next": "^16.3.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
