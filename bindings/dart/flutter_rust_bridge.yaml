@@ -1,0 +1,18 @@
+# Captures the invocation that produced the committed glue under
+# lib/src/rust and rust/src/frb_generated.rs, so a regen is reproducible
+# from this file rather than reconstructed from memory.
+#
+# web: false — this binding is native FFI only (see rust/Cargo.toml); the
+# browser target is bindings/wasm-js, generated through a different pipeline
+# that does read a WIT file. Committing a frb_generated.web.dart here would
+# be dead code no target ever loads.
+#
+# auto_upgrade_dependency: false — pubspec.yaml and rust/Cargo.toml pin
+# flutter_rust_bridge to 2.13.0, one minor ahead of this codegen tool
+# (2.12.0). Leaving auto-upgrade on would make a regen silently rewrite that
+# pin to match the tool instead of the tool being bumped deliberately.
+rust_input: crate::api
+rust_root: rust
+dart_output: lib/src/rust
+web: false
+auto_upgrade_dependency: false
