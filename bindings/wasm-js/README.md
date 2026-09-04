@@ -57,9 +57,25 @@ before building anything on top of it.
 
 ```sh
 pnpm install
-pnpm build   # cargo component build --release --target wasm32-unknown-unknown, then jco transpile --minify
+pnpm build   # cargo component build --locked --release --target wasm32-unknown-unknown, then jco transpile --minify
 pnpm test
 ```
+
+`build:rust` passes `--locked`, so `core-component/Cargo.lock` is enforced
+against its manifest here the same way `crates/`, `bindings/python` and
+`bindings/dart` enforce theirs in their own workflows. Without it `cargo`
+re-resolves silently in the runner and the committed lock drifts unnoticed —
+and this is the lock furthest from anyone's daily edit, because it goes stale
+from a `crates/` change as readily as from one in this directory: `ae-core` is
+a path dependency and `core-component` picks up `blake2`/`sha2` transitively
+through it rather than declaring them.
+
+So a manifest change that leaves the lock behind now fails the build with
+`error: cannot update the lock file ... because --locked was passed`, rather
+than compiling green. Regenerate the lock by running the same command without
+the flag — from `core-component/`, `cargo component build --release --target
+wasm32-unknown-unknown` — and commit the lock in the same change as the
+manifest.
 
 ### Status
 
