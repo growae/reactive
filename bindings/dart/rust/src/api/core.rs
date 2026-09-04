@@ -171,18 +171,23 @@ impl Tag {
 #[frb(opaque)]
 pub struct Value(pub(crate) ae_core::tx::Value);
 
-impl Value {
+// Fully qualified: flutter_rust_bridge_codegen@2.13.0 treats a bare,
+// unqualified `Value` type anywhere in a bound signature — including an impl
+// target — as its new built-in `serde_json::Value` delegate rather than
+// resolving it against local scope, which silently drops every method in
+// this block. Qualifying avoids the collision without renaming the type.
+impl crate::api::core::Value {
     /// An unsigned integer field, from a value small enough for `u64`
     /// (amounts, nonces, TTLs, fees, gas).
     #[frb(sync)]
-    pub fn uint(value: u64) -> Self {
+    pub fn uint(value: u64) -> crate::api::core::Value {
         Value(ae_core::tx::Value::uint(value))
     }
 
     /// An unsigned integer field, from a decimal string — for values wider
     /// than `u64`.
     #[frb(sync)]
-    pub fn uint_str(value: String) -> Result<Self, String> {
+    pub fn uint_str(value: String) -> Result<crate::api::core::Value, String> {
         ae_core::tx::Value::uint_str(&value)
             .map(Value)
             .map_err(to_err)
@@ -190,27 +195,27 @@ impl Value {
 
     /// A plain string field: an oracle format, a query, an AENS name.
     #[frb(sync)]
-    pub fn text(value: String) -> Self {
+    pub fn text(value: String) -> crate::api::core::Value {
         Value(ae_core::tx::Value::Text(value))
     }
 
     /// Anything carrying an `xx_...` prefix: addresses, name ids, call data,
     /// state hashes, contract bytearrays.
     #[frb(sync)]
-    pub fn encoded(value: String) -> Self {
+    pub fn encoded(value: String) -> crate::api::core::Value {
         Value(ae_core::tx::Value::Encoded(value))
     }
 
     /// Raw bytes with no encoding of their own: signatures, the `authFun`
     /// hash, pre-serialised state-tree entries.
     #[frb(sync)]
-    pub fn bytes(value: Vec<u8>) -> Self {
+    pub fn bytes(value: Vec<u8>) -> crate::api::core::Value {
         Value(ae_core::tx::Value::Bytes(value))
     }
 
     /// A repeated field.
     #[frb(sync)]
-    pub fn list(values: Vec<Value>) -> Self {
+    pub fn list(values: Vec<crate::api::core::Value>) -> crate::api::core::Value {
         Value(ae_core::tx::Value::List(
             values.into_iter().map(|v| v.0).collect(),
         ))
@@ -220,7 +225,7 @@ impl Value {
     /// is either an `xx_...` address or, from pointer version 2, a `ba_...`
     /// blob.
     #[frb(sync)]
-    pub fn pointers(pointers: Vec<(String, String)>) -> Self {
+    pub fn pointers(pointers: Vec<(String, String)>) -> crate::api::core::Value {
         Value(ae_core::tx::Value::Pointers(
             pointers
                 .into_iter()
@@ -231,7 +236,7 @@ impl Value {
 
     /// The `ctVersion` field: a VM version and an ABI version in one field.
     #[frb(sync)]
-    pub fn ct_version(vm_version: u8, abi_version: u8) -> Self {
+    pub fn ct_version(vm_version: u8, abi_version: u8) -> crate::api::core::Value {
         Value(ae_core::tx::Value::CtVersion {
             vm_version,
             abi_version,
@@ -249,7 +254,7 @@ impl Value {
     /// to wrap into several sibling `GaMetaTx`/`PayingForTx` arms should
     /// stay usable after the first wrap, not be disposed by it.
     #[frb(sync)]
-    pub fn tx(params: &TxParams) -> Self {
+    pub fn tx(params: &TxParams) -> crate::api::core::Value {
         Value(ae_core::tx::Value::Tx(Box::new(params.0.clone())))
     }
 
@@ -324,7 +329,7 @@ impl TxParams {
 
     /// Set a field.
     #[frb(sync)]
-    pub fn set(&mut self, key: String, value: Value) {
+    pub fn set(&mut self, key: String, value: crate::api::core::Value) {
         self.0.set(&key, value.0);
     }
 
@@ -342,7 +347,7 @@ impl TxParams {
 
     /// Read a field.
     #[frb(sync)]
-    pub fn get(&self, key: String) -> Option<Value> {
+    pub fn get(&self, key: String) -> Option<crate::api::core::Value> {
         self.0.get(&key).cloned().map(Value)
     }
 
@@ -351,7 +356,7 @@ impl TxParams {
     /// this is `(key, value)` pairs rather than a Dart `Map` — a caller who
     /// wants a map builds one from the pairs.
     #[frb(sync)]
-    pub fn fields(&self) -> Vec<(String, Value)> {
+    pub fn fields(&self) -> Vec<(String, crate::api::core::Value)> {
         self.0
             .fields()
             .iter()
