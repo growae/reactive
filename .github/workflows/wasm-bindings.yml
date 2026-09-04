@@ -19,12 +19,14 @@ on:
       - 'bindings/wasm-js/**'
       - 'crates/**'
       - '.github/workflows/wasm-bindings.yml'
+      - '.github/actions/setup-node-pnpm/**'
   pull_request:
     branches: [main, develop]
     paths:
       - 'bindings/wasm-js/**'
       - 'crates/**'
       - '.github/workflows/wasm-bindings.yml'
+      - '.github/actions/setup-node-pnpm/**'
 
 permissions:
   contents: read
@@ -52,11 +54,7 @@ jobs:
 
       - run: cargo install --locked cargo-component@0.21.1
 
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
 
       - run: pnpm install --frozen-lockfile
 
