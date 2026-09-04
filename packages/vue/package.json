@@ -32,10 +32,10 @@
     "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
-    "@tanstack/vue-query": ">=5.0.0",
+    "@tanstack/vue-query": ">=5.0.0 <6.0.0",
     "nuxt": ">=3.0.0 <5.0.0",
-    "typescript": ">=5.7.0",
-    "vue": ">=3.0.0"
+    "typescript": ">=5.7.0 <7.0.0",
+    "vue": ">=3.0.0 <4.0.0"
   },
   "peerDependenciesMeta": {
     "@tanstack/vue-query": {
