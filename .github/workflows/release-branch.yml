@@ -34,11 +34,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
 
       - run: pnpm install --frozen-lockfile
 

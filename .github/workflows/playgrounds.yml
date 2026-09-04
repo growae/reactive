@@ -13,6 +13,11 @@ name: Playgrounds
 # push leg in ci.yml exists so a branch gates itself before a pull request is
 # open, and duplicating that here would pay twice for the same commit on every
 # pull request. There is no `schedule:` — nothing reads a nightly result.
+#
+# `.github/actions/setup-node-pnpm/**` is in the filter because this job's
+# toolchain now comes from that composite action. Without the line, a change to
+# how Node and pnpm are set up would not be gated by the one job that builds
+# through a real bundler.
 on:
   pull_request:
     branches: [main, develop]
@@ -21,6 +26,7 @@ on:
       - 'packages/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/playgrounds.yml'
+      - '.github/actions/setup-node-pnpm/**'
 
 permissions:
   contents: read
@@ -32,11 +38,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
       - run: pnpm install --frozen-lockfile
       # The packages have to be built first even though the three Vite
       # playgrounds alias `@growae/reactive*` straight at `packages/*/src`:

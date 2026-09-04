@@ -33,11 +33,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check:ci
       - run: pnpm check:types
@@ -49,11 +45,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
@@ -66,11 +58,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm test:cov
       - uses: actions/upload-artifact@v7
@@ -111,11 +99,7 @@ jobs:
     # the log before assuming the change under test is at fault.
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @growae/reactive-vue run test:nuxt-compat nuxt${{ matrix.nuxt-major }}-app
 
@@ -189,17 +173,13 @@ jobs:
     # is healthy and answers /v3/status, it is just the wrong chain.
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
       # Node 22, matching Check / Build / Test and the root engines floor. This
       # job installs the same workspace they do, and the dev toolchain now needs
       # Node 22 outright (jsdom, @changesets/cli). Leaving it on 20 meant the one
       # job running the devnet was the one job running a Node the repo does not
       # support — a gate is worth less than nothing when it runs a tree nobody
       # else runs.
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
+      - uses: ./.github/actions/setup-node-pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - name: Start devnet
