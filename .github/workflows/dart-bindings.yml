@@ -20,6 +20,22 @@ on:
 permissions:
   contents: read
 
+# The two binaries the Check job's codegen step needs, pinned in one place so
+# the cache key below and the installs are the same string by construction —
+# a key that could drift from its pin would serve a stale binary, which is the
+# one failure the pin exists to prevent.
+env:
+  # The exact patch that produced the committed glue (the version baked into
+  # every `frb_generated.*` header). A floating install would silently rewrite
+  # that version string on every run and turn an unrelated PR into a large,
+  # unreviewed diff.
+  FRB_CODEGEN_VERSION: '2.13.0'
+  # `flutter_rust_bridge_codegen generate` shells out to `cargo expand` and,
+  # finding none, installs the latest itself mid-step — so this tool was
+  # already in the gate, unpinned and invisible, compiled from source on every
+  # cache miss. Naming it here pins it and makes it cacheable.
+  CARGO_EXPAND_VERSION: '1.0.126'
+
 jobs:
   check:
     name: Check
@@ -38,9 +54,16 @@ jobs:
         with:
           components: rustfmt, clippy
 
+      # `cache-bin: false` on this job only. The default caches
+      # `~/.cargo/bin` under a key derived from Cargo.lock and the rustc
+      # version, which made the two pinned tools below survive by accident and
+      # vanish on any lockfile bump. The version-keyed cache below owns them
+      # instead; leaving both on would double-store ~30MB and let a
+      # prefix-matched restore put a wrong-version binary on PATH.
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: bindings/dart/rust
+          cache-bin: false
 
       - run: cargo fmt --all -- --check
         working-directory: bindings/dart/rust
@@ -52,11 +75,41 @@ jobs:
 
       - run: dart pub get --enforce-lockfile
 
-      # Pinned to the exact patch that produced the committed glue (the
-      # version baked into every `frb_generated.*` header) — a floating
-      # install would silently rewrite that version string on every run and
-      # turn an unrelated PR into a large, unreviewed diff.
-      - run: cargo install --locked flutter_rust_bridge_codegen@2.13.0
+      # `cargo install` compiles from source: measured at 1m25s for the
+      # codegen tool, plus a further ~1m11s hidden inside the generate step
+      # below, which auto-installs `cargo-expand` when it cannot find one.
+      # Keyed on the two pinned versions and nothing else, so this is a hit on
+      # every run until a pin moves, and moving a pin can never serve the old
+      # binary. Deliberately no `restore-keys`: a prefix match would do
+      # precisely that.
+      - name: Restore the pinned codegen tools
+        id: codegen-tools
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/bin/flutter_rust_bridge_codegen
+            ~/.cargo/bin/cargo-expand
+          key: codegen-tools-${{ runner.os }}-frb-${{ env.FRB_CODEGEN_VERSION }}-expand-${{ env.CARGO_EXPAND_VERSION }}
+
+      - name: Install the pinned codegen tools
+        if: steps.codegen-tools.outputs.cache-hit != 'true'
+        run: |
+          cargo install --locked flutter_rust_bridge_codegen@"$FRB_CODEGEN_VERSION"
+          cargo install --locked cargo-expand@"$CARGO_EXPAND_VERSION"
+
+      # Guards the cache: a hit that restored a truncated or non-executable
+      # binary would otherwise surface as a confusing codegen failure two
+      # steps later, and a silently wrong `cargo-expand` would let the
+      # generate step below quietly install its own again.
+      - name: Verify the codegen tools on PATH
+        # In the crate dir, not `bindings/dart`: `cargo expand` is invoked as a
+        # cargo subcommand and wants a manifest, and this is the same directory
+        # the generate step below runs it from.
+        working-directory: bindings/dart/rust
+        run: |
+          set -euo pipefail
+          flutter_rust_bridge_codegen --version
+          cargo expand --version
 
       - run: flutter_rust_bridge_codegen generate --config-file flutter_rust_bridge.yaml
 
