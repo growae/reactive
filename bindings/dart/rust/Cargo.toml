@@ -16,11 +16,6 @@ crate-type = ["cdylib", "staticlib"]
 [dependencies]
 ae-core = { path = "../../../crates/ae-core" }
 flutter_rust_bridge = "=2.13.0"
-# Referenced directly by the flutter_rust_bridge-generated SSE codec in
-# frb_generated.rs (serde_json::Value), not re-exported through
-# flutter_rust_bridge itself — version matches what that crate's own
-# `[dependencies.serde_json]` declares.
-serde_json = "1.0"
 
 [profile.release]
 lto = true
