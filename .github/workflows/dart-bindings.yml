@@ -50,7 +50,7 @@ jobs:
 
       - uses: dart-lang/setup-dart@v1
 
-      - run: dart pub get
+      - run: dart pub get --enforce-lockfile
 
       - run: dart analyze --fatal-infos
 
@@ -142,6 +142,6 @@ jobs:
 
       - uses: dart-lang/setup-dart@v1
 
-      - run: dart pub get
+      - run: dart pub get --enforce-lockfile
 
       - run: dart test
