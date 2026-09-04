@@ -27,9 +27,9 @@
     "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
-    "solid-js": ">=1.0.0",
-    "@tanstack/solid-query": ">=5.0.0",
-    "typescript": ">=5.7.0"
+    "solid-js": ">=1.0.0 <2.0.0",
+    "@tanstack/solid-query": ">=5.0.0 <6.0.0",
+    "typescript": ">=5.7.0 <8.0.0"
   },
   "peerDependenciesMeta": {
     "@tanstack/solid-query": {

@@ -48,8 +48,8 @@
   },
   "peerDependencies": {
     "@growae/reactive-connectors": "workspace:*",
-    "@tanstack/query-core": ">=5.0.0",
-    "typescript": ">=5.7.0"
+    "@tanstack/query-core": ">=5.0.0 <6.0.0",
+    "typescript": ">=5.7.0 <8.0.0"
   },
   "peerDependenciesMeta": {
     "@growae/reactive-connectors": {

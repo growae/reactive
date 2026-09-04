@@ -83,13 +83,13 @@ importers:
   packages/connectors:
     dependencies:
       '@aeternity/aepp-sdk':
-        specifier: '>=14.0.0'
+        specifier: '>=14.0.0 <15.0.0'
         version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../core
       '@ledgerhq/hw-transport':
-        specifier: '>=6.0.0'
+        specifier: '>=6.0.0 <7.0.0'
         version: 6.34.1
       typescript:
         specifier: ^5.9.3
@@ -170,11 +170,11 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@tanstack/solid-query':
-        specifier: '>=5.0.0'
-        version: 5.95.2(solid-js@1.9.12)
+        specifier: '>=5.0.0 <6.0.0'
+        version: 5.102.8(solid-js@1.9.15)
       solid-js:
-        specifier: '>=1.0.0'
-        version: 1.9.12
+        specifier: '>=1.0.0 <2.0.0'
+        version: 1.9.15
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -185,7 +185,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       typescript:
-        specifier: ^5.9.3
+        specifier: '>=5.7.0 <7.0.0'
         version: 5.9.3
     devDependencies:
       '@nuxt/kit':
@@ -2975,9 +2975,6 @@ packages:
   '@tanstack/query-core@5.102.8':
     resolution: {integrity: sha512-ZNjkJ33CqvPNec/6lZBnHqLc3EVGPZ9ySLhYahU9TcuRFdmwXewuj0c4hwSWcGHqEUwcSrKeZ+oGcvPBqXcQcg==}
 
-  '@tanstack/query-core@5.95.2':
-    resolution: {integrity: sha512-o4T8vZHZET4Bib3jZ/tCW9/7080urD4c+0/AUaYVpIqOsr7y0reBc1oX3ttNaSW5mYyvZHctiQ/UOP2PfdmFEQ==}
-
   '@tanstack/react-query@5.102.8':
     resolution: {integrity: sha512-TYBea4OuXWD7MhaSHq069TWbFe7rcwWN6kzT7JF0OKi1K6c1gTv2IzD6A6ExJsCMozdkqBWeuIUZmu4KQg0O5A==}
     peerDependencies:
@@ -2985,11 +2982,6 @@ packages:
 
   '@tanstack/solid-query@5.102.8':
     resolution: {integrity: sha512-qna3S2XOsE++t31viQNeZziOO/gDEkoEnHG+2hVoYLG3cYFYDKWuhUYLvpsYKhbGz0qQed22qCnB55rVt3QB6Q==}
-    peerDependencies:
-      solid-js: ^1.6.0
-
-  '@tanstack/solid-query@5.95.2':
-    resolution: {integrity: sha512-1xsEybSKZhgaSMUmU71f4Ows5cLWtA6YyLMDUxhSwe8J9nD1b8J2VQF7KxiSESxDOznX7WabYCSv6CtcR4XVbg==}
     peerDependencies:
       solid-js: ^1.6.0
 
@@ -5706,12 +5698,6 @@ packages:
     resolution: {integrity: sha512-RNEqWOyhhUQYN9V1GfHwu9AR/g+NTciH6Z5u3/no6X3/w+04J2lVDL+svFQVXgXrEGBMG2puMVN3gq2SNGuTGw==}
     engines: {node: '>=20.0.0'}
 
-  seroval-plugins@1.5.1:
-    resolution: {integrity: sha512-4FbuZ/TMl02sqv0RTFexu0SP6V+ywaIe5bAWCCEik0fk17BhALgwvUDVF7e3Uvf9pxmwCEJsRPmlkUE6HdzLAw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      seroval: ^1.5.6
-
   seroval-plugins@1.5.6:
     resolution: {integrity: sha512-HXuLAX2pu/UByPpaeo/TaMfvMIi+1QqIoPJYCcAtU8QkVNwgR6MPlGuCQTErV1JwraaMbYaWVIBX7mppzGLATQ==}
     engines: {node: '>=10'}
@@ -5720,10 +5706,6 @@ packages:
 
   seroval@1.5.6:
     resolution: {integrity: sha512-rVQVWjjSvlINzaQPZH5JFqsqEsIWdTxY3iJZCnTL/5gQbXIRooVZKI60tVCkOVfzcRPejboxO2t0P89dg5mQaA==}
-    engines: {node: '>=10'}
-
-  seroval@1.6.2:
-    resolution: {integrity: sha512-mPT+SD2TrlB6wvte1KkYOYUkubaTbd6pZ/6Kk3C9nxzrHmCZyhxOO7XGAeL7f+yLKZglzGtM9odUVvg/EhO+vQ==}
     engines: {node: '>=10'}
 
   seroval@1.6.3:
@@ -5800,9 +5782,6 @@ packages:
   smob@1.6.2:
     resolution: {integrity: sha512-RQsvleCbF8cVHEv+xuDGaA4pOizFqJ0GgjtMSRo6oP8pnN7WsigHgVGey6aILRBKv4W2YOMHLqbKdnB6hpB9fw==}
     engines: {node: '>=20.0.0'}
-
-  solid-js@1.9.12:
-    resolution: {integrity: sha512-QzKaSJq2/iDrWR1As6MHZQ8fQkdOBf8GReYb7L5iKwMGceg7HxDcaOHk0at66tNgn9U2U7dXo8ZZpLIAmGMzgw==}
 
   solid-js@1.9.15:
     resolution: {integrity: sha512-EeiY2xfpZJqPLjXspVEKjAII4yv8NyG//NxZ3IpOFHdUNnnTyL0uJOeS9LWGvA7cFCz5y94cjFwYlmw5Luncsg==}
@@ -9278,8 +9257,6 @@ snapshots:
 
   '@tanstack/query-core@5.102.8': {}
 
-  '@tanstack/query-core@5.95.2': {}
-
   '@tanstack/react-query@5.102.8(react@19.2.8)':
     dependencies:
       '@tanstack/query-core': 5.102.8
@@ -9289,11 +9266,6 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.102.8
       solid-js: 1.9.15
-
-  '@tanstack/solid-query@5.95.2(solid-js@1.9.12)':
-    dependencies:
-      '@tanstack/query-core': 5.95.2
-      solid-js: 1.9.12
 
   '@tanstack/vue-query@5.102.8(vue@3.5.42(typescript@5.9.3))':
     dependencies:
@@ -12375,17 +12347,11 @@ snapshots:
 
   serialize-javascript@7.1.0: {}
 
-  seroval-plugins@1.5.1(seroval@1.6.2):
-    dependencies:
-      seroval: 1.6.2
-
   seroval-plugins@1.5.6(seroval@1.5.6):
     dependencies:
       seroval: 1.5.6
 
   seroval@1.5.6: {}
-
-  seroval@1.6.2: {}
 
   seroval@1.6.3: {}
 
@@ -12499,12 +12465,6 @@ snapshots:
   slash@5.1.0: {}
 
   smob@1.6.2: {}
-
-  solid-js@1.9.12:
-    dependencies:
-      csstype: 3.2.3
-      seroval: 1.6.2
-      seroval-plugins: 1.5.1(seroval@1.6.2)
 
   solid-js@1.9.15:
     dependencies:

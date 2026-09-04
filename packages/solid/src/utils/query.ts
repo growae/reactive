@@ -9,7 +9,7 @@ import {
   type DefaultError,
   type MutateFunction,
   type QueryKey,
-  type SolidMutationOptions,
+  type MutationOptions as SolidMutationOptions,
   createQuery as tanstack_useQuery,
   type CreateMutationResult as UseMutationResult,
   type CreateQueryResult as UseQueryResult,
