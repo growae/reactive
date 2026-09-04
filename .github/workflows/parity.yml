@@ -64,7 +64,11 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          # 22 to match the repository's declared `engines.node` floor and every
+          # other workflow here. The corpora are not sensitive to the Node major:
+          # all three regenerate byte-identically under 20 and 22, so this moves
+          # the job off an end-of-life runtime without moving the reference bytes.
+          node-version: 22
 
       # Reinstalls the exact reference versions each corpus records for itself,
       # regenerates every one, and fails on any difference. Without this the committed
