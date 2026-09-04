@@ -37,14 +37,13 @@ bindings/python/python/ae_core/*.pyd
 
 # Dart binding — Rust build output (the compiled native library a consumer's
 # own build step produces; `rust/target/release/libae_core_dart.*` is not
-# committed, same reasoning as the Python binding above), `.dart_tool/`'s
-# caches, and `pubspec.lock`, which a Dart package does not commit — only a
-# Dart *application* pins its own lockfile.
+# committed, same reasoning as the Python binding above) and `.dart_tool/`'s
+# caches. `pubspec.lock` is committed and enforced in CI — `publish_to: none`,
+# consumed only from source in this tree, so it pins the gate the same way
+# the Rust half runs `--locked`.
 bindings/dart/rust/target/
 bindings/dart/.dart_tool/
-bindings/dart/pubspec.lock
 bindings/dart/example/.dart_tool/
-bindings/dart/example/pubspec.lock
 
 # Outputs of the on-node exercise. Generated per run, never committed: one
 # carries a freshly generated signing key and the other is a record of a network
