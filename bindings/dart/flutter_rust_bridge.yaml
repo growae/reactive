@@ -8,9 +8,9 @@
 # be dead code no target ever loads.
 #
 # auto_upgrade_dependency: false — pubspec.yaml and rust/Cargo.toml pin
-# flutter_rust_bridge to 2.13.0, one minor ahead of this codegen tool
-# (2.12.0). Leaving auto-upgrade on would make a regen silently rewrite that
-# pin to match the tool instead of the tool being bumped deliberately.
+# flutter_rust_bridge to the same 2.13.0 this codegen tool is pinned to.
+# Leaving auto-upgrade on would make a regen silently rewrite that pin to
+# match the tool instead of the tool being bumped deliberately.
 rust_input: crate::api
 rust_root: rust
 dart_output: lib/src/rust
