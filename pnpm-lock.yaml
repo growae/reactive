@@ -169,15 +169,16 @@ importers:
       '@growae/reactive':
         specifier: workspace:*
         version: link:../core
-      '@tanstack/solid-query':
-        specifier: '>=5.0.0 <6.0.0'
-        version: 5.102.8(solid-js@1.9.15)
       solid-js:
         specifier: '>=1.0.0 <2.0.0'
         version: 1.9.15
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+    devDependencies:
+      '@tanstack/solid-query':
+        specifier: ^5.102.8
+        version: 5.102.8(solid-js@1.9.15)
 
   packages/vue:
     dependencies:
