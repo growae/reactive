@@ -24,7 +24,7 @@ vi.mock('./useNetworkId.js', () => ({
   useNetworkId: vi.fn(() => 'ae_uat'),
 }))
 
-import { useMicroBlock } from './useMicroBlock'
+import { useMicroBlock } from './useMicroBlock.js'
 
 describe('useMicroBlock', () => {
   it('should be a function', () => {

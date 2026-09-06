@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useAccount } from './useAccount'
+import { useAccount } from './useAccount.js'
 
 describe('useAccount', () => {
   it('should be a function', () => {

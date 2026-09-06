@@ -6,9 +6,9 @@ import type {
 } from '@growae/reactive'
 import { verifyTypedData } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties'
-import { type UseQueryReturnType, useQuery } from '../utils/query'
-import { useConfig } from './useConfig'
+import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
+import { useConfig } from './useConfig.js'
 
 export type UseVerifyTypedDataParameters = Compute<
   VerifyTypedDataParameters & ConfigParameter & { enabled?: boolean }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useBlock } from './useBlock'
+import { useBlock } from './useBlock.js'
 
 describe('useBlock', () => {
   it('should be a function', () => {

@@ -8,8 +8,8 @@ import {
   watchNodeClient,
 } from '@growae/reactive'
 import { useSyncExternalStore } from 'react'
-import type { ConfigParameter } from '../types/properties'
-import { useConfig } from './useConfig'
+import type { ConfigParameter } from '../types/properties.js'
+import { useConfig } from './useConfig.js'
 
 export type UseNodeClientParameters = Compute<
   GetNodeClientParameters & ConfigParameter

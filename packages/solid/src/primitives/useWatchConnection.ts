@@ -2,7 +2,7 @@ import type { Connection } from '@growae/reactive'
 import { type Config, watchConnection } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createEffect, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig'
+import { useConfig } from './useConfig.js'
 
 export type UseWatchConnectionParameters = Accessor<{
   config?: Config | undefined

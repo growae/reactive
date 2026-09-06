@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useNetworks } from './useNetworks'
+import { useNetworks } from './useNetworks.js'
 
 describe('useNetworks', () => {
   it('should be a function', () => {

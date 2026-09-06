@@ -28,7 +28,7 @@ vi.mock('vue', async () => {
   return { ...actual, onScopeDispose: vi.fn() }
 })
 
-import { useNameEntry } from './useNameEntry'
+import { useNameEntry } from './useNameEntry.js'
 
 describe('useNameEntry', () => {
   it('should be a function', () => {

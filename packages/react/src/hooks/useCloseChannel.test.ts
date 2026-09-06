@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useCloseChannel } from './useCloseChannel'
+import { useCloseChannel } from './useCloseChannel.js'
 
 describe('useCloseChannel', () => {
   it('should be a function', () => {

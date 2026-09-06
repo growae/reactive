@@ -28,7 +28,7 @@ vi.mock('vue', async () => {
   return { ...actual, onScopeDispose: vi.fn() }
 })
 
-import { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm'
+import { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm.js'
 
 describe('useWaitForTransactionConfirm', () => {
   it('should be a function', () => {

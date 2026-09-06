@@ -1,8 +1,8 @@
 import type { Config } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo, useContext } from 'solid-js'
-import { ReactiveContext } from '../context'
-import { ReactiveProviderNotFoundError } from '../errors/context'
+import { ReactiveContext } from '../context.js'
+import { ReactiveProviderNotFoundError } from '../errors/context.js'
 
 export type UseConfigParameters = Accessor<{ config?: Config | undefined }>
 

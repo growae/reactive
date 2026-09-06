@@ -1,7 +1,7 @@
 import { type Config, type SpendParameters, spend } from '@growae/reactive'
 import { createMutation } from '@tanstack/solid-query'
 import type { Accessor } from 'solid-js'
-import { useConfig } from './useConfig'
+import { useConfig } from './useConfig.js'
 
 export type UseSpendParameters = Accessor<{
   config?: Config | undefined

@@ -9,4 +9,4 @@ export {
   type UseQueryReturnType,
   useMutation,
   useQuery,
-} from '../utils/query'
+} from '../utils/query.js'

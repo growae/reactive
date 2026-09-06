@@ -12,7 +12,7 @@ import {
 } from '@tanstack/vue-query'
 import { computed, type MaybeRef, unref } from 'vue'
 
-import type { DeepMaybeRef, DeepUnwrapRef } from '../types/ref'
+import type { DeepMaybeRef, DeepUnwrapRef } from '../types/ref.js'
 
 export { useMutation }
 
