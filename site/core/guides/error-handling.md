@@ -107,8 +107,14 @@ not a hint to reorder the argument.
 | Error | When |
 |-------|------|
 | `BidNameNoAccountError` | `bidName` was called without a connected account |
+| `ClaimNameNoAccountError` | `claimName` was called without a connected account |
+| `PreclaimNameNoAccountError` | `preclaimName` was called without a connected account |
 | `RevokeNameNoAccountError` | `revokeName` was called without a connected account |
 | `TransferNameNoAccountError` | `transferName` was called without a connected account |
+| `UpdateNameNoAccountError` | `updateName` was called without a connected account |
+
+`resolveName` throws none of these. A name with no matching pointer is an
+ordinary answer, not a failure, so it returns `null` — see the AENS guide.
 
 ### Oracle Errors
 
