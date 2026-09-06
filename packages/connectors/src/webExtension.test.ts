@@ -33,7 +33,12 @@ const { TEST_ADDRESS, mockFrame, mockGetConnection } = vi.hoisted(() => {
   }
 })
 
-vi.mock('@aeternity/aepp-sdk', () => ({
+// Partial: the wallet entry points below are stubbed, everything else in the
+// sdk is the real module. `@growae/reactive` reaches the sdk for values as well
+// as types — a class it subclasses is `undefined` under a wholesale mock, and
+// the failure lands here rather than where the mock is written.
+vi.mock('@aeternity/aepp-sdk', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@aeternity/aepp-sdk')>()),
   WalletConnectorFrame: {
     connect: vi.fn().mockResolvedValue(mockFrame),
   },
