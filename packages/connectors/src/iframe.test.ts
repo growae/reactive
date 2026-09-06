@@ -2,7 +2,7 @@ import { BrowserWindowMessageConnection } from '@aeternity/aepp-sdk'
 import type { ConnectorEventMap, Network } from '@growae/reactive'
 import { createEmitter } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { iframe } from './iframe'
+import { iframe } from './iframe.js'
 
 function makeConfig(
   networks: Network[] = [

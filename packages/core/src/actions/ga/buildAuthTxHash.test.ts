@@ -5,7 +5,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 }))
 
 import { buildAuthTxHash as sdkBuildAuthTxHash } from '@aeternity/aepp-sdk'
-import { buildAuthTxHash } from './buildAuthTxHash'
+import { buildAuthTxHash } from './buildAuthTxHash.js'
 
 describe('buildAuthTxHash', () => {
   it('should be a function', () => {

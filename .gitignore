@@ -62,3 +62,9 @@ packages/vue/test/fixtures/*/node_modules/
 packages/vue/test/fixtures/*/.nuxt/
 packages/vue/test/fixtures/*/.output/
 packages/vue/test/fixtures/*/pnpm-lock.yaml
+
+# packages/core node-resolution gate — the packed tarballs and the scratch
+# consumer package it installs them into, rebuilt by
+# `pnpm --filter @growae/reactive run test:node-resolution` on every run,
+# never committed.
+.node-resolution-check/

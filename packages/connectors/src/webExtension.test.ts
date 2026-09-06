@@ -1,7 +1,7 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
 import { createEmitter } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { webExtension } from './webExtension'
+import { webExtension } from './webExtension.js'
 
 function makeConfig(
   networks: Network[] = [

@@ -1,4 +1,4 @@
-import type { Config, Connector } from '../createConfig'
+import type { Config, Connector } from '../createConfig.js'
 
 export type GetConnectorsReturnType = readonly Connector[]
 

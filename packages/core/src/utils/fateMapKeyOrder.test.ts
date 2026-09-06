@@ -7,7 +7,7 @@ import {
   compareStringKeysAsNode,
   detectMapKeyOrderDisagreement,
   type FateMapKey,
-} from './fateMapKeyOrder'
+} from './fateMapKeyOrder.js'
 
 /**
  * The corpus this file is twinned against is the round-trip sweep committed for

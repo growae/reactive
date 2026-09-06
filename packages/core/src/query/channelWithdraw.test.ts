@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { channelWithdrawMutationOptions } from './channelWithdraw'
+import { channelWithdrawMutationOptions } from './channelWithdraw.js'
 
 describe('channelWithdrawMutationOptions', () => {
   it('should be a function', () => {

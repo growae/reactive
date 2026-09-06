@@ -4,8 +4,8 @@ import {
   type PreclaimNameParameters,
   type PreclaimNameReturnType,
   preclaimName,
-} from '../actions/preclaimName'
-import type { Config } from '../createConfig'
+} from '../actions/preclaimName.js'
+import type { Config } from '../createConfig.js'
 
 export function preclaimNameMutationOptions(config: Config) {
   return {

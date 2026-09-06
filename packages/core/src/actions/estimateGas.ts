@@ -1,6 +1,6 @@
 import type { Node } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
+import type { Config } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
 
 export type EstimateGasParameters = {
   tx: string

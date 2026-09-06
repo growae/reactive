@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   SimulateContractMapKeyOrderError,
   simulateContract,
-} from './simulateContract'
+} from './simulateContract.js'
 
 describe('simulateContract', () => {
   it('should be a function', () => {

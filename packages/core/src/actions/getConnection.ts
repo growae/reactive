@@ -1,4 +1,4 @@
-import type { Config, Connection } from '../createConfig'
+import type { Config, Connection } from '../createConfig.js'
 
 export type GetConnectionReturnType = Connection | undefined
 

@@ -1,12 +1,12 @@
 import { Contract } from '@aeternity/aepp-sdk'
-import type { Config } from '../createConfig'
-import { BaseError } from '../errors/base'
+import type { Config } from '../createConfig.js'
+import { BaseError } from '../errors/base.js'
 import {
   describeMapKeyOrderDefects,
   findMapKeyOrderDefects,
   type MapKeyOrderDefect,
-} from '../utils/mapArgumentGuard'
-import type { CallContractParameters } from './callContract'
+} from '../utils/mapArgumentGuard.js'
+import type { CallContractParameters } from './callContract.js'
 
 export type SimulateContractParameters = Omit<
   CallContractParameters,

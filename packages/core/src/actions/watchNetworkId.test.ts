@@ -4,9 +4,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '../createConfig'
-import { mainnet, testnet } from '../types/network'
-import { watchNetworkId } from './watchNetworkId'
+import { createConfig } from '../createConfig.js'
+import { mainnet, testnet } from '../types/network.js'
+import { watchNetworkId } from './watchNetworkId.js'
 
 describe('watchNetworkId', () => {
   it('should call onChange when networkId changes', () => {

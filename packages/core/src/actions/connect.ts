@@ -1,10 +1,10 @@
-import type { CreateConnectorFn } from '../connectors/createConnector'
-import type { Config, Connector } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
+import type { CreateConnectorFn } from '../connectors/createConnector.js'
+import type { Config, Connector } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
 import {
   ConnectorAlreadyConnectedError,
   type ConnectorAlreadyConnectedErrorType,
-} from '../errors/config'
+} from '../errors/config.js'
 
 export type ConnectParameters = {
   connector: Connector | CreateConnectorFn

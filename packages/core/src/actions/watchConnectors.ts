@@ -1,4 +1,4 @@
-import type { Config } from '../createConfig'
+import type { Config } from '../createConfig.js'
 
 export type WatchConnectorsParameters = {
   onChange: (connectors: any[], prevConnectors: any[]) => void

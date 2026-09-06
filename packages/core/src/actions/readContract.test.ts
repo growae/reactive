@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { callContract } from './callContract'
-import { readContract } from './readContract'
+import { callContract } from './callContract.js'
+import { readContract } from './readContract.js'
 
 vi.mock('./callContract.js', () => ({
   callContract: vi.fn().mockResolvedValue({

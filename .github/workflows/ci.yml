@@ -67,6 +67,32 @@ jobs:
           name: coverage-report
           path: coverage/
 
+  node-resolution:
+    name: Node Resolution
+    runs-on: ubuntu-latest
+    needs: check
+    timeout-minutes: 10
+    # `Build` proves tsc emitted something. It does not prove Node can import
+    # it. Nothing else here ever loads the built artifact: every unit test
+    # resolves `@growae/reactive` through the tsconfig `paths` alias to `src/`,
+    # and every playground resolves it through a bundler. Both infer missing
+    # file extensions; Node's ESM resolver does not — which is how 0.0.1
+    # through 0.0.6 all shipped a `dist/esm` that throws ERR_MODULE_NOT_FOUND
+    # on the first import from a plain Node script, a Next.js server component
+    # or an SSR entry, with every gate green the whole time.
+    #
+    # So this job packs real tarballs and imports them from a scratch
+    # `"type": "module"` package under Node's own resolver, and type-checks the
+    # shipped declarations under `moduleResolution: nodenext`. It is separate
+    # from `Build` because it installs from the registry and takes minutes
+    # rather than seconds; it hangs off `check` for the same reason `build`
+    # does.
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @growae/reactive run test:node-resolution
+
   vue-nuxt-compat:
     name: Vue Nuxt Compat (nuxt ${{ matrix.nuxt-major }})
     runs-on: ubuntu-latest

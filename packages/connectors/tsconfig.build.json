@@ -1,6 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    // See packages/core/tsconfig.build.json - the emitted specifiers must be
+    // resolvable by Node, which infers no extensions.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "rootDir": "src",
     "outDir": "dist/esm",
     "declarationDir": "dist/types",

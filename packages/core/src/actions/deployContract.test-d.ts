@@ -3,7 +3,7 @@ import {
   type DeployContractParameters,
   type DeployContractReturnType,
   deployContract,
-} from './deployContract'
+} from './deployContract.js'
 
 test('deployContract returns Promise<DeployContractReturnType>', () => {
   expectTypeOf(deployContract).returns.toEqualTypeOf<

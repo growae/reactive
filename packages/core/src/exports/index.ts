@@ -10,7 +10,7 @@ export {
   createConfig,
   type PartializedState,
   type State,
-} from '../createConfig'
+} from '../createConfig.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Storage
@@ -23,33 +23,33 @@ export {
   noopStorage,
   type Storage,
   type StorageItemMap,
-} from '../createStorage'
+} from '../createStorage.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Emitter
 ////////////////////////////////////////////////////////////////////////////////
 
-export { createEmitter, Emitter, type EventData } from '../createEmitter'
+export { createEmitter, Emitter, type EventData } from '../createEmitter.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hydrate
 ////////////////////////////////////////////////////////////////////////////////
 
-export { hydrate } from '../hydrate'
+export { hydrate } from '../hydrate.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Version
 ////////////////////////////////////////////////////////////////////////////////
 
-export { version } from '../version'
+export { version } from '../version.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Types
 ////////////////////////////////////////////////////////////////////////////////
 
-export type { Network } from '../types/network'
-export { mainnet, testnet } from '../types/network'
-export type { Register, ResolvedRegister } from '../types/register'
+export type { Network } from '../types/network.js'
+export { mainnet, testnet } from '../types/network.js'
+export type { Register, ResolvedRegister } from '../types/register.js'
 export type {
   Compute,
   ExactPartial,
@@ -69,13 +69,13 @@ export type {
   UnionExactPartial,
   UnionLooseOmit,
   UnionStrictOmit,
-} from '../types/utils'
+} from '../types/utils.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors
 ////////////////////////////////////////////////////////////////////////////////
 
-export * from '../errors/index'
+export * from '../errors/index.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Connectors
@@ -85,91 +85,91 @@ export {
   type ConnectorEventMap,
   type CreateConnectorFn,
   createConnector,
-} from '../connectors/createConnector'
+} from '../connectors/createConnector.js'
 
-export { type MemoryParameters, memory } from '../connectors/memory'
+export { type MemoryParameters, memory } from '../connectors/memory.js'
 
-export { type MockParameters, mock } from '../connectors/mock'
+export { type MockParameters, mock } from '../connectors/mock.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Actions
 ////////////////////////////////////////////////////////////////////////////////
 
 // AENS sub-module actions (non-conflicting with root-level)
-export * from '../actions/aens/bidName'
-export * from '../actions/aens/revokeName'
-export * from '../actions/aens/transferName'
-export * from '../actions/buildTransaction'
-export * from '../actions/callContract'
-export * from '../actions/channel/channelContract'
-export * from '../actions/channel/channelDeposit'
-export * from '../actions/channel/channelTransfer'
-export * from '../actions/channel/channelWithdraw'
-export * from '../actions/channel/closeChannel'
+export * from '../actions/aens/bidName.js'
+export * from '../actions/aens/revokeName.js'
+export * from '../actions/aens/transferName.js'
+export * from '../actions/buildTransaction.js'
+export * from '../actions/callContract.js'
+export * from '../actions/channel/channelContract.js'
+export * from '../actions/channel/channelDeposit.js'
+export * from '../actions/channel/channelTransfer.js'
+export * from '../actions/channel/channelWithdraw.js'
+export * from '../actions/channel/closeChannel.js'
 // Channel sub-module actions
-export * from '../actions/channel/openChannel'
-export * from '../actions/claimName'
-export * from '../actions/compileContract'
-export * from '../actions/connect'
-export * from '../actions/deployContract'
-export * from '../actions/disconnect'
-export * from '../actions/estimateGas'
-export * from '../actions/ga/buildAuthTxHash'
+export * from '../actions/channel/openChannel.js'
+export * from '../actions/claimName.js'
+export * from '../actions/compileContract.js'
+export * from '../actions/connect.js'
+export * from '../actions/deployContract.js'
+export * from '../actions/disconnect.js'
+export * from '../actions/estimateGas.js'
+export * from '../actions/ga/buildAuthTxHash.js'
 // GA sub-module actions
-export * from '../actions/ga/createGeneralizedAccount'
-export * from '../actions/getAccount'
-export * from '../actions/getActiveAccount'
-export * from '../actions/getBalance'
-export * from '../actions/getBlock'
-export * from '../actions/getConnection'
-export * from '../actions/getConnections'
-export * from '../actions/getConnectors'
-export * from '../actions/getContractBytecode'
-export * from '../actions/getContractEvents'
-export * from '../actions/getHeight'
-export * from '../actions/getMicroBlock'
-export * from '../actions/getNameEntry'
-export * from '../actions/getNetworkId'
-export * from '../actions/getNetworks'
-export * from '../actions/getNodeClient'
-export * from '../actions/getOracleQueries'
-export * from '../actions/getOracleState'
-export * from '../actions/getTransaction'
-export * from '../actions/getTransactionCount'
-export * from '../actions/oracle/extendOracle'
-export * from '../actions/oracle/queryOracle'
+export * from '../actions/ga/createGeneralizedAccount.js'
+export * from '../actions/getAccount.js'
+export * from '../actions/getActiveAccount.js'
+export * from '../actions/getBalance.js'
+export * from '../actions/getBlock.js'
+export * from '../actions/getConnection.js'
+export * from '../actions/getConnections.js'
+export * from '../actions/getConnectors.js'
+export * from '../actions/getContractBytecode.js'
+export * from '../actions/getContractEvents.js'
+export * from '../actions/getHeight.js'
+export * from '../actions/getMicroBlock.js'
+export * from '../actions/getNameEntry.js'
+export * from '../actions/getNetworkId.js'
+export * from '../actions/getNetworks.js'
+export * from '../actions/getNodeClient.js'
+export * from '../actions/getOracleQueries.js'
+export * from '../actions/getOracleState.js'
+export * from '../actions/getTransaction.js'
+export * from '../actions/getTransactionCount.js'
+export * from '../actions/oracle/extendOracle.js'
+export * from '../actions/oracle/queryOracle.js'
 // Oracle sub-module actions (non-conflicting with root-level)
-export * from '../actions/oracle/registerOracle'
-export * from '../actions/oracle/respondToQuery'
-export * from '../actions/payForTransaction'
-export * from '../actions/preclaimName'
-export * from '../actions/readContract'
-export * from '../actions/readContracts'
-export * from '../actions/reconnect'
-export * from '../actions/resolveName'
-export * from '../actions/sendTransaction'
-export * from '../actions/signDelegation'
-export * from '../actions/signMessage'
-export * from '../actions/signTransaction'
-export * from '../actions/signTypedData'
-export * from '../actions/simulateContract'
-export * from '../actions/spend'
-export * from '../actions/switchActiveAccount'
-export * from '../actions/switchConnection'
-export * from '../actions/switchNetwork'
-export * from '../actions/transferFunds'
-export * from '../actions/updateName'
-export * from '../actions/verifyMessage'
-export * from '../actions/verifyTypedData'
-export * from '../actions/waitForTransaction'
-export * from '../actions/waitForTransactionConfirm'
-export * from '../actions/watchActiveAccount'
-export * from '../actions/watchConnection'
-export * from '../actions/watchConnections'
-export * from '../actions/watchConnectors'
-export * from '../actions/watchHeight'
-export * from '../actions/watchNetworkId'
-export * from '../actions/watchNodeClient'
+export * from '../actions/oracle/registerOracle.js'
+export * from '../actions/oracle/respondToQuery.js'
+export * from '../actions/payForTransaction.js'
+export * from '../actions/preclaimName.js'
+export * from '../actions/readContract.js'
+export * from '../actions/readContracts.js'
+export * from '../actions/reconnect.js'
+export * from '../actions/resolveName.js'
+export * from '../actions/sendTransaction.js'
+export * from '../actions/signDelegation.js'
+export * from '../actions/signMessage.js'
+export * from '../actions/signTransaction.js'
+export * from '../actions/signTypedData.js'
+export * from '../actions/simulateContract.js'
+export * from '../actions/spend.js'
+export * from '../actions/switchActiveAccount.js'
+export * from '../actions/switchConnection.js'
+export * from '../actions/switchNetwork.js'
+export * from '../actions/transferFunds.js'
+export * from '../actions/updateName.js'
+export * from '../actions/verifyMessage.js'
+export * from '../actions/verifyTypedData.js'
+export * from '../actions/waitForTransaction.js'
+export * from '../actions/waitForTransactionConfirm.js'
+export * from '../actions/watchActiveAccount.js'
+export * from '../actions/watchConnection.js'
+export * from '../actions/watchConnections.js'
+export * from '../actions/watchConnectors.js'
+export * from '../actions/watchHeight.js'
+export * from '../actions/watchNetworkId.js'
+export * from '../actions/watchNodeClient.js'
 
 // Constants
 export {
@@ -179,20 +179,20 @@ export {
   DEFAULT_QUERY_TTL_VALUE,
   DEFAULT_RESPONSE_TTL_VALUE,
   DEFAULT_TTL,
-} from '../constants'
+} from '../constants.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utilities
 ////////////////////////////////////////////////////////////////////////////////
 
-export { deepEqual } from '../utils/deepEqual'
-export { deserialize } from '../utils/deserialize'
+export { deepEqual } from '../utils/deepEqual.js'
+export { deserialize } from '../utils/deserialize.js'
 export {
   type EncodingPrefix,
   isValidAddress,
   isValidContractAddress,
   isValidName,
   isValidTxHash,
-} from '../utils/encoding'
-export { formatAmount, toAe, toAettos } from '../utils/formatAmount'
-export { serialize } from '../utils/serialize'
+} from '../utils/encoding.js'
+export { formatAmount, toAe, toAettos } from '../utils/formatAmount.js'
+export { serialize } from '../utils/serialize.js'

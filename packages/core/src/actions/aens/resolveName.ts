@@ -1,5 +1,5 @@
-import type { Config } from '../../createConfig'
-import { BaseError } from '../../errors/base'
+import type { Config } from '../../createConfig.js'
+import { BaseError } from '../../errors/base.js'
 
 export type ResolveNameParameters = {
   name: string

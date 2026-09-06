@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { claimName } from './claimName'
+import { claimName } from './claimName.js'
 
 describe('claimName', () => {
   it('should be a function', () => {

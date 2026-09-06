@@ -9,10 +9,10 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 }))
 
 import { MemoryAccount } from '@aeternity/aepp-sdk'
-import { createEmitter } from '../createEmitter'
-import { mainnet, testnet } from '../types/network'
-import type { ConnectorEventMap } from './createConnector'
-import { memory } from './memory'
+import { createEmitter } from '../createEmitter.js'
+import { mainnet, testnet } from '../types/network.js'
+import type { ConnectorEventMap } from './createConnector.js'
+import { memory } from './memory.js'
 
 function setupConnector(secretKey = 'test_secret_key', name?: string) {
   const connectorFn = memory({ accounts: [{ secretKey }], name })

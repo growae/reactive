@@ -1,5 +1,5 @@
-import type { Config, Connector } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
+import type { Config, Connector } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
 
 export type SignDelegationParameters = {
   delegation: any

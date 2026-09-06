@@ -4,8 +4,8 @@ import {
   type ReconnectParameters,
   type ReconnectReturnType,
   reconnect,
-} from '../actions/reconnect'
-import type { Config } from '../createConfig'
+} from '../actions/reconnect.js'
+import type { Config } from '../createConfig.js'
 
 export function reconnectMutationOptions(config: Config) {
   return {

@@ -1,4 +1,4 @@
-import { BaseError } from './base'
+import { BaseError } from './base.js'
 
 export type NodeNotFoundErrorType = NodeNotFoundError & {
   name: 'NodeNotFoundError'

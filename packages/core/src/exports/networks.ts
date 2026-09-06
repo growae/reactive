@@ -2,4 +2,4 @@
 // Network Definitions
 ////////////////////////////////////////////////////////////////////////////////
 
-export { mainnet, type Network, testnet } from '../types/network'
+export { mainnet, type Network, testnet } from '../types/network.js'

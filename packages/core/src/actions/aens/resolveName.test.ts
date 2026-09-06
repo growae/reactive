@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { NameNotResolvedError, resolveName } from './resolveName'
+import { NameNotResolvedError, resolveName } from './resolveName.js'
 
 describe('resolveName', () => {
   it('should be a function', () => {

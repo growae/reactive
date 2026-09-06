@@ -1,18 +1,18 @@
 import { Contract } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants'
-import type { Config } from '../createConfig'
-import { BaseError } from '../errors/base'
+import { DEFAULT_TTL } from '../constants.js'
+import type { Config } from '../createConfig.js'
+import { BaseError } from '../errors/base.js'
 import {
   describeMapKeyOrderDefects,
   findMapKeyOrderDefects,
   type MapKeyOrderDefect,
-} from '../utils/mapArgumentGuard'
+} from '../utils/mapArgumentGuard.js'
 import {
   invocationReason,
   isNodeInvocationError,
   observeSigning,
   transactionHashOf,
-} from '../utils/nodeInvocation'
+} from '../utils/nodeInvocation.js'
 
 export type CallContractParameters = {
   address: string

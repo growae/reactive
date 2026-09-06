@@ -1,5 +1,5 @@
-import type { Config } from '../createConfig'
-import { AccountNotFoundError } from '../errors/account'
+import type { Config } from '../createConfig.js'
+import { AccountNotFoundError } from '../errors/account.js'
 
 export type SwitchActiveAccountParameters = {
   account: string

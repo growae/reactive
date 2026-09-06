@@ -3,9 +3,9 @@ import {
   type GetHeightParameters,
   type GetHeightReturnType,
   getHeight,
-} from '../actions/getHeight'
-import type { Config } from '../createConfig'
-import type { ExactPartial } from '../types/utils'
+} from '../actions/getHeight.js'
+import type { Config } from '../createConfig.js'
+import type { ExactPartial } from '../types/utils.js'
 
 export type GetHeightOptions = ExactPartial<GetHeightParameters>
 

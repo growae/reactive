@@ -25,11 +25,11 @@ import {
   Tag,
   unpackTx,
 } from '@aeternity/aepp-sdk'
-import { mock } from '../connectors/mock'
-import { createConfig } from '../createConfig'
-import { testnet } from '../types/network'
-import { connect } from './connect'
-import { spend } from './spend'
+import { mock } from '../connectors/mock.js'
+import { createConfig } from '../createConfig.js'
+import { testnet } from '../types/network.js'
+import { connect } from './connect.js'
+import { spend } from './spend.js'
 
 const SENDER = 'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS'
 const RECIPIENT = 'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU'

@@ -6,8 +6,8 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 }))
 
 import { buildTxAsync } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants'
-import { buildTransaction } from './buildTransaction'
+import { DEFAULT_TTL } from '../constants.js'
+import { buildTransaction } from './buildTransaction.js'
 
 describe('buildTransaction', () => {
   it('should be a function', () => {

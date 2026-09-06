@@ -1,4 +1,4 @@
-import type { Config, Connection, Connector } from '../createConfig'
+import type { Config, Connection, Connector } from '../createConfig.js'
 
 export type GetActiveAccountReturnType =
   | {

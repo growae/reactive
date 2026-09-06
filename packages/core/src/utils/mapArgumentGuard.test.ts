@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { findMapKeyOrderDefects } from './mapArgumentGuard'
+import { findMapKeyOrderDefects } from './mapArgumentGuard.js'
 
 /**
  * The ACI of `test/integration/MapOrder.aes`, the contract the on-node half of

@@ -3,8 +3,8 @@ import {
   type RespondToQueryParameters,
   type RespondToQueryReturnType,
   respondToQuery,
-} from '../actions/oracle/respondToQuery'
-import type { Config } from '../createConfig'
+} from '../actions/oracle/respondToQuery.js'
+import type { Config } from '../createConfig.js'
 
 export type RespondToQueryErrorType = Error
 

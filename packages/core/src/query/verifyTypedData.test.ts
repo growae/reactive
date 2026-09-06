@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { verifyTypedDataMutationOptions } from './verifyTypedData'
+import { verifyTypedDataMutationOptions } from './verifyTypedData.js'
 
 describe('verifyTypedDataMutationOptions', () => {
   it('should be a function', () => {

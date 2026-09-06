@@ -3,8 +3,8 @@ import {
   type RevokeNameParameters,
   type RevokeNameReturnType,
   revokeName,
-} from '../actions/aens/revokeName'
-import type { Config } from '../createConfig'
+} from '../actions/aens/revokeName.js'
+import type { Config } from '../createConfig.js'
 
 export type RevokeNameErrorType = Error
 

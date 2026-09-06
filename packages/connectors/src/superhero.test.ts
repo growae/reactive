@@ -1,7 +1,7 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
 import { createEmitter } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { superhero } from './superhero'
+import { superhero } from './superhero.js'
 
 function makeConfig(
   networks: Network[] = [

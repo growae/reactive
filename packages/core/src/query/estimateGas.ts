@@ -3,9 +3,9 @@ import {
   type EstimateGasParameters,
   type EstimateGasReturnType,
   estimateGas,
-} from '../actions/estimateGas'
-import type { Config } from '../createConfig'
-import type { ExactPartial } from '../types/utils'
+} from '../actions/estimateGas.js'
+import type { Config } from '../createConfig.js'
+import type { ExactPartial } from '../types/utils.js'
 
 export type EstimateGasOptions = ExactPartial<EstimateGasParameters>
 

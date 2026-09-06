@@ -6,7 +6,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 }))
 
 import { hashTypedData } from '@aeternity/aepp-sdk'
-import { verifyTypedData } from './verifyTypedData'
+import { verifyTypedData } from './verifyTypedData.js'
 
 describe('verifyTypedData', () => {
   it('should be a function', () => {

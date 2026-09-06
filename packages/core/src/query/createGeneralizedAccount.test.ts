@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createGeneralizedAccountMutationOptions } from './createGeneralizedAccount'
+import { createGeneralizedAccountMutationOptions } from './createGeneralizedAccount.js'
 
 describe('createGeneralizedAccountMutationOptions', () => {
   it('should be a function', () => {
