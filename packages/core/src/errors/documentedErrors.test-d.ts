@@ -44,7 +44,7 @@ test('the Catching Specific Errors example', async () => {
     if (error instanceof CallContractNoAccountError) {
       expectTypeOf(error.shortMessage).toEqualTypeOf<string>()
     } else if (error instanceof CallContractMapKeyOrderError) {
-      expectTypeOf(error.defects).toBeArray
+      expectTypeOf(error.defects).toExtend<readonly unknown[]>()
     } else if (error instanceof CallContractInvocationError) {
       expectTypeOf(error.reason).toEqualTypeOf<string | undefined>()
       expectTypeOf(error.transactionHash).toEqualTypeOf<string | undefined>()
