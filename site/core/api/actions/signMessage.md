@@ -61,5 +61,13 @@ Specific account to sign with. Defaults to the currently active account.
 import type { SignMessageErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `UserRejectedRequestError` — user rejected the signing request
+`SignMessageErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at the
+type level, and on this action that is literal. Both of its own guards throw a
+plain `Error`, so `instanceof BaseError` does not narrow them:
+
+- `Error('No connected account')` — nothing is connected
+- `Error('Connector does not support message signing')` — the connector has no `signMessage`
+
+Past those guards the connector's own failures surface unwrapped. The bundled
+connectors raise `ConnectorNotConnectedError` and `ProviderNotFoundError`; a
+user declining the signature arrives as the wallet's own rejection.

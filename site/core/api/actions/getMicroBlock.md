@@ -75,5 +75,8 @@ Target network. Defaults to the currently active network.
 import type { GetMicroBlockErrorType } from '@growae/reactive'
 ```
 
-- `NetworkNotConfiguredError` — target network is not in the config
-- `NodeRequestError` — the node returned an error
+`GetMicroBlockErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at the
+type level. What the action raises:
+
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- The `@aeternity/aepp-sdk` node error, unwrapped, from either of the two node calls the action makes. A `hash` the node does not know arrives this way, as its own 404

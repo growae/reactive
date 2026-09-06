@@ -58,6 +58,11 @@ const result = await sendTransaction(config, {
 import type { SendTransactionErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `TransactionRejectedError` — node rejected the transaction
-- `TransactionExpiredError` — TTL exceeded before inclusion
+`SendTransactionErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at
+the type level. What the action raises:
+
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- The `@aeternity/aepp-sdk` node error, unwrapped, when `postTransaction` rejects. A transaction the node refuses — bad signature, wrong nonce, expired TTL, insufficient balance — arrives this way, carrying the node's own reason
+
+`sendTransaction` posts an already-signed transaction. It never reaches the
+connector, so it raises nothing about a missing or unsupported wallet.

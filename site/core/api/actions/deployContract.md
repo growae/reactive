@@ -92,6 +92,14 @@ console.log('Deployed at:', result.address)
 import type { DeployContractErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `ContractDeployError` — deployment failed (init reverted, out of gas, etc.)
-- `InsufficientBalanceError` — not enough AE for fee + amount
+`DeployContractErrorType` names its concrete classes, so `instanceof` narrows
+against it. In the order the action can raise them:
+
+- `DeployContractNoCodeError` — neither `sourceCode` nor `bytecode` was passed
+- `DeployContractMapKeyOrderError` — a `map` init argument would be serialised in a key order the node's decoder refuses. Checked first, before the node is reached and before anything is built. The guard is a miss rather than a refusal when `aci` is absent, since a source-only deployment has nothing here to read the init argument types off
+- `DeployContractNoAccountError` — no connected account
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- `DeployContractInvocationError` — the node executed `init` and refused it; carries `reason`, `transaction` and `transactionHash`
+
+Any other `@aeternity/aepp-sdk` failure — compilation through `onCompiler`,
+contract initialisation, node transport — is rethrown unchanged.

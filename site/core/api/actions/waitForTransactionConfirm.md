@@ -55,5 +55,16 @@ Polling interval in milliseconds.
 import type { WaitForTransactionConfirmErrorType } from '@growae/reactive'
 ```
 
-- `TransactionNotFoundError` — the transaction hash was not found
-- `NodeRequestError` — the node returned an error
+`WaitForTransactionConfirmErrorType` is `BaseErrorType | ErrorType` — a plain
+`Error` at the type level, and both of this action's own guards are literal
+plain `Error`s that `instanceof BaseError` does not narrow:
+
+- `Error('Transaction <hash> is not yet mined')` — the node knows the hash but it has no block height yet. This action waits for *confirmations* on an already-mined transaction; it is not an entry point for waiting on inclusion
+- `Error('Transaction <hash> was removed from the chain (fork)')` — the transaction had a block height on the first read and none on the recheck
+
+It also raises:
+
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+
+Any other node failure surfaces unwrapped. A hash the node has never seen
+arrives that way, as its own 404 from `getTransactionByHash`.

@@ -94,7 +94,7 @@ Node HTTP failures today arrive as the `@aeternity/aepp-sdk` error, unwrapped.
 | `CallContractNoAccountError` | `callContract` was called without a connected account |
 | `CallContractMapKeyOrderError` | A `map` argument would be serialised in a key order the node's decoder refuses. Refused locally, before anything is posted |
 | `CallContractInvocationError` | The node executed the call and refused it. Carries `reason`, `transaction` and `transactionHash` |
-| `SimulateContractMapKeyOrderError` | The same map-ordering defect on the `simulateContract` / `readContract` dry-run path |
+| `SimulateContractMapKeyOrderError` | The same map-ordering defect on `simulateContract`'s dry-run path. `readContract` is `callContract` with `callStatic: true` and raises `CallContractMapKeyOrderError`, not this one |
 | `CompileContractNoCompilerError` | `compileContract` was called without `onCompiler` |
 
 The three map-ordering classes each carry a `defects` array naming the arguments

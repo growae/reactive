@@ -62,5 +62,14 @@ Connector to use for signing. Defaults to the active connector.
 import type { SignDelegationErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `NodeRequestError` — the node returned an error
+`SignDelegationErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at
+the type level, and on this action that is literal. Both of its own guards throw
+a plain `Error`, so `instanceof BaseError` does not narrow them:
+
+- `Error('No connector found. Connect a wallet first.')` — no `connector` was passed and nothing is connected
+- `Error('Connector "<name>" does not support delegation signing.')` — the connector has no `signDelegation`
+
+Past those guards the connector's own failures surface unwrapped. Delegation
+signing is not part of the connector interface, so whether a given connector
+supports it, and what it throws when it refuses, is that connector's own
+business.

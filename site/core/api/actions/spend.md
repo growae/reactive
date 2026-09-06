@@ -79,6 +79,17 @@ const result = await spend(config, {
 import type { SpendErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `InsufficientBalanceError` — not enough AE
-- `NodeRequestError` — the node returned an error
+`SpendErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at the type
+level, and three of the four guards below are literal plain `Error`s that
+`instanceof BaseError` does not narrow. In the order the action can raise them:
+
+- `Error('No connected account')` — nothing is connected
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- `Error('No account available')` — the connection carries no active account
+- `Error('Connector does not support transaction signing')` — the connector has no `signTransaction`
+
+Everything else surfaces unwrapped: the node's error from
+`getAccountByPubkey` and `postTransaction`, the SDK's from building the spend
+transaction, and the connector's from signing. An account without enough AE to
+cover `amount` plus the fee is refused by the node when the transaction is
+posted, and arrives as the node's own error carrying its reason.

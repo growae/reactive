@@ -54,5 +54,8 @@ Additional fields are required depending on the transaction type specified by `t
 import type { BuildTransactionErrorType } from '@growae/reactive'
 ```
 
-- `NetworkNotConfiguredError` — target network is not in the config
-- `NodeRequestError` — the node returned an error
+`BuildTransactionErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at
+the type level. What the action raises:
+
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- The `@aeternity/aepp-sdk` error, unwrapped, when `buildTxAsync` rejects — a missing or malformed field for the given `tag`, or a node request made while building

@@ -50,9 +50,22 @@ const balance = await readContract(config, {
 
 ## Error Types
 
+`readContract` is `callContract` with `callStatic: true` and raises that
+action's errors. The package exports no `ReadContractErrorType`; the union to
+import is `callContract`'s:
+
 ```typescript
-import type { ReadContractErrorType } from '@growae/reactive'
+import type { CallContractErrorType } from '@growae/reactive'
 ```
 
-- `ContractNotFoundError` — contract not deployed at address
-- `ContractCallError` — the dry-run failed
+- `CallContractMapKeyOrderError` — a `map` argument would be serialised in a key order the node's decoder refuses. Checked before the node is reached
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- `CallContractInvocationError` — the node executed the dry-run and refused it; carries `reason`, `transaction` and `transactionHash`
+
+Any other `@aeternity/aepp-sdk` failure is rethrown unchanged — no contract
+deployed at `address` arrives that way, as the node's own error.
+
+`CallContractNoAccountError` is not reachable from `readContract`: the account
+check is skipped on the static path, which is what makes a read work while
+disconnected. `SimulateContractMapKeyOrderError` belongs to `simulateContract`,
+not to this action.

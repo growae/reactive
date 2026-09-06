@@ -76,6 +76,17 @@ Whether to wait for the transaction to be mined before returning.
 import type { TransferFundsErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `InsufficientBalanceError` — not enough AE
-- `NodeRequestError` — the node returned an error
+`TransferFundsErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at the
+type level, and three of the four guards below are literal plain `Error`s that
+`instanceof BaseError` does not narrow. In the order the action can raise them:
+
+- `Error('Invalid fraction: <n>. Must be between 0 and 1.')` — `fraction` is outside `[0, 1]`
+- `Error('No connector found. Connect a wallet first.')` — no `connector` was passed and nothing is connected
+- `Error('No account available on the current connector.')` — the connector reported no accounts
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+
+Everything else surfaces unwrapped, from the three calls this action delegates
+to: `getBalance`, the SDK's transaction building, and `sendTransaction`.
+`transferFunds` subtracts the estimated fee from the amount rather than letting
+the balance be exceeded, so an underfunded transfer is a smaller transfer, not
+an error.

@@ -82,6 +82,13 @@ const result = await callContract(config, {
 import type { CallContractErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `ContractCallError` — the contract call reverted
-- `InsufficientBalanceError` — not enough AE for fee + amount
+`CallContractErrorType` names its concrete classes, so `instanceof` narrows
+against it. In the order the action can raise them:
+
+- `CallContractMapKeyOrderError` — a `map` argument would be serialised in a key order the node's decoder refuses. Checked first, before the node is reached and before anything is built, so nothing was posted and no gas was spent
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- `CallContractNoAccountError` — no connected account, on a call that is not `callStatic`
+- `CallContractInvocationError` — the node executed the call and refused it; carries `reason`, `transaction` and `transactionHash`
+
+Any other `@aeternity/aepp-sdk` failure — contract initialisation, node
+transport — is rethrown unchanged.

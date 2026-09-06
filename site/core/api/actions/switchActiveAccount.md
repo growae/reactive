@@ -69,3 +69,10 @@ switchActiveAccount(config, { account: 'ak_abc...' })
 
 - [`getActiveAccount`](/core/api/actions/getActiveAccount)
 - [`watchActiveAccount`](/core/api/actions/watchActiveAccount)
+
+## Error Types
+
+`switchActiveAccount` is synchronous — it throws rather than rejecting — and the
+package exports no `SwitchActiveAccountErrorType`. It raises one class:
+
+- `AccountNotFoundError` — no connection is current, the current uid has no connection, or `account` is not one of that connection's `accounts`
