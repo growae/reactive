@@ -3,301 +3,301 @@
 export type {
   UseAccountParameters,
   UseAccountReturnType,
-} from './useAccount'
-export { useAccount } from './useAccount'
+} from './useAccount.js'
+export { useAccount } from './useAccount.js'
 export type {
   UseActiveAccountParameters,
   UseActiveAccountReturnType,
-} from './useActiveAccount'
-export { useActiveAccount } from './useActiveAccount'
+} from './useActiveAccount.js'
+export { useActiveAccount } from './useActiveAccount.js'
 export type {
   UseBalanceParameters,
   UseBalanceReturnType,
-} from './useBalance'
+} from './useBalance.js'
 // Chain read primitives
-export { useBalance } from './useBalance'
-export type { UseBlockParameters, UseBlockReturnType } from './useBlock'
-export { useBlock } from './useBlock'
+export { useBalance } from './useBalance.js'
+export type { UseBlockParameters, UseBlockReturnType } from './useBlock.js'
+export { useBlock } from './useBlock.js'
 export type {
   UseBuildTransactionParameters,
   UseBuildTransactionReturnType,
-} from './useBuildTransaction'
-export { useBuildTransaction } from './useBuildTransaction'
+} from './useBuildTransaction.js'
+export { useBuildTransaction } from './useBuildTransaction.js'
 export type {
   UseCallContractParameters,
   UseCallContractReturnType,
-} from './useCallContract'
-export { useCallContract } from './useCallContract'
+} from './useCallContract.js'
+export { useCallContract } from './useCallContract.js'
 export type {
   UseChannelDepositParameters,
   UseChannelDepositReturnType,
-} from './useChannelDeposit'
-export { useChannelDeposit } from './useChannelDeposit'
+} from './useChannelDeposit.js'
+export { useChannelDeposit } from './useChannelDeposit.js'
 export type {
   UseClaimNameParameters,
   UseClaimNameReturnType,
-} from './useClaimName'
-export { useClaimName } from './useClaimName'
+} from './useClaimName.js'
+export { useClaimName } from './useClaimName.js'
 export type {
   UseCloseChannelParameters,
   UseCloseChannelReturnType,
-} from './useCloseChannel'
-export { useCloseChannel } from './useCloseChannel'
+} from './useCloseChannel.js'
+export { useCloseChannel } from './useCloseChannel.js'
 export type {
   UseCompileContractParameters,
   UseCompileContractReturnType,
-} from './useCompileContract'
-export { useCompileContract } from './useCompileContract'
-export type { UseConfigParameters, UseConfigReturnType } from './useConfig'
-export { useConfig } from './useConfig'
+} from './useCompileContract.js'
+export { useCompileContract } from './useCompileContract.js'
+export type { UseConfigParameters, UseConfigReturnType } from './useConfig.js'
+export { useConfig } from './useConfig.js'
 export type {
   UseConnectParameters,
   UseConnectReturnType,
-} from './useConnect'
-export { useConnect } from './useConnect'
+} from './useConnect.js'
+export { useConnect } from './useConnect.js'
 export type {
   UseConnectionParameters,
   UseConnectionReturnType,
-} from './useConnection'
-export { useConnection } from './useConnection'
+} from './useConnection.js'
+export { useConnection } from './useConnection.js'
 export type {
   UseConnectionsParameters,
   UseConnectionsReturnType,
-} from './useConnections'
-export { useConnections } from './useConnections'
+} from './useConnections.js'
+export { useConnections } from './useConnections.js'
 export type {
   UseConnectorClientParameters,
   UseConnectorClientReturnType,
-} from './useConnectorClient'
-export { useConnectorClient } from './useConnectorClient'
+} from './useConnectorClient.js'
+export { useConnectorClient } from './useConnectorClient.js'
 export type {
   UseConnectorsParameters,
   UseConnectorsReturnType,
-} from './useConnectors'
-export { useConnectors } from './useConnectors'
+} from './useConnectors.js'
+export { useConnectors } from './useConnectors.js'
 export type {
   UseContractBytecodeParameters,
   UseContractBytecodeReturnType,
-} from './useContractBytecode'
-export { useContractBytecode } from './useContractBytecode'
+} from './useContractBytecode.js'
+export { useContractBytecode } from './useContractBytecode.js'
 export type {
   UseContractEventsParameters,
   UseContractEventsReturnType,
-} from './useContractEvents'
-export { useContractEvents } from './useContractEvents'
+} from './useContractEvents.js'
+export { useContractEvents } from './useContractEvents.js'
 export type {
   UseDeployContractParameters,
   UseDeployContractReturnType,
-} from './useDeployContract'
+} from './useDeployContract.js'
 // Contract primitives
-export { useDeployContract } from './useDeployContract'
+export { useDeployContract } from './useDeployContract.js'
 export type {
   UseDisconnectParameters,
   UseDisconnectReturnType,
-} from './useDisconnect'
-export { useDisconnect } from './useDisconnect'
+} from './useDisconnect.js'
+export { useDisconnect } from './useDisconnect.js'
 export type {
   UseEstimateGasParameters,
   UseEstimateGasReturnType,
-} from './useEstimateGas'
-export { useEstimateGas } from './useEstimateGas'
-export type { UseHeightParameters, UseHeightReturnType } from './useHeight'
-export { useHeight } from './useHeight'
+} from './useEstimateGas.js'
+export { useEstimateGas } from './useEstimateGas.js'
+export type { UseHeightParameters, UseHeightReturnType } from './useHeight.js'
+export { useHeight } from './useHeight.js'
 export type {
   UseMicroBlockParameters,
   UseMicroBlockReturnType,
-} from './useMicroBlock'
-export { useMicroBlock } from './useMicroBlock'
+} from './useMicroBlock.js'
+export { useMicroBlock } from './useMicroBlock.js'
 export type {
   UseNameEntryParameters,
   UseNameEntryReturnType,
-} from './useNameEntry'
-export { useNameEntry } from './useNameEntry'
+} from './useNameEntry.js'
+export { useNameEntry } from './useNameEntry.js'
 export type {
   UseNetworkIdParameters,
   UseNetworkIdReturnType,
-} from './useNetworkId'
-export { useNetworkId } from './useNetworkId'
+} from './useNetworkId.js'
+export { useNetworkId } from './useNetworkId.js'
 export type {
   UseNetworksParameters,
   UseNetworksReturnType,
-} from './useNetworks'
-export { useNetworks } from './useNetworks'
+} from './useNetworks.js'
+export { useNetworks } from './useNetworks.js'
 export type {
   UseNodeClientParameters,
   UseNodeClientReturnType,
-} from './useNodeClient'
-export { useNodeClient } from './useNodeClient'
+} from './useNodeClient.js'
+export { useNodeClient } from './useNodeClient.js'
 export type {
   UseOpenChannelParameters,
   UseOpenChannelReturnType,
-} from './useOpenChannel'
+} from './useOpenChannel.js'
 // Channel primitives
-export { useOpenChannel } from './useOpenChannel'
+export { useOpenChannel } from './useOpenChannel.js'
 export type {
   UseOracleQueriesParameters,
   UseOracleQueriesReturnType,
-} from './useOracleQueries'
-export { useOracleQueries } from './useOracleQueries'
+} from './useOracleQueries.js'
+export { useOracleQueries } from './useOracleQueries.js'
 export type {
   UseOracleStateParameters,
   UseOracleStateReturnType,
-} from './useOracleState'
-export { useOracleState } from './useOracleState'
+} from './useOracleState.js'
+export { useOracleState } from './useOracleState.js'
 export type {
   UsePayForTransactionParameters,
   UsePayForTransactionReturnType,
-} from './usePayForTransaction'
-export { usePayForTransaction } from './usePayForTransaction'
+} from './usePayForTransaction.js'
+export { usePayForTransaction } from './usePayForTransaction.js'
 export type {
   UsePreclaimNameParameters,
   UsePreclaimNameReturnType,
-} from './usePreclaimName'
+} from './usePreclaimName.js'
 // AENS primitives
-export { usePreclaimName } from './usePreclaimName'
+export { usePreclaimName } from './usePreclaimName.js'
 export type {
   UseQueryOracleParameters,
   UseQueryOracleReturnType,
-} from './useQueryOracle'
-export { useQueryOracle } from './useQueryOracle'
+} from './useQueryOracle.js'
+export { useQueryOracle } from './useQueryOracle.js'
 export type {
   UseReadContractParameters,
   UseReadContractReturnType,
-} from './useReadContract'
-export { useReadContract } from './useReadContract'
+} from './useReadContract.js'
+export { useReadContract } from './useReadContract.js'
 export type {
   UseReadContractsParameters,
   UseReadContractsReturnType,
-} from './useReadContracts'
-export { useReadContracts } from './useReadContracts'
+} from './useReadContracts.js'
+export { useReadContracts } from './useReadContracts.js'
 export type {
   UseReconnectParameters,
   UseReconnectReturnType,
-} from './useReconnect'
-export { useReconnect } from './useReconnect'
+} from './useReconnect.js'
+export { useReconnect } from './useReconnect.js'
 export type {
   UseRegisterOracleParameters,
   UseRegisterOracleReturnType,
-} from './useRegisterOracle'
+} from './useRegisterOracle.js'
 // Oracle primitives
-export { useRegisterOracle } from './useRegisterOracle'
+export { useRegisterOracle } from './useRegisterOracle.js'
 export type {
   UseResolveNameParameters,
   UseResolveNameReturnType,
-} from './useResolveName'
-export { useResolveName } from './useResolveName'
+} from './useResolveName.js'
+export { useResolveName } from './useResolveName.js'
 export type {
   UseRespondToQueryParameters,
   UseRespondToQueryReturnType,
-} from './useRespondToQuery'
-export { useRespondToQuery } from './useRespondToQuery'
+} from './useRespondToQuery.js'
+export { useRespondToQuery } from './useRespondToQuery.js'
 export type {
   UseRevokeNameParameters,
   UseRevokeNameReturnType,
-} from './useRevokeName'
-export { useRevokeName } from './useRevokeName'
+} from './useRevokeName.js'
+export { useRevokeName } from './useRevokeName.js'
 export type {
   UseSendTransactionParameters,
   UseSendTransactionReturnType,
-} from './useSendTransaction'
+} from './useSendTransaction.js'
 // Transaction primitives
-export { useSendTransaction } from './useSendTransaction'
+export { useSendTransaction } from './useSendTransaction.js'
 export type {
   UseSignDelegationParameters,
   UseSignDelegationReturnType,
-} from './useSignDelegation'
-export { useSignDelegation } from './useSignDelegation'
+} from './useSignDelegation.js'
+export { useSignDelegation } from './useSignDelegation.js'
 export type {
   UseSignMessageParameters,
   UseSignMessageReturnType,
-} from './useSignMessage'
+} from './useSignMessage.js'
 // Signing primitives
-export { useSignMessage } from './useSignMessage'
+export { useSignMessage } from './useSignMessage.js'
 export type {
   UseSignTransactionParameters,
   UseSignTransactionReturnType,
-} from './useSignTransaction'
-export { useSignTransaction } from './useSignTransaction'
+} from './useSignTransaction.js'
+export { useSignTransaction } from './useSignTransaction.js'
 export type {
   UseSignTypedDataParameters,
   UseSignTypedDataReturnType,
-} from './useSignTypedData'
-export { useSignTypedData } from './useSignTypedData'
+} from './useSignTypedData.js'
+export { useSignTypedData } from './useSignTypedData.js'
 export type {
   UseSimulateContractParameters,
   UseSimulateContractReturnType,
-} from './useSimulateContract'
-export { useSimulateContract } from './useSimulateContract'
-export type { UseSpendParameters, UseSpendReturnType } from './useSpend'
-export { useSpend } from './useSpend'
+} from './useSimulateContract.js'
+export { useSimulateContract } from './useSimulateContract.js'
+export type { UseSpendParameters, UseSpendReturnType } from './useSpend.js'
+export { useSpend } from './useSpend.js'
 export type {
   UseSwitchActiveAccountParameters,
   UseSwitchActiveAccountReturnType,
-} from './useSwitchActiveAccount'
-export { useSwitchActiveAccount } from './useSwitchActiveAccount'
+} from './useSwitchActiveAccount.js'
+export { useSwitchActiveAccount } from './useSwitchActiveAccount.js'
 export type {
   UseSwitchNetworkParameters,
   UseSwitchNetworkReturnType,
-} from './useSwitchNetwork'
-export { useSwitchNetwork } from './useSwitchNetwork'
+} from './useSwitchNetwork.js'
+export { useSwitchNetwork } from './useSwitchNetwork.js'
 export type {
   UseTransactionParameters,
   UseTransactionReturnType,
-} from './useTransaction'
-export { useTransaction } from './useTransaction'
+} from './useTransaction.js'
+export { useTransaction } from './useTransaction.js'
 export type {
   UseTransactionCountParameters,
   UseTransactionCountReturnType,
-} from './useTransactionCount'
-export { useTransactionCount } from './useTransactionCount'
+} from './useTransactionCount.js'
+export { useTransactionCount } from './useTransactionCount.js'
 export type {
   UseTransferFundsParameters,
   UseTransferFundsReturnType,
-} from './useTransferFunds'
-export { useTransferFunds } from './useTransferFunds'
+} from './useTransferFunds.js'
+export { useTransferFunds } from './useTransferFunds.js'
 export type {
   UseTransferNameParameters,
   UseTransferNameReturnType,
-} from './useTransferName'
-export { useTransferName } from './useTransferName'
+} from './useTransferName.js'
+export { useTransferName } from './useTransferName.js'
 export type {
   UseUpdateNameParameters,
   UseUpdateNameReturnType,
-} from './useUpdateName'
-export { useUpdateName } from './useUpdateName'
+} from './useUpdateName.js'
+export { useUpdateName } from './useUpdateName.js'
 export type {
   UseVerifyMessageParameters,
   UseVerifyMessageReturnType,
-} from './useVerifyMessage'
-export { useVerifyMessage } from './useVerifyMessage'
+} from './useVerifyMessage.js'
+export { useVerifyMessage } from './useVerifyMessage.js'
 export type {
   UseVerifyTypedDataParameters,
   UseVerifyTypedDataReturnType,
-} from './useVerifyTypedData'
-export { useVerifyTypedData } from './useVerifyTypedData'
+} from './useVerifyTypedData.js'
+export { useVerifyTypedData } from './useVerifyTypedData.js'
 export type {
   UseWaitForTransactionParameters,
   UseWaitForTransactionReturnType,
-} from './useWaitForTransaction'
-export { useWaitForTransaction } from './useWaitForTransaction'
+} from './useWaitForTransaction.js'
+export { useWaitForTransaction } from './useWaitForTransaction.js'
 export type {
   UseWaitForTransactionConfirmParameters,
   UseWaitForTransactionConfirmReturnType,
-} from './useWaitForTransactionConfirm'
-export { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm'
+} from './useWaitForTransactionConfirm.js'
+export { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm.js'
 export type {
   UseWatchConnectionParameters,
   UseWatchConnectionReturnType,
-} from './useWatchConnection'
-export { useWatchConnection } from './useWatchConnection'
+} from './useWatchConnection.js'
+export { useWatchConnection } from './useWatchConnection.js'
 export type {
   UseWatchConnectorsParameters,
   UseWatchConnectorsReturnType,
-} from './useWatchConnectors'
-export { useWatchConnectors } from './useWatchConnectors'
+} from './useWatchConnectors.js'
+export { useWatchConnectors } from './useWatchConnectors.js'
 export type {
   UseWatchHeightParameters,
   UseWatchHeightReturnType,
-} from './useWatchHeight'
+} from './useWatchHeight.js'
 // Watcher primitives
-export { useWatchHeight } from './useWatchHeight'
+export { useWatchHeight } from './useWatchHeight.js'

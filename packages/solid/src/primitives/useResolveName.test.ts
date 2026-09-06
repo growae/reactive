@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useResolveName } from './useResolveName'
+import { useResolveName } from './useResolveName.js'
 
 describe('useResolveName', () => {
   it('should be a function', () => {

@@ -21,7 +21,7 @@ vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({})),
 }))
 
-import { useSignDelegation } from './useSignDelegation'
+import { useSignDelegation } from './useSignDelegation.js'
 
 describe('useSignDelegation', () => {
   it('should be a function', () => {

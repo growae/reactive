@@ -5,7 +5,7 @@ import {
   watchNetworkId,
 } from '@growae/reactive'
 import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
-import { useConfig } from './useConfig'
+import { useConfig } from './useConfig.js'
 
 export type UseNetworkIdParameters = Accessor<{
   config?: Config | undefined

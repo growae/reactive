@@ -24,7 +24,7 @@ vi.mock('./useNetworkId.js', () => ({
   useNetworkId: vi.fn(() => 'ae_uat'),
 }))
 
-import { useNameEntry } from './useNameEntry'
+import { useNameEntry } from './useNameEntry.js'
 
 describe('useNameEntry', () => {
   it('should be a function', () => {

@@ -7,10 +7,10 @@ import {
   type WaitForTransactionConfirmReturnType,
   waitForTransactionConfirm,
 } from '@growae/reactive'
-import type { ConfigParameter } from '../types/properties'
-import { type UseQueryReturnType, useQuery } from '../utils/query'
-import { useConfig } from './useConfig'
-import { useNetworkId } from './useNetworkId'
+import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
+import { useConfig } from './useConfig.js'
+import { useNetworkId } from './useNetworkId.js'
 
 export type UseWaitForTransactionConfirmParameters = Compute<
   WaitForTransactionConfirmParameters & ConfigParameter & { enabled?: boolean }

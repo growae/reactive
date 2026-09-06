@@ -20,7 +20,7 @@ vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({})),
 }))
 
-import { useCompileContract } from './useCompileContract'
+import { useCompileContract } from './useCompileContract.js'
 
 describe('useCompileContract', () => {
   it('should be a function', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { usePayForTransaction } from './usePayForTransaction'
+import { usePayForTransaction } from './usePayForTransaction.js'
 
 describe('usePayForTransaction', () => {
   it('should be a function', () => {

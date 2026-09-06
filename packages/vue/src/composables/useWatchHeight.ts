@@ -1,9 +1,9 @@
 import type { Compute } from '@growae/reactive'
 import { watchHeight } from '@growae/reactive'
 import { type MaybeRef, onScopeDispose, ref, toValue, watch } from 'vue'
-import type { ConfigParameter } from '../types/properties'
-import { useConfig } from './useConfig'
-import { useNetworkId } from './useNetworkId'
+import type { ConfigParameter } from '../types/properties.js'
+import { useConfig } from './useConfig.js'
+import { useNetworkId } from './useNetworkId.js'
 
 export type UseWatchHeightParameters = Compute<
   ConfigParameter & {

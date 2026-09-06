@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useDeployContract } from './useDeployContract'
+import { useDeployContract } from './useDeployContract.js'
 
 describe('useDeployContract', () => {
   it('should be a function', () => {

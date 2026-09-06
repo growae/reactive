@@ -6,12 +6,12 @@ import {
   type GetNodeClientParameters,
   getConnection,
 } from '@growae/reactive'
-import type { ConfigParameter } from '../types/properties'
-import type { UseQueryReturnType } from '../utils/query'
-import { useQuery } from '../utils/query'
-import { useConfig } from './useConfig'
-import { useConnection } from './useConnection'
-import { useNetworkId } from './useNetworkId'
+import type { ConfigParameter } from '../types/properties.js'
+import type { UseQueryReturnType } from '../utils/query.js'
+import { useQuery } from '../utils/query.js'
+import { useConfig } from './useConfig.js'
+import { useConnection } from './useConnection.js'
+import { useNetworkId } from './useNetworkId.js'
 
 export type UseConnectorClientParameters = Compute<
   GetNodeClientParameters & ConfigParameter

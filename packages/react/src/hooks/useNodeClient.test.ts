@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useNodeClient } from './useNodeClient'
+import { useNodeClient } from './useNodeClient.js'
 
 describe('useNodeClient', () => {
   it('should be a function', () => {

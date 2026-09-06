@@ -5,7 +5,7 @@ import {
 } from '@growae/reactive'
 import type { Accessor } from 'solid-js'
 import { createMemo } from 'solid-js'
-import { useConfig } from './useConfig'
+import { useConfig } from './useConfig.js'
 
 export type UseNetworksParameters = Accessor<{
   config?: Config | undefined

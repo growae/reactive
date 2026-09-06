@@ -5,8 +5,8 @@ import type {
 } from '@growae/reactive'
 import { getNodeClient, watchNodeClient } from '@growae/reactive'
 import { onScopeDispose, type Ref, ref } from 'vue'
-import type { ConfigParameter } from '../types/properties'
-import { useConfig } from './useConfig'
+import type { ConfigParameter } from '../types/properties.js'
+import { useConfig } from './useConfig.js'
 
 export type UseNodeClientParameters = Compute<
   GetNodeClientParameters & ConfigParameter

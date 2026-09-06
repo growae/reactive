@@ -24,7 +24,7 @@ vi.mock('./useNetworkId.js', () => ({
   useNetworkId: vi.fn(() => 'ae_uat'),
 }))
 
-import { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm'
+import { useWaitForTransactionConfirm } from './useWaitForTransactionConfirm.js'
 
 describe('useWaitForTransactionConfirm', () => {
   it('should be a function', () => {
