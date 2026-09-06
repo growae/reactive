@@ -10,6 +10,11 @@ export type PayForTransactionParameters = {
   ttl?: number | undefined
   networkId?: string | undefined
   connector?: Connector | undefined
+  /**
+   * Declared but not read: this action posts an unsigned `PayingForTx` and
+   * `sendTransaction` no longer accepts a connector, so there is nothing here
+   * to wait for yet. Wiring it up is tracked as its own change.
+   */
   waitMined?: boolean | undefined
 }
 
@@ -27,7 +32,7 @@ export async function payForTransaction(
   config: Config,
   parameters: PayForTransactionParameters,
 ): Promise<PayForTransactionReturnType> {
-  const { innerTx, ttl, networkId, connector, waitMined = true } = parameters
+  const { innerTx, ttl, networkId, connector } = parameters
 
   let payerConnector: Connector | undefined = connector
   let payerId: string | undefined
@@ -62,7 +67,5 @@ export async function payForTransaction(
   return sendTransaction(config, {
     tx,
     networkId,
-    connector: payerConnector,
-    waitMined,
   })
 }

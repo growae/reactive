@@ -4,6 +4,7 @@ import type { Config, Connector } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
 import { getBalance } from './getBalance.js'
 import { sendTransaction } from './sendTransaction.js'
+import { signTransaction } from './signTransaction.js'
 
 export type TransferFundsParameters = {
   fraction: number
@@ -12,7 +13,16 @@ export type TransferFundsParameters = {
   connector?: Connector | undefined
   /** Transaction TTL in blocks relative to current height. Defaults to 300. */
   ttl?: number | undefined
+  /**
+   * Wait for the transfer to be mined before resolving. Defaults to `true`,
+   * which is what populates `blockHash`, `blockHeight` and `tx`.
+   */
   waitMined?: boolean | undefined
+  /**
+   * Upper bound in milliseconds on the `waitMined` wait. Defaults to
+   * `DEFAULT_WAIT_TIMEOUT` (20 minutes).
+   */
+  timeout?: number | undefined
 }
 
 export type TransferFundsReturnType = {
@@ -36,6 +46,7 @@ export async function transferFunds(
     connector,
     ttl,
     waitMined = true,
+    timeout,
   } = parameters
 
   if (fraction < 0 || fraction > 1) {
@@ -95,10 +106,16 @@ export async function transferFunds(
     onNode: node,
   })
 
-  return sendTransaction(config, {
+  const signedTx = await signTransaction(config, {
     tx,
     networkId,
     connector: senderConnector,
+  })
+
+  return sendTransaction(config, {
+    tx: signedTx,
+    networkId,
     waitMined,
+    timeout,
   })
 }

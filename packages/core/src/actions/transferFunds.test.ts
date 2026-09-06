@@ -1,8 +1,121 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_TTL } from '../constants.js'
 import { transferFunds } from './transferFunds.js'
 
+vi.mock('@aeternity/aepp-sdk', () => ({
+  buildTxAsync: vi.fn(async () => 'tx_UNSIGNED'),
+  unpackTx: vi.fn(() => ({ fee: '1000' })),
+  Tag: { SpendTx: 12 },
+}))
+
+/**
+ * A connector that signs to a value the built transaction can never be
+ * mistaken for, so `postTransaction` receiving `tx_UNSIGNED` is a failure the
+ * assertion names rather than a silent pass.
+ */
+function mockSetup() {
+  const signTransaction = vi.fn(async () => 'tx_SIGNED')
+  const postTransaction = vi.fn(async () => ({ txHash: 'th_1' }))
+  const getTransactionByHash = vi.fn(async () => ({
+    hash: 'th_1',
+    blockHash: 'kh_1',
+    blockHeight: 42,
+    tx: { type: 'SpendTx' },
+  }))
+  const node = {
+    postTransaction,
+    getTransactionByHash,
+    getAccountByPubkey: vi.fn(async () => ({
+      balance: '10000000000000000000',
+      nonce: 1,
+    })),
+    getCurrentKeyBlockHeight: vi.fn(async () => ({ height: 100 })),
+  }
+  const connector = {
+    uid: 'c1',
+    signTransaction,
+    getAccounts: vi.fn(async () => ['ak_sender']),
+  }
+  const config = {
+    getNodeClient: vi.fn(() => node),
+    state: {
+      networkId: 'ae_uat',
+      current: 'c1',
+      connections: new Map([['c1', { connector, activeAccount: 'ak_sender' }]]),
+    },
+  } as any
+
+  return { config, connector, node, postTransaction, signTransaction }
+}
+
 describe('transferFunds', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('should sign the transaction before posting it', async () => {
+    const { config, postTransaction, signTransaction } = mockSetup()
+
+    await transferFunds(config, { fraction: 0.5, recipient: 'ak_recipient' })
+
+    expect(signTransaction).toHaveBeenCalledTimes(1)
+    expect(signTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ tx: 'tx_UNSIGNED', networkId: 'ae_uat' }),
+    )
+    // The signed value, never the built one.
+    expect(postTransaction).toHaveBeenCalledWith({ tx: 'tx_SIGNED' })
+  })
+
+  it('should return the signed transaction as rawTx', async () => {
+    const { config } = mockSetup()
+
+    const result = await transferFunds(config, {
+      fraction: 0.5,
+      recipient: 'ak_recipient',
+    })
+
+    expect(result.rawTx).toBe('tx_SIGNED')
+  })
+
+  it('should populate blockHash, blockHeight and tx on the default path', async () => {
+    const { config } = mockSetup()
+
+    const result = await transferFunds(config, {
+      fraction: 0.5,
+      recipient: 'ak_recipient',
+    })
+
+    expect(result).toEqual({
+      hash: 'th_1',
+      rawTx: 'tx_SIGNED',
+      blockHash: 'kh_1',
+      blockHeight: 42,
+      tx: { type: 'SpendTx' },
+    })
+  })
+
+  it('should not wait when waitMined is false', async () => {
+    const { config, node } = mockSetup()
+
+    const result = await transferFunds(config, {
+      fraction: 0.5,
+      recipient: 'ak_recipient',
+      waitMined: false,
+    })
+
+    expect(node.getTransactionByHash).not.toHaveBeenCalled()
+    expect(result).toEqual({ hash: 'th_1', rawTx: 'tx_SIGNED' })
+  })
+
+  it('should throw when the connector cannot sign', async () => {
+    const { config, connector } = mockSetup()
+    delete (connector as any).signTransaction
+
+    await expect(
+      transferFunds(config, { fraction: 0.5, recipient: 'ak_recipient' }),
+    ).rejects.toThrow(/Connector does not support transaction signing/)
+  })
+
   it('should be a function', () => {
     expect(typeof transferFunds).toBe('function')
   })

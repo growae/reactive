@@ -179,6 +179,7 @@ export {
   DEFAULT_QUERY_TTL_VALUE,
   DEFAULT_RESPONSE_TTL_VALUE,
   DEFAULT_TTL,
+  DEFAULT_WAIT_TIMEOUT,
 } from '../constants.js'
 
 ////////////////////////////////////////////////////////////////////////////////
