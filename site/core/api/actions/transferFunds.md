@@ -25,6 +25,9 @@ const result = await transferFunds(config, {
 type TransferFundsReturnType = {
   hash: string
   rawTx: string
+  blockHash?: string
+  blockHeight?: number
+  tx?: Record<string, any>
 }
 ```
 
@@ -32,13 +35,40 @@ type TransferFundsReturnType = {
 
 - **Type:** `string`
 
-The transaction hash.
+The transaction hash (`th_...`).
 
 ### rawTx
 
 - **Type:** `string`
 
-The signed transaction.
+The signed transaction (`tx_...`).
+
+`blockHash`, `blockHeight` and `tx` describe the mined transaction. All three
+are declared on the type and **none is currently populated**: `transferFunds`
+returns whatever `sendTransaction` returns, and that is `hash` and `rawTx`
+alone. Read them as `undefined` until this action waits for the transaction to
+be mined — the same gap `waitMined` describes below.
+
+### blockHash
+
+- **Type:** `string`
+- **Optional**
+
+Hash of the key block the transaction was mined into (`kh_...`).
+
+### blockHeight
+
+- **Type:** `number`
+- **Optional**
+
+Height of that block.
+
+### tx
+
+- **Type:** `Record<string, any>`
+- **Optional**
+
+The decoded transaction body.
 
 ## Parameters
 

@@ -37,7 +37,7 @@ type DeployContractReturnType = {
   address: string
   txHash: string
   rawTx: string
-  result?: unknown
+  result?: any
 }
 ```
 
@@ -52,6 +52,21 @@ The deployed contract address (`ct_...`).
 - **Type:** `string`
 
 The transaction hash (`th_...`).
+
+### rawTx
+
+- **Type:** `string`
+
+The signed deployment transaction (`tx_...`).
+
+### result
+
+- **Type:** `any`
+- **Optional**
+
+The node's contract call object for the deployment, as
+`@aeternity/aepp-sdk` returned it — gas used, return type, log. Diagnostics;
+`address` and `txHash` are what a caller normally needs.
 
 ## Parameters
 

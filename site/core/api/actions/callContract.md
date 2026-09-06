@@ -25,11 +25,53 @@ const result = await callContract(config, {
 
 ```typescript
 type CallContractReturnType = {
+  decodedResult: any
   hash: string
-  result: unknown
   rawTx: string
+  result?: any
+  gasUsed?: number
 }
 ```
+
+### decodedResult
+
+- **Type:** `any`
+
+The call's own return value, decoded from the contract's ABI. This is the field
+carrying what the Sophia function returned — `result` is not it.
+
+It is `any`, not a type read off the ACI: nothing on this action is generic, so
+the decoded value arrives untyped and narrowing it is the caller's job.
+
+### hash
+
+- **Type:** `string`
+
+The transaction hash (`th_...`).
+
+### rawTx
+
+- **Type:** `string`
+
+The signed transaction (`tx_...`).
+
+### result
+
+- **Type:** `any`
+- **Optional**
+
+The node's contract call object for the call, as `@aeternity/aepp-sdk` returned
+it — gas used, return type, log. Optional because the dry-run path
+(`options.callStatic`, and so every `readContract`) does not always produce one;
+read `decodedResult` for the return value and treat this as diagnostics.
+
+### gasUsed
+
+- **Type:** `number`
+- **Optional**
+
+Gas the node actually charged, lifted out of `result`. `undefined` whenever
+`result` is.
 
 ## Parameters
 

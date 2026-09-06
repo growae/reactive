@@ -24,16 +24,25 @@ const block = await getMicroBlock(config, {
 type GetMicroBlockReturnType = {
   hash: string
   height: number
+  pofHash: string
+  prevHash: string
+  prevKeyHash: string
+  stateHash: string
   time: number
-  transactions: Array<unknown>
+  txsHash: string
+  version: number
+  transactions: any[]
 }
 ```
+
+The micro block header, flattened, plus its transaction list. Every field is
+required.
 
 ### hash
 
 - **Type:** `string`
 
-The micro block hash.
+The micro block hash (`mh_...`).
 
 ### height
 
@@ -41,17 +50,55 @@ The micro block hash.
 
 The block height.
 
+### pofHash
+
+- **Type:** `string`
+
+Proof-of-fraud hash. `'no_fraud'` on a block that reports none.
+
+### prevHash
+
+- **Type:** `string`
+
+Hash of the previous block, key or micro.
+
+### prevKeyHash
+
+- **Type:** `string`
+
+Hash of the previous key block (`kh_...`) — the generation this micro block
+belongs to.
+
+### stateHash
+
+- **Type:** `string`
+
+State trees root hash after the block was applied.
+
 ### time
 
 - **Type:** `number`
 
-The block timestamp.
+The block timestamp, in milliseconds since the epoch. Normalised to a number
+whatever form the node reported.
+
+### txsHash
+
+- **Type:** `string`
+
+Root hash of the block's transaction tree.
+
+### version
+
+- **Type:** `number`
+
+Protocol version the block was produced under.
 
 ### transactions
 
-- **Type:** `Array<unknown>`
+- **Type:** `any[]`
 
-List of transactions included in the micro block.
+The transactions included in the micro block, as the node returned them.
 
 ## Parameters
 
