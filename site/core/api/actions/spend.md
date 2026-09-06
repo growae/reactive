@@ -71,7 +71,9 @@ const result = await spend(config, {
 const result = await spend(config, {
   recipient: 'ak_2dA...',
   amount: 1000000000000000000n, // 1 AE in aettos
-  payload: 'ba_aW52b2ljZSAjNDI=',
+  // base64check, not bare base64 — the SDK rejects a payload whose checksum
+  // does not verify. Build one with `encode(bytes, Encoding.Bytearray)`.
+  payload: 'ba_aW52b2ljZSAjNDIoT9GR',
 })
 ```
 
