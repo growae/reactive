@@ -14,11 +14,11 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 }))
 
 import { buildTx } from '@aeternity/aepp-sdk'
-import { mock } from '../connectors/mock'
-import { createConfig } from '../createConfig'
-import { testnet } from '../types/network'
-import { connect } from './connect'
-import { spend } from './spend'
+import { mock } from '../connectors/mock.js'
+import { createConfig } from '../createConfig.js'
+import { testnet } from '../types/network.js'
+import { connect } from './connect.js'
+import { spend } from './spend.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { respondToQueryMutationOptions } from './respondToQuery'
+import { respondToQueryMutationOptions } from './respondToQuery.js'
 
 describe('respondToQueryMutationOptions', () => {
   it('should be a function', () => {

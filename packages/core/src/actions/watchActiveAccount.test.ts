@@ -4,12 +4,12 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { mock } from '../connectors/mock'
-import { createConfig } from '../createConfig'
-import { mainnet } from '../types/network'
-import { connect } from './connect'
-import { switchActiveAccount } from './switchActiveAccount'
-import { watchActiveAccount } from './watchActiveAccount'
+import { mock } from '../connectors/mock.js'
+import { createConfig } from '../createConfig.js'
+import { mainnet } from '../types/network.js'
+import { connect } from './connect.js'
+import { switchActiveAccount } from './switchActiveAccount.js'
+import { watchActiveAccount } from './watchActiveAccount.js'
 
 const TEST_ACCOUNTS = ['ak_addr1', 'ak_addr2'] as const
 

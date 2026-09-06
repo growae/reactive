@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { UpdateNameNoAccountError, updateName } from './updateName'
+import { UpdateNameNoAccountError, updateName } from './updateName.js'
 
 describe('updateName', () => {
   it('should be a function', () => {

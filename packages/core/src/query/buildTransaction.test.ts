@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildTransactionMutationOptions } from './buildTransaction'
+import { buildTransactionMutationOptions } from './buildTransaction.js'
 
 describe('buildTransactionMutationOptions', () => {
   it('should be a function', () => {

@@ -1,5 +1,5 @@
 import { buildAuthTxHash as sdkBuildAuthTxHash } from '@aeternity/aepp-sdk'
-import type { Config } from '../../createConfig'
+import type { Config } from '../../createConfig.js'
 
 export type BuildAuthTxHashParameters = {
   tx: string

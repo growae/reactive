@@ -3,9 +3,9 @@ import {
   type GetBlockParameters,
   type GetBlockReturnType,
   getBlock,
-} from '../actions/getBlock'
-import type { Config } from '../createConfig'
-import type { ExactPartial } from '../types/utils'
+} from '../actions/getBlock.js'
+import type { Config } from '../createConfig.js'
+import type { ExactPartial } from '../types/utils.js'
 
 export type GetBlockOptions = ExactPartial<GetBlockParameters>
 

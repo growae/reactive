@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { waitForTransactionConfirm } from './waitForTransactionConfirm'
+import { waitForTransactionConfirm } from './waitForTransactionConfirm.js'
 
 describe('waitForTransactionConfirm', () => {
   it('should be a function', () => {

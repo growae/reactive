@@ -3,8 +3,8 @@ import {
   type ChannelTransferParameters,
   type ChannelTransferReturnType,
   channelTransfer,
-} from '../actions/channel/channelTransfer'
-import type { Config } from '../createConfig'
+} from '../actions/channel/channelTransfer.js'
+import type { Config } from '../createConfig.js'
 
 export type ChannelTransferErrorType = Error
 

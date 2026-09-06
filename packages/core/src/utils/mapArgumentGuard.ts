@@ -27,7 +27,7 @@ import {
   type FateMapKey,
   type FateMapKeyType,
   type MapKeyOrderDisagreement,
-} from './fateMapKeyOrder'
+} from './fateMapKeyOrder.js'
 
 export type MapKeyOrderDefect = MapKeyOrderDisagreement & {
   /** Where in the call's arguments the map sits, e.g. `entries` or `rows[0].tags`. */

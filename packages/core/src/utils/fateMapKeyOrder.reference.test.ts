@@ -7,7 +7,7 @@ import {
   compareStringKeysAsNode,
   detectMapKeyOrderDisagreement,
   type FateMapKey,
-} from './fateMapKeyOrder'
+} from './fateMapKeyOrder.js'
 
 /**
  * The encoder half of `fateMapKeyOrder.ts`, run against the encoder itself.

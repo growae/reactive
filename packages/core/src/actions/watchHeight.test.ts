@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { watchHeight } from './watchHeight'
+import { watchHeight } from './watchHeight.js'
 
 describe('watchHeight', () => {
   it('should be a function', () => {

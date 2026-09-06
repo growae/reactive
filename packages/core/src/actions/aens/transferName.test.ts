@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { TransferNameNoAccountError, transferName } from './transferName'
+import { TransferNameNoAccountError, transferName } from './transferName.js'
 
 describe('transferName', () => {
   it('should be a function', () => {

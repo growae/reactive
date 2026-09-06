@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_TTL } from '../constants'
-import { transferFunds } from './transferFunds'
+import { DEFAULT_TTL } from '../constants.js'
+import { transferFunds } from './transferFunds.js'
 
 describe('transferFunds', () => {
   it('should be a function', () => {

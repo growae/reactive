@@ -4,8 +4,8 @@ import {
   type CompileContractParameters,
   type CompileContractReturnType,
   compileContract,
-} from '../actions/compileContract'
-import type { Config } from '../createConfig'
+} from '../actions/compileContract.js'
+import type { Config } from '../createConfig.js'
 
 export function compileContractMutationOptions(config: Config) {
   return {

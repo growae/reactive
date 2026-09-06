@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mainnet, testnet } from './network'
+import { mainnet, testnet } from './network.js'
 
 describe('network constants', () => {
   describe('mainnet', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getOracleState } from './getOracleState'
+import { getOracleState } from './getOracleState.js'
 
 describe('getOracleState', () => {
   it('should be a function', () => {

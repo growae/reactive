@@ -31,6 +31,16 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
+      # The last thing between a broken artifact and real users. `Build`
+      # succeeding says only that tsc emitted files; this packs them and
+      # imports them under Node's own ESM resolver, which is the one resolver
+      # no other gate in this repository uses. 0.0.1 through 0.0.6 were all
+      # published through this job and all of them throw ERR_MODULE_NOT_FOUND
+      # on `import '@growae/reactive'` from a Node script. It runs before
+      # `changeset publish` because npm has no unpublish worth the name.
+      - name: Verify the built package imports under Node
+        run: pnpm --filter @growae/reactive run test:node-resolution
+
       # Pinned to @changesets/cli 3.0.1. Two behaviours are relied on, neither of
       # them log prose: a non-zero exit means nothing reached the registry, and a
       # successful publish creates one local git tag per published package. The

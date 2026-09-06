@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getNameEntry } from './getNameEntry'
+import { getNameEntry } from './getNameEntry.js'
 
 describe('getNameEntry', () => {
   it('should be a function', () => {

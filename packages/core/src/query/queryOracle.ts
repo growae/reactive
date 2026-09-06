@@ -3,8 +3,8 @@ import {
   type QueryOracleParameters,
   type QueryOracleReturnType,
   queryOracle,
-} from '../actions/oracle/queryOracle'
-import type { Config } from '../createConfig'
+} from '../actions/oracle/queryOracle.js'
+import type { Config } from '../createConfig.js'
 
 export type QueryOracleErrorType = Error
 

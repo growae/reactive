@@ -1,4 +1,4 @@
-import type { Config, State } from './createConfig'
+import type { Config, State } from './createConfig.js'
 
 type HydrateParameters = {
   initialState?: State | undefined

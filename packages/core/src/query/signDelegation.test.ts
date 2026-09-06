@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { signDelegationMutationOptions } from './signDelegation'
+import { signDelegationMutationOptions } from './signDelegation.js'
 
 describe('signDelegationMutationOptions', () => {
   it('should be a function', () => {

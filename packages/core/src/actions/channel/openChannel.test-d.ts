@@ -3,7 +3,7 @@ import {
   type OpenChannelParameters,
   type OpenChannelReturnType,
   openChannel,
-} from './openChannel'
+} from './openChannel.js'
 
 test('openChannel returns Promise<OpenChannelReturnType>', () => {
   expectTypeOf(openChannel).returns.toEqualTypeOf<

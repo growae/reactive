@@ -3,8 +3,8 @@ import {
   type CloseChannelParameters,
   type CloseChannelReturnType,
   closeChannel,
-} from '../actions/channel/closeChannel'
-import type { Config } from '../createConfig'
+} from '../actions/channel/closeChannel.js'
+import type { Config } from '../createConfig.js'
 
 export type CloseChannelErrorType = Error
 

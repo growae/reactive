@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getContractEvents } from './getContractEvents'
+import { getContractEvents } from './getContractEvents.js'
 
 describe('getContractEvents', () => {
   it('should be a function', () => {

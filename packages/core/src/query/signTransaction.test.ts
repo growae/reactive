@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { signTransactionMutationOptions } from './signTransaction'
+import { signTransactionMutationOptions } from './signTransaction.js'
 
 describe('signTransactionMutationOptions', () => {
   it('should be a function', () => {

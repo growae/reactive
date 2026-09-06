@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildAuthTxHashMutationOptions } from './buildAuthTxHash'
+import { buildAuthTxHashMutationOptions } from './buildAuthTxHash.js'
 
 describe('buildAuthTxHashMutationOptions', () => {
   it('should be a function', () => {

@@ -3,9 +3,9 @@ import {
   type GetContractBytecodeParameters,
   type GetContractBytecodeReturnType,
   getContractBytecode,
-} from '../actions/getContractBytecode'
-import type { Config } from '../createConfig'
-import type { ExactPartial } from '../types/utils'
+} from '../actions/getContractBytecode.js'
+import type { Config } from '../createConfig.js'
+import type { ExactPartial } from '../types/utils.js'
 
 export type GetContractBytecodeOptions =
   ExactPartial<GetContractBytecodeParameters>

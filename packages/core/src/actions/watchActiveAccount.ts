@@ -1,6 +1,6 @@
-import type { Config } from '../createConfig'
-import type { GetActiveAccountReturnType } from './getActiveAccount'
-import { getActiveAccount } from './getActiveAccount'
+import type { Config } from '../createConfig.js'
+import type { GetActiveAccountReturnType } from './getActiveAccount.js'
+import { getActiveAccount } from './getActiveAccount.js'
 
 export type WatchActiveAccountParameters = {
   onChange: (

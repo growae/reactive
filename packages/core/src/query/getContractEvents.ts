@@ -2,9 +2,9 @@ import {
   type GetContractEventsParameters,
   type GetContractEventsReturnType,
   getContractEvents,
-} from '../actions/getContractEvents'
-import type { Config } from '../createConfig'
-import type { ExactPartial } from '../types/utils'
+} from '../actions/getContractEvents.js'
+import type { Config } from '../createConfig.js'
+import type { ExactPartial } from '../types/utils.js'
 
 export type GetContractEventsOptions = ExactPartial<GetContractEventsParameters>
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { deserialize } from './deserialize'
-import { serialize } from './serialize'
+import { deserialize } from './deserialize.js'
+import { serialize } from './serialize.js'
 
 describe('serialize', () => {
   it('should serialize plain objects', () => {

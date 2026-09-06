@@ -1,7 +1,7 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
 import { createEmitter } from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ledger } from './ledger'
+import { ledger } from './ledger.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 const SIGNED_TX = 'tx_signed_abc123'
