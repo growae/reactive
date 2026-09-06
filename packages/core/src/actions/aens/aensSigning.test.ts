@@ -31,6 +31,21 @@ import { bidName } from './bidName.js'
 import { revokeName } from './revokeName.js'
 import { transferName } from './transferName.js'
 
+/**
+ * The sdk types `unpackTx` as an intersection over the whole `TxUnpacked`
+ * union, which does not narrow on field access, so name the fields asserted on.
+ */
+type UnpackedNameTx = {
+  accountId: string
+  nameId: string
+  recipientId: string
+  nameFee: string
+}
+
+function unpackNameTx(tx: Encoded.Transaction, tag: Tag): UnpackedNameTx {
+  return unpackTx(tx, tag as never) as unknown as UnpackedNameTx
+}
+
 const NAME = 'testname.chain'
 const AUCTION_NAME = 'short.chain'
 /** The sdk refuses a bid below the name's minimum, so bid exactly that. */
@@ -109,7 +124,7 @@ describe('aens signing', () => {
       networkId: testnet.id,
     })
 
-    const unpacked = unpackTx(tx, Tag.NameRevokeTx)
+    const unpacked = unpackNameTx(tx, Tag.NameRevokeTx)
     expect(unpacked.accountId).toBe(account.address)
     expect(unpacked.nameId).toBe(produceNameId(NAME))
   })
@@ -126,7 +141,7 @@ describe('aens signing', () => {
       transferName(config, { name: NAME, recipient: RECIPIENT }),
     )
 
-    const unpacked = unpackTx(tx, Tag.NameTransferTx)
+    const unpacked = unpackNameTx(tx, Tag.NameTransferTx)
     expect(unpacked.accountId).toBe(account.address)
     expect(unpacked.recipientId).toBe(RECIPIENT)
   })
@@ -143,7 +158,7 @@ describe('aens signing', () => {
       bidName(config, { name: AUCTION_NAME, nameFee: BID_FEE }),
     )
 
-    const unpacked = unpackTx(tx, Tag.NameClaimTx)
+    const unpacked = unpackNameTx(tx, Tag.NameClaimTx)
     expect(unpacked.accountId).toBe(account.address)
     expect(unpacked.nameFee).toBe(BID_FEE)
   })

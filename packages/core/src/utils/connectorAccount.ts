@@ -196,7 +196,11 @@ export class ConnectorAccount extends AccountBase {
    * `signTypedData` over `signMessage` would hand back a signature over a
    * different payload than the caller asked for, which no consumer can detect.
    */
-  override async signTypedData(): Promise<Encoded.Signature> {
+  override async signTypedData(
+    _data: Encoded.ContractBytearray,
+    _aci: Parameters<AccountBase['signTypedData']>[1],
+    _options?: Parameters<AccountBase['signTypedData']>[2],
+  ): Promise<Encoded.Signature> {
     throw new ConnectorSigningUnsupportedError(
       this.#connector.name,
       'typed-data signing',
@@ -204,11 +208,17 @@ export class ConnectorAccount extends AccountBase {
   }
 
   /** @deprecated the sdk's own deprecation — `unsafeSign` is the replacement. */
-  override async sign(): Promise<Uint8Array> {
-    return this.unsafeSign()
+  override async sign(
+    data: string | Uint8Array,
+    options?: Parameters<AccountBase['sign']>[1],
+  ): Promise<Uint8Array> {
+    return this.unsafeSign(data, options)
   }
 
-  override async unsafeSign(): Promise<Uint8Array> {
+  override async unsafeSign(
+    _data: string | Uint8Array,
+    _options?: Parameters<AccountBase['unsafeSign']>[1],
+  ): Promise<Uint8Array> {
     throw new ConnectorSigningUnsupportedError(
       this.#connector.name,
       'raw data signing',
