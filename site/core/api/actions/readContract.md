@@ -23,7 +23,31 @@ const result = await readContract(config, {
 
 ## Return Type
 
-The return type depends on the contract function's return type as defined in the ACI. Reactive infers this automatically when TypeScript generics are used.
+```typescript
+type ReadContractReturnType = CallContractReturnType
+```
+
+The same flat object `callContract` returns — `decodedResult`, `hash`, `rawTx`,
+and the optional `result` and `gasUsed`. Field by field, see
+[`callContract`](/core/api/actions/callContract#return-type).
+
+The read's own value is on `decodedResult`, and it is `any`. **Nothing here is
+generic.** Neither `readContract` nor `callContract` takes a type parameter and
+neither reads a return type off the ACI, so the decoded value is not inferred
+and not narrowed — a caller that wants a type asserts it:
+
+```typescript
+const { decodedResult } = await readContract(config, {
+  address: 'ct_token...',
+  aci: tokenAci,
+  method: 'balance',
+  args: ['ak_owner...'],
+})
+const balance = decodedResult as bigint
+```
+
+Because the call is a dry-run, `hash` and `rawTx` describe the transaction the
+node executed and discarded; nothing was posted.
 
 ## Parameters
 
@@ -48,13 +72,17 @@ removed — this action forces it on, which is what makes the call a dry-run.
 ### Read token balance
 
 ```typescript
-const balance = await readContract(config, {
+const { decodedResult: balance } = await readContract(config, {
   address: 'ct_token...',
   aci: tokenAci,
   method: 'balance',
   args: ['ak_owner...'],
 })
 ```
+
+The balance is on `decodedResult`. The action's own return value is the whole
+`CallContractReturnType` object, so `const balance = await readContract(…)`
+binds that object, not the number.
 
 ## Error Types
 

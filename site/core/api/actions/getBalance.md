@@ -21,23 +21,17 @@ const balance = await getBalance(config, {
 ## Return Type
 
 ```typescript
-type GetBalanceReturnType = {
-  aettos: bigint
-  ae: string
-}
+type GetBalanceReturnType = string
 ```
 
-### aettos
+The balance as a decimal string, in the unit `format` asked for — aettos by
+default (smallest unit, 1 AE = 10^18 aettos), AE when `format: 'ae'`, where the
+fractional part is written out and trailing zeros are trimmed (`'1.5'`, `'2'`).
 
-- **Type:** `bigint`
-
-Balance in aettos (smallest unit, 1 AE = 10^18 aettos).
-
-### ae
-
-- **Type:** `string`
-
-Balance formatted in AE as a decimal string.
+It is a single string, not an object and not a `bigint`. There is no `aettos`
+or `ae` field to destructure; call the action twice, or convert the aettos form
+yourself with `BigInt(balance)`. An address the node has never seen answers
+`'0'`.
 
 ## Parameters
 

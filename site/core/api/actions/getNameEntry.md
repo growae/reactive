@@ -24,10 +24,13 @@ const entry = await getNameEntry(config, {
 type GetNameEntryReturnType = {
   id: string
   owner: string
-  pointers: Array<{ key: string; id: string }>
+  pointers: NamePointer[]
   ttl: number
 }
 ```
+
+`NamePointer` is `{ key: string; id: string }` and is exported from the package
+root.
 
 ### id
 
@@ -43,7 +46,7 @@ The account address that owns the name.
 
 ### pointers
 
-- **Type:** `Array<{ key: string; id: string }>`
+- **Type:** `NamePointer[]`
 
 Name pointers mapping keys to addresses or data.
 

@@ -13,7 +13,7 @@ import { signMessage } from '@growae/reactive/actions'
 ```typescript
 import { signMessage } from '@growae/reactive/actions'
 
-const signature = await signMessage(config, {
+const { signature } = await signMessage(config, {
   message: 'Hello, Aeternity!',
 })
 ```
@@ -23,7 +23,6 @@ const signature = await signMessage(config, {
 ```typescript
 type SignMessageReturnType = {
   signature: string
-  address: string
 }
 ```
 
@@ -33,11 +32,9 @@ type SignMessageReturnType = {
 
 The hex-encoded signature.
 
-### address
-
-- **Type:** `string`
-
-The account address that signed the message.
+The signing address is not returned. `signMessage` answers with the signature
+alone, so a caller that needs to know which account produced it reads that from
+`getActiveAccount`, or passes `onAccount` and already knows.
 
 ## Parameters
 
