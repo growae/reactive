@@ -308,7 +308,8 @@ if (pinnedPackageManager !== `pnpm@${consumerPnpmVersion}`)
 // ERR_PNPM_IGNORED_BUILDS — `bufferutil`, `core-js-pure`, `es5-ext`,
 // `esbuild`, `utf-8-validate`, `vue-demi` here — and on its way out it
 // rewrites this generated `pnpm-workspace.yaml` with an `allowBuilds` block
-// that is not valid YAML. Under a `pnpm run` parent the same install is only
+// whose values are the literal prose `set this to true or false` — it parses,
+// it just cannot be used. Under a `pnpm run` parent the same install is only
 // a warning. That is a gate whose verdict depends on how it was started,
 // which is the defect this whole check exists to remove.
 //
