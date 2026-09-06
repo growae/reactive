@@ -44,10 +44,9 @@ The transaction hash (`th_...`).
 The signed transaction (`tx_...`).
 
 `blockHash`, `blockHeight` and `tx` describe the mined transaction. All three
-are declared on the type and **none is currently populated**: `transferFunds`
-returns whatever `sendTransaction` returns, and that is `hash` and `rawTx`
-alone. Read them as `undefined` until this action waits for the transaction to
-be mined — the same gap `waitMined` describes below.
+are populated on the default path, where `waitMined` is `true`. They are
+`undefined` when `waitMined: false` is passed, because there is then no mined
+transaction to read them from.
 
 ### blockHash
 
@@ -113,9 +112,17 @@ Transaction TTL in blocks relative to current height. Set to `0` for no expirati
 - **Type:** `boolean`
 - **Default:** `true`
 
-Forwarded to `sendTransaction`, which does not currently read it — see that
-action's page. `transferFunds` returns as soon as the node accepts the
-transaction.
+Wait for the transfer to be mined before resolving. This is what populates
+`blockHash`, `blockHeight` and `tx`. Pass `false` to return as soon as the node
+accepts the transaction, in which case those three fields are `undefined`.
+
+### timeout
+
+- **Type:** `number`
+- **Default:** `DEFAULT_WAIT_TIMEOUT`
+
+Upper bound in milliseconds on the `waitMined` wait — 20 minutes by default, so
+a transfer that never lands rejects rather than pending indefinitely.
 
 ## Error Types
 
@@ -130,10 +137,22 @@ type level, and three of the four guards below are literal plain `Error`s that
 - `Error('Invalid fraction: <n>. Must be between 0 and 1.')` — `fraction` is outside `[0, 1]`
 - `Error('No connector found. Connect a wallet first.')` — no `connector` was passed and nothing is connected
 - `Error('No account available on the current connector.')` — the connector reported no accounts
+- `Error('Connector does not support transaction signing.')` — raised by the `signTransaction` delegation, after the two guards above, when the connector exposes no `signTransaction`
 - `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
 
-Everything else surfaces unwrapped, from the three calls this action delegates
-to: `getBalance`, the SDK's transaction building, and `sendTransaction`.
+On the default path, two further plain `Error`s can be raised after the
+transaction has already been posted, by the `waitForTransaction` call
+underneath `sendTransaction`:
+
+- `Error('Waiting for transaction <hash> timed out after <ms>ms')` — the transfer was not mined within `timeout`
+- `Error('Transaction <hash> was not mined within <n> blocks')` — the transaction carries no TTL and did not land within the block bound
+
+Both mean the transfer is posted and on its way; only the wait ended. Do not
+resend on either without checking `getTransaction` first.
+
+Everything else surfaces unwrapped, from the four calls this action delegates
+to: `getBalance`, the SDK's transaction building, `signTransaction`, and
+`sendTransaction`.
 `transferFunds` subtracts the estimated fee from the amount rather than letting
 the balance be exceeded, so an underfunded transfer is a smaller transfer, not
 an error.

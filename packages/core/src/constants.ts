@@ -6,6 +6,16 @@
 export const DEFAULT_TTL = 300
 
 /**
+ * Default upper bound, in milliseconds, on how long an action waits for its
+ * transaction to be mined. `waitForTransaction` polls until the transaction
+ * leaves the mempool and stops only on this timeout when the transaction
+ * carries a non-zero TTL, so an action that waits by default needs a bound
+ * that is comfortably past a handful of key blocks without approaching
+ * `DEFAULT_TTL`'s ~15 hours. 20 minutes.
+ */
+export const DEFAULT_WAIT_TIMEOUT = 20 * 60 * 1000
+
+/**
  * Default AENS name TTL in blocks (~375 days at max).
  */
 export const DEFAULT_NAME_TTL = 180000
