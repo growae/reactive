@@ -20,6 +20,7 @@ import { preclaimName } from '@growae/reactive/actions'
 const preclaim = await preclaimName(config, {
   name: 'alice.chain',
 })
+// { txHash, rawTx, blockHeight, salt, commitmentId }
 ```
 
 ### Parameters
@@ -28,7 +29,11 @@ const preclaim = await preclaimName(config, {
 |-----------|------|---------|-------------|
 | `name` | `string` | — | Required. The name to preclaim (must end in `.chain`). |
 | `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
-| `fee` | `bigint` | auto | Transaction fee. |
+
+`commitmentId` is derived from the name and the salt — it is the value that was
+posted, not a block hash. Keep `salt`; `claimName` needs it.
+
+Throws `PreclaimNameNoAccountError` when no account is connected.
 
 ::: tip Default TTL
 All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `ttl: 0` for no expiration.
@@ -45,6 +50,7 @@ const claim = await claimName(config, {
   name: 'alice.chain',
   salt: preclaim.salt,
 })
+// { txHash, rawTx, blockHeight, nameId }
 ```
 
 ### Parameters
@@ -52,9 +58,11 @@ const claim = await claimName(config, {
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `name` | `string` | — | Required. The name to claim. |
-| `salt` | `number` | — | Required. Salt from the preclaim step. |
-| `nameFee` | `bigint` | auto | Name fee (auction price for short names). |
+| `salt` | `number` | `0` | Salt from the preclaim step. Since Ceres a name can be claimed without preclaiming, so it is optional. |
+| `nameFee` | `bigint \| string` | auto | Name fee (auction price for short names). |
 | `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
+
+Throws `ClaimNameNoAccountError` when no account is connected.
 
 ## Update Name Pointers
 
@@ -63,10 +71,9 @@ import { updateName } from '@growae/reactive/actions'
 
 await updateName(config, {
   name: 'alice.chain',
-  pointers: {
-    account_pubkey: 'ak_2dA...',
-  },
+  pointers: [{ key: 'account_pubkey', id: 'ak_2dA...' }],
 })
+// { txHash, rawTx, blockHeight }
 ```
 
 ### Parameters
@@ -74,10 +81,13 @@ await updateName(config, {
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `name` | `string` | — | Required. The name to update. |
-| `pointers` | `Record<string, string>` | — | Required. Pointer key-value map. |
+| `pointers` | `{ key: string; id: string }[]` | — | Required. The pointers to set. |
+| `extendPointers` | `boolean` | `false` | Merge with the pointers already on the name instead of replacing them. |
 | `nameTtl` | `number` | `180000` | Name TTL in blocks (~375 days max). |
 | `clientTtl` | `number` | `3600` | Client cache TTL in seconds. |
 | `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
+
+Throws `UpdateNameNoAccountError` when no account is connected.
 
 ## Transfer a Name
 
@@ -107,10 +117,13 @@ const address = await resolveName(config, {
   name: 'alice.chain',
   key: 'account_pubkey',
 })
-// 'ak_2dA...'
+// 'ak_2dA...', or null
 ```
 
-This is a read-only operation (no transaction, no TTL).
+This is a read-only operation (no transaction, no TTL). A name that is not
+registered, or one with no pointer under `key`, resolves to `null` rather than
+throwing — asking whether a name resolves is an ordinary question, not an
+exceptional one.
 
 ## Name Auctions
 
