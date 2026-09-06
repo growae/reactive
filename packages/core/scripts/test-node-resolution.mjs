@@ -17,12 +17,13 @@
 // surface rather than an error.
 //
 // `packages/react`, `packages/solid` and `packages/vue` are built by `tsc` the
-// same way and carry the same defect; they belong in PACKAGES once their
-// sources carry explicit extensions.
+// same way and carried the same defect; now that their sources carry explicit
+// extensions, they are in PACKAGES alongside core and connectors.
 import { execFileSync } from 'node:child_process'
 import {
   mkdirSync,
   readdirSync,
+  readFileSync,
   renameSync,
   rmSync,
   writeFileSync,
@@ -46,6 +47,13 @@ const SUBPATHS = [
   '@growae/reactive/connectors',
   '@growae/reactive/internal',
   '@growae/reactive-connectors',
+  '@growae/reactive-react',
+  '@growae/reactive-react/query',
+  '@growae/reactive-solid',
+  '@growae/reactive-solid/query',
+  '@growae/reactive-vue',
+  '@growae/reactive-vue/query',
+  '@growae/reactive-vue/nuxt',
 ]
 
 const PACKAGES = [
@@ -54,6 +62,9 @@ const PACKAGES = [
     name: '@growae/reactive-connectors',
     tarball: 'growae-reactive-connectors.tgz',
   },
+  { name: '@growae/reactive-react', tarball: 'growae-reactive-react.tgz' },
+  { name: '@growae/reactive-solid', tarball: 'growae-reactive-solid.tgz' },
+  { name: '@growae/reactive-vue', tarball: 'growae-reactive-vue.tgz' },
 ]
 
 function run(command, args, cwd, options = {}) {
@@ -76,6 +87,9 @@ run(
   ['--filter', '@growae/reactive', 'run', 'build:connectors'],
   repoRoot,
 )
+run('pnpm', ['--filter', '@growae/reactive-react', 'run', 'build'], repoRoot)
+run('pnpm', ['--filter', '@growae/reactive-solid', 'run', 'build'], repoRoot)
+run('pnpm', ['--filter', '@growae/reactive-vue', 'run', 'build'], repoRoot)
 
 for (const { name, tarball } of PACKAGES) {
   run(
@@ -111,6 +125,41 @@ for (const { name, tarball } of PACKAGES) {
 const tarballSpec = Object.fromEntries(
   PACKAGES.map(({ name, tarball }) => [name, `file:../tarballs/${tarball}`]),
 )
+
+// `@tanstack/solid-query`, `@tanstack/vue-query`, `nuxt` and `@nuxt/kit` are
+// declared as OPTIONAL peers, so pnpm's default auto-install-peers skips them
+// in this scratch, `--ignore-workspace` consumer — unlike `@tanstack/react-query`,
+// a required peer of `@growae/reactive-react`. The `./query` and `./nuxt`
+// subpaths import them unconditionally, so the consumer needs them as real
+// dependencies. Read straight out of `packages/solid/package.json` and
+// `packages/vue/package.json`'s own `devDependencies` — the versions those
+// packages already test against — instead of a literal here that could drift
+// from what they actually carry.
+function devDependencyVersion(packageDir, dependencyName) {
+  const manifestPath = path.join(
+    repoRoot,
+    'packages',
+    packageDir,
+    'package.json',
+  )
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+  const version = manifest.devDependencies?.[dependencyName]
+  if (!version)
+    throw new Error(
+      `${path.relative(repoRoot, manifestPath)} has no devDependency on ${dependencyName}`,
+    )
+  return version
+}
+const EXTRA_DEPENDENCIES = {
+  '@tanstack/solid-query': devDependencyVersion(
+    'solid',
+    '@tanstack/solid-query',
+  ),
+  '@tanstack/vue-query': devDependencyVersion('vue', '@tanstack/vue-query'),
+  nuxt: devDependencyVersion('vue', 'nuxt'),
+  '@nuxt/kit': devDependencyVersion('vue', '@nuxt/kit'),
+}
+
 writeFileSync(
   path.join(consumerDir, 'package.json'),
   `${JSON.stringify(
@@ -119,7 +168,7 @@ writeFileSync(
       version: '0.0.0',
       private: true,
       type: 'module',
-      dependencies: tarballSpec,
+      dependencies: { ...tarballSpec, ...EXTRA_DEPENDENCIES },
       pnpm: { overrides: tarballSpec },
     },
     null,

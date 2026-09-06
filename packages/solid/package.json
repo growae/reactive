@@ -39,6 +39,9 @@
       "optional": true
     }
   },
+  "devDependencies": {
+    "@tanstack/solid-query": "^5.102.8"
+  },
   "publishConfig": {
     "access": "public"
   }
