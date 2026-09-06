@@ -35,6 +35,13 @@ The block height at which the transaction reached the required confirmation dept
 
 The transaction hash to wait for.
 
+### networkId
+
+- **Type:** `string`
+- **Optional**
+
+Target network. Defaults to the currently active network.
+
 ### confirm
 
 - **Type:** `number`

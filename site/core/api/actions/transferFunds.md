@@ -56,6 +56,21 @@ Fraction of the balance to transfer, between 0 and 1 (e.g. `0.5` for 50%).
 
 Recipient address (`ak_...`).
 
+### networkId
+
+- **Type:** `string`
+- **Optional**
+
+Target network. Defaults to the currently active network.
+
+### connector
+
+- **Type:** `Connector`
+- **Optional**
+
+Connector to transfer from. Defaults to the active connection's connector, and
+the sender address is then that connection's active account.
+
 ### ttl
 
 - **Type:** `number`
@@ -68,7 +83,9 @@ Transaction TTL in blocks relative to current height. Set to `0` for no expirati
 - **Type:** `boolean`
 - **Default:** `true`
 
-Whether to wait for the transaction to be mined before returning.
+Forwarded to `sendTransaction`, which does not currently read it — see that
+action's page. `transferFunds` returns as soon as the node accepts the
+transaction.
 
 ## Error Types
 

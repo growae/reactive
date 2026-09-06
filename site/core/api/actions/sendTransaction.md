@@ -31,24 +31,39 @@ type SendTransactionReturnType = {
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `tx` | `string` | — | Required. The signed transaction to broadcast. |
-| `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
-| `waitForConfirmation` | `boolean` | `false` | Wait for the transaction to be mined before returning. |
-| `confirmationBlocks` | `number` | `1` | Number of blocks to wait when `waitForConfirmation` is true. |
+| `tx` | `string` | — | Required. The signed transaction (`tx_...`) to broadcast. |
+| `networkId` | `string` | active | Target network. |
+| `connector` | `Connector` | — | Declared on the type; the current implementation does not read it. |
+| `waitMined` | `boolean` | — | Declared on the type; the current implementation does not read it. |
+| `options.verify` | `boolean` | — | Declared on the type; the current implementation does not read it. |
+| `options.waitMined` | `boolean` | — | Declared on the type; the current implementation does not read it. |
 
-::: tip Default TTL
-All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `ttl: 0` for no expiration.
+`sendTransaction` carries no TTL parameter. A transaction's TTL is fixed when it
+is built and signed, which happens before this action is reached — set it on
+whichever action built the transaction, or on `buildTransaction`.
+
+::: warning `waitMined` does not wait
+`sendTransaction` returns as soon as the node accepts the transaction. It
+resolves to a hash, not to an included transaction, whatever `waitMined` or
+`options.waitMined` is set to. To wait, call `waitForTransactionConfirm` with
+the returned hash.
 :::
 
 ## Examples
 
-### Wait for confirmation
+### Wait for the transaction to be confirmed
 
 ```typescript
-const result = await sendTransaction(config, {
-  tx: signedTx,
-  waitForConfirmation: true,
-  confirmationBlocks: 3,
+import {
+  sendTransaction,
+  waitForTransactionConfirm,
+} from '@growae/reactive/actions'
+
+const result = await sendTransaction(config, { tx: signedTx })
+
+await waitForTransactionConfirm(config, {
+  hash: result.hash,
+  confirm: 3,
 })
 ```
 

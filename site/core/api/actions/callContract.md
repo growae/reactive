@@ -16,7 +16,7 @@ import { callContract } from '@growae/reactive/actions'
 const result = await callContract(config, {
   address: 'ct_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
   aci: contractAci,
-  fn: 'transfer',
+  method: 'transfer',
   args: ['ak_recipient...', 1000n],
 })
 ```
@@ -37,17 +37,22 @@ type CallContractReturnType = {
 |-----------|------|---------|-------------|
 | `address` | `string` | — | Required. Contract address (`ct_...`). |
 | `aci` | `Aci` | — | Required. Contract ACI (Application Call Interface). |
-| `fn` | `string` | — | Required. Function name to call. |
+| `method` | `string` | — | Required. Function name to call. |
 | `args` | `unknown[]` | `[]` | Arguments to pass to the function. |
-| `amount` | `bigint` | `0n` | AE (in aettos) to attach to the call (payable functions). |
-| `gas` | `number` | auto | Gas limit. Auto-estimated if omitted. |
-| `gasPrice` | `bigint` | auto | Gas price in aettos. |
-| `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
-| `nonce` | `number` | auto | Account nonce. |
-| `fee` | `bigint` | auto | Transaction fee in aettos. |
+| `networkId` | `string` | active | Target network. |
+| `options.amount` | `bigint` | `0n` | AE (in aettos) to attach to the call (payable functions). |
+| `options.gasLimit` | `number` | auto | Gas limit. Auto-estimated if omitted. |
+| `options.gasPrice` | `bigint` | auto | Gas price in aettos. |
+| `options.fee` | `bigint` | auto | Transaction fee in aettos. |
+| `options.ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
+| `options.callStatic` | `boolean` | `false` | Run the call as a dry-run instead of posting it. `readContract` is this action with `callStatic` forced on. |
+
+Everything below `networkId` lives under `options`. There is no top-level
+`amount`, `gas`, `ttl` or `fee` on `CallContractParameters`, and the action
+exposes no nonce override at all — the nonce is the SDK's to pick.
 
 ::: tip Default TTL
-All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `ttl: 0` for no expiration.
+All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `options: { ttl: 0 }` for no expiration.
 :::
 
 ## Examples
@@ -58,9 +63,9 @@ All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale
 const result = await callContract(config, {
   address: 'ct_auction...',
   aci: auctionAci,
-  fn: 'bid',
+  method: 'bid',
   args: [itemId],
-  amount: 5000000000000000000n, // 5 AE
+  options: { amount: 5000000000000000000n }, // 5 AE
 })
 ```
 
@@ -70,9 +75,9 @@ const result = await callContract(config, {
 const result = await callContract(config, {
   address: 'ct_token...',
   aci: tokenAci,
-  fn: 'transfer',
+  method: 'transfer',
   args: ['ak_recipient...', 1000n],
-  ttl: 0, // no expiration
+  options: { ttl: 0 }, // no expiration
 })
 ```
 
