@@ -16,7 +16,7 @@ import { readContract } from '@growae/reactive/actions'
 const result = await readContract(config, {
   address: 'ct_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
   aci: contractAci,
-  fn: 'get_balance',
+  method: 'get_balance',
   args: ['ak_2dA...'],
 })
 ```
@@ -31,9 +31,17 @@ The return type depends on the contract function's return type as defined in the
 |-----------|------|---------|-------------|
 | `address` | `string` | — | Required. Contract address (`ct_...`). |
 | `aci` | `Aci` | — | Required. Contract ACI (Application Call Interface). |
-| `fn` | `string` | — | Required. Function name to call. |
+| `method` | `string` | — | Required. Function name to call. |
 | `args` | `unknown[]` | `[]` | Arguments to pass to the function. |
 | `networkId` | `string` | active | Target network. |
+| `options.amount` | `bigint` | `0n` | AE (in aettos) to attach to the dry-run. |
+| `options.gasLimit` | `number` | auto | Gas limit. |
+| `options.gasPrice` | `bigint` | auto | Gas price in aettos. |
+| `options.fee` | `bigint` | auto | Transaction fee in aettos. |
+| `options.ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. |
+
+`ReadContractParameters` is `CallContractParameters` with `options.callStatic`
+removed — this action forces it on, which is what makes the call a dry-run.
 
 ## Examples
 
@@ -43,7 +51,7 @@ The return type depends on the contract function's return type as defined in the
 const balance = await readContract(config, {
   address: 'ct_token...',
   aci: tokenAci,
-  fn: 'balance',
+  method: 'balance',
   args: ['ak_owner...'],
 })
 ```

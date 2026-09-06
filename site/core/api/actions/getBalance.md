@@ -55,6 +55,13 @@ The account address (`ak_...`) to query.
 
 Target network. Defaults to the currently active network.
 
+### format
+
+- **Type:** `'ae' | 'aettos'`
+- **Default:** `'aettos'`
+
+Unit the balance is returned in.
+
 ## Error Types
 
 ```typescript

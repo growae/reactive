@@ -48,12 +48,13 @@ The account address that signed the message.
 
 The message to sign.
 
-### account
+### onAccount
 
 - **Type:** `string`
 - **Optional**
 
-Specific account to sign with. Defaults to the currently active account.
+Specific account to sign with, passed through to the connector. Defaults to the
+connector's own choice, which is the currently active account.
 
 ## Error Types
 
