@@ -7,6 +7,7 @@
 Migration:
 
 - `claimName` takes `salt: number` where it took `salt: bigint | string`. It is the sdk's `nameSalt` field, and it round-trips from `preclaimName`, which reports it as a number. It is now optional: since Ceres a name can be claimed without preclaiming.
+- `preclaimName` returns `salt: number` where it returned `salt: bigint`. It is the same value the sdk generated, in the type `claimName` now takes, so the round-trip needs no conversion — but code that did arithmetic on it, or passed it somewhere typed `bigint`, has to drop the conversion.
 - `updateName` takes `name` where it took `nameId`, matching every other AENS action. It also gained `extendPointers`, which merges with the pointers already on the name instead of replacing them.
 - `claimName`, `preclaimName` and `updateName` return `rawTx` and `blockHeight` alongside `txHash`. Existing fields are unchanged.
 - `claimName`, `preclaimName` and `updateName` throw `ClaimNameNoAccountError`, `PreclaimNameNoAccountError` and `UpdateNameNoAccountError` — all `BaseError` subclasses, all exported — where they threw a bare `Error`. Safe for anyone catching `Error`; breaking for anyone matching the message text.
