@@ -19,15 +19,31 @@
 // `packages/react`, `packages/solid` and `packages/vue` are built by `tsc` the
 // same way and carried the same defect; now that their sources carry explicit
 // extensions, they are in PACKAGES alongside core and connectors.
+//
+// HOW TO RUN IT. Both of these are supported and do the same thing:
+//
+//   pnpm --filter @growae/reactive run test:node-resolution   (what CI runs)
+//   node packages/core/scripts/test-node-resolution.mjs       (the shebang)
+//
+// They used to differ in a way nothing reported: the scratch consumer's
+// anti-substitution overrides were read under one invocation and silently
+// ignored under the other, and the gate then graded the last PUBLISHED release
+// instead of the build in the tree. The banner below records the pnpm actually
+// on PATH, and `assertNoSubstitution` re-derives the answer from the installed
+// tree rather than trusting any override mechanism — so a difference between
+// the two invocations can no longer change the verdict without saying so.
 import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import {
   mkdirSync,
   readdirSync,
   readFileSync,
+  realpathSync,
   renameSync,
   rmSync,
   writeFileSync,
 } from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -56,15 +72,43 @@ const SUBPATHS = [
   '@growae/reactive-vue/nuxt',
 ]
 
+// `dir` is the package's directory under `packages/`. The post-install
+// assertion hashes the entry file the tree just built there and requires the
+// installed copy to be byte-identical, so every entry needs to say where its
+// build output lives.
 const PACKAGES = [
-  { name: '@growae/reactive', tarball: 'growae-reactive.tgz' },
+  { name: '@growae/reactive', dir: 'core', tarball: 'growae-reactive.tgz' },
   {
     name: '@growae/reactive-connectors',
+    dir: 'connectors',
     tarball: 'growae-reactive-connectors.tgz',
   },
-  { name: '@growae/reactive-react', tarball: 'growae-reactive-react.tgz' },
-  { name: '@growae/reactive-solid', tarball: 'growae-reactive-solid.tgz' },
-  { name: '@growae/reactive-vue', tarball: 'growae-reactive-vue.tgz' },
+  {
+    name: '@growae/reactive-react',
+    dir: 'react',
+    tarball: 'growae-reactive-react.tgz',
+  },
+  {
+    name: '@growae/reactive-solid',
+    dir: 'solid',
+    tarball: 'growae-reactive-solid.tgz',
+  },
+  {
+    name: '@growae/reactive-vue',
+    dir: 'vue',
+    tarball: 'growae-reactive-vue.tgz',
+  },
+]
+
+// The four packages whose manifests carry `"@growae/reactive": "workspace:*"`.
+// `pnpm pack` rewrites that to a plain version — `0.0.6` today — which the
+// registry can satisfy, so each of these is a way for the published release to
+// walk into this consumer under the name the tree is supposed to be providing.
+const DEPENDENTS_ON_CORE = [
+  '@growae/reactive-connectors',
+  '@growae/reactive-react',
+  '@growae/reactive-solid',
+  '@growae/reactive-vue',
 ]
 
 function run(command, args, cwd, options = {}) {
@@ -72,6 +116,31 @@ function run(command, args, cwd, options = {}) {
     `$ ${command} ${args.join(' ')}  (in ${path.relative(repoRoot, cwd) || '.'})`,
   )
   return execFileSync(command, args, { cwd, stdio: 'inherit', ...options })
+}
+
+// Which pnpm this run uses decides how the scratch consumer is resolved, and
+// it is not always the one CI uses: `pnpm run` puts its own pnpm first on
+// PATH, a bare `node` invocation takes whatever the shell has. Record it
+// rather than let it stay invisible — and say so when it is not the version
+// this repository pins, because that is when a local result and a CI result
+// are allowed to disagree.
+const pinnedPackageManager = JSON.parse(
+  readFileSync(path.join(repoRoot, 'package.json'), 'utf8'),
+).packageManager
+const pnpmVersion = execFileSync('pnpm', ['--version'], {
+  encoding: 'utf8',
+}).trim()
+console.log(
+  `node ${process.version} · pnpm ${pnpmVersion} · started via ${
+    process.env.npm_lifecycle_event
+      ? `pnpm run ${process.env.npm_lifecycle_event}`
+      : 'a direct node invocation'
+  }`,
+)
+if (pinnedPackageManager !== `pnpm@${pnpmVersion}`) {
+  console.log(
+    `  note: this repository pins ${pinnedPackageManager}; the guard below does not depend on the version, but resolution details can.`,
+  )
 }
 
 rmSync(workDir, { recursive: true, force: true })
@@ -112,8 +181,7 @@ for (const { name, tarball } of PACKAGES) {
 
 // `"type": "module"` and no bundler, no tsconfig `paths`, no vite alias.
 // Third-party dependencies come from the registry exactly as a consumer's
-// would, and `--ignore-workspace` keeps this monorepo's own resolution out of
-// it.
+// would.
 //
 // The `overrides` are load-bearing. `pnpm pack` rewrites
 // `"@growae/reactive": "workspace:*"` in packages/connectors into a fixed
@@ -122,9 +190,40 @@ for (const { name, tarball } of PACKAGES) {
 // the tree. It fails either way while the published one is broken, which is
 // how it was caught; the day that one is fixed the same silent substitution
 // would turn the gate green on evidence about the wrong artifact.
+//
+// Which is why they are written TWICE, and why this install no longer passes
+// `--ignore-workspace`. pnpm is moving settings out of the `pnpm` field in
+// package.json and into `pnpm-workspace.yaml`; on the way it prints
+//
+//   [WARN] The "pnpm" field in package.json is no longer read by pnpm.
+//
+// and honours nothing. But `--ignore-workspace` makes pnpm ignore the
+// consumer's own `pnpm-workspace.yaml` too, overrides included — measured on
+// pnpm 10.33.0: with the overrides in the new home and `--ignore-workspace`
+// still passed, all four dependents resolved `@growae/reactive` to the
+// registry-published copy. So the new home only works without that flag, and
+// the isolation it used to provide comes instead from the consumer having a
+// `pnpm-workspace.yaml` of its own: pnpm stops walking up at the first
+// workspace root it finds, and `packages: []` keeps this monorepo's own
+// packages out of the graph.
+//
+// Neither home is trusted. `assertNoSubstitution` below re-derives what was
+// actually installed, and that is what decides the verdict.
 const tarballSpec = Object.fromEntries(
   PACKAGES.map(({ name, tarball }) => [name, `file:../tarballs/${tarball}`]),
 )
+
+// A negative control, for anyone who wants to see the guard fail rather than
+// take its word for it: with this set the overrides are left out entirely, the
+// registry copy is installed in their place, and the run MUST fail. It can
+// only ever make the gate redder, never greener.
+const negativeControl =
+  process.env.NODE_RESOLUTION_CHECK_NEGATIVE_CONTROL === '1'
+if (negativeControl)
+  console.log(
+    'NODE_RESOLUTION_CHECK_NEGATIVE_CONTROL=1 — installing WITHOUT the overrides; this run is expected to FAIL.',
+  )
+const overrides = negativeControl ? {} : tarballSpec
 
 // `@tanstack/solid-query`, `@tanstack/vue-query`, `nuxt` and `@nuxt/kit` are
 // declared as OPTIONAL peers, so pnpm's default auto-install-peers skips them
@@ -169,14 +268,120 @@ writeFileSync(
       private: true,
       type: 'module',
       dependencies: { ...tarballSpec, ...EXTRA_DEPENDENCIES },
-      pnpm: { overrides: tarballSpec },
+      // The old home. Still read by the pnpm this repository pins, ignored
+      // with a warning by the versions that come after it.
+      pnpm: { overrides },
     },
     null,
     2,
   )}\n`,
 )
 
-run('pnpm', ['install', '--ignore-workspace'], consumerDir)
+// The new home. Written as JSON, which is valid YAML, so no quoting rule about
+// `@` or `file:` can silently produce a file pnpm reads as empty.
+writeFileSync(
+  path.join(consumerDir, 'pnpm-workspace.yaml'),
+  `# Generated by packages/core/scripts/test-node-resolution.mjs.\n# \`packages: []\` makes this directory its own workspace root, which is what\n# keeps the monorepo above it out of this install.\n${JSON.stringify(
+    { packages: [], overrides },
+    null,
+    2,
+  )}\n`,
+)
+
+run('pnpm', ['install'], consumerDir)
+
+// Everything above is a way of ASKING for the tarballs. This is the part that
+// checks what was installed, and it trusts none of it: for every package, and
+// then for `@growae/reactive` as seen from inside each package that depends on
+// it, resolve the entry Node would actually load and require it to be the file
+// this tree just built, byte for byte.
+//
+// Two properties are asserted, and the second is the one that matters. A
+// registry copy lands under the consumer's own `node_modules/.pnpm` too, so
+// "is it inside the scratch directory" cannot tell the two apart on its own —
+// only the content hash can. The path check catches the other direction: a
+// resolution that escaped to the monorepo's `packages/` or to a global store.
+function packageEntryPath(packageDir) {
+  const manifest = JSON.parse(
+    readFileSync(path.join(packageDir, 'package.json'), 'utf8'),
+  )
+  const dot = manifest.exports?.['.']
+  const entry = (typeof dot === 'string' ? dot : dot?.default) ?? manifest.main
+  if (!entry)
+    throw new Error(`${packageDir}/package.json declares no "." entry`)
+  return path.join(packageDir, entry)
+}
+
+function hashOf(file) {
+  return createHash('sha256').update(readFileSync(file)).digest('hex')
+}
+
+// What the tree built, keyed by package name — the only artifact this gate is
+// allowed to be reporting on.
+const builtEntryHash = new Map(
+  PACKAGES.map(({ name, dir }) => [
+    name,
+    hashOf(packageEntryPath(path.join(repoRoot, 'packages', dir))),
+  ]),
+)
+
+function assertResolvesToTreeBuild(name, fromDir, description) {
+  // From the REALPATH: pnpm's consumer-level `node_modules/<name>` is a
+  // symlink into the virtual store, and Node resolves a package's own
+  // dependencies from where the files really are. Resolving from the symlink
+  // would answer the top-level question a second time instead of the nested
+  // one, which is exactly the question at issue here.
+  const require_ = createRequire(
+    realpathSync(path.join(fromDir, 'package.json')),
+  )
+  let resolved
+  try {
+    resolved = realpathSync(require_.resolve(name))
+  } catch (error) {
+    return `${description}: ${name} did not resolve at all (${error.code ?? error.message})`
+  }
+  const where = path.relative(repoRoot, resolved)
+  if (!resolved.startsWith(`${workDir}${path.sep}`))
+    return `${description}: ${name} resolved OUTSIDE the scratch consumer, to ${where}`
+  if (hashOf(resolved) !== builtEntryHash.get(name))
+    return `${description}: ${name} resolved to ${where}, which is NOT the build in this tree — a different copy of ${name} was substituted (the published release is the usual one). This gate would have been grading that copy.`
+  console.log(`✔ ${description}: ${name} -> ${where}`)
+  return null
+}
+
+const substitutions = []
+for (const { name } of PACKAGES) {
+  const failure = assertResolvesToTreeBuild(
+    name,
+    consumerDir,
+    'consumer imports',
+  )
+  if (failure) substitutions.push(failure)
+}
+for (const dependent of DEPENDENTS_ON_CORE) {
+  const failure = assertResolvesToTreeBuild(
+    '@growae/reactive',
+    path.join(consumerDir, 'node_modules', dependent),
+    `inside ${dependent}`,
+  )
+  if (failure) substitutions.push(failure)
+}
+
+// Fail here rather than carrying on. Fourteen green import lines about the
+// wrong artifact is the failure this whole check exists to prevent, and it
+// reads exactly like a pass.
+if (substitutions.length > 0) {
+  console.log(
+    `\nNode resolution check ABORTED — the scratch consumer is not testing this tree:\n${substitutions
+      .map((f) => `  - ${f}`)
+      .join(
+        '\n',
+      )}\n\nNothing below this line would have been evidence about the built packages.`,
+  )
+  rmSync(workDir, { recursive: true, force: true })
+  process.exit(1)
+}
+console.log('✔ every resolution above is the build in this tree\n')
 
 const failures = []
 
