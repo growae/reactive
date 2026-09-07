@@ -139,6 +139,10 @@ function coreSidebar(): DefaultTheme.SidebarItem[] {
           link: '/core/api/actions/buildTransaction',
         },
         {
+          text: 'waitForTransaction',
+          link: '/core/api/actions/waitForTransaction',
+        },
+        {
           text: 'waitForTransactionConfirm',
           link: '/core/api/actions/waitForTransactionConfirm',
         },
