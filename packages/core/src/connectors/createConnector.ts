@@ -50,6 +50,19 @@ export type CreateConnectorFn<
       tx: string
       networkId: string
       innerTx?: boolean | undefined
+      /**
+       * The account the transaction was built for.
+       *
+       * Optional, so an implementation written before this parameter existed
+       * stays type-compatible and keeps signing with whichever account it
+       * considers active. When it is present the connector must sign with
+       * exactly that account or throw `ConnectorAccountUnavailableError` — it
+       * must never fall back to another one. A transaction built for one
+       * account and signed by another either fails at the node with a bare
+       * signature error or, worse, succeeds and moves the wrong account's
+       * funds.
+       */
+      onAccount?: string | undefined
     }): Promise<string>
     signMessage?(params: {
       message: string

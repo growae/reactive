@@ -2,6 +2,7 @@ import { buildTxAsync, Tag, unpackTx } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants.js'
 import type { Config, Connector } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { activeAccountForConnector } from '../utils/activeAccount.js'
 import { getBalance } from './getBalance.js'
 import { sendTransaction } from './sendTransaction.js'
 import { signTransaction } from './signTransaction.js'
@@ -66,9 +67,13 @@ export async function transferFunds(
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  if (!senderId) {
-    senderId = (await senderConnector.getAccounts())[0]
-  }
+  // An explicit connector still has an active account — it is core that holds
+  // it, on the connection for that connector. `getAccounts()[0]` is only the
+  // last resort for a connector core has no connection for; taking it while a
+  // connection exists transfers from the first account after the user selected
+  // another, with a valid signature and no error anywhere.
+  senderId ??= activeAccountForConnector(config, senderConnector)
+  senderId ??= (await senderConnector.getAccounts())[0]
   if (!senderId) {
     throw new Error('No account available on the current connector.')
   }
@@ -110,6 +115,7 @@ export async function transferFunds(
     tx,
     networkId,
     connector: senderConnector,
+    onAccount: senderId,
   })
 
   return sendTransaction(config, {

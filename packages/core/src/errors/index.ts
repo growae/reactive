@@ -24,6 +24,8 @@ export {
 } from './config.js'
 
 export {
+  ConnectorAccountUnavailableError,
+  type ConnectorAccountUnavailableErrorType,
   ProviderNotFoundError,
   type ProviderNotFoundErrorType,
   SwitchNetworkNotSupportedError,

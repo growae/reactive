@@ -68,6 +68,7 @@ export async function spend(
   const signed = await connector.signTransaction({
     tx: spendTx,
     networkId: networkId ?? config.state.networkId,
+    onAccount: senderId,
   })
 
   const result = await node.postTransaction({ tx: signed })

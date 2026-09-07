@@ -1,5 +1,8 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
-import { createEmitter } from '@growae/reactive'
+import {
+  ConnectorAccountUnavailableError,
+  createEmitter,
+} from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { metamaskSnap } from './metamaskSnap.js'
 
@@ -162,6 +165,43 @@ describe('metamaskSnap', () => {
     })
 
     expect(signed).toBe(SIGNED_TX)
+  })
+
+  /**
+   * As with `ledger`: one derivation path, one address. A named account this
+   * snap did not derive throws rather than being signed from the configured
+   * path, which would return a valid signature from the wrong sender.
+   */
+  it('signs for the account it derived when it is the one named', async () => {
+    mockEthereum()
+    const connector = metamaskSnap()
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    const { accounts } = await instance.connect()
+
+    const signed = await instance.signTransaction!({
+      tx: 'tx_abc',
+      networkId: 'ae_uat',
+      onAccount: accounts[0]!,
+    })
+
+    expect(signed).toBe(SIGNED_TX)
+  })
+
+  it('throws for a named account the snap does not hold', async () => {
+    mockEthereum()
+    const connector = metamaskSnap()
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    await expect(
+      instance.signTransaction!({
+        tx: 'tx_abc',
+        networkId: 'ae_uat',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
   })
 
   it('should sign a message via snap', async () => {

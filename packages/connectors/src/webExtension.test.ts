@@ -1,5 +1,8 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
-import { createEmitter } from '@growae/reactive'
+import {
+  ConnectorAccountUnavailableError,
+  createEmitter,
+} from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { webExtension } from './webExtension.js'
 
@@ -160,5 +163,80 @@ describe('webExtension', () => {
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ accounts: [TEST_ADDRESS] }),
     )
+  })
+
+  /**
+   * The wallet holds every account it exposes, so `onAccount` selects between
+   * them. Before it existed, `signTransaction` took `accounts[0]` and nothing
+   * propagated `switchActiveAccount` to the wallet: the transaction was built
+   * for the selected account and signed by the first one.
+   *
+   * The unknown-account case throws rather than falling back the way
+   * `signMessage` still does. A fallback here returns a valid signature over a
+   * transaction from a different sender, which the node accepts.
+   */
+  describe('signTransaction onAccount', () => {
+    const SECOND_ADDRESS =
+      'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS'
+    const signFirst = vi.fn().mockResolvedValue('tx_signedByFirst')
+    const signSecond = vi.fn().mockResolvedValue('tx_signedBySecond')
+
+    async function connectedWithTwoAccounts() {
+      mockFrame.accounts = [
+        { address: TEST_ADDRESS, signTransaction: signFirst },
+        { address: SECOND_ADDRESS, signTransaction: signSecond },
+      ] as never
+      mockFrame.subscribeAccounts.mockResolvedValue([
+        { address: TEST_ADDRESS },
+        { address: SECOND_ADDRESS },
+      ])
+      const instance = webExtension()(makeConfig())
+      await instance.setup?.()
+      await instance.connect()
+      return instance
+    }
+
+    beforeEach(() => {
+      signFirst.mockClear().mockResolvedValue('tx_signedByFirst')
+      signSecond.mockClear().mockResolvedValue('tx_signedBySecond')
+    })
+
+    it('signs with the named account rather than the first', async () => {
+      const instance = await connectedWithTwoAccounts()
+
+      const signed = await instance.signTransaction!({
+        tx: 'tx_abc',
+        networkId: 'ae_uat',
+        onAccount: SECOND_ADDRESS,
+      })
+
+      expect(signed).toBe('tx_signedBySecond')
+      expect(signFirst).not.toHaveBeenCalled()
+    })
+
+    it('signs with the first account when none is named', async () => {
+      const instance = await connectedWithTwoAccounts()
+
+      const signed = await instance.signTransaction!({
+        tx: 'tx_abc',
+        networkId: 'ae_uat',
+      })
+
+      expect(signed).toBe('tx_signedByFirst')
+    })
+
+    it('throws for an account the wallet does not hold', async () => {
+      const instance = await connectedWithTwoAccounts()
+
+      await expect(
+        instance.signTransaction!({
+          tx: 'tx_abc',
+          networkId: 'ae_uat',
+          onAccount: 'ak_someOtherAccount',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+      expect(signFirst).not.toHaveBeenCalled()
+      expect(signSecond).not.toHaveBeenCalled()
+    })
   })
 })

@@ -1,5 +1,8 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
-import { createEmitter } from '@growae/reactive'
+import {
+  ConnectorAccountUnavailableError,
+  createEmitter,
+} from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ledger } from './ledger.js'
 
@@ -148,6 +151,44 @@ describe('ledger', () => {
       innerTx: undefined,
     })
     expect(signed).toBe(SIGNED_TX)
+  })
+
+  /**
+   * The device derives exactly one address, at `accountIndex`, so a named
+   * account it does not hold cannot be served by any other derivation. It
+   * throws instead of signing from the configured index: that would return a
+   * valid signature over a transaction built for a different sender, and the
+   * node would accept it.
+   */
+  it('signs for the account it derived when it is the one named', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    const signed = await instance.signTransaction!({
+      tx: 'tx_abc',
+      networkId: 'ae_uat',
+      onAccount: TEST_ADDRESS,
+    })
+
+    expect(signed).toBe(SIGNED_TX)
+  })
+
+  it('throws for a named account the device does not hold', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    await expect(
+      instance.signTransaction!({
+        tx: 'tx_abc',
+        networkId: 'ae_uat',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
+    expect(mockAccount.signTransaction).not.toHaveBeenCalled()
   })
 
   it('should sign a message via Ledger', async () => {

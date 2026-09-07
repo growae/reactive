@@ -1,5 +1,6 @@
 import { AccountLedgerFactory } from '@aeternity/aepp-sdk'
 import {
+  ConnectorAccountUnavailableError,
   ConnectorNotConnectedError,
   createConnector,
   NetworkNotConfiguredError,
@@ -35,6 +36,24 @@ export function ledger(parameters: LedgerParameters) {
   let connectedNetworkId: string
 
   const accountIndex = parameters.accountIndex ?? 0
+
+  /**
+   * A named account is served only when it is the one this connector derived.
+   *
+   * `currentAccounts` holds exactly the address at `accountIndex`, so there is
+   * no other index to resolve to. Signing from `accountIndex` anyway would
+   * hand back a valid signature over a transaction built for a different
+   * sender, so an account this device is not configured for throws.
+   */
+  function assertCanSignFor(onAccount: string | undefined, name: string) {
+    if (onAccount == null) return
+    if (currentAccounts.indexOf(onAccount) === -1) {
+      throw new ConnectorAccountUnavailableError({
+        connectorName: name,
+        account: onAccount,
+      })
+    }
+  }
 
   return createConnector<Provider>((config) => ({
     id: 'ledger',
@@ -96,8 +115,9 @@ export function ledger(parameters: LedgerParameters) {
       return network
     },
 
-    async signTransaction({ tx, networkId, innerTx }) {
+    async signTransaction({ tx, networkId, innerTx, onAccount }) {
       if (!factory || !connected) throw new ConnectorNotConnectedError()
+      assertCanSignFor(onAccount, this.name)
       const account = await factory.initialize(accountIndex)
       return account.signTransaction(tx as `tx_${string}`, {
         networkId,

@@ -2,6 +2,7 @@ import { buildTxAsync, Tag } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants.js'
 import type { Config, Connector } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { activeAccountForConnector } from '../utils/activeAccount.js'
 import { sendTransaction } from './sendTransaction.js'
 
 export type PayForTransactionParameters = {
@@ -47,9 +48,11 @@ export async function payForTransaction(
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  if (!payerId) {
-    payerId = (await payerConnector.getAccounts())[0]
-  }
+  // Same as `transferFunds`: the connection core holds for this connector
+  // knows which account the user selected, and `getAccounts()[0]` is only the
+  // fallback for a connector that has no connection.
+  payerId ??= activeAccountForConnector(config, payerConnector)
+  payerId ??= (await payerConnector.getAccounts())[0]
   if (!payerId) {
     throw new Error('No account available on the current connector.')
   }

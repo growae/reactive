@@ -10,6 +10,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 
 import { MemoryAccount } from '@aeternity/aepp-sdk'
 import { createEmitter } from '../createEmitter.js'
+import { ConnectorAccountUnavailableError } from '../errors/connector.js'
 import { mainnet, testnet } from '../types/network.js'
 import type { ConnectorEventMap } from './createConnector.js'
 import { memory } from './memory.js'
@@ -167,6 +168,77 @@ describe('memory connector', () => {
         networkId: testnet.id,
         innerTx: true,
       })
+    })
+  })
+
+  /**
+   * The connector holds every account it was configured with, so `onAccount`
+   * selects between them rather than being a hint. It shipped signing with
+   * `accounts[0]` unconditionally, which is the account the built transaction
+   * belongs to only until the user switches.
+   */
+  describe('signTransaction onAccount', () => {
+    const ADDRESSES = ['ak_first', 'ak_second']
+
+    function setupMultiAccount() {
+      vi.mocked(MemoryAccount).mockImplementation(((): unknown => {
+        const address = ADDRESSES[
+          vi.mocked(MemoryAccount).mock.calls.length - 1
+        ] as string
+        return {
+          address,
+          sign: vi.fn().mockResolvedValue(new Uint8Array(64)),
+          signTransaction: vi.fn().mockResolvedValue(`signed_by_${address}`),
+        }
+      }) as never)
+      const connectorFn = memory({
+        accounts: [{ secretKey: 'k1' }, { secretKey: 'k2' }],
+      })
+      return connectorFn({
+        emitter: createEmitter<ConnectorEventMap>('mem-uid'),
+        networks: [testnet, mainnet],
+      })
+    }
+
+    it('signs with the named account rather than the first', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+        onAccount: 'ak_second',
+      })
+
+      expect(signed).toBe('signed_by_ak_second')
+    })
+
+    it('falls back to the first account when none is named', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+      })
+
+      expect(signed).toBe('signed_by_ak_first')
+    })
+
+    it('throws for an account it does not hold rather than falling back', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await expect(
+        connector.signTransaction!({
+          tx: 'tx_data',
+          networkId: testnet.id,
+          onAccount: 'ak_notMine',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
     })
   })
 

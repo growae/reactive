@@ -68,6 +68,31 @@ Every connector must implement:
 | `getProvider` | `AccountBase` | Get signing provider |
 | `isAuthorized` | `boolean` | Check previous authorization |
 
+Signing is optional — a connector that omits these methods is a read-only one:
+
+| Method | Return Type | Description |
+|--------|------------|-------------|
+| `signTransaction` | `string` | Sign `{ tx, networkId, innerTx?, onAccount? }` |
+| `signMessage` | `string` | Sign `{ message, onAccount? }` |
+
+### Signing for a named account
+
+`signTransaction` takes an optional `onAccount`: the address the caller built
+the transaction for. It is optional so that a connector written before the
+parameter existed keeps working, but an implementation that receives it has one
+obligation:
+
+**Sign with exactly that account, or throw `ConnectorAccountUnavailableError`.
+Never fall back to another account.** A transaction built for one account and
+signed by another is either rejected by the node with a bare signature error
+or — when the connector holds both keys — accepted, moving the wrong account's
+funds with nothing anywhere reporting a problem.
+
+Core passes the account it built for, which is `activeAccount` on the
+connection. Without the pin, a `switchActiveAccount` to a second account leaves
+the transaction built for the new one and signed by whichever the connector
+picked for itself.
+
 ## Events
 
 Connectors emit events via the `config.emitter`:
