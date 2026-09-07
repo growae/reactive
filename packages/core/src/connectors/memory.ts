@@ -28,7 +28,8 @@ export function memory(parameters: MemoryParameters) {
    * This connector holds every account it was configured with, so a name it
    * cannot serve is a caller error rather than a wallet limitation — and it
    * throws, because signing with `accounts[0]` instead would return a valid
-   * signature over a transaction built for somebody else.
+   * signature attributed to somebody else: the wrong sender on a transaction,
+   * the wrong signer on a message.
    */
   function accountFor(onAccount: string | undefined): MemoryAccount {
     if (onAccount == null) return accounts[0]!
@@ -102,10 +103,10 @@ export function memory(parameters: MemoryParameters) {
       })
     },
 
-    async signMessage({ message }) {
+    async signMessage({ message, onAccount }) {
       if (!connected) throw new ConnectorNotConnectedError()
       const encoded = new TextEncoder().encode(message)
-      const signature = await accounts[0]!.sign(encoded)
+      const signature = await accountFor(onAccount).sign(encoded)
       return Buffer.from(signature).toString('hex')
     },
 

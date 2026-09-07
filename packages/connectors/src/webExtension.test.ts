@@ -171,20 +171,36 @@ describe('webExtension', () => {
    * propagated `switchActiveAccount` to the wallet: the transaction was built
    * for the selected account and signed by the first one.
    *
-   * The unknown-account case throws rather than falling back the way
-   * `signMessage` still does. A fallback here returns a valid signature over a
-   * transaction from a different sender, which the node accepts.
+   * Both signing paths throw on an unknown account rather than falling back.
+   * On the transaction path the fallback returns a valid signature over a
+   * transaction from a different sender, which the node accepts; on the
+   * message path it returns a signature that verifies against an address the
+   * caller never named, so the caller's own check is what fails, far from the
+   * connector that mis-signed it.
    */
-  describe('signTransaction onAccount', () => {
+  describe('onAccount pinning', () => {
     const SECOND_ADDRESS =
       'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS'
     const signFirst = vi.fn().mockResolvedValue('tx_signedByFirst')
     const signSecond = vi.fn().mockResolvedValue('tx_signedBySecond')
+    // The connector hex-encodes whatever bytes the wallet returns, so the
+    // assertions below read as hex: `1122` from the first account, `3344`
+    // from the second.
+    const msgFirst = vi.fn().mockResolvedValue(new Uint8Array([0x11, 0x22]))
+    const msgSecond = vi.fn().mockResolvedValue(new Uint8Array([0x33, 0x44]))
 
     async function connectedWithTwoAccounts() {
       mockFrame.accounts = [
-        { address: TEST_ADDRESS, signTransaction: signFirst },
-        { address: SECOND_ADDRESS, signTransaction: signSecond },
+        {
+          address: TEST_ADDRESS,
+          signTransaction: signFirst,
+          signMessage: msgFirst,
+        },
+        {
+          address: SECOND_ADDRESS,
+          signTransaction: signSecond,
+          signMessage: msgSecond,
+        },
       ] as never
       mockFrame.subscribeAccounts.mockResolvedValue([
         { address: TEST_ADDRESS },
@@ -199,6 +215,8 @@ describe('webExtension', () => {
     beforeEach(() => {
       signFirst.mockClear().mockResolvedValue('tx_signedByFirst')
       signSecond.mockClear().mockResolvedValue('tx_signedBySecond')
+      msgFirst.mockClear().mockResolvedValue(new Uint8Array([0x11, 0x22]))
+      msgSecond.mockClear().mockResolvedValue(new Uint8Array([0x33, 0x44]))
     })
 
     it('signs with the named account rather than the first', async () => {
@@ -237,6 +255,41 @@ describe('webExtension', () => {
       ).rejects.toThrow(ConnectorAccountUnavailableError)
       expect(signFirst).not.toHaveBeenCalled()
       expect(signSecond).not.toHaveBeenCalled()
+    })
+
+    it('signs a message with the named account rather than the first', async () => {
+      const instance = await connectedWithTwoAccounts()
+
+      const signature = await instance.signMessage!({
+        message: 'hello',
+        onAccount: SECOND_ADDRESS,
+      })
+
+      expect(signature).toBe('3344')
+      expect(msgSecond).toHaveBeenCalledWith('hello')
+      expect(msgFirst).not.toHaveBeenCalled()
+    })
+
+    it('signs a message with the first account when none is named', async () => {
+      const instance = await connectedWithTwoAccounts()
+
+      const signature = await instance.signMessage!({ message: 'hello' })
+
+      expect(signature).toBe('1122')
+      expect(msgFirst).toHaveBeenCalledWith('hello')
+    })
+
+    it('throws on signMessage for an account the wallet does not hold', async () => {
+      const instance = await connectedWithTwoAccounts()
+
+      await expect(
+        instance.signMessage!({
+          message: 'hello',
+          onAccount: 'ak_someOtherAccount',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+      expect(msgFirst).not.toHaveBeenCalled()
+      expect(msgSecond).not.toHaveBeenCalled()
     })
   })
 })

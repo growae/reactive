@@ -77,21 +77,31 @@ Signing is optional — a connector that omits these methods is a read-only one:
 
 ### Signing for a named account
 
-`signTransaction` takes an optional `onAccount`: the address the caller built
-the transaction for. It is optional so that a connector written before the
-parameter existed keeps working, but an implementation that receives it has one
-obligation:
+`signTransaction` and `signMessage` each take an optional `onAccount`: the
+address the caller meant to sign with. It is optional on both so that a
+connector written before the parameter existed keeps working, but an
+implementation that receives it has one obligation:
 
 **Sign with exactly that account, or throw `ConnectorAccountUnavailableError`.
 Never fall back to another account.** A transaction built for one account and
 signed by another is either rejected by the node with a bare signature error
 or — when the connector holds both keys — accepted, moving the wrong account's
-funds with nothing anywhere reporting a problem.
+funds with nothing anywhere reporting a problem. A message signed by an account
+the caller did not name moves nothing, but it is a valid signature that
+verifies against the wrong address: the caller's check fails downstream with
+nothing pointing back at the connector that mis-signed it.
+
+The rule is the same on both methods, and a connector that enforces it on one
+and not the other is the shape this obligation exists to prevent. A connector
+that cannot serve the named account — one bound to a single derivation path or
+device index, as `ledger` and `metamaskSnap` are — throws for any other account
+rather than signing from the one it has.
 
 Core passes the account it built for, which is `activeAccount` on the
-connection. Without the pin, a `switchActiveAccount` to a second account leaves
-the transaction built for the new one and signed by whichever the connector
-picked for itself.
+connection, on both paths. Without the pin, a `switchActiveAccount` to a second
+account leaves the transaction built for the new one and signed by whichever
+the connector picked for itself, and the message signed by that same
+self-chosen account while the caller verifies against the active one.
 
 ## Events
 

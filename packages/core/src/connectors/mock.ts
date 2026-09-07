@@ -33,6 +33,24 @@ export function mock(parameters: MockParameters) {
   let connected = features.defaultConnected ?? false
   let connectedNetworkId: string
 
+  /**
+   * The mock holds a fixed account list, so a named account outside it is the
+   * same defect a wallet connector would reject — and it is rejected here too,
+   * so a test that pins the wrong account fails in the test rather than in
+   * whatever the mock stands in for. Both signing paths check it: a message
+   * signed by an account the caller did not name verifies against the wrong
+   * address, which is a wrong answer returned as a successful one.
+   */
+  function assertCanSignFor(onAccount: string | undefined) {
+    if (onAccount == null) return
+    if (!parameters.accounts.includes(onAccount)) {
+      throw new ConnectorAccountUnavailableError({
+        connectorName: 'Mock Connector',
+        account: onAccount,
+      })
+    }
+  }
+
   return createConnector<Provider>((config) => ({
     id: 'mock',
     name: 'Mock Connector',
@@ -113,25 +131,17 @@ export function mock(parameters: MockParameters) {
           throw new Error('Failed to sign transaction.')
         throw features.signTransactionError
       }
-      // The mock holds a fixed account list, so a named account outside it is
-      // the same defect a wallet connector would reject — and it is rejected
-      // here too, so a test that pins the wrong account fails in the test
-      // rather than in whatever the mock stands in for.
-      if (onAccount != null && !parameters.accounts.includes(onAccount)) {
-        throw new ConnectorAccountUnavailableError({
-          connectorName: 'Mock Connector',
-          account: onAccount,
-        })
-      }
+      assertCanSignFor(onAccount)
       return `signed_${tx}`
     },
 
-    async signMessage({ message }) {
+    async signMessage({ message, onAccount }) {
       if (features.signMessageError) {
         if (typeof features.signMessageError === 'boolean')
           throw new Error('Failed to sign message.')
         throw features.signMessageError
       }
+      assertCanSignFor(onAccount)
       return `signed_${message}`
     },
 

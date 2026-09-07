@@ -50,8 +50,15 @@ The message to sign.
 - **Type:** `string`
 - **Optional**
 
-Specific account to sign with, passed through to the connector. Defaults to the
-connector's own choice, which is the currently active account.
+The account to sign the message with. Defaults to the active account of the
+current connection — the same account `getActiveAccount` reports and
+`switchActiveAccount` sets. Pass it explicitly to sign with some other account
+the connector holds.
+
+The connector signs with exactly this account or throws
+`ConnectorAccountUnavailableError`; it never falls back to another one. Naming
+an account the connector does not hold is therefore an error rather than a
+signature from a different address.
 
 ## Error Types
 
@@ -67,5 +74,7 @@ plain `Error`, so `instanceof BaseError` does not narrow them:
 - `Error('Connector does not support message signing')` — the connector has no `signMessage`
 
 Past those guards the connector's own failures surface unwrapped. The bundled
-connectors raise `ConnectorNotConnectedError` and `ProviderNotFoundError`; a
-user declining the signature arrives as the wallet's own rejection.
+connectors raise `ConnectorAccountUnavailableError` for an `onAccount` they do
+not hold — a `BaseError` subclass, so `instanceof` narrows it — along with
+`ConnectorNotConnectedError` and `ProviderNotFoundError`; a user declining the
+signature arrives as the wallet's own rejection.

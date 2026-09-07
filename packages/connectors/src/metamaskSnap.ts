@@ -51,8 +51,9 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
    *
    * `currentAccounts` holds exactly the address at `accountIndex`, so there is
    * no other derivation path to resolve to. Signing from the configured path
-   * anyway would hand back a valid signature over a transaction built for a
-   * different sender, so an account this snap is not configured for throws.
+   * anyway would hand back a valid signature attributed to an account the
+   * caller never named — the wrong sender on a transaction, the wrong signer on
+   * a message — so an account this snap is not configured for throws instead.
    */
   function assertCanSignFor(onAccount: string | undefined, name: string) {
     if (onAccount == null) return
@@ -166,8 +167,9 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
       )
     },
 
-    async signMessage({ message }) {
+    async signMessage({ message, onAccount }) {
       if (!provider || !connected) throw new ConnectorNotConnectedError()
+      assertCanSignFor(onAccount, this.name)
       const signature = await invokeSnap<string>(
         'signMessage',
         {
