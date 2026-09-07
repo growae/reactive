@@ -1,3 +1,4 @@
+import { buildTxAsync } from '@aeternity/aepp-sdk'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_TTL } from '../constants.js'
 import { transferFunds } from './transferFunds.js'
@@ -48,6 +49,24 @@ function mockSetup() {
   return { config, connector, node, postTransaction, signTransaction }
 }
 
+/**
+ * The same connector, with a second account and the user on it.
+ *
+ * On the explicit-`connector` path the action used `getAccounts()[0]`, which
+ * is the account the connector signs with — so this never produced the node
+ * signature error, it produced something quieter: a transfer out of the first
+ * account, sized against the first account's balance, correctly signed, while
+ * the user had selected the second. Nothing reports it.
+ */
+function multiAccountSetup() {
+  const setup = mockSetup()
+  setup.connector.getAccounts = vi.fn(async () => ['ak_first', 'ak_second'])
+  setup.config.state.connections = new Map([
+    ['c1', { connector: setup.connector, activeAccount: 'ak_second' }],
+  ])
+  return setup
+}
+
 describe('transferFunds', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -64,6 +83,24 @@ describe('transferFunds', () => {
     )
     // The signed value, never the built one.
     expect(postTransaction).toHaveBeenCalledWith({ tx: 'tx_SIGNED' })
+  })
+
+  it('takes the sender from the active account, not the first of the list', async () => {
+    const { config, connector, signTransaction } = multiAccountSetup()
+
+    await transferFunds(config, {
+      fraction: 0.5,
+      recipient: 'ak_recipient',
+      connector: connector as any,
+    })
+
+    // Built for, sized against, and signed by the same account throughout.
+    expect(buildTxAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ senderId: 'ak_second' }),
+    )
+    expect(signTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ onAccount: 'ak_second' }),
+    )
   })
 
   it('should return the signed transaction as rawTx', async () => {

@@ -120,9 +120,15 @@ export class ConnectorAccount extends AccountBase {
 
     // The sdk passes the network id it read off the node; the connection's own
     // is the fallback for a caller that reaches the account directly.
+    //
+    // `onAccount` is the address this adapter was built for, the same one
+    // `signMessage` and `signDelegation` already pin. Without it the connector
+    // signs with an account of its own choosing while the sdk builds the
+    // transaction against `this.address`.
     const signed = await signTransaction.call(this.#connector, {
       tx,
       networkId: options.networkId ?? this.#networkId,
+      onAccount: this.address,
       ...(options.innerTx != null ? { innerTx: options.innerTx } : {}),
     })
 

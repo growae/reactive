@@ -19,9 +19,15 @@ import { createConfig } from '../createConfig.js'
 import { testnet } from '../types/network.js'
 import { connect } from './connect.js'
 import { spend } from './spend.js'
+import { switchActiveAccount } from './switchActiveAccount.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
+] as const
+
+const MULTI_ACCOUNTS = [
+  'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
+  'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS',
 ] as const
 
 function createTestConfig() {
@@ -105,6 +111,38 @@ describe('spend', () => {
     })
 
     expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 42 }))
+  })
+
+  /**
+   * `spend` has always built the transaction for `connection.activeAccount`,
+   * and the connector has always signed with an account of its own choosing.
+   * With one account those are the same address and nothing shows; after a
+   * `switchActiveAccount` to a second one they are not, and the transaction
+   * goes to the node built for one account and signed by another.
+   */
+  it('asks the connector for the switched-to account', async () => {
+    const config = createConfig({
+      networks: [testnet],
+      connectors: [mock({ accounts: [...MULTI_ACCOUNTS] })],
+      storage: null,
+    })
+    const connector = config.connectors[0]!
+    await connect(config, { connector })
+    switchActiveAccount(config, { account: MULTI_ACCOUNTS[1] })
+
+    const signTransaction = vi.spyOn(
+      config.state.connections.get(config.state.current!)!.connector,
+      'signTransaction',
+    )
+
+    await spend(config, { recipient: 'ak_recipient', amount: 100n })
+
+    expect(buildTx).toHaveBeenCalledWith(
+      expect.objectContaining({ senderId: MULTI_ACCOUNTS[1] }),
+    )
+    expect(signTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ onAccount: MULTI_ACCOUNTS[1] }),
+    )
   })
 
   it('should auto-increment nonce from account info', async () => {

@@ -2,6 +2,7 @@ import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
 } from '../errors/config.js'
+import { ConnectorAccountUnavailableError } from '../errors/connector.js'
 import { createConnector } from './createConnector.js'
 
 export type MockParameters = {
@@ -106,11 +107,21 @@ export function mock(parameters: MockParameters) {
       return network
     },
 
-    async signTransaction({ tx }) {
+    async signTransaction({ tx, onAccount }) {
       if (features.signTransactionError) {
         if (typeof features.signTransactionError === 'boolean')
           throw new Error('Failed to sign transaction.')
         throw features.signTransactionError
+      }
+      // The mock holds a fixed account list, so a named account outside it is
+      // the same defect a wallet connector would reject — and it is rejected
+      // here too, so a test that pins the wrong account fails in the test
+      // rather than in whatever the mock stands in for.
+      if (onAccount != null && !parameters.accounts.includes(onAccount)) {
+        throw new ConnectorAccountUnavailableError({
+          connectorName: 'Mock Connector',
+          account: onAccount,
+        })
       }
       return `signed_${tx}`
     },

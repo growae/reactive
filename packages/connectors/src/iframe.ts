@@ -4,6 +4,7 @@ import {
   WalletConnectorFrame as WCF,
 } from '@aeternity/aepp-sdk'
 import {
+  ConnectorAccountUnavailableError,
   ConnectorNotConnectedError,
   createConnector,
   ProviderNotFoundError,
@@ -117,8 +118,25 @@ export function iframe(parameters: IframeParameters = {}) {
       return provider.isConnected && currentAccounts.length > 0
     },
 
-    async signTransaction({ tx, networkId, innerTx }) {
+    async signTransaction({ tx, networkId, innerTx, onAccount }) {
       if (!provider) throw new ConnectorNotConnectedError()
+      // A named account the wallet does not hold throws rather than falling
+      // back to `accounts[0]` the way `signMessage` does: that fallback returns
+      // a valid signature from the wrong sender, and on the transaction path
+      // the node accepts it and the wrong account's funds move.
+      if (onAccount != null) {
+        const named = provider.accounts.find((a) => a.address === onAccount)
+        if (!named) {
+          throw new ConnectorAccountUnavailableError({
+            connectorName: this.name,
+            account: onAccount,
+          })
+        }
+        return named.signTransaction(tx as `tx_${string}`, {
+          networkId,
+          innerTx,
+        })
+      }
       const account = provider.accounts[0]
       if (!account) throw new ConnectorNotConnectedError()
       return account.signTransaction(tx as `tx_${string}`, {

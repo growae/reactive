@@ -65,6 +65,7 @@ export async function registerOracle(
   const signed = await connector.signTransaction({
     tx,
     networkId: networkId ?? config.state.networkId,
+    onAccount: senderId,
   })
 
   const result = await node.postTransaction({ tx: signed })

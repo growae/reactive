@@ -60,6 +60,7 @@ From `packages/core/src/errors/connector.ts`.
 
 | Error | When |
 |-------|------|
+| `ConnectorAccountUnavailableError` | A transaction was pinned to an account the connector does not hold. `signTransaction` takes an optional `onAccount`, and a connector that cannot serve the named account throws rather than signing with its own — a fallback would return a valid signature from the wrong sender |
 | `ProviderNotFoundError` | The wallet provider is not present — no injected extension, no iframe parent, no Snap |
 | `SwitchNetworkNotSupportedError` † | Reserved for connectors without programmatic network switching |
 

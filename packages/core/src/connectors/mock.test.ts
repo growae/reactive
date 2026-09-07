@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createEmitter } from '../createEmitter.js'
+import { ConnectorAccountUnavailableError } from '../errors/connector.js'
 import { mainnet, testnet } from '../types/network.js'
 import type { ConnectorEventMap } from './createConnector.js'
 import { mock } from './mock.js'
@@ -124,6 +125,30 @@ describe('mock connector', () => {
         networkId: testnet.id,
       })
       expect(result).toBe('signed_tx_rawdata')
+    })
+
+    // The mock stands in for a wallet, so it refuses an account it does not
+    // hold for the same reason a wallet does: signing with its own instead
+    // returns a valid signature from the wrong sender.
+    it('should throw for an account it does not hold', async () => {
+      const { connector } = setupConnector()
+      await expect(
+        connector.signTransaction!({
+          tx: 'tx_data',
+          networkId: testnet.id,
+          onAccount: 'ak_notMine',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+    })
+
+    it('should sign for an account it does hold', async () => {
+      const { connector } = setupConnector()
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+        onAccount: TEST_ACCOUNTS[0],
+      })
+      expect(signed).toBe('signed_tx_data')
     })
 
     it('should throw when signTransactionError is enabled', async () => {

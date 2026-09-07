@@ -15,6 +15,7 @@ import {
 } from './connectorAccount.js'
 
 const ADDRESS = 'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS'
+const OTHER_ADDRESS = 'ak_2WBNaS4723qjJ2YcjcPy7LvHEtPfDyCtNmaLj3AnbAB6tYoaer'
 const NETWORK_ID = 'ae_uat'
 const UNSIGNED = encode(new Uint8Array([1, 2, 3]), Encoding.Transaction)
 const SIGNED = encode(new Uint8Array([4, 5, 6]), Encoding.Transaction)
@@ -71,6 +72,7 @@ describe('ConnectorAccount', () => {
       tx: UNSIGNED,
       networkId: 'ae_mainnet',
       innerTx: true,
+      onAccount: ADDRESS,
     })
   })
 
@@ -82,7 +84,27 @@ describe('ConnectorAccount', () => {
     expect(connector.signTransaction).toHaveBeenCalledWith({
       tx: UNSIGNED,
       networkId: NETWORK_ID,
+      onAccount: ADDRESS,
     })
+  })
+
+  it('pins the account it was built for, as signMessage already does', async () => {
+    // The adapter carries an address and, before `onAccount` existed on
+    // `signTransaction`, could not honour it on the one method that moves
+    // funds: the sdk built the transaction against `this.address` while the
+    // connector signed with an account of its own choosing.
+    const connector = createConnector()
+    const account = new ConnectorAccount({
+      address: OTHER_ADDRESS,
+      connector,
+      networkId: NETWORK_ID,
+    })
+
+    await account.signTransaction(UNSIGNED, {})
+
+    expect(connector.signTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({ onAccount: OTHER_ADDRESS }),
+    )
   })
 
   it('reports a connector that cannot sign transactions', async () => {
@@ -192,6 +214,7 @@ describe('connectorAccount', () => {
     expect(connector.signTransaction).toHaveBeenCalledWith({
       tx: UNSIGNED,
       networkId: NETWORK_ID,
+      onAccount: ADDRESS,
     })
   })
 })
