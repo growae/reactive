@@ -42,8 +42,9 @@ export function ledger(parameters: LedgerParameters) {
    *
    * `currentAccounts` holds exactly the address at `accountIndex`, so there is
    * no other index to resolve to. Signing from `accountIndex` anyway would
-   * hand back a valid signature over a transaction built for a different
-   * sender, so an account this device is not configured for throws.
+   * hand back a valid signature attributed to an account the caller never
+   * named — the wrong sender on a transaction, the wrong signer on a message —
+   * so an account this device is not configured for throws instead.
    */
   function assertCanSignFor(onAccount: string | undefined, name: string) {
     if (onAccount == null) return
@@ -125,8 +126,9 @@ export function ledger(parameters: LedgerParameters) {
       })
     },
 
-    async signMessage({ message }) {
+    async signMessage({ message, onAccount }) {
       if (!factory || !connected) throw new ConnectorNotConnectedError()
+      assertCanSignFor(onAccount, this.name)
       const account = await factory.initialize(accountIndex)
       const signature = await account.signMessage(message)
       return Buffer.from(signature).toString('hex')

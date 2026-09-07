@@ -174,10 +174,10 @@ describe('memory connector', () => {
   /**
    * The connector holds every account it was configured with, so `onAccount`
    * selects between them rather than being a hint. It shipped signing with
-   * `accounts[0]` unconditionally, which is the account the built transaction
-   * belongs to only until the user switches.
+   * `accounts[0]` unconditionally on both paths, which is the account the
+   * caller meant only until the user switches.
    */
-  describe('signTransaction onAccount', () => {
+  describe('onAccount pinning', () => {
     const ADDRESSES = ['ak_first', 'ak_second']
 
     function setupMultiAccount() {
@@ -239,6 +239,45 @@ describe('memory connector', () => {
           onAccount: 'ak_notMine',
         }),
       ).rejects.toThrow(ConnectorAccountUnavailableError)
+    })
+
+    it('signs a message with the named account rather than the first', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await connector.signMessage!({
+        message: 'hello',
+        onAccount: 'ak_second',
+      })
+
+      const first = vi.mocked(MemoryAccount).mock.results[0]!.value
+      const second = vi.mocked(MemoryAccount).mock.results[1]!.value
+      expect(second.sign).toHaveBeenCalled()
+      expect(first.sign).not.toHaveBeenCalled()
+    })
+
+    it('signs a message with the first account when none is named', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await connector.signMessage!({ message: 'hello' })
+
+      const first = vi.mocked(MemoryAccount).mock.results[0]!.value
+      expect(first.sign).toHaveBeenCalled()
+    })
+
+    it('throws on signMessage for an account it does not hold', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await expect(
+        connector.signMessage!({ message: 'hello', onAccount: 'ak_notMine' }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+      const first = vi.mocked(MemoryAccount).mock.results[0]!.value
+      expect(first.sign).not.toHaveBeenCalled()
     })
   })
 

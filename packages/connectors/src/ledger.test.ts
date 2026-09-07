@@ -204,6 +204,41 @@ describe('ledger', () => {
     expect(sig).toBe(Buffer.from(SIGNED_MSG).toString('hex'))
   })
 
+  it('should sign a message for the account the device derived', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    const sig = await instance.signMessage!({
+      message: 'hello',
+      onAccount: TEST_ADDRESS,
+    })
+
+    expect(sig).toBe(Buffer.from(SIGNED_MSG).toString('hex'))
+  })
+
+  /**
+   * The device derives one address, so there is no second one to resolve to
+   * and the parameter used to be ignored outright. Ignoring it returned a
+   * signature the caller then verified against the address it named, which is
+   * not the address that signed.
+   */
+  it('throws on signMessage for a named account the device does not hold', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    await expect(
+      instance.signMessage!({
+        message: 'hello',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
+    expect(mockAccount.signMessage).not.toHaveBeenCalled()
+  })
+
   it('should throw on signTransaction when not connected', async () => {
     const connector = ledger({ transport: mockTransport })
     const config = makeConfig()

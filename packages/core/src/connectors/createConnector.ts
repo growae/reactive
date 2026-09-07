@@ -66,6 +66,17 @@ export type CreateConnectorFn<
     }): Promise<string>
     signMessage?(params: {
       message: string
+      /**
+       * The account the message is to be signed by.
+       *
+       * Optional, so an implementation written before this parameter existed
+       * stays type-compatible. When it is present the connector must sign with
+       * exactly that account or throw `ConnectorAccountUnavailableError` — it
+       * must never fall back to another one. A message signed by an account
+       * the caller did not name is a valid signature that verifies against the
+       * wrong address, so the caller's check fails downstream with nothing
+       * pointing at the connector that mis-signed it.
+       */
       onAccount?: string | undefined
     }): Promise<string>
 

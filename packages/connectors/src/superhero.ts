@@ -36,6 +36,35 @@ export function superhero(parameters: SuperheroParameters = {}) {
   let currentNetworkId = ''
   let currentAccounts: readonly string[] = []
 
+  /**
+   * The wallet account a named `onAccount` asks for, or the first when it
+   * names none.
+   *
+   * The wallet holds every account it exposes, so a name outside that list is
+   * one it cannot serve, and it throws rather than falling back to
+   * `accounts[0]`. That fallback returns a valid signature from a sender the
+   * caller never named: on the transaction path the node accepts it and the
+   * wrong account's funds move, and on the message path it verifies against an
+   * address the caller did not ask about. Both are wrong answers handed back
+   * as successful ones.
+   */
+  function accountFor(onAccount: string | undefined, connectorName: string) {
+    const accounts = provider?.accounts ?? []
+    if (onAccount == null) {
+      const first = accounts[0]
+      if (!first) throw new ConnectorNotConnectedError()
+      return first
+    }
+    const named = accounts.find((a) => a.address === onAccount)
+    if (!named) {
+      throw new ConnectorAccountUnavailableError({
+        connectorName,
+        account: onAccount,
+      })
+    }
+    return named
+  }
+
   return createConnector<Provider>((config) => ({
     id: 'superhero',
     name: 'Superhero Wallet',
@@ -118,39 +147,17 @@ export function superhero(parameters: SuperheroParameters = {}) {
 
     async signTransaction({ tx, networkId, innerTx, onAccount }) {
       if (!provider) throw new ConnectorNotConnectedError()
-      // A named account the wallet does not hold throws rather than falling
-      // back to `accounts[0]` the way `signMessage` does: that fallback returns
-      // a valid signature from the wrong sender, and on the transaction path
-      // the node accepts it and the wrong account's funds move.
-      if (onAccount != null) {
-        const named = provider.accounts.find((a) => a.address === onAccount)
-        if (!named) {
-          throw new ConnectorAccountUnavailableError({
-            connectorName: this.name,
-            account: onAccount,
-          })
-        }
-        return named.signTransaction(tx as `tx_${string}`, {
-          networkId,
-          innerTx,
-        })
-      }
-      const account = provider.accounts[0]
-      if (!account) throw new ConnectorNotConnectedError()
-      return account.signTransaction(tx as `tx_${string}`, {
-        networkId,
-        innerTx,
-      })
+      return accountFor(onAccount, this.name).signTransaction(
+        tx as `tx_${string}`,
+        { networkId, innerTx },
+      )
     },
 
     async signMessage({ message, onAccount }) {
       if (!provider) throw new ConnectorNotConnectedError()
-      const account = onAccount
-        ? (provider.accounts.find((a) => a.address === onAccount) ??
-          provider.accounts[0])
-        : provider.accounts[0]
-      if (!account) throw new ConnectorNotConnectedError()
-      const signature = await account.signMessage(message)
+      const signature = await accountFor(onAccount, this.name).signMessage(
+        message,
+      )
       return Buffer.from(signature).toString('hex')
     },
 

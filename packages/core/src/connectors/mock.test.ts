@@ -172,6 +172,28 @@ describe('mock connector', () => {
         connector.signMessage!({ message: 'hello' }),
       ).rejects.toThrow('Failed to sign message.')
     })
+
+    it('should sign for a named account it holds', async () => {
+      const { connector } = setupConnector()
+      const result = await connector.signMessage!({
+        message: 'hello',
+        onAccount: TEST_ACCOUNTS[1],
+      })
+      expect(result).toBe('signed_hello')
+    })
+
+    // A test that pins an account the mock does not hold should fail here,
+    // not in whatever the mock stands in for — the same rule the transaction
+    // path already enforces.
+    it('should throw for a named account it does not hold', async () => {
+      const { connector } = setupConnector()
+      await expect(
+        connector.signMessage!({
+          message: 'hello',
+          onAccount: 'ak_someOtherAccount',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+    })
   })
 
   describe('isAuthorized', () => {
