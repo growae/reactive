@@ -93,7 +93,8 @@ The wait is always bounded. `DEFAULT_WAIT_TIMEOUT` is 20 minutes, comfortably
 past the handful of key blocks a transaction takes to be included and far short
 of `DEFAULT_TTL`'s ~15 hours, so a transaction that never lands rejects rather
 than pending forever. For finer control over the polling itself — how many
-blocks to allow, how often to poll — call `waitForTransaction` directly.
+blocks to allow, how often to poll — call
+[`waitForTransaction`](/core/api/actions/waitForTransaction) directly.
 
 ## Examples
 
