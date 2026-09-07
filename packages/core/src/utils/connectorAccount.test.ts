@@ -15,7 +15,7 @@ import {
 } from './connectorAccount.js'
 
 const ADDRESS = 'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS'
-const OTHER_ADDRESS = 'ak_nQpnNuBPQwibGpSJmjAah6r3ctVA7oncdiEqzFhTFCbCQfmWM'
+const OTHER_ADDRESS = 'ak_2WBNaS4723qjJ2YcjcPy7LvHEtPfDyCtNmaLj3AnbAB6tYoaer'
 const NETWORK_ID = 'ae_uat'
 const UNSIGNED = encode(new Uint8Array([1, 2, 3]), Encoding.Transaction)
 const SIGNED = encode(new Uint8Array([4, 5, 6]), Encoding.Transaction)
