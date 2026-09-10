@@ -74,6 +74,24 @@
   
   Migration: remove `connector` and `options` from any `sendTransaction` call — neither had any effect. If you relied on `transferFunds` returning as soon as the node accepted the transaction, pass `waitMined: false`; note that it did not previously succeed at all.
 
+- **Breaking.** `deployContract` reports a failed on-chain deployment as
+  `DeployContractInvocationError` where the sdk's `NodeInvocationError` used to
+  escape. Catching `NodeInvocationError` from `deployContract` stops matching;
+  catch `DeployContractInvocationError`, which is a `BaseError` subclass, is
+  exported, and carries the node's own `reason` plus the `transactionHash` and
+  `transaction` when they are known. This is the same swap `callContract` made
+  in 0.0.6, on the remaining path that had not made it.
+
+  It also refuses a `map` init argument locally, before anything is built or
+  posted, with `DeployContractMapKeyOrderError`. `@aeternity/aepp-calldata`
+  sorts a `map` argument's entries itself and its order is not the node's, so
+  the node's decoder refuses the init call — and on a deployment with a
+  `gasLimit` set the sdk skips its dry-run estimate and posts the
+  `ContractCreateTx` outright, so the transaction was mined, refused inside the
+  decoder, and **charged the whole gas limit for a contract that was never
+  created**. There is no insertion order that avoids the defect, so the refusal
+  is not a hint about reordering the argument. `DeployContractErrorType` widens
+  to name both new errors.
 ### Patch Changes
 
 - de3d9f5: Fix `bidName`, `revokeName` and `transferName`, which failed for every caller.
@@ -126,6 +144,18 @@
 - Updated dependencies [ae108e0]
 - Updated dependencies [91ce459]
   - @growae/reactive-connectors@0.1.0
+
+- `simulateContract` refuses a `map` argument the node's decoder would reject,
+  with `SimulateContractMapKeyOrderError`. It builds its own
+  `Contract.initialize` and `$call({ callStatic: true })` rather than
+  delegating to `callContract`, so it was the last action reaching the
+  `@aeternity/aepp-calldata` encoder with no guard in front of it. A static
+  call posts nothing and is charged nothing, so what this buys is legibility —
+  which argument is at fault — in place of a decoder error from the node. The
+  refusal is its own class rather than a reused `CallContractMapKeyOrderError`
+  so that a caller who invoked `simulateContract` does not read a
+  "CallContract" name off it. `SimulateContractErrorType` is newly exported
+  from `@growae/reactive/actions`.
 
 ## 0.0.6
 
