@@ -1,5 +1,16 @@
 # @growae/create-reactive
 
+## 0.0.7
+
+### Patch Changes
+
+- 603de83: Lift the scaffolded `typescript` devDependency pin in the `next` and `vite-react` templates from `^5.7.0` to `^7.0.2`, matching the pin already used by `vite-solid` and `vite-vanilla`.
+  
+  The `core` bug that held these two templates back on TypeScript 5.7 is fixed, and TypeScript 6.0.3 and 7.0.2 both type-check clean across the packages. `vite-vue` and `nuxt` stay pinned at `^5.7.0` until `vue-tsc` supports TypeScript 7.
+- 1b8d3b8: Scaffold the `uuid` advisory override per chosen package manager instead of shipping one static key.
+  
+  Each generated project now gets only the mechanism its own package manager reads: `overrides` in `package.json` for npm and bun, a `pnpm-workspace.yaml` override for pnpm (both 10 and 11 — pnpm 11 dropped the `pnpm.overrides` package.json field pnpm 10 used to read), and a `resolutions` path selector for yarn. Previously only npm and pnpm 10 were protected; pnpm 11 silently stopped reading the old key, and yarn had no working key at all because pnpm and yarn's selector grammars collide within a single field. Yarn users now get the override back.
+
 ## 0.0.6
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @growae/reactive-cli
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [de3d9f5]
+- Updated dependencies [d2eb066]
+- Updated dependencies [7150cec]
+- Updated dependencies [ae108e0]
+- Updated dependencies [91ce459]
+- Updated dependencies [3ceaf95]
+  - @growae/reactive@0.1.0
+
 ## 0.0.6
 
 ### Patch Changes
