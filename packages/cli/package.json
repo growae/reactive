@@ -42,7 +42,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.4.1",
     "tsup": "^8.5.0"
   }
 }
