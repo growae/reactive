@@ -1,7 +1,10 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
-import { createEmitter } from '@growae/reactive'
+import {
+  ConnectorAccountUnavailableError,
+  createEmitter,
+} from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ledger } from './ledger'
+import { ledger } from './ledger.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 const SIGNED_TX = 'tx_signed_abc123'
@@ -32,7 +35,12 @@ const mockFactory = {
   initialize: vi.fn().mockResolvedValue(mockAccount),
 }
 
-vi.mock('@aeternity/aepp-sdk', () => ({
+// Partial: the wallet entry points below are stubbed, everything else in the
+// sdk is the real module. `@growae/reactive` reaches the sdk for values as well
+// as types — a class it subclasses is `undefined` under a wholesale mock, and
+// the failure lands here rather than where the mock is written.
+vi.mock('@aeternity/aepp-sdk', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@aeternity/aepp-sdk')>()),
   AccountLedgerFactory: vi.fn().mockImplementation(() => mockFactory),
 }))
 
@@ -145,6 +153,44 @@ describe('ledger', () => {
     expect(signed).toBe(SIGNED_TX)
   })
 
+  /**
+   * The device derives exactly one address, at `accountIndex`, so a named
+   * account it does not hold cannot be served by any other derivation. It
+   * throws instead of signing from the configured index: that would return a
+   * valid signature over a transaction built for a different sender, and the
+   * node would accept it.
+   */
+  it('signs for the account it derived when it is the one named', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    const signed = await instance.signTransaction!({
+      tx: 'tx_abc',
+      networkId: 'ae_uat',
+      onAccount: TEST_ADDRESS,
+    })
+
+    expect(signed).toBe(SIGNED_TX)
+  })
+
+  it('throws for a named account the device does not hold', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    await expect(
+      instance.signTransaction!({
+        tx: 'tx_abc',
+        networkId: 'ae_uat',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
+    expect(mockAccount.signTransaction).not.toHaveBeenCalled()
+  })
+
   it('should sign a message via Ledger', async () => {
     const connector = ledger({ transport: mockTransport })
     const config = makeConfig()
@@ -156,6 +202,41 @@ describe('ledger', () => {
 
     expect(mockAccount.signMessage).toHaveBeenCalledWith('hello')
     expect(sig).toBe(Buffer.from(SIGNED_MSG).toString('hex'))
+  })
+
+  it('should sign a message for the account the device derived', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    const sig = await instance.signMessage!({
+      message: 'hello',
+      onAccount: TEST_ADDRESS,
+    })
+
+    expect(sig).toBe(Buffer.from(SIGNED_MSG).toString('hex'))
+  })
+
+  /**
+   * The device derives one address, so there is no second one to resolve to
+   * and the parameter used to be ignored outright. Ignoring it returned a
+   * signature the caller then verified against the address it named, which is
+   * not the address that signed.
+   */
+  it('throws on signMessage for a named account the device does not hold', async () => {
+    const connector = ledger({ transport: mockTransport })
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    await expect(
+      instance.signMessage!({
+        message: 'hello',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
+    expect(mockAccount.signMessage).not.toHaveBeenCalled()
   })
 
   it('should throw on signTransaction when not connected', async () => {

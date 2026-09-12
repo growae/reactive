@@ -7,6 +7,7 @@
   "scripts": {
     "build": "pnpm --filter @growae/reactive run build && pnpm -r --filter='./packages/**' --filter='!@growae/reactive' run build && pnpm --filter @growae/reactive run build:connectors",
     "build:core": "pnpm --filter @growae/reactive run build",
+    "build:playgrounds": "pnpm -r --filter='./playgrounds/**' run build",
     "build:react": "pnpm --filter @growae/reactive-react run build",
     "build:vue": "pnpm --filter @growae/reactive-vue run build",
     "build:solid": "pnpm --filter @growae/reactive-solid run build",
@@ -20,7 +21,7 @@
     "clean": "pnpm -r --filter='./packages/**' run clean",
     "dev": "pnpm -r --filter='./packages/**' run dev",
     "test": "vitest",
-    "test:integration": "INTEGRATION=true vitest run test/integration/",
+    "test:integration": "INTEGRATION=true vitest run --no-file-parallelism test/integration/",
     "test:cov": "vitest --coverage",
     "check": "biome check --write .",
     "check:ci": "biome ci .",
@@ -29,7 +30,7 @@
     "prepare": "git config core.hooksPath .githooks"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
+    "@biomejs/biome": "^2.5.11",
     "@changesets/cli": "^3.0.1",
     "@vitest/coverage-v8": "^3.2.7",
     "lint-staged": "^17.4.1",

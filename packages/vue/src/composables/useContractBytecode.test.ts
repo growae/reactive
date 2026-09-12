@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useContractBytecode } from './useContractBytecode'
+import { useContractBytecode } from './useContractBytecode.js'
 
 describe('useContractBytecode', () => {
   it('should be a function', () => {

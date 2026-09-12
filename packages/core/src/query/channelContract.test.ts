@@ -3,7 +3,7 @@ import {
   channelContractCallMutationOptions,
   channelContractCallStaticMutationOptions,
   channelContractCreateMutationOptions,
-} from './channelContract'
+} from './channelContract.js'
 
 describe('channelContractCreateMutationOptions', () => {
   it('should be a function', () => {

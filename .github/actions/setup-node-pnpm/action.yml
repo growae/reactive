@@ -1,0 +1,104 @@
+name: Setup Node and pnpm
+description: >
+  Node plus the pnpm version pinned in the root package.json, activated through
+  corepack out of a cached store, with the pnpm content-addressable store cached
+  alongside it.
+
+# Why this exists instead of `pnpm/action-setup@v6`.
+#
+# That action cannot be made to stop reaching the npm registry. Its installer
+# opens with `rm -rf` over its own `dest` (`~/setup-pnpm`) before it does
+# anything else, so wrapping it in `actions/cache` restores a directory it then
+# deletes — the cache is written every run and read by nothing. What follows the
+# delete is two registry round trips per job: `npm ci` of a bootstrap pnpm
+# (v11.19.0, pinned in the action's own lockfile), then `pnpm self-update` down
+# to the version this repo pins. `standalone: true` swaps the first package for
+# `@pnpm/exe` and keeps both round trips.
+#
+# Nine jobs across seven workflows paid that twice-per-job, and when the registry
+# was slow it consumed the whole `timeout-minutes: 5` budget on Check and Build —
+# runs 33857702511 and 33858660965 on `068fedb`, where the step alone ran 5m02s
+# and 5m08s against a ~16s local build. The budget was never the problem and has
+# not been changed.
+#
+# corepack ships with the Node that `actions/setup-node` installs and reads the
+# same `packageManager: pnpm@<version>` pin the repo already carries, so the pin
+# stays in one place. Its store is a plain directory it never clears, which makes
+# it genuinely cacheable: on a warm cache `corepack install` resolves the pinned
+# version locally and no request leaves the runner.
+
+inputs:
+  node-version:
+    description: Node major to install.
+    required: false
+    default: '22'
+  registry-url:
+    description: >
+      npm registry to write into .npmrc, for jobs that publish. Left empty for
+      the gates, which only read.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # Read before setup-node, with sed rather than node, so the cache key is
+    # available before any toolchain exists and the step cannot depend on
+    # whichever node the runner image happens to ship.
+    - name: Read the pinned pnpm version
+      id: pin
+      shell: bash
+      run: |
+        set -euo pipefail
+        version="$(sed -n 's/.*"packageManager"[[:space:]]*:[[:space:]]*"pnpm@\([^"+]*\).*/\1/p' "$GITHUB_WORKSPACE/package.json")"
+        if [ -z "$version" ]; then
+          echo "::error::No pnpm pin found in package.json \"packageManager\"." >&2
+          exit 1
+        fi
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+
+    # Keyed on the pnpm version alone: the store holds one unpacked pnpm and
+    # nothing else, so it is a hit on every job of every run until the pin moves.
+    - name: Restore the corepack store
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/node/corepack
+        key: corepack-${{ runner.os }}-pnpm-${{ steps.pin.outputs.version }}
+
+    - uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Activate pnpm
+      shell: bash
+      env:
+        COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+      run: |
+        set -euo pipefail
+        # Pinned explicitly rather than left to corepack's platform default, so
+        # the directory cached above and the directory corepack writes are the
+        # same one by construction.
+        export COREPACK_HOME="$HOME/.cache/node/corepack"
+        corepack enable pnpm
+        corepack install
+        pnpm --version
+        echo "COREPACK_HOME=$COREPACK_HOME" >> "$GITHUB_ENV"
+
+    # `actions/setup-node`'s own `cache: pnpm` needed pnpm on PATH before it ran,
+    # which is the ordering that forced a pnpm installer ahead of Node in the
+    # first place. Doing the store cache here inverts that, and adds the
+    # `restore-keys` prefix setup-node does not support: a lockfile change now
+    # reuses the previous store instead of refetching every package in it.
+    - name: Resolve the pnpm store path
+      id: store
+      shell: bash
+      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore the pnpm store
+      uses: actions/cache@v6
+      with:
+        path: ${{ steps.store.outputs.path }}
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: |
+          pnpm-store-${{ runner.os }}-

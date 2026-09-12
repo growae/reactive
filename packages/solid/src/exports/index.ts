@@ -6,17 +6,17 @@ export {
   ReactiveContext,
   ReactiveProvider,
   type ReactiveProviderProps,
-} from '../context'
+} from '../context.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors
 ////////////////////////////////////////////////////////////////////////////////
 
-export { BaseError, type BaseErrorType } from '../errors/base'
+export { BaseError, type BaseErrorType } from '../errors/base.js'
 export {
   ReactiveProviderNotFoundError,
   type ReactiveProviderNotFoundErrorType,
-} from '../errors/context'
+} from '../errors/context.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Hydrate
@@ -25,7 +25,7 @@ export {
 export {
   Hydrate,
   type HydrateProps,
-} from '../hydrate'
+} from '../hydrate.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Primitives
@@ -224,7 +224,7 @@ export {
   useWatchConnectors,
   // Watchers
   useWatchHeight,
-} from '../primitives/index'
+} from '../primitives/index.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // @growae/reactive re-exports

@@ -1,7 +1,7 @@
 import { buildTx, Tag } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants'
-import type { Config } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
+import { DEFAULT_TTL } from '../constants.js'
+import type { Config } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
 
 export type SpendParameters = {
   recipient: string
@@ -68,6 +68,7 @@ export async function spend(
   const signed = await connector.signTransaction({
     tx: spendTx,
     networkId: networkId ?? config.state.networkId,
+    onAccount: senderId,
   })
 
   const result = await node.postTransaction({ tx: signed })

@@ -1,8 +1,8 @@
 import type { GetConnectionsReturnType } from '@growae/reactive'
 import { getConnections, watchConnections } from '@growae/reactive'
 import { onScopeDispose, type Ref, ref } from 'vue'
-import type { ConfigParameter } from '../types/properties'
-import { useConfig } from './useConfig'
+import type { ConfigParameter } from '../types/properties.js'
+import { useConfig } from './useConfig.js'
 
 export type UseConnectionsParameters = ConfigParameter
 

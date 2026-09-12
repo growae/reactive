@@ -119,3 +119,49 @@ answer, not a reading of its source.
 writes.** Read a map off the chain, hand it back to a call, and re-encoding
 sorts it into the encoder's order again — `bulk(emit_string_map())` fails
 exactly as the literal does. A value having come from the chain buys nothing.
+
+## Deployment — the same encoder, a different failure
+
+Recorded 2026-09-02 UTC, on the same devnet image (`aeternity/aeternity:v7.2.0`,
+`ae_devnet`), against `aesophia_http` 8.0.0 and the same sdk and calldata
+versions. Contract `MapOrderInit.aes`; path exercised `deployContract` →
+`Contract.$deploy` → `AciContractCallEncoder`, whose call data is
+`encode(contract, "init", args)`.
+
+```
+docker compose up -d
+INTEGRATION=1 pnpm vitest run test/integration/mapKeyOrderDeploy.integration.test.ts
+```
+
+`init` takes two arguments so both sides of the guard's deliberate asymmetry can
+be posted from one contract: `entries : map(string, int)`, which the guard reads
+off the ACI and refuses, and `wrapped : wrapper`, the same map behind a
+`datatype` the guard stops descending into and therefore lets through.
+
+| Deployment | Node | `gas_used` | Nonce |
+|---|---|---|---|
+| `init({"ä"→1, "ö"→2}, Wrapped({"ä"→1, "ö"→2}))` — control | `ok`, contract created, `size()` returns `4` | 94 | advances |
+| `init({"ä"→1, "xy"→2}, …)` — the guard sees it | refused in `packages/core`, nothing built | 0 | unmoved |
+| `init(control, Wrapped({"ä"→1, "xy"→2}))` — the guard misses it | accepted into the mempool, **never included** | 0 | unmoved |
+
+**The third row is the finding.** A `ContractCallTx` carrying a disagreeing map
+is mined, comes back `error`, and is charged the whole gas limit — every failure
+row in the tables above. A `ContractCreateTx` carrying one is not. The node logs
+`Tx pool events hashes: [th_…]` for it and then nothing: every micro block after
+it carries zero transactions, no error is logged, `/v3/transactions/th_…`
+answers `404`, and the caller's next nonce is unchanged and reusable — the very
+next deployment took that same nonce and was mined normally.
+
+What the caller sees is the sdk giving up polling:
+`RestError: v3/transactions/th_… error: Transaction not found`, naming a hash
+the node denies having. So on the deployment path this defect costs no gas; it
+costs a transaction that disappears, and the guard buys legibility rather than
+money. The row that opened this work assumed the opposite, on the reasonable
+inference that a shared encoder implies a shared failure — it does not.
+
+**The wrap around `NodeInvocationError` is for a different failure and does
+fire.** An `init` that aborts is included and refused normally: a contract whose
+`init` calls `require(false, "init said no")` returned `return_type=revert`,
+`gas_used=31`, and `DeployContractInvocationError` carried
+`reason: "init said no"` and the transaction hash — which the sdk drops on this
+path, so the hash exists only because the signing is observed on the way past.

@@ -4,9 +4,9 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { createConfig } from '../createConfig'
-import { testnet } from '../types/network'
-import { getBalanceQueryKey, getBalanceQueryOptions } from './getBalance'
+import { createConfig } from '../createConfig.js'
+import { testnet } from '../types/network.js'
+import { getBalanceQueryKey, getBalanceQueryOptions } from './getBalance.js'
 
 describe('getBalanceQueryKey', () => {
   it('should return a query key tuple', () => {

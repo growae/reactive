@@ -19,7 +19,7 @@ const compiled = await compileContract(config, { sourceCode, onCompiler: compile
 const result = await deployContract(config, {
   aci: compiled.rawAci,   // full ACI array — required by aepp-sdk
   bytecode: compiled.bytecode,
-  args: ['initial_value', 42n],
+  initArgs: ['initial_value', 42n],
 })
 
 console.log('Deployed at:', result.address)
@@ -37,7 +37,7 @@ type DeployContractReturnType = {
   address: string
   txHash: string
   rawTx: string
-  result?: unknown
+  result?: any
 }
 ```
 
@@ -53,22 +53,46 @@ The deployed contract address (`ct_...`).
 
 The transaction hash (`th_...`).
 
+### rawTx
+
+- **Type:** `string`
+
+The signed deployment transaction (`tx_...`).
+
+### result
+
+- **Type:** `any`
+- **Optional**
+
+The node's contract call object for the deployment, as
+`@aeternity/aepp-sdk` returned it — gas used, return type, log. Diagnostics;
+`address` and `txHash` are what a caller normally needs.
+
 ## Parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `aci` | `Aci` | — | Required. Contract ACI. |
-| `bytecode` | `string` | — | Required. Compiled contract bytecode. |
-| `args` | `unknown[]` | `[]` | Arguments for the `init` function. |
-| `amount` | `bigint` | `0n` | AE (in aettos) to send to the contract on deploy. |
-| `gas` | `number` | auto | Gas limit for deployment. |
-| `gasPrice` | `bigint` | auto | Gas price in aettos. |
-| `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
-| `nonce` | `number` | auto | Account nonce. |
-| `fee` | `bigint` | auto | Transaction fee in aettos. |
+| `sourceCode` | `string` | — | Sophia source to deploy. Either this or `bytecode` must be present. |
+| `bytecode` | `string` | — | Compiled contract bytecode. Either this or `sourceCode` must be present. |
+| `aci` | `Aci` | — | Contract ACI. The SDK encodes `initArgs` against it, and the map key-order guard below is a miss without it. |
+| `initArgs` | `unknown[]` | `[]` | Arguments for the `init` function. |
+| `onCompiler` | `CompilerBase` | — | Compiler instance, for a `sourceCode` deployment. |
+| `networkId` | `string` | active | Target network. |
+| `options.amount` | `bigint` | `0n` | AE (in aettos) to send to the contract on deploy. |
+| `options.gasLimit` | `number` | auto | Gas limit for deployment. |
+| `options.gasPrice` | `bigint` | auto | Gas price in aettos. |
+| `options.fee` | `bigint` | auto | Transaction fee in aettos. |
+| `options.deposit` | `bigint` | auto | Deposit attached to the create transaction. |
+| `options.ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
+
+Every field of `DeployContractParameters` is optional at the type level; what
+the action enforces is that one of `sourceCode` and `bytecode` is present, which
+is what `DeployContractNoCodeError` reports. There is no top-level `args`,
+`gas`, `ttl` or `fee`, and the action exposes no nonce override at all — the
+nonce is the SDK's to pick.
 
 ::: tip Default TTL
-All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `ttl: 0` for no expiration.
+All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `options: { ttl: 0 }` for no expiration.
 :::
 
 ## Examples
@@ -79,8 +103,8 @@ All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale
 const result = await deployContract(config, {
   aci: vaultAci,
   bytecode: vaultBytecode,
-  args: [],
-  amount: 10000000000000000000n, // 10 AE
+  initArgs: [],
+  options: { amount: 10000000000000000000n }, // 10 AE
 })
 
 console.log('Deployed at:', result.address)
@@ -92,6 +116,14 @@ console.log('Deployed at:', result.address)
 import type { DeployContractErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorNotConnectedError` — no wallet connected
-- `ContractDeployError` — deployment failed (init reverted, out of gas, etc.)
-- `InsufficientBalanceError` — not enough AE for fee + amount
+`DeployContractErrorType` names its concrete classes, so `instanceof` narrows
+against it. In the order the action can raise them:
+
+- `DeployContractNoCodeError` — neither `sourceCode` nor `bytecode` was passed
+- `DeployContractMapKeyOrderError` — a `map` init argument would be serialised in a key order the node's decoder refuses. Checked first, before the node is reached and before anything is built. The guard is a miss rather than a refusal when `aci` is absent, since a source-only deployment has nothing here to read the init argument types off
+- `DeployContractNoAccountError` — no connected account
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- `DeployContractInvocationError` — the node executed `init` and refused it; carries `reason`, `transaction` and `transactionHash`
+
+Any other `@aeternity/aepp-sdk` failure — compilation through `onCompiler`,
+contract initialisation, node transport — is rethrown unchanged.

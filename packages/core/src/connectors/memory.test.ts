@@ -9,10 +9,11 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 }))
 
 import { MemoryAccount } from '@aeternity/aepp-sdk'
-import { createEmitter } from '../createEmitter'
-import { mainnet, testnet } from '../types/network'
-import type { ConnectorEventMap } from './createConnector'
-import { memory } from './memory'
+import { createEmitter } from '../createEmitter.js'
+import { ConnectorAccountUnavailableError } from '../errors/connector.js'
+import { mainnet, testnet } from '../types/network.js'
+import type { ConnectorEventMap } from './createConnector.js'
+import { memory } from './memory.js'
 
 function setupConnector(secretKey = 'test_secret_key', name?: string) {
   const connectorFn = memory({ accounts: [{ secretKey }], name })
@@ -167,6 +168,116 @@ describe('memory connector', () => {
         networkId: testnet.id,
         innerTx: true,
       })
+    })
+  })
+
+  /**
+   * The connector holds every account it was configured with, so `onAccount`
+   * selects between them rather than being a hint. It shipped signing with
+   * `accounts[0]` unconditionally on both paths, which is the account the
+   * caller meant only until the user switches.
+   */
+  describe('onAccount pinning', () => {
+    const ADDRESSES = ['ak_first', 'ak_second']
+
+    function setupMultiAccount() {
+      vi.mocked(MemoryAccount).mockImplementation(((): unknown => {
+        const address = ADDRESSES[
+          vi.mocked(MemoryAccount).mock.calls.length - 1
+        ] as string
+        return {
+          address,
+          sign: vi.fn().mockResolvedValue(new Uint8Array(64)),
+          signTransaction: vi.fn().mockResolvedValue(`signed_by_${address}`),
+        }
+      }) as never)
+      const connectorFn = memory({
+        accounts: [{ secretKey: 'k1' }, { secretKey: 'k2' }],
+      })
+      return connectorFn({
+        emitter: createEmitter<ConnectorEventMap>('mem-uid'),
+        networks: [testnet, mainnet],
+      })
+    }
+
+    it('signs with the named account rather than the first', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+        onAccount: 'ak_second',
+      })
+
+      expect(signed).toBe('signed_by_ak_second')
+    })
+
+    it('falls back to the first account when none is named', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+      })
+
+      expect(signed).toBe('signed_by_ak_first')
+    })
+
+    it('throws for an account it does not hold rather than falling back', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await expect(
+        connector.signTransaction!({
+          tx: 'tx_data',
+          networkId: testnet.id,
+          onAccount: 'ak_notMine',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+    })
+
+    it('signs a message with the named account rather than the first', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await connector.signMessage!({
+        message: 'hello',
+        onAccount: 'ak_second',
+      })
+
+      const first = vi.mocked(MemoryAccount).mock.results[0]!.value
+      const second = vi.mocked(MemoryAccount).mock.results[1]!.value
+      expect(second.sign).toHaveBeenCalled()
+      expect(first.sign).not.toHaveBeenCalled()
+    })
+
+    it('signs a message with the first account when none is named', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await connector.signMessage!({ message: 'hello' })
+
+      const first = vi.mocked(MemoryAccount).mock.results[0]!.value
+      expect(first.sign).toHaveBeenCalled()
+    })
+
+    it('throws on signMessage for an account it does not hold', async () => {
+      const connector = setupMultiAccount()
+      await connector.setup?.()
+      await connector.connect?.({ networkId: testnet.id })
+
+      await expect(
+        connector.signMessage!({ message: 'hello', onAccount: 'ak_notMine' }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+      const first = vi.mocked(MemoryAccount).mock.results[0]!.value
+      expect(first.sign).not.toHaveBeenCalled()
     })
   })
 

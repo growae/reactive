@@ -1,8 +1,9 @@
 import { buildTxAsync, Tag } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants'
-import type { Config, Connector } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
-import { sendTransaction } from './sendTransaction'
+import { DEFAULT_TTL } from '../constants.js'
+import type { Config, Connector } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { activeAccountForConnector } from '../utils/activeAccount.js'
+import { sendTransaction } from './sendTransaction.js'
 
 export type PayForTransactionParameters = {
   innerTx: string
@@ -10,6 +11,11 @@ export type PayForTransactionParameters = {
   ttl?: number | undefined
   networkId?: string | undefined
   connector?: Connector | undefined
+  /**
+   * Declared but not read: this action posts an unsigned `PayingForTx` and
+   * `sendTransaction` no longer accepts a connector, so there is nothing here
+   * to wait for yet. Wiring it up is tracked as its own change.
+   */
   waitMined?: boolean | undefined
 }
 
@@ -27,7 +33,7 @@ export async function payForTransaction(
   config: Config,
   parameters: PayForTransactionParameters,
 ): Promise<PayForTransactionReturnType> {
-  const { innerTx, ttl, networkId, connector, waitMined = true } = parameters
+  const { innerTx, ttl, networkId, connector } = parameters
 
   let payerConnector: Connector | undefined = connector
   let payerId: string | undefined
@@ -42,9 +48,11 @@ export async function payForTransaction(
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  if (!payerId) {
-    payerId = (await payerConnector.getAccounts())[0]
-  }
+  // Same as `transferFunds`: the connection core holds for this connector
+  // knows which account the user selected, and `getAccounts()[0]` is only the
+  // fallback for a connector that has no connection.
+  payerId ??= activeAccountForConnector(config, payerConnector)
+  payerId ??= (await payerConnector.getAccounts())[0]
   if (!payerId) {
     throw new Error('No account available on the current connector.')
   }
@@ -62,7 +70,5 @@ export async function payForTransaction(
   return sendTransaction(config, {
     tx,
     networkId,
-    connector: payerConnector,
-    waitMined,
   })
 }

@@ -8,8 +8,8 @@ vi.mock('@aeternity/aepp-sdk', () => ({
 import { createConfig, mock, testnet } from '@growae/reactive'
 import { renderHook } from '@testing-library/react'
 import { createElement, useState } from 'react'
-import { ReactiveProvider } from '../context'
-import { type UseConfigParameters, useConfig } from './useConfig'
+import { ReactiveProvider } from '../context.js'
+import { type UseConfigParameters, useConfig } from './useConfig.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

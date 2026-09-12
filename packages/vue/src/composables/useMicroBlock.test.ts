@@ -28,7 +28,7 @@ vi.mock('vue', async () => {
   return { ...actual, onScopeDispose: vi.fn() }
 })
 
-import { useMicroBlock } from './useMicroBlock'
+import { useMicroBlock } from './useMicroBlock.js'
 
 describe('useMicroBlock', () => {
   it('should be a function', () => {

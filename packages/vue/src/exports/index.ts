@@ -6,19 +6,19 @@ export {
   configKey,
   ReactivePlugin,
   type ReactivePluginOptions,
-} from '../plugin'
+} from '../plugin.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Errors
 ////////////////////////////////////////////////////////////////////////////////
 
-export { BaseError, type BaseErrorType } from '../errors/base'
+export { BaseError, type BaseErrorType } from '../errors/base.js'
 export {
   ReactiveInjectionContextError,
   type ReactiveInjectionContextErrorType,
   ReactivePluginNotFoundError,
   type ReactivePluginNotFoundErrorType,
-} from '../errors/plugin'
+} from '../errors/plugin.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Composables
@@ -217,13 +217,13 @@ export {
   useWatchConnectors,
   // Watchers
   useWatchHeight,
-} from '../composables/index'
+} from '../composables/index.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Nuxt Module
 ////////////////////////////////////////////////////////////////////////////////
 
-export type { ReactiveNuxtOptions } from '../nuxt/module'
+export type { ReactiveNuxtOptions } from '../nuxt/module.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // @growae/reactive re-exports

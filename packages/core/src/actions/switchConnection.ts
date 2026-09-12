@@ -1,6 +1,6 @@
-import type { Config, Connector } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
-import { ConnectorNotFoundError } from '../errors/config'
+import type { Config, Connector } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { ConnectorNotFoundError } from '../errors/config.js'
 
 export type SwitchConnectionParameters = {
   connector: Connector

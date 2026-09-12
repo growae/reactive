@@ -21,7 +21,7 @@ vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({})),
 }))
 
-import { useBuildTransaction } from './useBuildTransaction'
+import { useBuildTransaction } from './useBuildTransaction.js'
 
 describe('useBuildTransaction', () => {
   it('should be a function', () => {

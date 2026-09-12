@@ -1,7 +1,10 @@
 import type { ConnectorEventMap, Network } from '@growae/reactive'
-import { createEmitter } from '@growae/reactive'
+import {
+  ConnectorAccountUnavailableError,
+  createEmitter,
+} from '@growae/reactive'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { metamaskSnap } from './metamaskSnap'
+import { metamaskSnap } from './metamaskSnap.js'
 
 const TEST_ADDRESS = 'ak_2swhLkgBPeeADxVTAby6be6on1iqYGLvWamCaDmQnYF9E1WXBZ'
 const SIGNED_TX = 'tx_signed_snap_abc123'
@@ -164,6 +167,43 @@ describe('metamaskSnap', () => {
     expect(signed).toBe(SIGNED_TX)
   })
 
+  /**
+   * As with `ledger`: one derivation path, one address. A named account this
+   * snap did not derive throws rather than being signed from the configured
+   * path, which would return a valid signature from the wrong sender.
+   */
+  it('signs for the account it derived when it is the one named', async () => {
+    mockEthereum()
+    const connector = metamaskSnap()
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    const { accounts } = await instance.connect()
+
+    const signed = await instance.signTransaction!({
+      tx: 'tx_abc',
+      networkId: 'ae_uat',
+      onAccount: accounts[0]!,
+    })
+
+    expect(signed).toBe(SIGNED_TX)
+  })
+
+  it('throws for a named account the snap does not hold', async () => {
+    mockEthereum()
+    const connector = metamaskSnap()
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    await expect(
+      instance.signTransaction!({
+        tx: 'tx_abc',
+        networkId: 'ae_uat',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
+  })
+
   it('should sign a message via snap', async () => {
     mockEthereum()
     const connector = metamaskSnap()
@@ -175,6 +215,44 @@ describe('metamaskSnap', () => {
     const sig = await instance.signMessage!({ message: 'hello' })
 
     expect(sig).toBe(Buffer.from(SIGNED_MSG_B64, 'base64').toString('hex'))
+  })
+
+  it('should sign a message for the account the snap derived', async () => {
+    mockEthereum()
+    const connector = metamaskSnap()
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+
+    const sig = await instance.signMessage!({
+      message: 'hello',
+      onAccount: TEST_ADDRESS,
+    })
+
+    expect(sig).toBe(Buffer.from(SIGNED_MSG_B64, 'base64').toString('hex'))
+  })
+
+  /**
+   * The snap derives one address, so there is no other derivation path to
+   * resolve to and the parameter used to be ignored outright. Ignoring it
+   * returned a signature the caller then verified against the address it
+   * named, which is not the address that signed.
+   */
+  it('throws on signMessage for a named account the snap does not hold', async () => {
+    const request = mockEthereum()
+    const connector = metamaskSnap()
+    const instance = connector(makeConfig())
+    await instance.setup?.()
+    await instance.connect()
+    request.mockClear()
+
+    await expect(
+      instance.signMessage!({
+        message: 'hello',
+        onAccount: 'ak_someOtherAccount',
+      }),
+    ).rejects.toThrow(ConnectorAccountUnavailableError)
+    expect(request).not.toHaveBeenCalled()
   })
 
   it('should switch network', async () => {

@@ -6,7 +6,7 @@ export {
   createEmitter,
   Emitter,
   type EventData,
-} from '../createEmitter'
+} from '../createEmitter.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Types
@@ -30,15 +30,15 @@ export type {
   UnionExactPartial,
   UnionLooseOmit,
   UnionStrictOmit,
-} from '../types/utils'
+} from '../types/utils.js'
 
 ////////////////////////////////////////////////////////////////////////////////
 // Utilities
 ////////////////////////////////////////////////////////////////////////////////
 
-export { deepEqual } from '../utils/deepEqual'
-export { deserialize } from '../utils/deserialize'
-export { getAction } from '../utils/getAction'
-export { getVersion } from '../utils/getVersion'
-export { serialize } from '../utils/serialize'
-export { uid } from '../utils/uid'
+export { deepEqual } from '../utils/deepEqual.js'
+export { deserialize } from '../utils/deserialize.js'
+export { getAction } from '../utils/getAction.js'
+export { getVersion } from '../utils/getVersion.js'
+export { serialize } from '../utils/serialize.js'
+export { uid } from '../utils/uid.js'

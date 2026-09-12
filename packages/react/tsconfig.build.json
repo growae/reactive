@@ -1,6 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    // Node's ESM resolver does no extension inference, and tsc does not
+    // rewrite specifiers. NodeNext makes an extensionless relative import a
+    // compile error, so the emitted dist/esm and dist/types stay resolvable.
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "rootDir": "src",
     "outDir": "dist/esm",
     "declarationDir": "dist/types",

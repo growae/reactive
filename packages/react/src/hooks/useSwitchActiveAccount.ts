@@ -5,8 +5,8 @@ import {
   switchActiveAccount,
 } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
-import type { ConfigParameter } from '../types/properties'
-import { useConfig } from './useConfig'
+import type { ConfigParameter } from '../types/properties.js'
+import { useConfig } from './useConfig.js'
 
 export type UseSwitchActiveAccountParameters = ConfigParameter
 

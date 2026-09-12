@@ -24,56 +24,90 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
+      - uses: ./.github/actions/setup-node-pnpm
         with:
-          node-version: 22
-          cache: pnpm
           registry-url: https://registry.npmjs.org
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
 
-      - name: Check for publishable packages
-        id: check
-        run: |
-          OUTPUT=$(pnpm changeset status --since=origin/main 2>&1 || true)
-          if echo "$OUTPUT" | grep -q "No changesets present"; then
-            echo "has_changesets=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changesets=true" >> "$GITHUB_OUTPUT"
-          fi
+      # The last thing between a broken artifact and real users. `Build`
+      # succeeding says only that tsc emitted files; this packs them and
+      # imports them under Node's own ESM resolver, which is the one resolver
+      # no other gate in this repository uses. 0.0.1 through 0.0.6 were all
+      # published through this job and all of them throw ERR_MODULE_NOT_FOUND
+      # on `import '@growae/reactive'` from a Node script. It runs before
+      # `changeset publish` because npm has no unpublish worth the name.
+      - name: Verify the built package imports under Node
+        run: pnpm --filter @growae/reactive run test:node-resolution
 
+      # Pinned to @changesets/cli 3.0.1. Two behaviours are relied on, neither of
+      # them log prose: a non-zero exit means nothing reached the registry, and a
+      # successful publish creates one local git tag per published package. The
+      # "no tags but the log says it published" branch below is the tripwire — if a
+      # changesets upgrade stops tagging, this job goes red instead of silently
+      # classifying a real release as "nothing to do".
       - name: Publish to npm
         id: publish
+        shell: bash
         run: |
-          pnpm changeset publish 2>&1 | tee /tmp/publish-output.txt
-          TAGS=$(grep -oP 'New tag:\s+\K\S+' /tmp/publish-output.txt || true)
-          echo "tags<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$TAGS" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-          if [ -n "$TAGS" ]; then
-            echo "published=true" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          git tag --list | LC_ALL=C sort > /tmp/tags-before.txt
+          if pnpm changeset publish 2>&1 | tee /tmp/publish-output.txt; then
+            git tag --list | LC_ALL=C sort > /tmp/tags-after.txt
+            TAGS=$(comm -13 /tmp/tags-before.txt /tmp/tags-after.txt)
+            echo "tags<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$TAGS" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+            if [ -n "$TAGS" ]; then
+              echo "result=published" >> "$GITHUB_OUTPUT"
+            elif grep -Eiq 'successfully published|packages published successfully' /tmp/publish-output.txt; then
+              echo "result=failed" >> "$GITHUB_OUTPUT"
+              echo "changeset publish reported published packages but created no git tags." >&2
+              echo "The registry may have been written to. Do not re-run blind: reconcile the" >&2
+              echo "registry against this workflow's tag assumption before the next release." >&2
+              exit 1
+            else
+              echo "result=none" >> "$GITHUB_OUTPUT"
+            fi
           else
-            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "result=failed" >> "$GITHUB_OUTPUT"
+            echo "changeset publish exited non-zero; nothing reached the registry." >&2
+            exit 1
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # changesets creates lightweight tags, which `git push --follow-tags` ignores.
       - name: Push tags
-        if: steps.publish.outputs.published == 'true'
-        run: git push --follow-tags
+        if: steps.publish.outputs.result == 'published'
+        shell: bash
+        env:
+          NEW_TAGS: ${{ steps.publish.outputs.tags }}
+        run: |
+          set -euo pipefail
+          TAGS=()
+          while IFS= read -r tag; do
+            [ -n "$tag" ] || continue
+            TAGS+=("$tag")
+          done < <(printf '%s\n' "$NEW_TAGS")
+          if [ "${#TAGS[@]}" -eq 0 ]; then
+            echo "publish reported 'published' with an empty tag list." >&2
+            exit 1
+          fi
+          printf 'pushing %d tag(s): %s\n' "${#TAGS[@]}" "${TAGS[*]}"
+          git push origin "${TAGS[@]}"
 
       - name: Get release version
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         id: version
         run: |
           VERSION=$(node -p "require('./packages/core/package.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Generate release notes
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         id: notes
         run: |
           NOTES="## Published Packages\n\n"
@@ -90,7 +124,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -101,15 +135,22 @@ jobs:
             --latest
 
       - name: Summary
-        if: steps.publish.outputs.published == 'true'
+        if: steps.publish.outputs.result == 'published'
         run: |
           echo "### Released v${{ steps.version.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "${{ steps.notes.outputs.notes }}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: No release needed
-        if: steps.publish.outputs.published == 'false'
+        if: steps.publish.outputs.result == 'none'
         run: echo "No new versions to publish." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish failed
+        if: always() && steps.publish.outputs.result == 'failed'
+        run: |
+          echo "### Publish failed" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Either \`changeset publish\` exited non-zero and nothing reached the registry, or it published without creating git tags. Read the publish step log before re-running." >> "$GITHUB_STEP_SUMMARY"
 
   back-merge:
     name: Back-merge to develop
@@ -124,8 +165,8 @@ jobs:
 
       - name: Merge main into develop
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "Badi Ifaoui"
+          git config user.email "badi.ifaoui@zixdev.com"
           git fetch origin main
           git merge origin/main --no-edit -m "chore: back-merge main into develop"
           git push origin develop

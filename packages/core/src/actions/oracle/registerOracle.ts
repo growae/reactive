@@ -1,7 +1,7 @@
 import { buildTx, Tag } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../../constants'
-import type { Config } from '../../createConfig'
-import { BaseError } from '../../errors/base'
+import { DEFAULT_TTL } from '../../constants.js'
+import type { Config } from '../../createConfig.js'
+import { BaseError } from '../../errors/base.js'
 
 export type RegisterOracleParameters = {
   queryFormat: string
@@ -65,6 +65,7 @@ export async function registerOracle(
   const signed = await connector.signTransaction({
     tx,
     networkId: networkId ?? config.state.networkId,
+    onAccount: senderId,
   })
 
   const result = await node.postTransaction({ tx: signed })

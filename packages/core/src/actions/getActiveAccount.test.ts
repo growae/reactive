@@ -4,11 +4,11 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   Node: vi.fn().mockImplementation(() => ({})),
 }))
 
-import { mock } from '../connectors/mock'
-import { createConfig } from '../createConfig'
-import { mainnet } from '../types/network'
-import { connect } from './connect'
-import { getActiveAccount } from './getActiveAccount'
+import { mock } from '../connectors/mock.js'
+import { createConfig } from '../createConfig.js'
+import { mainnet } from '../types/network.js'
+import { connect } from './connect.js'
+import { getActiveAccount } from './getActiveAccount.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',

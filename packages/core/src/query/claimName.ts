@@ -4,8 +4,8 @@ import {
   type ClaimNameParameters,
   type ClaimNameReturnType,
   claimName,
-} from '../actions/claimName'
-import type { Config } from '../createConfig'
+} from '../actions/claimName.js'
+import type { Config } from '../createConfig.js'
 
 export function claimNameMutationOptions(config: Config) {
   return {

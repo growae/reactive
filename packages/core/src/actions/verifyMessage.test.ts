@@ -4,7 +4,7 @@ vi.mock('@aeternity/aepp-sdk', () => ({
   verifyMessageSignature: vi.fn().mockReturnValue(true),
 }))
 
-import { verifyMessage } from './verifyMessage'
+import { verifyMessage } from './verifyMessage.js'
 
 describe('verifyMessage', () => {
   it('should be a function', () => {

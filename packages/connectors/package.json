@@ -1,6 +1,6 @@
 {
   "name": "@growae/reactive-connectors",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
   "main": "dist/esm/exports/index.js",
@@ -23,9 +23,9 @@
     "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
-    "@aeternity/aepp-sdk": ">=14.0.0",
-    "@ledgerhq/hw-transport": ">=6.0.0",
-    "typescript": ">=5.7.0"
+    "@aeternity/aepp-sdk": ">=14.0.0 <15.0.0",
+    "@ledgerhq/hw-transport": ">=6.0.0 <7.0.0",
+    "typescript": ">=5.7.0 <8.0.0"
   },
   "peerDependenciesMeta": {
     "@ledgerhq/hw-transport": {

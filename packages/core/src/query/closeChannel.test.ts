@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { closeChannelMutationOptions } from './closeChannel'
+import { closeChannelMutationOptions } from './closeChannel.js'
 
 describe('closeChannelMutationOptions', () => {
   it('should be a function', () => {

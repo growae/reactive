@@ -473,7 +473,7 @@ function SpendTab() {
   const handleSpend = () => {
     spendMutation.reset()
     spendMutation.mutateAsync({
-      recipientId: recipient(),
+      recipient: recipient(),
       amount: amount(),
       payload: payload() || undefined,
     })

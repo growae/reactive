@@ -1,9 +1,11 @@
 import { buildTxAsync, Tag, unpackTx } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants'
-import type { Config, Connector } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
-import { getBalance } from './getBalance'
-import { sendTransaction } from './sendTransaction'
+import { DEFAULT_TTL } from '../constants.js'
+import type { Config, Connector } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { activeAccountForConnector } from '../utils/activeAccount.js'
+import { getBalance } from './getBalance.js'
+import { sendTransaction } from './sendTransaction.js'
+import { signTransaction } from './signTransaction.js'
 
 export type TransferFundsParameters = {
   fraction: number
@@ -12,7 +14,16 @@ export type TransferFundsParameters = {
   connector?: Connector | undefined
   /** Transaction TTL in blocks relative to current height. Defaults to 300. */
   ttl?: number | undefined
+  /**
+   * Wait for the transfer to be mined before resolving. Defaults to `true`,
+   * which is what populates `blockHash`, `blockHeight` and `tx`.
+   */
   waitMined?: boolean | undefined
+  /**
+   * Upper bound in milliseconds on the `waitMined` wait. Defaults to
+   * `DEFAULT_WAIT_TIMEOUT` (20 minutes).
+   */
+  timeout?: number | undefined
 }
 
 export type TransferFundsReturnType = {
@@ -36,6 +47,7 @@ export async function transferFunds(
     connector,
     ttl,
     waitMined = true,
+    timeout,
   } = parameters
 
   if (fraction < 0 || fraction > 1) {
@@ -55,9 +67,13 @@ export async function transferFunds(
     throw new Error('No connector found. Connect a wallet first.')
   }
 
-  if (!senderId) {
-    senderId = (await senderConnector.getAccounts())[0]
-  }
+  // An explicit connector still has an active account — it is core that holds
+  // it, on the connection for that connector. `getAccounts()[0]` is only the
+  // last resort for a connector core has no connection for; taking it while a
+  // connection exists transfers from the first account after the user selected
+  // another, with a valid signature and no error anywhere.
+  senderId ??= activeAccountForConnector(config, senderConnector)
+  senderId ??= (await senderConnector.getAccounts())[0]
   if (!senderId) {
     throw new Error('No account available on the current connector.')
   }
@@ -95,10 +111,17 @@ export async function transferFunds(
     onNode: node,
   })
 
-  return sendTransaction(config, {
+  const signedTx = await signTransaction(config, {
     tx,
     networkId,
     connector: senderConnector,
+    onAccount: senderId,
+  })
+
+  return sendTransaction(config, {
+    tx: signedTx,
+    networkId,
     waitMined,
+    timeout,
   })
 }

@@ -3,7 +3,7 @@ import {
   type RegisterOracleParameters,
   type RegisterOracleReturnType,
   registerOracle,
-} from './registerOracle'
+} from './registerOracle.js'
 
 test('registerOracle returns Promise<RegisterOracleReturnType>', () => {
   expectTypeOf(registerOracle).returns.toEqualTypeOf<

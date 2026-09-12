@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useOpenChannel } from './useOpenChannel'
+import { useOpenChannel } from './useOpenChannel.js'
 
 describe('useOpenChannel', () => {
   it('should be a function', () => {

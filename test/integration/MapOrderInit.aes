@@ -1,0 +1,26 @@
+@compiler >= 8
+
+// The deployment half of the map-key-ordering exercise — see `MAP-ORDER.md`.
+//
+// `MapOrder.aes` takes its maps as entrypoint arguments. This one takes them at
+// construction, which reaches the same `@aeternity/aepp-calldata` encoder by a
+// different route: `Contract.$deploy` builds a `ContractCreateTx` whose call
+// data is `encode(contract, "init", args)`.
+//
+// Two init parameters, because the guard in `packages/core` is deliberately
+// asymmetric and both sides of that have to be measured. `entries` is a map the
+// guard can see through the ACI and refuses. `wrapped` is the same map behind a
+// variant, whose JavaScript shape the ACI does not fix, so the guard stops
+// descending and the deployment goes to the chain exactly as it did before the
+// guard existed — which is how what the defect costs is measured rather than
+// asserted.
+contract MapOrderInit =
+  record state = { size : int }
+
+  datatype wrapper = Wrapped(map(string, int))
+
+  entrypoint init(entries : map(string, int), wrapped : wrapper) : state =
+    switch(wrapped)
+      Wrapped(inner) => { size = Map.size(entries) + Map.size(inner) }
+
+  entrypoint size() : int = state.size

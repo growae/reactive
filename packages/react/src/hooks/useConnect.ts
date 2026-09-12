@@ -9,10 +9,10 @@ import {
 } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import type { ConfigParameter } from '../types/properties'
-import type { UseMutationReturnType } from '../utils/query'
-import { useConfig } from './useConfig'
-import { useConnectors } from './useConnectors'
+import type { ConfigParameter } from '../types/properties.js'
+import type { UseMutationReturnType } from '../utils/query.js'
+import { useConfig } from './useConfig.js'
+import { useConnectors } from './useConnectors.js'
 
 export type UseConnectParameters<context = unknown> = Compute<
   ConfigParameter & {

@@ -27,7 +27,7 @@ import {
   type FateMapKey,
   type FateMapKeyType,
   type MapKeyOrderDisagreement,
-} from './fateMapKeyOrder'
+} from './fateMapKeyOrder.js'
 
 export type MapKeyOrderDefect = MapKeyOrderDisagreement & {
   /** Where in the call's arguments the map sits, e.g. `entries` or `rows[0].tags`. */
@@ -393,4 +393,26 @@ export function findMapKeyOrderDefects(
     walkValue(walk, resolveType(aci, argument.type), args[i], name, 0)
   })
   return walk.defects
+}
+
+function renderKey(key: FateMapKey): string {
+  return typeof key === 'string' ? JSON.stringify(key) : `${key}`
+}
+
+/**
+ * The two orders of every defect, rendered for an error's `metaMessages`.
+ *
+ * `callContract`, `deployContract` and `simulateContract` refuse on the same
+ * predicate and have to say the same thing about it, so the wording is written
+ * once here: messages a reader compares are then describing the same defect in
+ * the same words, and none can drift while the others do not.
+ */
+export function describeMapKeyOrderDefects(
+  defects: readonly MapKeyOrderDefect[],
+): string[] {
+  return defects.flatMap((defect) => [
+    `Argument "${defect.path}" — map(${defect.keyType}, _):`,
+    `  the node accepts    ${defect.nodeOrder.map(renderKey).join(', ')}`,
+    `  the encoder writes  ${defect.encoderOrder.map(renderKey).join(', ')}`,
+  ])
 }

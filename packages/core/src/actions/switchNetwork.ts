@@ -1,6 +1,6 @@
-import type { Config } from '../createConfig'
-import type { BaseErrorType, ErrorType } from '../errors/base'
-import { NetworkNotConfiguredError } from '../errors/config'
+import type { Config } from '../createConfig.js'
+import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { NetworkNotConfiguredError } from '../errors/config.js'
 
 export type SwitchNetworkParameters = {
   networkId: string

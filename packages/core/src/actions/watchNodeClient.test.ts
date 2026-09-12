@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { watchNodeClient } from './watchNodeClient'
+import { watchNodeClient } from './watchNodeClient.js'
 
 describe('watchNodeClient', () => {
   it('should be a function', () => {

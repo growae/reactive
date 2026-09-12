@@ -44,10 +44,19 @@ The wallet's active network ID (e.g. `ae_mainnet`, `ae_uat`).
 
 ### connector
 
-- **Type:** `Connector`
+- **Type:** `Connector | CreateConnectorFn`
 - **Required**
 
-The connector instance to use for connecting.
+The connector to connect with. A `CreateConnectorFn` — what the bundled
+connector factories such as `superhero()` return — is set up against the config
+first; an already-set-up `Connector` is used as it is.
+
+### networkId
+
+- **Type:** `string`
+- **Optional**
+
+Network to request from the wallet. Defaults to the config's current network.
 
 ## Error Types
 
@@ -55,6 +64,16 @@ The connector instance to use for connecting.
 import type { ConnectErrorType } from '@growae/reactive'
 ```
 
-- `ConnectorAlreadyConnectedError` — already connected
-- `ConnectorNotFoundError` — connector not registered in config
-- `UserRejectedRequestError` — user rejected the connection request
+`ConnectErrorType` is `ConnectorAlreadyConnectedErrorType | BaseErrorType |
+ErrorType`. What the action raises:
+
+- `ConnectorAlreadyConnectedError` — the connector already holds the current connection
+- Whatever the connector's own `connect` throws, unwrapped. The bundled connectors raise `ProviderNotFoundError` when the wallet provider is not present, and `NetworkNotConfiguredError` from the ones that validate the requested `networkId` against the config
+
+A user declining the request in their wallet arrives as the wallet's own
+rejection, not as a Reactive error class. `connect` restores the previous
+`status` before rethrowing, so a failed attempt leaves the config as it found
+it.
+
+`ConnectorNotFoundError` is not raised here — it belongs to `switchConnection`,
+for a connector uid that is not in the config.

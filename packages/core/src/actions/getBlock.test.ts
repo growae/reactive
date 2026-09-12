@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getBlock } from './getBlock'
+import { getBlock } from './getBlock.js'
 
 describe('getBlock', () => {
   it('should be a function', () => {

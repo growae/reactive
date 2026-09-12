@@ -6,13 +6,13 @@ import {
   NodeInvocationError,
 } from '@aeternity/aepp-sdk'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { DEFAULT_TTL } from '../constants'
+import { DEFAULT_TTL } from '../constants.js'
 import {
   CallContractInvocationError,
   CallContractMapKeyOrderError,
   CallContractNoAccountError,
   callContract,
-} from './callContract'
+} from './callContract.js'
 
 describe('callContract', () => {
   it('should be a function', () => {

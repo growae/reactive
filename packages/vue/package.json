@@ -1,6 +1,6 @@
 {
   "name": "@growae/reactive-vue",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
   "main": "dist/esm/exports/index.js",
@@ -25,16 +25,17 @@
     "build": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types",
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
-    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch",
+    "test:nuxt-compat": "node scripts/test-nuxt-compat.mjs"
   },
   "dependencies": {
     "@growae/reactive": "workspace:*"
   },
   "peerDependencies": {
-    "@tanstack/vue-query": ">=5.0.0",
-    "nuxt": ">=3.0.0",
-    "typescript": ">=5.7.0",
-    "vue": ">=3.0.0"
+    "@tanstack/vue-query": ">=5.0.0 <6.0.0",
+    "nuxt": ">=3.0.0 <5.0.0",
+    "typescript": ">=5.7.0 <7.0.0",
+    "vue": ">=3.0.0 <4.0.0"
   },
   "peerDependenciesMeta": {
     "@tanstack/vue-query": {
@@ -49,10 +50,10 @@
   },
   "devDependencies": {
     "@nuxt/kit": "^3.21.11",
-    "@tanstack/vue-query": "^5.102.0",
-    "@vue/test-utils": "^2.4.11",
+    "@tanstack/vue-query": "^5.102.8",
+    "@vue/test-utils": "^2.5.0",
     "nuxt": "^3.21.11",
-    "vue": "^3.5.0"
+    "vue": "^3.5.42"
   },
   "publishConfig": {
     "access": "public"

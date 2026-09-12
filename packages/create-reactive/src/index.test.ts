@@ -90,6 +90,88 @@ describe('template copying', () => {
   })
 })
 
+describe('manager-specific uuid override generation', () => {
+  let tempDir: string
+  const originalCwd = process.cwd()
+  const originalUserAgent = process.env.npm_config_user_agent
+
+  const allVariants = frameworks.flatMap((f) => f.variants.map((v) => v.name))
+
+  beforeEach(async () => {
+    tempDir = join(
+      tmpdir(),
+      `create-reactive-override-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    )
+    await mkdir(tempDir, { recursive: true })
+    process.chdir(tempDir)
+  })
+
+  afterEach(async () => {
+    process.chdir(originalCwd)
+    if (originalUserAgent === undefined) {
+      delete process.env.npm_config_user_agent
+    } else {
+      process.env.npm_config_user_agent = originalUserAgent
+    }
+    await rm(tempDir, { recursive: true, force: true })
+  })
+
+  async function scaffoldAs(template: string, userAgent: string) {
+    process.env.npm_config_user_agent = userAgent
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
+    await createReactive({ targetDir: 'app', template })
+    logSpy.mockRestore()
+    return JSON.parse(
+      readFileSync(join(tempDir, 'app', 'package.json'), 'utf-8'),
+    ) as Record<string, unknown>
+  }
+
+  for (const template of allVariants) {
+    it(`emits npm overrides only, for ${template}`, async () => {
+      const pkg = await scaffoldAs(
+        template,
+        'npm/10.9.8 node/v20.11.0 linux x64',
+      )
+      expect(pkg.overrides).toEqual({ 'uuid@<11.1.1': '^11.1.1' })
+      expect(pkg.resolutions).toBeUndefined()
+      expect(pkg.pnpm).toBeUndefined()
+      expect(existsSync(join(tempDir, 'app', 'pnpm-workspace.yaml'))).toBe(
+        false,
+      )
+    })
+
+    it(`emits a pnpm-workspace.yaml override and no package.json key, for ${template}`, async () => {
+      const pkg = await scaffoldAs(
+        template,
+        'pnpm/10.33.0 node/v20.11.0 linux x64',
+      )
+      expect(pkg.overrides).toBeUndefined()
+      expect(pkg.resolutions).toBeUndefined()
+      expect(pkg.pnpm).toBeUndefined()
+      const workspaceYaml = readFileSync(
+        join(tempDir, 'app', 'pnpm-workspace.yaml'),
+        'utf-8',
+      )
+      expect(workspaceYaml).toContain("'uuid@<11.1.1': '^11.1.1'")
+    })
+
+    it(`emits yarn resolutions with a scoped path selector, for ${template}`, async () => {
+      const pkg = await scaffoldAs(
+        template,
+        'yarn/1.22.22 node/v20.11.0 linux x64',
+      )
+      expect(pkg.resolutions).toEqual({
+        '**/@metamask/utils/uuid': '^11.1.1',
+      })
+      expect(pkg.overrides).toBeUndefined()
+      expect(pkg.pnpm).toBeUndefined()
+      expect(existsSync(join(tempDir, 'app', 'pnpm-workspace.yaml'))).toBe(
+        false,
+      )
+    })
+  }
+})
+
 describe('scaffold-time npm engine warning', () => {
   let scaffoldTempDir: string
   const originalCwd = process.cwd()

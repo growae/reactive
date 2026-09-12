@@ -67,3 +67,9 @@ The current `Connector` instance. `undefined` when disconnected.
 
 - [`switchActiveAccount`](/core/api/actions/switchActiveAccount)
 - [`watchActiveAccount`](/core/api/actions/watchActiveAccount)
+
+## Error Types
+
+`getActiveAccount` raises nothing. It is a synchronous read of config state, and
+the disconnected case is a return value — `{ isConnected: false }` with
+`address`, `addresses` and `connector` all `undefined` — not a thrown error.

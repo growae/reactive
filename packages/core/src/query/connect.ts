@@ -4,8 +4,8 @@ import {
   type ConnectParameters,
   type ConnectReturnType,
   connect,
-} from '../actions/connect'
-import type { Config } from '../createConfig'
+} from '../actions/connect.js'
+import type { Config } from '../createConfig.js'
 
 export function connectMutationOptions(config: Config) {
   return {

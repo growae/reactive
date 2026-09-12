@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ExtendOracleNoAccountError, extendOracle } from './extendOracle'
+import { ExtendOracleNoAccountError, extendOracle } from './extendOracle.js'
 
 describe('extendOracle', () => {
   it('should be a function', () => {

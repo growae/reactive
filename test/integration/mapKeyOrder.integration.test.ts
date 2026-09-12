@@ -13,9 +13,15 @@ import { signTransaction } from '../../packages/core/src/actions/signTransaction
 import { memory } from '../../packages/core/src/connectors/memory'
 import { createConfig } from '../../packages/core/src/createConfig'
 import {
+  type CallInfo,
+  COMPILER_URL,
+  callInfoByHash,
   DEVNET_URL,
   devnet,
   FAUCET_SECRET_KEY,
+  INCLUSION_TIMEOUT_MS,
+  nextNonce,
+  sleep,
   waitForNode,
 } from '../setup/integration'
 
@@ -60,9 +66,6 @@ import {
  * through the sdk directly and is not affected by the guard.
  */
 
-const COMPILER_URL =
-  process.env.AE_COMPILER_URL ?? 'https://v8.compiler.aepps.com'
-
 /**
  * The devnet account this exercise funds its own transactions from. Defaults to
  * the suite's committed genesis account so `docker compose up` is all a re-run
@@ -77,7 +80,6 @@ const GAS_LIMIT = 200_000
 /** Shared with `mapOrderDryRun.mjs`, which posts the same calls on a public node. */
 const SOURCE = readFileSync(new URL('./MapOrder.aes', import.meta.url), 'utf8')
 
-type CallInfo = { returnType?: string; returnValue?: string; gasUsed?: number }
 type Outcome = {
   ok: boolean
   decoded?: unknown
@@ -90,58 +92,10 @@ type Outcome = {
 }
 
 /**
- * The sdk reports a failed contract call as `Invocation failed: ""` and drops
- * the transaction hash on the way out, so its own error says nothing about why
- * the call failed. The node's call object carries the answer; it is read back
- * off the chain here, because without it this exercise would only establish
- * that *something* went wrong.
- *
- * Every read below is of **one named transaction** and waits for that
- * transaction to be included. The first version of this helper took instead the
- * most recent `ContractCallTx` by this caller off the top of the chain, which
- * is a *different* transaction for as long as the node has not included the one
- * just posted: it answered with the previous call's result, in tens of
- * milliseconds against the seconds a real read takes, and failed the suite
- * about one run in five.
+ * `callInfoByHash` and `nextNonce` are shared with the deployment exercise and
+ * live in `test/setup/integration.ts`; what stays here is the read that only
+ * this file needs.
  */
-
-const INCLUSION_TIMEOUT_MS = 60_000
-const POLL_INTERVAL_MS = 100
-/** A transaction posted moments ago sits at the top of the chain, not deep in it. */
-const GENERATIONS_SEARCHED = 20
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-/**
- * The call object of one transaction, polled until the node has included it.
- * `/info` answers `404` while the transaction is still in the mempool, so an
- * unsuccessful read here is "not yet", never "no such call".
- */
-async function callInfoByHash(hash: string): Promise<CallInfo | undefined> {
-  const deadline = Date.now() + INCLUSION_TIMEOUT_MS
-  do {
-    const response = await fetch(`${DEVNET_URL}/v3/transactions/${hash}/info`)
-    if (response.ok) {
-      const info = await response.json()
-      if (info?.call_info)
-        return {
-          returnType: info.call_info.return_type,
-          returnValue: info.call_info.return_value,
-          gasUsed: info.call_info.gas_used,
-        }
-    }
-    await sleep(POLL_INTERVAL_MS)
-  } while (Date.now() < deadline)
-  return undefined
-}
-
-/** The nonce the next transaction this account posts will carry. */
-async function nextNonce(account: string): Promise<number> {
-  const { next_nonce } = await (
-    await fetch(`${DEVNET_URL}/v3/accounts/${account}/next-nonce`)
-  ).json()
-  return next_nonce
-}
 
 /**
  * The hash of the contract call this caller posted with `nonce`.
@@ -180,7 +134,7 @@ async function callHashByNonce(
         if (call) return call.hash
       }
     }
-    await sleep(POLL_INTERVAL_MS)
+    await sleep(100)
   } while (Date.now() < deadline)
   return undefined
 }

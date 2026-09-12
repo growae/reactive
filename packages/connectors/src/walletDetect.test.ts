@@ -1,7 +1,7 @@
 import { BrowserWindowMessageConnection } from '@aeternity/aepp-sdk'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { DetectedWallet } from './walletDetect'
-import { walletDetect } from './walletDetect'
+import type { DetectedWallet } from './walletDetect.js'
+import { walletDetect } from './walletDetect.js'
 
 const mockDisconnect = vi.fn()
 

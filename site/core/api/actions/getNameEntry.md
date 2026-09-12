@@ -24,10 +24,13 @@ const entry = await getNameEntry(config, {
 type GetNameEntryReturnType = {
   id: string
   owner: string
-  pointers: Array<{ key: string; id: string }>
+  pointers: NamePointer[]
   ttl: number
 }
 ```
+
+`NamePointer` is `{ key: string; id: string }` and is exported from the package
+root.
 
 ### id
 
@@ -43,7 +46,7 @@ The account address that owns the name.
 
 ### pointers
 
-- **Type:** `Array<{ key: string; id: string }>`
+- **Type:** `NamePointer[]`
 
 Name pointers mapping keys to addresses or data.
 
@@ -75,6 +78,9 @@ Target network. Defaults to the currently active network.
 import type { GetNameEntryErrorType } from '@growae/reactive'
 ```
 
-- `NameNotFoundError` — the AENS name does not exist
-- `NetworkNotConfiguredError` — target network is not in the config
-- `NodeRequestError` — the node returned an error
+`GetNameEntryErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at the
+type level. `getNameEntry` returns the node's entry and wraps none of the node's
+failures in a package error class, so what it raises is:
+
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- The `@aeternity/aepp-sdk` node error, unwrapped, when `getNameEntryByName` rejects. A name that is not registered arrives this way, as the node's own 404

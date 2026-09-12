@@ -1,7 +1,7 @@
 import type { Node } from '@aeternity/aepp-sdk'
 import { expectTypeOf, test } from 'vitest'
-import { type Config, createConfig, type State } from './createConfig'
-import { mainnet, testnet } from './types/network'
+import { type Config, createConfig, type State } from './createConfig.js'
+import { mainnet, testnet } from './types/network.js'
 
 test('createConfig returns Config', () => {
   const config = createConfig({

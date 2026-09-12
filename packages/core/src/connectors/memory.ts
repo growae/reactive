@@ -3,8 +3,9 @@ import { type AccountBase, MemoryAccount } from '@aeternity/aepp-sdk'
 import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
-} from '../errors/config'
-import { createConnector } from './createConnector'
+} from '../errors/config.js'
+import { ConnectorAccountUnavailableError } from '../errors/connector.js'
+import { createConnector } from './createConnector.js'
 
 export type MemoryParameters = {
   accounts: Array<{ secretKey: string }>
@@ -19,9 +20,32 @@ export function memory(parameters: MemoryParameters) {
   let connected = false
   let accounts: MemoryAccount[] = []
 
+  const connectorName = parameters.name ?? 'Memory Account'
+
+  /**
+   * The account a named `onAccount` asks for, or the first when it names none.
+   *
+   * This connector holds every account it was configured with, so a name it
+   * cannot serve is a caller error rather than a wallet limitation — and it
+   * throws, because signing with `accounts[0]` instead would return a valid
+   * signature attributed to somebody else: the wrong sender on a transaction,
+   * the wrong signer on a message.
+   */
+  function accountFor(onAccount: string | undefined): MemoryAccount {
+    if (onAccount == null) return accounts[0]!
+    const account = accounts.find((a) => a.address === onAccount)
+    if (!account) {
+      throw new ConnectorAccountUnavailableError({
+        connectorName,
+        account: onAccount,
+      })
+    }
+    return account
+  }
+
   return createConnector<Provider>((config) => ({
     id: 'memory',
-    name: parameters.name ?? 'Memory Account',
+    name: connectorName,
     type: memory.type,
 
     async setup() {
@@ -71,18 +95,18 @@ export function memory(parameters: MemoryParameters) {
       return network
     },
 
-    async signTransaction({ tx, networkId, innerTx }) {
+    async signTransaction({ tx, networkId, innerTx, onAccount }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return accounts[0]!.signTransaction(tx as `tx_${string}`, {
+      return accountFor(onAccount).signTransaction(tx as `tx_${string}`, {
         networkId,
         innerTx,
       })
     },
 
-    async signMessage({ message }) {
+    async signMessage({ message, onAccount }) {
       if (!connected) throw new ConnectorNotConnectedError()
       const encoded = new TextEncoder().encode(message)
-      const signature = await accounts[0]!.sign(encoded)
+      const signature = await accountFor(onAccount).sign(encoded)
       return Buffer.from(signature).toString('hex')
     },
 

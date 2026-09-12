@@ -6,6 +6,17 @@
 export const DEFAULT_TTL = 300
 
 /**
+ * Default upper bound, in milliseconds, on how long an action waits for its
+ * transaction to be mined. An explicit timeout is the caller's own bound, so
+ * `waitForTransaction` does not also apply its default `blocks` alongside one:
+ * the wait then ends on this timeout, or at the transaction's ttl height if
+ * that passes first. An action that waits by default therefore needs a bound
+ * comfortably past a handful of key blocks without approaching `DEFAULT_TTL`'s
+ * ~15 hours. 20 minutes.
+ */
+export const DEFAULT_WAIT_TIMEOUT = 20 * 60 * 1000
+
+/**
  * Default AENS name TTL in blocks (~375 days at max).
  */
 export const DEFAULT_NAME_TTL = 180000

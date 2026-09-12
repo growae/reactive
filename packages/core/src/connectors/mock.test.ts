@@ -1,8 +1,9 @@
 import { describe, expect, it, vi } from 'vitest'
-import { createEmitter } from '../createEmitter'
-import { mainnet, testnet } from '../types/network'
-import type { ConnectorEventMap } from './createConnector'
-import { mock } from './mock'
+import { createEmitter } from '../createEmitter.js'
+import { ConnectorAccountUnavailableError } from '../errors/connector.js'
+import { mainnet, testnet } from '../types/network.js'
+import type { ConnectorEventMap } from './createConnector.js'
+import { mock } from './mock.js'
 
 const TEST_ACCOUNTS = [
   'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
@@ -126,6 +127,30 @@ describe('mock connector', () => {
       expect(result).toBe('signed_tx_rawdata')
     })
 
+    // The mock stands in for a wallet, so it refuses an account it does not
+    // hold for the same reason a wallet does: signing with its own instead
+    // returns a valid signature from the wrong sender.
+    it('should throw for an account it does not hold', async () => {
+      const { connector } = setupConnector()
+      await expect(
+        connector.signTransaction!({
+          tx: 'tx_data',
+          networkId: testnet.id,
+          onAccount: 'ak_notMine',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
+    })
+
+    it('should sign for an account it does hold', async () => {
+      const { connector } = setupConnector()
+      const signed = await connector.signTransaction!({
+        tx: 'tx_data',
+        networkId: testnet.id,
+        onAccount: TEST_ACCOUNTS[0],
+      })
+      expect(signed).toBe('signed_tx_data')
+    })
+
     it('should throw when signTransactionError is enabled', async () => {
       const { connector } = setupConnector({ signTransactionError: true })
       await expect(
@@ -146,6 +171,28 @@ describe('mock connector', () => {
       await expect(
         connector.signMessage!({ message: 'hello' }),
       ).rejects.toThrow('Failed to sign message.')
+    })
+
+    it('should sign for a named account it holds', async () => {
+      const { connector } = setupConnector()
+      const result = await connector.signMessage!({
+        message: 'hello',
+        onAccount: TEST_ACCOUNTS[1],
+      })
+      expect(result).toBe('signed_hello')
+    })
+
+    // A test that pins an account the mock does not hold should fail here,
+    // not in whatever the mock stands in for — the same rule the transaction
+    // path already enforces.
+    it('should throw for a named account it does not hold', async () => {
+      const { connector } = setupConnector()
+      await expect(
+        connector.signMessage!({
+          message: 'hello',
+          onAccount: 'ak_someOtherAccount',
+        }),
+      ).rejects.toThrow(ConnectorAccountUnavailableError)
     })
   })
 

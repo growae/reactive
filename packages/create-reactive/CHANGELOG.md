@@ -1,5 +1,16 @@
 # @growae/create-reactive
 
+## 0.0.7
+
+### Patch Changes
+
+- 603de83: Lift the scaffolded `typescript` devDependency pin in the `next` and `vite-react` templates from `^5.7.0` to `^7.0.2`, matching the pin already used by `vite-solid` and `vite-vanilla`.
+  
+  The `core` bug that held these two templates back on TypeScript 5.7 is fixed, and TypeScript 6.0.3 and 7.0.2 both type-check clean across the packages. `vite-vue` and `nuxt` stay pinned at `^5.7.0` until `vue-tsc` supports TypeScript 7.
+- 1b8d3b8: Scaffold the `uuid` advisory override per chosen package manager instead of shipping one static key.
+  
+  Each generated project now gets only the mechanism its own package manager reads: `overrides` in `package.json` for npm and bun, a `pnpm-workspace.yaml` override for pnpm (both 10 and 11 — pnpm 11 dropped the `pnpm.overrides` package.json field pnpm 10 used to read), and a `resolutions` path selector for yarn. Previously only npm and pnpm 10 were protected; pnpm 11 silently stopped reading the old key, and yarn had no working key at all because pnpm and yarn's selector grammars collide within a single field. Yarn users now get the override back.
+
 ## 0.0.6
 
 ### Patch Changes
@@ -49,12 +60,13 @@
   (`uuid@<11.1.1`) instead of being unbounded, so it no longer force-upgrades
   `uuid` for every dependency your generated app adds later.
 
-  The `resolutions` key is gone. pnpm and yarn read that field with mutually
-  exclusive selector grammars — a yarn-shaped key hard-fails `pnpm install` and
-  a pnpm-shaped key hard-fails `yarn install`, and no key satisfies both.
-  `overrides` and `pnpm.overrides` cover npm and pnpm. **Yarn users:** you lose
-  this override and `yarn audit` will surface one moderate `uuid` finding via
-  `@metamask/utils`; install and resolution are otherwise identical.
+  The mechanism is now generated per package manager instead of shipped as one
+  static key: `overrides` in `package.json` for npm and bun, a
+  `pnpm-workspace.yaml` override for pnpm (both 10 and 11 — pnpm 11 dropped the
+  `pnpm.overrides` package.json field pnpm 10 used to read), and a `resolutions`
+  path selector for yarn. Every generated project carries only its own
+  manager's key, so the mutually exclusive pnpm/yarn selector grammars never
+  collide, and yarn users keep the override.
 
 - Template tooling floors moved again before this candidate: `next` `^16.3.2`,
   `vite` `^8.2.2`, `@vitejs/plugin-react` `^6.1.0` and `vue-tsc` `^3.3.11`. All

@@ -15,9 +15,17 @@ updates:
     groups:
       workspace-minor-patch:
         update-types: ['minor', 'patch']
+        exclude-patterns:
+          - '@bytecodealliance/jco'
     # Major bumps stay ungrouped and land as individual PRs — a major here,
     # especially on @aeternity/aepp-sdk, is a compatibility decision, not
     # hygiene, and grouping would bury it.
+    # @bytecodealliance/jco is excluded from the group for the same reason:
+    # its output is committed and byte-gated at
+    # bindings/wasm-js/generated/core-harness.js (see wasm-bindings.yml), so a
+    # jco bump carries a regeneration step and has to arrive as its own PR,
+    # not buried inside a ten-package group where the one bump needing
+    # hand-work is invisible.
 
   # The six create-reactive scaffold templates. None carries a lockfile, so
   # each is its own directory and Dependabot reads it off the manifest's

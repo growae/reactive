@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useTransferName } from './useTransferName'
+import { useTransferName } from './useTransferName.js'
 
 describe('useTransferName', () => {
   it('should be a function', () => {

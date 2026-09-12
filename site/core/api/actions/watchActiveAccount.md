@@ -70,3 +70,9 @@ const unwatch = watchActiveAccount(config, {
 
 - [`getActiveAccount`](/core/api/actions/getActiveAccount)
 - [`switchActiveAccount`](/core/api/actions/switchActiveAccount)
+
+## Error Types
+
+`watchActiveAccount` raises nothing itself, and neither does the unsubscribe
+function it returns. Anything thrown by your `onChange` callback propagates out
+of the store notification that invoked it.

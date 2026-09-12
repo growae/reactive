@@ -1,4 +1,4 @@
-import type { RequiredBy, UnionLooseOmit } from './utils'
+import type { RequiredBy, UnionLooseOmit } from './utils.js'
 
 export type QueryParameter<
   queryFnData = unknown,

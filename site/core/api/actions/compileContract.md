@@ -81,5 +81,12 @@ Compiler instance to use for compilation.
 import type { CompileContractErrorType } from '@growae/reactive'
 ```
 
-- `CompilationError` — Sophia source code has errors
-- `CompilerNotAvailableError` — compiler instance is not reachable
+`CompileContractErrorType` names its one concrete class:
+
+- `CompileContractNoCompilerError` — `onCompiler` was not passed
+
+Everything else comes from the compiler you pass in, unwrapped: a Sophia syntax
+or type error arrives as the compiler's own rejection from
+`compileBySourceCode`, not as a Reactive error class. `compileContract` does not
+read the config — it resolves no network and needs no connected account — so it
+raises no configuration or connection error at all.

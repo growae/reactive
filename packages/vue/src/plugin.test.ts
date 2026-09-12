@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest'
 import { createApp, defineComponent, inject } from 'vue'
-import { configKey, ReactivePlugin } from './plugin'
+import { configKey, ReactivePlugin } from './plugin.js'
 
 function createMockConfig() {
   return {

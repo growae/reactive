@@ -1,4 +1,5 @@
 import {
+  ConnectorAccountUnavailableError,
   ConnectorNotConnectedError,
   createConnector,
   NetworkNotConfiguredError,
@@ -43,6 +44,25 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
     if (typeof window === 'undefined' || !(window as any).ethereum)
       throw new ProviderNotFoundError()
     return (window as any).ethereum as EthereumProvider
+  }
+
+  /**
+   * A named account is served only when it is the one the snap derived.
+   *
+   * `currentAccounts` holds exactly the address at `accountIndex`, so there is
+   * no other derivation path to resolve to. Signing from the configured path
+   * anyway would hand back a valid signature attributed to an account the
+   * caller never named — the wrong sender on a transaction, the wrong signer on
+   * a message — so an account this snap is not configured for throws instead.
+   */
+  function assertCanSignFor(onAccount: string | undefined, name: string) {
+    if (onAccount == null) return
+    if (currentAccounts.indexOf(onAccount) === -1) {
+      throw new ConnectorAccountUnavailableError({
+        connectorName: name,
+        account: onAccount,
+      })
+    }
   }
 
   async function invokeSnap<R>(
@@ -132,8 +152,9 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
       return network
     },
 
-    async signTransaction({ tx, networkId, innerTx }) {
+    async signTransaction({ tx, networkId, innerTx, onAccount }) {
       if (!provider || !connected) throw new ConnectorNotConnectedError()
+      assertCanSignFor(onAccount, this.name)
       return invokeSnap<string>(
         'signTransaction',
         {
@@ -146,8 +167,9 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
       )
     },
 
-    async signMessage({ message }) {
+    async signMessage({ message, onAccount }) {
       if (!provider || !connected) throw new ConnectorNotConnectedError()
+      assertCanSignFor(onAccount, this.name)
       const signature = await invokeSnap<string>(
         'signMessage',
         {

@@ -6,11 +6,13 @@ import prompts from 'prompts'
 
 import { type Framework, frameworks } from './frameworks'
 import {
+  applyUuidOverride,
   copy,
   emptyDir,
   formatTargetDir,
   isEmpty,
   isValidPackageName,
+  type PkgManager,
   pkgFromUserAgent,
   satisfiesEngineRange,
   toValidPackageName,
@@ -154,7 +156,6 @@ export async function createReactive(
   const template: string = variant || framework?.name || argTemplate
 
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
-  type PkgManager = 'bun' | 'npm' | 'pnpm' | 'yarn'
   let pkgManager: PkgManager
   if (options.bun) pkgManager = 'bun'
   else if (options.npm) pkgManager = 'npm'
@@ -187,7 +188,10 @@ export async function createReactive(
 
   pkg.name = packageName || getProjectName()
 
+  const pnpmWorkspaceYaml = applyUuidOverride(pkg, pkgManager)
+
   write('package.json', `${JSON.stringify(pkg, null, 2)}\n`)
+  if (pnpmWorkspaceYaml) write('pnpm-workspace.yaml', pnpmWorkspaceYaml)
 
   const engines = pkg.engines as Record<string, string> | undefined
   const requiredNpmRange = engines?.npm

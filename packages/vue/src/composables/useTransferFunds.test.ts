@@ -20,7 +20,7 @@ vi.mock('./useConfig.js', () => ({
   useConfig: vi.fn(() => ({})),
 }))
 
-import { useTransferFunds } from './useTransferFunds'
+import { useTransferFunds } from './useTransferFunds.js'
 
 describe('useTransferFunds', () => {
   it('should be a function', () => {

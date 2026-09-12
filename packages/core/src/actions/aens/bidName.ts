@@ -1,7 +1,8 @@
-import { Name } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../../constants'
-import type { Config } from '../../createConfig'
-import { BaseError } from '../../errors/base'
+import { ensureName, Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants.js'
+import type { Config } from '../../createConfig.js'
+import { BaseError } from '../../errors/base.js'
+import { connectorAccount } from '../../utils/connectorAccount.js'
 
 export type BidNameParameters = {
   name: string
@@ -36,14 +37,21 @@ export async function bidName(
     throw new BidNameNoAccountError()
   }
 
-  const nameInstance = new Name(name as any, {
+  ensureName(name)
+
+  const nameInstance = new Name(name, {
     onNode: node,
-    onAccount: connection.activeAccount as any,
+    onAccount: connectorAccount(connection),
   })
 
+  // `ttl` reaches the transaction builder and the NameClaimTx schema at
+  // runtime, but not through the published type: the sdk derives its name
+  // option types with `Omit` over the `TxParamsAsync` union, and `Omit` on a
+  // union keeps only the keys every member shares, which `ttl` is not. The cast
+  // is narrowed to that one option type rather than `any`.
   const result = await nameInstance.bid(nameFee.toString(), {
     ttl: ttl ?? DEFAULT_TTL,
-  } as any)
+  } as Parameters<Name['bid']>[1])
 
   return {
     txHash: result.hash,

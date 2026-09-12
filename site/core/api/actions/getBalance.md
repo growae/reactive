@@ -21,23 +21,17 @@ const balance = await getBalance(config, {
 ## Return Type
 
 ```typescript
-type GetBalanceReturnType = {
-  aettos: bigint
-  ae: string
-}
+type GetBalanceReturnType = string
 ```
 
-### aettos
+The balance as a decimal string, in the unit `format` asked for — aettos by
+default (smallest unit, 1 AE = 10^18 aettos), AE when `format: 'ae'`, where the
+fractional part is written out and trailing zeros are trimmed (`'1.5'`, `'2'`).
 
-- **Type:** `bigint`
-
-Balance in aettos (smallest unit, 1 AE = 10^18 aettos).
-
-### ae
-
-- **Type:** `string`
-
-Balance formatted in AE as a decimal string.
+It is a single string, not an object and not a `bigint`. There is no `aettos`
+or `ae` field to destructure; call the action twice, or convert the aettos form
+yourself with `BigInt(balance)`. An address the node has never seen answers
+`'0'`.
 
 ## Parameters
 
@@ -55,11 +49,24 @@ The account address (`ak_...`) to query.
 
 Target network. Defaults to the currently active network.
 
+### format
+
+- **Type:** `'ae' | 'aettos'`
+- **Default:** `'aettos'`
+
+Unit the balance is returned in.
+
 ## Error Types
 
 ```typescript
 import type { GetBalanceErrorType } from '@growae/reactive'
 ```
 
-- `NetworkNotConfiguredError` — target network is not in the config
-- `NodeRequestError` — the node returned an error
+`GetBalanceErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at the
+type level. What the action raises:
+
+- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
+- The `@aeternity/aepp-sdk` node error, unwrapped, for any node failure other than a 404
+
+A 404 is not a failure here. An address the node has never seen has no account
+entry, and `getBalance` answers `'0'` rather than throwing.

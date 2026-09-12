@@ -1,7 +1,8 @@
-import { Name } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../../constants'
-import type { Config } from '../../createConfig'
-import { BaseError } from '../../errors/base'
+import { Encoding, ensureEncoded, ensureName, Name } from '@aeternity/aepp-sdk'
+import { DEFAULT_TTL } from '../../constants.js'
+import type { Config } from '../../createConfig.js'
+import { BaseError } from '../../errors/base.js'
+import { connectorAccount } from '../../utils/connectorAccount.js'
 
 export type TransferNameParameters = {
   name: string
@@ -36,17 +37,22 @@ export async function transferName(
     throw new TransferNameNoAccountError()
   }
 
-  const nameInstance = new Name(name as any, {
+  ensureName(name)
+  ensureEncoded(recipient, Encoding.AccountAddress)
+
+  const nameInstance = new Name(name, {
     onNode: node,
-    onAccount: connection.activeAccount as any,
+    onAccount: connectorAccount(connection),
   })
 
-  const result = await nameInstance.transfer(
-    recipient as any,
-    {
-      ttl: ttl ?? DEFAULT_TTL,
-    } as any,
-  )
+  // `ttl` reaches the transaction builder and the NameTransferTx schema at
+  // runtime, but not through the published type: the sdk derives its name
+  // option types with `Omit` over the `TxParamsAsync` union, and `Omit` on a
+  // union keeps only the keys every member shares, which `ttl` is not. The cast
+  // is narrowed to that one option type rather than `any`.
+  const result = await nameInstance.transfer(recipient, {
+    ttl: ttl ?? DEFAULT_TTL,
+  } as Parameters<Name['transfer']>[1])
 
   return {
     txHash: result.hash,

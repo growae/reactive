@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { queryOracleMutationOptions } from './queryOracle'
+import { queryOracleMutationOptions } from './queryOracle.js'
 
 describe('queryOracleMutationOptions', () => {
   it('should be a function', () => {

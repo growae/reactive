@@ -7,11 +7,11 @@ import {
   type GetBalanceReturnType,
   getBalance,
 } from '@growae/reactive'
-import type { ConfigParameter } from '../types/properties'
-import { type UseQueryReturnType, useQuery } from '../utils/query'
-import { useActiveAccount } from './useActiveAccount'
-import { useConfig } from './useConfig'
-import { useNetworkId } from './useNetworkId'
+import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
+import { useActiveAccount } from './useActiveAccount.js'
+import { useConfig } from './useConfig.js'
+import { useNetworkId } from './useNetworkId.js'
 
 export type UseBalanceParameters = Compute<
   Omit<GetBalanceParameters, 'address'> &

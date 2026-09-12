@@ -1,7 +1,7 @@
-import type { Emitter } from '../createEmitter'
-import type { Storage } from '../createStorage'
-import type { Network } from '../types/network'
-import type { Compute } from '../types/utils'
+import type { Emitter } from '../createEmitter.js'
+import type { Storage } from '../createStorage.js'
+import type { Network } from '../types/network.js'
+import type { Compute } from '../types/utils.js'
 
 export type ConnectorEventMap = {
   change: {
@@ -50,9 +50,33 @@ export type CreateConnectorFn<
       tx: string
       networkId: string
       innerTx?: boolean | undefined
+      /**
+       * The account the transaction was built for.
+       *
+       * Optional, so an implementation written before this parameter existed
+       * stays type-compatible and keeps signing with whichever account it
+       * considers active. When it is present the connector must sign with
+       * exactly that account or throw `ConnectorAccountUnavailableError` — it
+       * must never fall back to another one. A transaction built for one
+       * account and signed by another either fails at the node with a bare
+       * signature error or, worse, succeeds and moves the wrong account's
+       * funds.
+       */
+      onAccount?: string | undefined
     }): Promise<string>
     signMessage?(params: {
       message: string
+      /**
+       * The account the message is to be signed by.
+       *
+       * Optional, so an implementation written before this parameter existed
+       * stays type-compatible. When it is present the connector must sign with
+       * exactly that account or throw `ConnectorAccountUnavailableError` — it
+       * must never fall back to another one. A message signed by an account
+       * the caller did not name is a valid signature that verifies against the
+       * wrong address, so the caller's check fails downstream with nothing
+       * pointing at the connector that mis-signed it.
+       */
       onAccount?: string | undefined
     }): Promise<string>
 

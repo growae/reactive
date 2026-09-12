@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { transferFundsMutationOptions } from './transferFunds'
+import { transferFundsMutationOptions } from './transferFunds.js'
 
 describe('transferFundsMutationOptions', () => {
   it('should be a function', () => {

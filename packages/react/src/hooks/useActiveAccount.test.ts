@@ -3,8 +3,8 @@ import { createConfig, mainnet, mock } from '@growae/reactive'
 import { renderHook } from '@testing-library/react'
 import { createElement } from 'react'
 import { describe, expect, it } from 'vitest'
-import { ReactiveProvider } from '../context'
-import { useActiveAccount } from './useActiveAccount'
+import { ReactiveProvider } from '../context.js'
+import { useActiveAccount } from './useActiveAccount.js'
 
 function createWrapper(config: ReturnType<typeof createConfig>) {
   return ({ children }: { children: React.ReactNode }) =>

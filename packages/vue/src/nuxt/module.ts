@@ -15,7 +15,12 @@ export default defineNuxtModule<ReactiveNuxtOptions>({
     name: '@growae/reactive-vue/nuxt',
     configKey: 'reactive',
     compatibility: {
-      nuxt: '>=3.0.0',
+      // Upper bound is the majors the Vue Nuxt Compat gate actually builds
+      // against. An open `>=` re-vouches for the next major the day it
+      // publishes, with nobody deciding it; the cap makes that a decision
+      // with a gate behind it. The floor stays at 3.0.0 deliberately — the
+      // four kit entry points used here have been stable since 3.0.0.
+      nuxt: '>=3.0.0 <5.0.0',
     },
   },
   defaults: {

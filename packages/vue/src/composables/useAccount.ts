@@ -6,11 +6,11 @@ import type {
 } from '@growae/reactive'
 import { getAccount } from '@growae/reactive'
 import { computed } from 'vue'
-import type { ConfigParameter } from '../types/properties'
-import { type UseQueryReturnType, useQuery } from '../utils/query'
-import { useActiveAccount } from './useActiveAccount'
-import { useConfig } from './useConfig'
-import { useNetworkId } from './useNetworkId'
+import type { ConfigParameter } from '../types/properties.js'
+import { type UseQueryReturnType, useQuery } from '../utils/query.js'
+import { useActiveAccount } from './useActiveAccount.js'
+import { useConfig } from './useConfig.js'
+import { useNetworkId } from './useNetworkId.js'
 
 export type UseAccountParameters = Compute<
   Omit<GetAccountParameters, 'address'> & {

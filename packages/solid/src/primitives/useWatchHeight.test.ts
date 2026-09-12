@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { useWatchHeight } from './useWatchHeight'
+import { useWatchHeight } from './useWatchHeight.js'
 
 describe('useWatchHeight', () => {
   it('should be a function', () => {

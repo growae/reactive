@@ -4,8 +4,8 @@ import {
   type VerifyTypedDataParameters,
   type VerifyTypedDataReturnType,
   verifyTypedData,
-} from '../actions/verifyTypedData'
-import type { Config } from '../createConfig'
+} from '../actions/verifyTypedData.js'
+import type { Config } from '../createConfig.js'
 
 export function verifyTypedDataMutationOptions(config: Config) {
   return {

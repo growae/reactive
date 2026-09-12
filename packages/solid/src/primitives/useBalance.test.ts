@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { createComponent } from 'solid-js'
 import { renderToStringAsync } from 'solid-js/web'
 import { describe, expect, it, vi } from 'vitest'
-import { useBalance } from './useBalance'
+import { useBalance } from './useBalance.js'
 
 function createMockConfig() {
   return {
