@@ -41,6 +41,17 @@ jobs:
       - name: Verify the built package imports under Node
         run: pnpm --filter @growae/reactive run test:node-resolution
 
+      # `changeset publish` tags every package it publishes with
+      # `git tag <tag> -m <tag>` (@changesets/git 4.0.0) — an annotated tag, which
+      # needs a committer identity. `actions/checkout` configures none, changesets
+      # discards `tag()`'s return value, and the result is a successful publish with
+      # no tags at all: the 0.1.0 run reached the registry and then failed on the
+      # tripwire below. Fleet identity, set here and not as a commit trailer.
+      - name: Configure git identity
+        run: |
+          git config user.name "Badi Ifaoui"
+          git config user.email "badi.ifaoui@zixdev.com"
+
       # Pinned to @changesets/cli 3.0.1. Two behaviours are relied on, neither of
       # them log prose: a non-zero exit means nothing reached the registry, and a
       # successful publish creates one local git tag per published package. The
@@ -79,7 +90,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # changesets creates lightweight tags, which `git push --follow-tags` ignores.
+      # changesets creates annotated tags, one per published package, and they point
+      # at a commit that is already on the remote — nothing else in this job pushes,
+      # so there is no `--follow-tags` to carry them. Push exactly the tags this run
+      # created, by name.
       - name: Push tags
         if: steps.publish.outputs.result == 'published'
         shell: bash
