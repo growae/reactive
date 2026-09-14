@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@growae/reactive": "workspace:*",
-    "use-sync-external-store": "^1.4.0"
+    "use-sync-external-store": "^1.7.0"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.0.0 <6.0.0",
@@ -40,10 +40,10 @@
   "devDependencies": {
     "@tanstack/react-query": "^5.102.8",
     "@testing-library/react": "^16.3.3",
-    "@types/react": "^19.2.18",
+    "@types/react": "^19.3.0",
     "jsdom": "^30.0.1",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "publishConfig": {
     "access": "public"
