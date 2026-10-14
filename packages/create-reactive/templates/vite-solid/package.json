@@ -9,12 +9,12 @@
   },
   "dependencies": {
     "@growae/reactive-solid": "latest",
-    "@tanstack/solid-query": "^5.102.8",
-    "solid-js": "^1.9.15"
+    "@tanstack/solid-query": "^5.104.1",
+    "solid-js": "^1.9.17"
   },
   "devDependencies": {
     "typescript": "^7.0.2",
-    "vite": "^8.2.2",
+    "vite": "^8.3.4",
     "vite-plugin-solid": "^2.11.14"
   }
 }
