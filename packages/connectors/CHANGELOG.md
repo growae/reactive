@@ -1,5 +1,16 @@
 # @growae/reactive-connectors
 
+## 0.2.0
+
+### Minor Changes
+
+- Ship the SDK-free Rust transaction core with a smaller public API. The JS toolkit uses fetch for node reads and ships the WASM asset with the core package. The memory connector uses Rust for AE-framed signatures. Generic transaction building now takes explicit wire fields. Higher-level Sophia, oracle, state-channel and SDK-dependent wallet APIs stay on the 0.1 line. See the site migration guide for supported entry points. React adds useSwitchConnection, useMicroBlockTransactionCount and useTransactionConfirmations.
+
+### Patch Changes
+
+- Updated dependencies
+  - @growae/reactive@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

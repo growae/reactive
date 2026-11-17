@@ -1,10 +1,10 @@
-import { type AccountBase, MemoryAccount } from '@aeternity/aepp-sdk'
-
+import { canonicalAci, wireDomain } from '../actions/typedData.js'
 import {
   ConnectorNotConnectedError,
   NetworkNotConfiguredError,
 } from '../errors/config.js'
 import { ConnectorAccountUnavailableError } from '../errors/connector.js'
+import { loadProtocol } from '../exports/protocol.js'
 import { createConnector } from './createConnector.js'
 
 export type MemoryParameters = {
@@ -15,10 +15,12 @@ export type MemoryParameters = {
 memory.type = 'memory' as const
 
 export function memory(parameters: MemoryParameters) {
-  type Provider = AccountBase
+  type Provider = { address: string }
+  type Account = Provider & { secretKey: string }
 
   let connected = false
-  let accounts: MemoryAccount[] = []
+  let activeNetwork: string | undefined
+  let accounts: Account[] = []
 
   const connectorName = parameters.name ?? 'Memory Account'
 
@@ -31,7 +33,7 @@ export function memory(parameters: MemoryParameters) {
    * signature attributed to somebody else: the wrong sender on a transaction,
    * the wrong signer on a message.
    */
-  function accountFor(onAccount: string | undefined): MemoryAccount {
+  function accountFor(onAccount: string | undefined): Account {
     if (onAccount == null) return accounts[0]!
     const account = accounts.find((a) => a.address === onAccount)
     if (!account) {
@@ -48,18 +50,20 @@ export function memory(parameters: MemoryParameters) {
     name: connectorName,
     type: memory.type,
 
-    async setup() {
-      accounts = parameters.accounts.map(
-        (a) => new MemoryAccount(a.secretKey as `sk_${string}`),
-      )
-    },
-
     async connect({ networkId } = {}) {
       const targetNetworkId = networkId ?? config.networks[0].id
 
       const isConfigured = config.networks.some((n) => n.id === targetNetworkId)
       if (!isConfigured) throw new NetworkNotConfiguredError()
 
+      const { keys } = await loadProtocol()
+      accounts = parameters.accounts.map(({ secretKey }) => ({
+        secretKey,
+        address: keys.addressFromSecret(secretKey),
+      }))
+      if (!accounts.length)
+        throw new Error('A memory connector requires an account')
+      activeNetwork = targetNetworkId
       connected = true
       return {
         accounts: accounts.map((a) => a.address),
@@ -77,11 +81,12 @@ export function memory(parameters: MemoryParameters) {
     },
 
     async getNetworkId() {
-      return config.networks[0].id
+      return activeNetwork ?? config.networks[0].id
     },
 
     async getProvider() {
-      return accounts[0]!
+      if (!connected) throw new ConnectorNotConnectedError()
+      return { address: accounts[0]!.address }
     },
 
     async isAuthorized() {
@@ -91,23 +96,44 @@ export function memory(parameters: MemoryParameters) {
     async switchNetwork({ networkId }) {
       const network = config.networks.find((n) => n.id === networkId)
       if (!network) throw new NetworkNotConfiguredError()
+      activeNetwork = networkId
       config.emitter.emit('change', { networkId })
       return network
     },
 
     async signTransaction({ tx, networkId, innerTx, onAccount }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      return accountFor(onAccount).signTransaction(tx as `tx_${string}`, {
+      const { keys, encoding, tx: transactions } = await loadProtocol()
+      const signature = keys.signTransaction(
+        accountFor(onAccount).secretKey,
+        tx,
         networkId,
-        innerTx,
-      })
+        innerTx ?? false,
+      )
+      return transactions.wrapSigned([encoding.decode(signature)], tx)
     },
 
     async signMessage({ message, onAccount }) {
       if (!connected) throw new ConnectorNotConnectedError()
-      const encoded = new TextEncoder().encode(message)
-      const signature = await accountFor(onAccount).sign(encoded)
-      return Buffer.from(signature).toString('hex')
+      const { keys, encoding } = await loadProtocol()
+      const signature = keys.signMessage(
+        accountFor(onAccount).secretKey,
+        message,
+      )
+      return Array.from(encoding.decode(signature), (byte) =>
+        byte.toString(16).padStart(2, '0'),
+      ).join('')
+    },
+
+    async signTypedData({ data, aci, domain, onAccount }) {
+      if (!connected) throw new ConnectorNotConnectedError()
+      const { typedData } = await loadProtocol()
+      return typedData.sign(
+        accountFor(onAccount).secretKey,
+        data,
+        canonicalAci(aci),
+        wireDomain(domain),
+      )
     },
 
     onAccountsChanged(accounts) {
@@ -116,6 +142,7 @@ export function memory(parameters: MemoryParameters) {
     },
 
     onNetworkChanged(networkId) {
+      activeNetwork = networkId
       config.emitter.emit('change', { networkId })
     },
 

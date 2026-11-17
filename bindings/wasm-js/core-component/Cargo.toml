@@ -8,6 +8,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
+ae-fate = { path = "../../../crates/ae-fate" }
 ae-core = { path = "../../../crates/ae-core" }
 num-bigint = "0.5"
 wit-bindgen-rt = { version = "0.44", features = ["bitflags"] }

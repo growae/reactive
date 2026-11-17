@@ -94,7 +94,7 @@ nothing pointing back at the connector that mis-signed it.
 The rule is the same on both methods, and a connector that enforces it on one
 and not the other is the shape this obligation exists to prevent. A connector
 that cannot serve the named account — one bound to a single derivation path or
-device index, as `ledger` and `metamaskSnap` are — throws for any other account
+device index, as `metamaskSnap` is — throws for any other account
 rather than signing from the one it has.
 
 Core passes the account it built for, which is `activeAccount` on the
@@ -114,10 +114,10 @@ Connectors emit events via the `config.emitter`:
 | `change` | `{ accounts?, networkId? }` | Account or network changed |
 | `error` | `Error` | Connector error |
 
-## Built-in Connectors
+## Included connectors
 
 | Connector | Description |
-|-----------|-------------|
-| `superhero()` | Superhero Wallet (browser extension + deeplink) |
-| `iframe()` | Iframe-based wallet communication |
-| `mock()` | Testing connector with configurable accounts |
+|---|---|
+| `metamaskSnap()` | Connect through MetaMask Snap. |
+| `memory()` | Sign locally through the Rust protocol core. |
+| `mock()` | Exercise connection flows in tests. |

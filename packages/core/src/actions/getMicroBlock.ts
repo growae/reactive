@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
 
 export type GetMicroBlockParameters = {
   hash: string
@@ -27,7 +27,9 @@ export async function getMicroBlock(
   parameters: GetMicroBlockParameters,
 ): Promise<GetMicroBlockReturnType> {
   const { hash } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   const [header, txs] = await Promise.all([
     node.getMicroBlockHeaderByHash(hash),

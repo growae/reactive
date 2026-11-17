@@ -1,6 +1,6 @@
 # useSpend
 
-Hook for sending AE tokens to a recipient.
+Send AE to a recipient. Provide the amount in aettos. The action builds and prices the transaction with Rust, asks the selected connector to sign, and submits the signed bytes to the node.
 
 ## Import
 
@@ -22,7 +22,7 @@ function SendAE() {
         onClick={() =>
           spend({
             recipient: 'ak_2dA...',
-            amount: '1.5',
+            amount: 1500000000000000000n,
           })
         }
         disabled={isPending}
@@ -53,10 +53,10 @@ Key parameters:
 |-----------|------|---------|-------------|
 | `recipient` | `string` | — | Required. Recipient address or AENS name. |
 | `amount` | `bigint \| string` | — | Required. Amount to send. |
-| `ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
+| `options.ttl` | `number` | current height + 300 | Transaction absolute expiry height. Use `0` for no expiry. |
 
 ::: tip Default TTL
-All transactions default to a TTL of 300 blocks (~15 hours). This prevents stale transactions from lingering indefinitely. Override with `ttl: 0` for no expiration.
+Spends default to an expiry 300 key blocks after the current height. Pass `options: { ttl: 0 }` to disable expiry.
 :::
 
 ### mutation

@@ -1,6 +1,6 @@
 {
   "name": "@growae/reactive",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "type": "module",
   "main": "dist/esm/exports/index.js",
@@ -31,7 +31,11 @@
       "types": "./dist/types/exports/internal.d.ts",
       "default": "./dist/esm/exports/internal.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./protocol": {
+      "types": "./dist/types/exports/protocol.d.ts",
+      "default": "./dist/esm/exports/protocol.js"
+    }
   },
   "scripts": {
     "build": "pnpm run build:esm+types",
@@ -40,12 +44,13 @@
     "clean": "rm -rf dist",
     "check:types": "tsc --noEmit",
     "test:node-resolution": "node scripts/test-node-resolution.mjs",
-    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch"
+    "dev": "tsc --project tsconfig.build.json --outDir ./dist/esm --declaration --declarationMap --declarationDir ./dist/types --watch",
+    "prebuild": "pnpm run clean"
   },
   "dependencies": {
-    "@aeternity/aepp-sdk": "^14.0.0",
     "eventemitter3": "^5.0.0",
-    "zustand": "^5.0.15"
+    "zustand": "^5.0.15",
+    "json-bigint": "^1.0.0"
   },
   "peerDependencies": {
     "@growae/reactive-connectors": "workspace:*",
@@ -64,9 +69,17 @@
     }
   },
   "devDependencies": {
-    "@tanstack/query-core": "^5.102.8"
+    "@tanstack/query-core": "^5.102.8",
+    "@types/json-bigint": "^1.0.4"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "imports": {
+    "#ae-protocol": "./protocol-generated/core-harness.js"
+  },
+  "files": [
+    "dist",
+    "protocol-generated"
+  ]
 }

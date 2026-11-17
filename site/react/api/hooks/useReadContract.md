@@ -1,46 +1,12 @@
 # useReadContract
 
-Hook for reading Sophia contract state via dry-run (no transaction, no fees).
-
-## Import
-
-```typescript
-import { useReadContract } from '@growae/reactive-react'
-```
-
-## Usage
+Execute a Sophia read through the node’s dry-run endpoint.
 
 ```tsx
 import { useReadContract } from '@growae/reactive-react'
 
-function TokenBalance() {
-  const { data: balance } = useReadContract({
-    address: 'ct_token...',
-    aci: tokenAci,
-    fn: 'balance',
-    args: ['ak_owner...'],
-  })
-
-  return <div>Token balance: {balance?.toString()}</div>
-}
+// Inside a React component
+const result = useReadContract({ address: contract, function: 'balance', args: [{ address: owner }] })
 ```
 
-## Return Type
-
-See [TanStack Query query docs](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery) for full return type.
-
-### data
-
-The return type depends on the contract function's Sophia return type.
-
-## Parameters
-
-See [`readContract` Parameters](/core/api/actions/readContract#parameters).
-
-### query
-
-See [TanStack Query query docs](https://tanstack.com/query/v5/docs/framework/react/reference/useQuery) for query options.
-
-## Action
-
-- [`readContract`](/core/api/actions/readContract)
+Pass `function` and FATE `args`, or pre-encoded `callData`. `top` pins a block hash. The query returns the encoded `cb_` result. Use `decodeContractValue` from core to recover its wire value. Reverts reject the query.

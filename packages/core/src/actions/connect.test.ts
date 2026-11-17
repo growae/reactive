@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@aeternity/aepp-sdk', () => ({
-  Node: vi.fn().mockImplementation(() => ({})),
+vi.mock('../node.js', () => ({
+  NodeClient: vi.fn().mockImplementation(() => ({})),
 }))
 
 import { mock } from '../connectors/mock.js'

@@ -66,7 +66,7 @@ import type { GetBalanceErrorType } from '@growae/reactive'
 type level. What the action raises:
 
 - `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
-- The `@aeternity/aepp-sdk` node error, unwrapped, for any node failure other than a 404
+- A `NodeRequestError`, for any node failure other than a 404
 
 A 404 is not a failure here. An address the node has never seen has no account
 entry, and `getBalance` answers `'0'` rather than throwing.

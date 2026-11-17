@@ -88,7 +88,7 @@ jobs:
         with:
           working-directory: bindings/python
           target: ${{ matrix.target }}
-          args: --release --out dist
+          args: --locked --release --out dist
           manylinux: ${{ matrix.manylinux || 'auto' }}
 
       - uses: actions/upload-artifact@v7
@@ -97,9 +97,12 @@ jobs:
           path: bindings/python/dist/*.whl
 
   test:
-    name: Test
+    name: Test wheel on ${{ matrix.os }}
     needs: check
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
@@ -115,7 +118,7 @@ jobs:
       # Not `maturin develop`: that needs an active virtualenv to install
       # into, and a bare `actions/setup-python` runner has none. Build the
       # wheel and install it the same way a real consumer would.
-      - run: maturin build --release --out dist
+      - run: maturin build --locked --release --out dist
 
       - run: pip install dist/*.whl
 

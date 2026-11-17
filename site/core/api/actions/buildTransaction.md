@@ -1,61 +1,17 @@
 # buildTransaction
 
-Builds an unsigned transaction.
+Build an unsigned `tx_` transaction offline using the Rust protocol core. The builder accepts a schema tag name, an optional schema version, and typed fields. Supply the nonce and any height-dependent inputs. For a fee-bearing transaction, omitting the fee asks Rust to calculate the protocol minimum.
 
-## Import
+```ts
+import { buildTransaction, type TransactionField } from '@growae/reactive/actions'
 
-```typescript
-import { buildTransaction } from '@growae/reactive/actions'
+const fields: TransactionField[] = [
+    { key: 'senderId', value: { tag: 'encoded', val: sender } },
+    { key: 'recipientId', value: { tag: 'encoded', val: recipient } },
+    { key: 'amount', value: { tag: 'uint', val: '1000000000000000000' } },
+    { key: 'nonce', value: { tag: 'uint', val: '1' } },
+ ]
+const tx = await buildTransaction(config, { tag: 'SpendTx', fields })
 ```
 
-## Usage
-
-```typescript
-import { buildTransaction } from '@growae/reactive/actions'
-import { Tag } from '@aeternity/aepp-sdk'
-
-const unsignedTx = await buildTransaction(config, {
-  tag: Tag.SpendTx,
-  senderId: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
-  recipientId: 'ak_recipient...',
-  amount: 1000000000000000000n,
-})
-```
-
-## Return Type
-
-```typescript
-type BuildTransactionReturnType = string
-```
-
-The unsigned transaction as an RLP-encoded string.
-
-## Parameters
-
-### tag
-
-- **Type:** `Tag`
-- **Required**
-
-Transaction type tag (e.g. `Tag.SpendTx`, `Tag.ContractCallTx`).
-
-### networkId
-
-- **Type:** `string`
-- **Optional**
-
-Target network. Defaults to the currently active network.
-
-Additional fields are required depending on the transaction type specified by `tag`.
-
-## Error Types
-
-```typescript
-import type { BuildTransactionErrorType } from '@growae/reactive'
-```
-
-`BuildTransactionErrorType` is `BaseErrorType | ErrorType` — a plain `Error` at
-the type level. What the action raises:
-
-- `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
-- The `@aeternity/aepp-sdk` error, unwrapped, when `buildTxAsync` rejects — a missing or malformed field for the given `tag`, or a node request made while building
+Integer field values are decimal strings. The return value is an encoded transaction string. [Protocol types and migration](../../rust-protocol)

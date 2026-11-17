@@ -7,13 +7,13 @@ Reactive has first-class support for wallets with multiple accounts. The active 
 When a wallet connects with multiple accounts, `@growae/reactive` tracks which one is **active** (the account used for signing). The active account defaults to the first account provided by the wallet, and can change when:
 
 1. The user explicitly calls `switchActiveAccount`
-2. The wallet itself pushes an account change event (e.g. the user switches accounts in Superhero Wallet)
+2. The wallet itself pushes an account change event (e.g. the user switches accounts in the connected wallet)
 
 ## Concepts
 
 ### `activeAccount`
 
-Every `Connection` in state has an `activeAccount: string` field — the address currently selected for signing. All transaction actions (`spend`, `callContract`, etc.) use this address automatically.
+Every `Connection` in state has an `activeAccount: string` field — the address currently selected for signing. All transaction actions such as `spend` use this address automatically.
 
 ### `accounts`
 

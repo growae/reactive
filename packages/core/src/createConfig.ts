@@ -1,7 +1,5 @@
-import { Node } from '@aeternity/aepp-sdk'
 import { persist, subscribeWithSelector } from 'zustand/middleware'
 import { createStore, type Mutate, type StoreApi } from 'zustand/vanilla'
-
 import type {
   ConnectorEventMap,
   CreateConnectorFn,
@@ -13,6 +11,7 @@ import {
   type Storage,
 } from './createStorage.js'
 import { NetworkNotConfiguredError } from './errors/config.js'
+import { NodeClient } from './node.js'
 import type { Network } from './types/network.js'
 import type { Compute, ExactPartial, RemoveUndefined } from './types/utils.js'
 import { uid } from './utils/uid.js'
@@ -62,7 +61,6 @@ export function createConfig<
   }
 
   // Resolve relative URLs against window.location.origin in browser environments.
-  // aepp-sdk's Node constructor calls `new URL(nodeUrl)` which requires an absolute URL.
   function resolveNodeUrl(url: string): string {
     try {
       new URL(url)
@@ -78,10 +76,10 @@ export function createConfig<
   }
 
   // Node client pool, memoized by networkId
-  const nodeClients = new Map<string, Node>()
+  const nodeClients = new Map<string, NodeClient>()
   function getNodeClient(
     config: { networkId?: string | undefined } = {},
-  ): Node {
+  ): NodeClient {
     const networkId = config.networkId ?? store.getState().networkId
     const network = networks.getState().find((x) => x.id === networkId)
 
@@ -98,7 +96,7 @@ export function createConfig<
       if (client) return client
     }
 
-    const client = new Node(resolveNodeUrl(network.nodeUrl))
+    const client = new NodeClient(resolveNodeUrl(network.nodeUrl))
     nodeClients.set(networkId, client)
     return client
   }
@@ -282,9 +280,10 @@ export function createConfig<
           connection.connector.emitter.on('connect', connect)
       }
 
-      x.connections.delete(data.uid)
+      const connections = new Map(x.connections)
+      connections.delete(data.uid)
 
-      if (x.connections.size === 0)
+      if (connections.size === 0)
         return {
           ...x,
           connections: new Map(),
@@ -292,11 +291,14 @@ export function createConfig<
           status: 'disconnected',
         }
 
-      const nextConnection = x.connections.values().next().value as Connection
+      const nextConnection = connections.values().next().value as Connection
       return {
         ...x,
-        connections: new Map(x.connections),
-        current: nextConnection.connector.uid,
+        connections,
+        current:
+          x.current && connections.has(x.current)
+            ? x.current
+            : nextConnection.connector.uid,
       }
     })
   }
@@ -433,7 +435,7 @@ export type Config<
       | undefined,
   ): () => void
 
-  getNodeClient(parameters?: { networkId?: string | undefined }): Node
+  getNodeClient(parameters?: { networkId?: string | undefined }): NodeClient
 
   _internal: Internal<networks>
 }

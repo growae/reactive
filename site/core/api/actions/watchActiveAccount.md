@@ -43,7 +43,7 @@ Callback that fires whenever the active account changes. Both current and previo
 ### React to wallet-pushed account changes
 
 ```typescript
-// When Superhero Wallet switches the selected account, this fires automatically
+// When the wallet switches the selected account, this fires automatically
 const unwatch = watchActiveAccount(config, {
   onChange({ address, isConnected }) {
     if (isConnected) {

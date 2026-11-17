@@ -4,8 +4,8 @@ const { MockNode } = vi.hoisted(() => ({
   MockNode: vi.fn().mockImplementation((url: string) => ({ url })),
 }))
 
-vi.mock('@aeternity/aepp-sdk', () => ({
-  Node: MockNode,
+vi.mock('./node.js', () => ({
+  NodeClient: MockNode,
 }))
 
 import { mock } from './connectors/mock.js'

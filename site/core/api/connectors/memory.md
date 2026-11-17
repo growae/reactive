@@ -1,6 +1,6 @@
 # memory
 
-In-memory signing accounts backed by secret keys from `@aeternity/aepp-sdk` `MemoryAccount`.
+In-memory signing accounts backed by the Rust protocol core.
 
 ## Import
 

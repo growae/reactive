@@ -16,12 +16,12 @@ import { VueQueryPlugin } from '@tanstack/vue-query'
 import { ReactivePlugin } from '@growae/reactive-vue'
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 import App from './App.vue'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 
 const app = createApp(App)

@@ -58,6 +58,7 @@ const consumerDir = path.join(workDir, 'consumer')
 const SUBPATHS = [
   '@growae/reactive',
   '@growae/reactive/actions',
+  '@growae/reactive/protocol',
   '@growae/reactive/query',
   '@growae/reactive/networks',
   '@growae/reactive/connectors',
@@ -65,6 +66,7 @@ const SUBPATHS = [
   '@growae/reactive-connectors',
   '@growae/reactive-react',
   '@growae/reactive-react/query',
+  '@growae/reactive-react/codegen',
   '@growae/reactive-solid',
   '@growae/reactive-solid/query',
   '@growae/reactive-vue',
@@ -320,6 +322,13 @@ if (pinnedPackageManager !== `pnpm@${consumerPnpmVersion}`)
 // exercising the newer pnpm this change exists for.
 run('pnpm', ['install', '--ignore-scripts'], consumerDir)
 
+const installed = readdirSync(path.join(consumerDir, 'node_modules/.pnpm'))
+if (installed.some((name) => name.startsWith('@aeternity+aepp-sdk@'))) {
+  throw new Error(
+    'Packed Reactive packages pulled the legacy SDK into the consumer',
+  )
+}
+
 // Everything above is a way of ASKING for the tarballs. This is the part that
 // checks what was installed, and it trusts none of it: for every package, and
 // then for `@growae/reactive` as seen from inside each package that depends on
@@ -425,6 +434,10 @@ for (const subpath of SUBPATHS) {
         '--input-type=module',
         '-e',
         `const m = await import(${JSON.stringify(subpath)})
+         if (m.loadProtocol) {
+           const { hash } = await m.loadProtocol()
+           if (hash.blake2b256(new Uint8Array()).length !== 32) throw new Error('WASM hash failed')
+         }
          const n = Object.keys(m).length
          if (n === 0) throw new Error('resolved but exported nothing')
          console.log('  ' + ${JSON.stringify(subpath)} + ' -> ' + n + ' exports')`,
@@ -474,6 +487,14 @@ type NonEmpty<T> = keyof T extends never
   : true
 ${SUBPATHS.map((_, i) => `const _${i}: NonEmpty<typeof m${i}> = true`).join('\n')}
 export type Checked = [${SUBPATHS.map((_, i) => `typeof _${i}`).join(', ')}]
+
+import { loadProtocol } from '@growae/reactive/protocol'
+declare const protocol: Awaited<ReturnType<typeof loadProtocol>>
+const wireHash: string = protocol.tx.transactionHash('tx_example')
+import { createUseReadContract } from '@growae/reactive-react/codegen'
+const useBalanceOf = createUseReadContract({address:'ct_example',function:'balance'})
+export type GeneratedRead = ReturnType<typeof useBalanceOf>
+export type WireHash = typeof wireHash
 
 export type Config = m0.Config
 export type Connector = m0.Connector

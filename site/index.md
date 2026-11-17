@@ -10,20 +10,17 @@ hero:
       text: Get Started
       link: /react/getting-started
     - theme: alt
+      text: Rust protocol and migration
+      link: /core/rust-protocol
+    - theme: alt
       text: View on GitHub
       link: https://github.com/growae/reactive
 
 features:
-  - icon: ⚡
-    title: React, Vue & Solid
-    details: First-class support for all major frameworks. Use hooks, composables, or primitives — whichever fits your stack.
-  - icon: 🔒
-    title: Type Safe
-    details: Full TypeScript support with inferred types. Sophia contract ACIs are fully typed, and every action has typed parameters and return values.
-  - icon: 🔗
-    title: Aeternity Native
-    details: Built for AENS, Oracles, State Channels, and Sophia contracts. Not an EVM adapter — purpose-built for the Aeternity protocol.
-  - icon: 📦
-    title: Modular Architecture
-    details: Use only what you need. @growae/reactive works standalone, or pair it with @growae/reactive-react, @growae/reactive-vue, or @growae/reactive-solid.
+  - title: Shared Rust protocol
+    details: Build, sign, unpack, and hash æternity transactions in JavaScript, Python, and Dart.
+  - title: Framework adapters
+    details: Read network and wallet state from React, Vue, and Solid.
+  - title: Node reads
+    details: Query balances, key blocks, micro blocks, transactions and AENS pointers using the v3 node API.
 ---

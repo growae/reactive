@@ -1,3 +1,5 @@
+import type { CallGroup } from '../actions/calls.js'
+import type { AciJson, TypedDomain } from '../actions/typedData.js'
 import type { Emitter } from '../createEmitter.js'
 import type { Storage } from '../createStorage.js'
 import type { Network } from '../types/network.js'
@@ -80,6 +82,22 @@ export type CreateConnectorFn<
       onAccount?: string | undefined
     }): Promise<string>
 
+    signTypedData?(params: {
+      data: string
+      aci: AciJson
+      domain: TypedDomain
+      onAccount: string
+    }): Promise<string>
+    /** Optional wallet UI operations, invoked only by a user-triggered action. */
+    watchAsset?(parameters: {
+      token: string
+      networkId: string
+      onAccount: string
+    }): Promise<boolean>
+    showCallsStatus?(parameters: {
+      group: CallGroup
+      onAccount: string
+    }): Promise<void>
     onAccountsChanged(accounts: string[]): void
     onNetworkChanged(networkId: string): void
     onDisconnect(error?: Error | undefined): void

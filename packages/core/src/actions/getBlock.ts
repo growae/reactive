@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
 
 export type GetBlockParameters = {
   height?: number | undefined
@@ -17,7 +17,7 @@ export type GetBlockReturnType = {
   miner?: string
   beneficiary?: string
   target?: number
-  nonce?: number
+  nonce?: number | string
 }
 
 export type GetBlockErrorType = BaseErrorType | ErrorType
@@ -27,7 +27,9 @@ export async function getBlock(
   parameters: GetBlockParameters,
 ): Promise<GetBlockReturnType> {
   const { height, hash } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   let block: any
   if (hash != null) {

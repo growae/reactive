@@ -25,31 +25,31 @@ References: `@aeternity/aepp-sdk` 14.1.1, `@aeternity/aepp-calldata` 1.9.1.
 |---|---|---|---|---|---|---|---|---|---|
 | `SignedTx` | 1 | action | client | 2 | 2 | 2/2 | 2/2 | — | — |
 | `SpendTx` | 1 | action | client | 4 | 4 | 4/4 | 4/4 | — | **not exercised** |
-| `NamePreclaimTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `NameClaimTx` | 2 | action | client | 2 | 2 | 2/2 | 2/2 | 1 (ttl (Ttl)) | **not exercised** |
-| `NameUpdateTx` | 1 | action | client | 3 | 3 | 3/3 | 3/3 | — | **not exercised** |
-| `NameUpdateTx` | 2 | action | client | 2 | **1/2** | 2/2 | 2/2 | 3 (nameTtl (NameTtl), clientTtl (ShortUIntDefault), ttl (Ttl)) | **not exercised** |
-| `NameTransferTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `NameRevokeTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ContractCreateTx` | 1 | action | client | 2 | 2 | 2/2 | 2/2 | 1 (ttl (Ttl)) | **not exercised** |
-| `ContractCallTx` | 1 | action | client | 2 | 2 | 2/2 | 2/2 | 1 (ttl (Ttl)) | **not exercised** |
-| `OracleRegisterTx` | 1 | action | client | 2 | 2 | 2/2 | 2/2 | — | **not exercised** |
-| `OracleExtendTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | 3 (oracleTtlType (OracleTtlType), oracleTtlValue (ShortUIntDefault), ttl (Ttl)) | **not exercised** |
-| `OracleQueryTx` | 1 | action | client | 2 | 2 | 2/2 | 2/2 | — | **not exercised** |
-| `OracleRespondTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | 3 (responseTtlType (OracleTtlType), responseTtlValue (ShortUIntDefault), ttl (Ttl)) | **not exercised** |
-| `ChannelCreateTx` | 2 | action | node | 3 | **2/3** | 3/3 | 3/3 | — | **not exercised** |
-| `ChannelCloseMutualTx` | 1 | action | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelCloseSoloTx` | 1 | generic builder only | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelSlashTx` | 1 | generic builder only | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelDepositTx` | 1 | action | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelWithdrawTx` | 1 | action | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelSettleTx` | 1 | generic builder only | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelForceProgressTx` | 1 | generic builder only | node | 1 | **0/1** | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `ChannelOffChainTx` | 2 | action | node | 1 | 1 | 1/1 | 1/1 | — | — |
-| `ChannelSnapshotSoloTx` | 1 | generic builder only | node | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `GaAttachTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
-| `GaMetaTx` | 2 | action | client | 1 | 1 | 1/1 | 1/1 | — | **not exercised** |
-| `PayingForTx` | 1 | action | client | 1 | 1 | 1/1 | 1/1 | — | **not exercised** |
+| `NamePreclaimTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `NameClaimTx` | 2 | generic builder only | client | 2 | 2 | 2/2 | 2/2 | 1 (ttl (Ttl)) | **not exercised** |
+| `NameUpdateTx` | 1 | generic builder only | client | 3 | 3 | 3/3 | 3/3 | — | **not exercised** |
+| `NameUpdateTx` | 2 | generic builder only | client | 2 | **1/2** | 2/2 | 2/2 | 3 (nameTtl (NameTtl), clientTtl (ShortUIntDefault), ttl (Ttl)) | **not exercised** |
+| `NameTransferTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `NameRevokeTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ContractCreateTx` | 1 | generic builder only | client | 2 | 2 | 2/2 | 2/2 | 1 (ttl (Ttl)) | **not exercised** |
+| `ContractCallTx` | 1 | generic builder only | client | 2 | 2 | 2/2 | 2/2 | 1 (ttl (Ttl)) | **not exercised** |
+| `OracleRegisterTx` | 1 | generic builder only | client | 2 | 2 | 2/2 | 2/2 | — | **not exercised** |
+| `OracleExtendTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 3 (oracleTtlType (OracleTtlType), oracleTtlValue (ShortUIntDefault), ttl (Ttl)) | **not exercised** |
+| `OracleQueryTx` | 1 | generic builder only | client | 2 | 2 | 2/2 | 2/2 | — | **not exercised** |
+| `OracleRespondTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 3 (responseTtlType (OracleTtlType), responseTtlValue (ShortUIntDefault), ttl (Ttl)) | **not exercised** |
+| `ChannelCreateTx` | 2 | generic builder only | client | 3 | **2/3** | 3/3 | 3/3 | — | **not exercised** |
+| `ChannelCloseMutualTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelCloseSoloTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelSlashTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelDepositTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelWithdrawTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelSettleTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelForceProgressTx` | 1 | generic builder only | client | 1 | **0/1** | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `ChannelOffChainTx` | 2 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | — | — |
+| `ChannelSnapshotSoloTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `GaAttachTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | 1 (ttl (Ttl)) | **not exercised** |
+| `GaMetaTx` | 2 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | — | **not exercised** |
+| `PayingForTx` | 1 | generic builder only | client | 1 | 1 | 1/1 | 1/1 | — | **not exercised** |
 
 **Non-postable vectors.** Correct bytes, content a node refuses. Kept as encoding tests, excluded from the on-node clause, and re-measured on every on-node run — a marking nothing re-checks is a marking that rots.
 

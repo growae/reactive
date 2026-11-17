@@ -1,14 +1,6 @@
 package growae:core-harness;
 
-/// Shared shapes the other interfaces build on.
-///
-/// WIT has no recursive types — confirmed empirically, not assumed: a
-/// self-referential variant (`variant v { items(list<v>) }`) is rejected by
-/// `cargo component build` with "type `v` depends on itself". `ae_core::Value`
-/// is recursive (`List(Vec<Value>)`, `Tx(Box<TxParams>)`), so `field-value`
-/// below mirrors only its six non-recursive shapes. A nested transaction
-/// crosses the boundary as its own `tx_.../sg_...` string via `encoded`
-/// instead of nesting — call `tx.unpack` again to look inside it.
+/// Public transaction fields. Nested transactions cross as encoded tx_ strings.
 interface types {
   /// One AENS pointer: a schema key (e.g. `"account_pubkey"`) and its
   /// `xx_...`-encoded or `ba_...`-encoded target.
@@ -17,10 +9,13 @@ interface types {
     id: string,
   }
 
-  /// A transaction field's value. Six of `ae_core::tx::Value`'s eight shapes —
-  /// `List` and `Tx` are the two that recurse and are deliberately absent.
-  /// `uint` carries a decimal string: WIT has no bignum, and `ae_core` fields
-  /// go up to a 128-bit aetto amount.
+  /// The two repeated field types in the transaction schemas: delegate IDs and signatures.
+  variant list-item {
+    encoded(string),
+    bytes(list<u8>),
+  }
+
+  /// Integers cross as decimal strings to preserve amounts above 64 bits.
   variant field-value {
     uint(string),
     text(string),
@@ -28,6 +23,7 @@ interface types {
     bytes(list<u8>),
     ct-version(tuple<u8, u8>),
     pointers(list<pointer>),
+    items(list<list-item>),
   }
 
   /// One transaction field, by its schema name (e.g. `"senderId"`, `"amount"`).
@@ -84,21 +80,7 @@ interface keys {
   verify-message: func(message: string, signature: string, address: string) -> result<bool, string>;
 }
 
-/// `ae_core::tx` — `TxParams` ⇄ `tx_...`, over the tags a wallet-less caller
-/// actually drives.
-///
-/// Out of scope for this pass, and why: `SignedTx` is built and read through
-/// `wrap-signed`/`unpack-signed` below rather than through `build`/`unpack`,
-/// because its `signatures` field is `ae_core::tx::Value::List` — one of the
-/// two recursive shapes `field-value` leaves out. `ChannelCreateTx` (a
-/// repeated address list) and `ChannelCloseSoloTx`/`ChannelSlashTx` (a
-/// pre-serialised state-tree proof-of-inclusion) need shapes that belong to
-/// the state-trees workstream, not yet exposed here — the other seven Channel
-/// tags need only scalars and encoded strings and build normally. Every other
-/// one of the 26 tags — including `GaMetaTx`/`PayingForTx`, whose nested `tx`
-/// field is itself a `Transaction`-kind field and accepts a plain `encoded`
-/// `tx_...`/`sg_...` string on the wire — goes through `build`/`unpack`
-/// as-is.
+/// Transactions built and unpacked through ae-core.
 interface tx {
   use types.{tx-field};
 
@@ -108,6 +90,9 @@ interface tx {
   /// present — there is no fee model behind this boundary, so `fee` /
   /// `gasLimit` / `nameFee` are the caller's numbers, not computed here.
   build: func(tag: string, version: option<u32>, fields: list<tx-field>) -> result<string, string>;
+
+  /// Minimum fee in aettos under the current consensus protocol.
+  minimum-fee: func(tag: string, version: option<u32>, fields: list<tx-field>) -> result<string, string>;
 
   /// Parse a `tx_...` string back to its tag, version and fields. A nested
   /// transaction field (`GaMetaTx.tx`, `PayingForTx.tx`) comes back as its own
@@ -175,6 +160,26 @@ interface fee {
   is-auction-name: func(label-length: u32) -> bool;
 }
 
+/// Nested values cross the boundary as previously encoded FATE bytes.
+interface fate {
+  record variant-value { arities: list<u8>, index: u8, values: list<list<u8>> }
+  variant value {
+    integer(string), bits(string), boolean(bool), string-bytes(list<u8>),
+    sized-bytes(list<u8>), address(string), tuple-values(list<list<u8>>),
+    list-values(list<list<u8>>), pairs(list<tuple<list<u8>,list<u8>>>),
+    tagged(variant-value), raw(list<u8>),
+  }
+  encode-value: func(input: value) -> result<list<u8>,string>;
+  decode-value: func(input: list<u8>) -> result<value,string>;
+  encode-calldata: func(name:string, arguments:list<list<u8>>) -> result<string,string>;
+}
+
+interface typed-data {
+  record domain { name: option<string>, version: option<string>, network-id: option<string>, contract-address: option<string> }
+  sign: func(secret:string, data:string, canonical-aci:string, domain:domain) -> result<string,string>;
+  verify: func(address:string, signature:string, data:string, canonical-aci:string, domain:domain) -> result<bool,string>;
+}
+
 world harness {
   export encoding;
   export hash;
@@ -182,4 +187,6 @@ world harness {
   export tx;
   export aens;
   export fee;
+  export fate;
+  export typed-data;
 }

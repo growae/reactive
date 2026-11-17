@@ -29,13 +29,13 @@ pnpm add @growae/reactive-solid @tanstack/solid-query
 ```tsx
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 
 const queryClient = new QueryClient()
@@ -54,47 +54,32 @@ function App() {
 ### 3. Use Primitives
 
 ```tsx
-import { useConnect, useBalance } from '@growae/reactive-solid'
+import { useBalance, useConnect, useConnectors } from '@growae/reactive-solid'
+import { For } from 'solid-js'
 
 function Wallet() {
-  const { connect, connectors } = useConnect()
-  const balance = useBalance({ address: 'ak_2dA...' })
-
+  const connection = useConnect()
+  const connectors = useConnectors()
+  const balance = useBalance()
   return (
-    <div>
-      <For each={connectors()}>
-        {(connector) => (
-          <button onClick={() => connect({ connector })}>
-            {connector.name}
-          </button>
-        )}
-      </For>
-      <Show when={balance.data}>
-        <p>Balance: {balance.data.ae} AE</p>
-      </Show>
-    </div>
+    <section>
+      <For each={connectors()}>{connector =>
+        <button onClick={() => connection.mutate({ connector })}>{connector.name}</button>
+      }</For>
+      <p>{balance.data ?? '—'} aettos</p>
+    </section>
   )
 }
 ```
 
-## Default TTL
+## Transaction encoding
 
-All transaction primitives (`useSpend`, `useSendTransaction`, `useCallContract`, `useDeployContract`) default to a **TTL of 300 blocks** (~15 hours). Override per-call:
-
-```typescript
-const spend = useSpend()
-
-spend.mutate({
-  recipient: 'ak_...',
-  amount: '1.0',
-  ttl: 0, // no expiration
-})
-```
+See the [Rust protocol guide](/core/rust-protocol) for signing, wire field types and the list of supported operations.
 
 ## Next Steps
 
 - [Installation](/solid/installation) — detailed install guide
 - [ReactiveProvider](/solid/api/ReactiveProvider) — provider setup
-- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
+- [Connectors](/core/guides/connectors) — all available wallet connectors (MetaMask Snap, Ledger, MetaMask Snap, and more)
 - [useConnect](/solid/api/primitives/useConnect) — wallet connection
 - [useBalance](/solid/api/primitives/useBalance) — balance queries

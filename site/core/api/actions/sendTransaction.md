@@ -139,7 +139,7 @@ import type { SendTransactionErrorType } from '@growae/reactive'
 the type level. What the action raises:
 
 - `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
-- The `@aeternity/aepp-sdk` node error, unwrapped, when `postTransaction` rejects. A transaction the node refuses — bad signature, wrong nonce, expired TTL, insufficient balance — arrives this way, carrying the node's own reason
+- A `NodeRequestError`, when `postTransaction` rejects. A transaction the node refuses — bad signature, wrong nonce, expired TTL, insufficient balance — arrives this way, carrying the node's own reason
 
 With `waitMined: true`, two further plain `Error`s can be raised after the
 transaction has already been posted, by the `waitForTransaction` call underneath:

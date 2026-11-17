@@ -1,62 +1,21 @@
-import { describe, expect, it, vi } from 'vitest'
+import { expect, it } from 'vitest'
+import { createConfig } from '../createConfig.js'
+import { loadProtocol } from '../exports/protocol.js'
+import { testnet } from '../types/network.js'
+import { buildTransaction, type TransactionField } from './buildTransaction.js'
 
-vi.mock('@aeternity/aepp-sdk', () => ({
-  buildTxAsync: vi.fn().mockResolvedValue('tx_encoded_build'),
-  Tag: { SpendTx: 12, ContractCallTx: 43 },
-}))
-
-import { buildTxAsync } from '@aeternity/aepp-sdk'
-import { DEFAULT_TTL } from '../constants.js'
-import { buildTransaction } from './buildTransaction.js'
-
-describe('buildTransaction', () => {
-  it('should be a function', () => {
-    expect(typeof buildTransaction).toBe('function')
-  })
-
-  it('should require config and parameters', () => {
-    expect(buildTransaction.length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('should throw without a valid node', async () => {
-    const mockConfig = {
-      getNodeClient: vi.fn(() => {
-        throw new Error('No node')
-      }),
-      state: { networkId: 'ae_uat' },
-    }
-    await expect(
-      buildTransaction(mockConfig as any, { tag: 12 as any }),
-    ).rejects.toThrow()
-  })
-
-  it('should build transaction using SDK buildTxAsync', async () => {
-    const mockNode = {}
-    const mockConfig = {
-      getNodeClient: vi.fn(() => mockNode),
-      state: { networkId: 'ae_uat' },
-    }
-
-    const result = await buildTransaction(mockConfig as any, {
-      tag: 12 as any,
-      senderId: 'ak_sender',
-      recipientId: 'ak_recipient',
-      amount: '100',
-    })
-
-    expect(result).toBe('tx_encoded_build')
-    expect(buildTxAsync).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tag: 12,
-        senderId: 'ak_sender',
-        recipientId: 'ak_recipient',
-        amount: '100',
-        onNode: mockNode,
-      }),
-    )
-  })
-
-  it('should have DEFAULT_TTL of 300 for transaction expiry', () => {
-    expect(DEFAULT_TTL).toBe(300)
-  })
+it('builds offline and fills the minimum fee in Rust', async () => {
+  const config = createConfig({ networks: [testnet], storage: null })
+  const { tx, keys } = await loadProtocol()
+  const [, address] = keys.fromSeed(new Uint8Array(32).fill(1))
+  const fields: TransactionField[] = [
+    { key: 'senderId', value: { tag: 'encoded', val: address } },
+    { key: 'recipientId', value: { tag: 'encoded', val: address } },
+    { key: 'amount', value: { tag: 'uint', val: '1' } },
+    { key: 'nonce', value: { tag: 'uint', val: '1' } },
+  ]
+  const encoded = await buildTransaction(config, { tag: 'SpendTx', fields })
+  expect(
+    tx.unpack(encoded)[2].find((field) => field.key === 'fee')?.value,
+  ).toEqual({ tag: 'uint', val: tx.minimumFee('SpendTx', undefined, fields) })
 })

@@ -63,7 +63,7 @@ import { mainnet, testnet } from '@growae/reactive/networks'
 
 const config = createConfig({
   networks: [mainnet, testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 ```
 

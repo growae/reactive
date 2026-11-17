@@ -19,6 +19,8 @@ dev_mode:
   auto_emit_microblocks: true
 
 http:
+  endpoints:
+    dry-run: true
   external:
     port: 3013
   internal:

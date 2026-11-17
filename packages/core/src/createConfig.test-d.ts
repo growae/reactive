@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import { expectTypeOf, test } from 'vitest'
 import { type Config, createConfig, type State } from './createConfig.js'
+import type { NodeClient } from './node.js'
 import { mainnet, testnet } from './types/network.js'
 
 test('createConfig returns Config', () => {
@@ -29,7 +29,9 @@ test('State.status is a union of connection states', () => {
 
 test('Config has getNodeClient method', () => {
   expectTypeOf<Config['getNodeClient']>().toBeFunction()
-  expectTypeOf<ReturnType<Config['getNodeClient']>>().toMatchTypeOf<Node>()
+  expectTypeOf<
+    ReturnType<Config['getNodeClient']>
+  >().toEqualTypeOf<NodeClient>()
 })
 
 test('Config has subscribe method', () => {

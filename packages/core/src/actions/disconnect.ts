@@ -22,18 +22,16 @@ export async function disconnect(
     connector = connection?.connector
   }
 
-  const connections = config.state.connections
-
   if (connector) {
     await connector.disconnect()
     connector.emitter.off('change', config._internal.events.change)
     connector.emitter.off('disconnect', config._internal.events.disconnect)
     connector.emitter.on('connect', config._internal.events.connect)
-
-    connections.delete(connector.uid)
   }
 
   config.setState((x) => {
+    const connections = new Map(x.connections)
+    if (connector) connections.delete(connector.uid)
     if (connections.size === 0) {
       return {
         ...x,
@@ -46,8 +44,11 @@ export async function disconnect(
     const nextConnection = connections.values().next().value as Connection
     return {
       ...x,
-      connections: new Map(connections),
-      current: nextConnection.connector.uid,
+      connections,
+      current:
+        x.current && connections.has(x.current)
+          ? x.current
+          : nextConnection.connector.uid,
     }
   })
 

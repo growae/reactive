@@ -3,25 +3,23 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const { mockNode } = vi.hoisted(() => ({
   mockNode: {
     getAccountByPubkey: vi.fn(),
+    getCurrentKeyBlockHeight: vi.fn().mockResolvedValue({ height: 1000 }),
     postTransaction: vi.fn(),
   },
 }))
 
-// Deliberately a partial mock: only `Node` is stubbed, so `buildTx` runs for
-// real and this suite sees serialisation defects a wholesale SDK mock hides.
-vi.mock('@aeternity/aepp-sdk', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@aeternity/aepp-sdk')>()
-  return {
-    ...actual,
-    Node: vi.fn().mockImplementation(() => mockNode),
-  }
-})
+// The SDK is an independent byte reference for the Rust-backed action.
+vi.mock('../node.js', () => ({
+  NodeClient: vi.fn().mockImplementation(() => mockNode),
+}))
 
 import {
+  buildTx,
   decode,
   type Encoded,
   Encoding,
   encode,
+  produceNameId,
   Tag,
   unpackTx,
 } from '@aeternity/aepp-sdk'
@@ -52,6 +50,7 @@ type UnpackedSpendTx = {
   senderId: Encoded.AccountAddress
   recipientId: Encoded.AccountAddress
   amount: string
+  ttl: number
   payload: Encoded.Bytearray
 }
 
@@ -80,6 +79,7 @@ describe('spend transaction serialisation', () => {
     })
 
     const unpacked = unpackSpendTx(result.rawTx)
+    expect(unpacked.ttl).toBe(1300)
     expect(unpacked.senderId).toBe(SENDER)
     expect(unpacked.recipientId).toBe(RECIPIENT)
     expect(BigInt(unpacked.amount)).toBe(1000000000000000000n)
@@ -96,6 +96,45 @@ describe('spend transaction serialisation', () => {
     })
 
     expect(decode(unpackSpendTx(result.rawTx).payload)).toHaveLength(0)
+  })
+
+  it('matches the reference bytes including the inferred fee', async () => {
+    const config = await createConnectedConfig()
+    const amount = 10n ** 20n
+    const result = await spend(config, {
+      recipient: RECIPIENT,
+      amount,
+      options: { ttl: 18 },
+    })
+    expect(result.rawTx).toBe(
+      `signed_${buildTx({
+        tag: Tag.SpendTx,
+        senderId: SENDER,
+        recipientId: RECIPIENT,
+        amount,
+        nonce: 6,
+        ttl: 18,
+      })}`,
+    )
+  })
+
+  it('rejects an insufficient explicit fee before signing or posting', async () => {
+    const config = await createConnectedConfig()
+    await expect(
+      spend(config, { recipient: RECIPIENT, amount: 1n, options: { fee: 1n } }),
+    ).rejects.toThrow(/fee/i)
+    expect(mockNode.postTransaction).not.toHaveBeenCalled()
+  })
+
+  it('addresses an AENS recipient using its wire name ID', async () => {
+    const config = await createConnectedConfig()
+    const result = await spend(config, {
+      recipient: 'recipient.chain',
+      amount: 1n,
+    })
+    expect(unpackSpendTx(result.rawTx).recipientId).toBe(
+      produceNameId('recipient.chain'),
+    )
   })
 
   it('keeps an explicitly-passed payload', async () => {

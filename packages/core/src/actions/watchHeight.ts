@@ -1,4 +1,5 @@
 import type { Config } from '../createConfig.js'
+import { observe } from './observe.js'
 
 export type WatchHeightParameters = {
   onChange: (height: number, prevHeight: number) => void
@@ -14,32 +15,15 @@ export function watchHeight(
 ): WatchHeightReturnType {
   const { onChange, pollingInterval = 10_000, networkId } = parameters
 
-  let currentHeight = 0
-  let active = true
-
-  const poll = async () => {
-    while (active) {
-      try {
-        const node = config.getNodeClient({ networkId })
-        const status = await node.getStatus()
-        const newHeight = status.topBlockHeight ?? 0
-        if (newHeight !== currentHeight) {
-          const prev = currentHeight
-          currentHeight = newHeight
-          if (prev > 0) {
-            onChange(newHeight, prev)
-          }
-        }
-      } catch {
-        // silently retry on next interval
-      }
-      await new Promise((resolve) => setTimeout(resolve, pollingInterval))
-    }
-  }
-
-  poll()
-
-  return () => {
-    active = false
-  }
+  let previous: number | undefined
+  return observe(
+    async () =>
+      (await config.getNodeClient({ networkId }).getStatus()).topBlockHeight,
+    (height) => {
+      const old = previous
+      previous = height
+      if (old !== undefined && old !== height) onChange(height, old)
+    },
+    pollingInterval,
+  )
 }

@@ -128,7 +128,7 @@ describe('action API pages', () => {
   })
 
   it('reads pages and declarations that are actually there', () => {
-    expect(actionPages.length).toBeGreaterThan(15)
+    expect(actionPages.length).toBeGreaterThan(8)
     expect(declarations.size).toBeGreaterThan(15)
     // The check is worthless if the pages resolve to nothing: most of them must
     // reach a real `*Parameters` declaration, and those must carry real paths.
@@ -136,7 +136,7 @@ describe('action API pages', () => {
       ...(acceptedPaths(page.action) ?? []),
     ])
     expect(resolved.length).toBeGreaterThan(12)
-    expect(acceptedPaths('callContract')).toContain('options.gasLimit')
-    expect(acceptedPaths('callContract')?.has('gasLimit')).toBe(false)
+    expect(acceptedPaths('spend')).toContain('options.nonce')
+    expect(acceptedPaths('spend')?.has('nonce')).toBe(false)
   })
 })

@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  type GetConnectionReturnType,
-  getConnection,
-  watchConnection,
-} from '@growae/reactive'
+import { type GetConnectionReturnType, getConnection } from '@growae/reactive'
 import { useSyncExternalStore } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'
@@ -19,7 +15,11 @@ export function useConnection(
   const config = useConfig(parameters)
 
   return useSyncExternalStore(
-    (onChange) => watchConnection(config, { onChange }),
+    (onChange) =>
+      config.subscribe(
+        (state) => state.connections.get(state.current ?? ''),
+        onChange,
+      ),
     () => getConnection(config),
     () => getConnection(config),
   )

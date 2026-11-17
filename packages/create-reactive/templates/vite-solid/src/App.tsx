@@ -1,40 +1,15 @@
-import { useBalance, useConnect, useDisconnect } from '@growae/reactive-solid'
-import { For, Show } from 'solid-js'
+import { useHeight } from '@growae/reactive-solid'
 
-function App() {
-  const { connect, connectors, status, error } = useConnect()
-  const { disconnect } = useDisconnect()
-  const { data: balance } = useBalance()
-
+export default function App() {
+  const height = useHeight()
   return (
-    <div>
-      <h1>Reactive App</h1>
-
-      <div>
-        <h2>Connect</h2>
-        <For each={connectors()}>
-          {(connector) => (
-            <button onClick={() => connect({ connector })}>
-              {connector.name}
-            </button>
-          )}
-        </For>
-        <div>{status()}</div>
-        <Show when={error()}>
-          <div>{error()!.message}</div>
-        </Show>
-      </div>
-
-      <Show when={balance() !== undefined}>
-        <div>
-          <h2>Balance</h2>
-          <p>{balance()?.toString()} aettos</p>
-        </div>
-      </Show>
-
-      <button onClick={() => disconnect()}>Disconnect</button>
-    </div>
+    <main>
+      <h1>æternity testnet</h1>
+      <p>
+        {height.isError
+          ? height.error.message
+          : (height.data ?? 'Loading key-block height…')}
+      </p>
+    </main>
   )
 }
-
-export default App

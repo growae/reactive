@@ -2,7 +2,7 @@
 
 ## Overview
 
-`@growae/reactive` is the framework-agnostic foundation for interacting with the Aeternity blockchain. It provides type-safe actions for sending transactions, reading balances, working with Sophia contracts, AENS names, oracles, and state channels.
+`@growae/reactive` is the framework-agnostic foundation for interacting with the Aeternity blockchain. It provides type-safe actions for sending transactions, reading balances, building and signing transactions through Rust, and querying AENS names.
 
 ## Quick Start
 
@@ -29,11 +29,11 @@ pnpm add @growae/reactive
 ```typescript
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 ```
 
@@ -51,7 +51,7 @@ console.log(balance) // { aettos: 1000000000000000000n, ae: '1.0' }
 // Send AE (TTL defaults to 300 blocks)
 const result = await spend(config, {
   recipient: 'ak_2dA...',
-  amount: '1.5', // in AE
+  amount: 1500000000000000000n, // in AE
 })
 ```
 
@@ -64,7 +64,7 @@ You can override this per-action:
 ```typescript
 await spend(config, {
   recipient: 'ak_2dA...',
-  amount: '1.0',
+  amount: 1000000000000000000n,
   ttl: 0, // no expiration
 })
 ```
@@ -74,7 +74,7 @@ Or set a custom TTL:
 ```typescript
 await spend(config, {
   recipient: 'ak_2dA...',
-  amount: '1.0',
+  amount: 1000000000000000000n,
   ttl: 100, // 100 blocks (~5 hours)
 })
 ```
@@ -83,7 +83,9 @@ await spend(config, {
 
 - [Installation](/core/installation) — detailed install guide
 - [Configuration](/core/configuration) — learn about `createConfig` options
-- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
+- [Connectors](/core/guides/connectors) — all available wallet connectors (MetaMask Snap, memory, mock, and custom connectors)
 - [Networks](/core/networks) — configure mainnet, testnet, or custom networks
-- [AENS Guide](/core/guides/aens) — register and manage `.chain` names
-- [Contracts Guide](/core/guides/contracts) — deploy and call Sophia contracts
+
+
+
+[Supported APIs and migration notes](./rust-protocol)

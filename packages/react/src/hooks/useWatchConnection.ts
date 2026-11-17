@@ -1,7 +1,6 @@
 'use client'
 
 import type { Compute, Connection } from '@growae/reactive'
-import { watchConnection } from '@growae/reactive'
 import { useEffect, useRef } from 'react'
 import type { ConfigParameter } from '../types/properties.js'
 import { useConfig } from './useConfig.js'
@@ -27,8 +26,9 @@ export function useWatchConnection(
   useEffect(() => {
     if (!enabled) return
     if (!onChangeRef.current) return
-    return watchConnection(config, {
-      onChange: (connection) => onChangeRef.current?.(connection),
-    })
+    return config.subscribe(
+      (state) => state.connections.get(state.current ?? ''),
+      (connection) => onChangeRef.current?.(connection),
+    )
   }, [config, enabled])
 }

@@ -13,13 +13,13 @@ import { ReactiveProvider } from '@growae/reactive-solid'
 ```tsx
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 import { ReactiveProvider } from '@growae/reactive-solid'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 
 const queryClient = new QueryClient()

@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
 
 export type GetAccountParameters = {
   address: string
@@ -24,7 +24,9 @@ export async function getAccount(
   parameters: GetAccountParameters,
 ): Promise<GetAccountReturnType> {
   const { address, height, hash } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   let account: any
   if (height != null) {

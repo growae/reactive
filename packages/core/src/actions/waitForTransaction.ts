@@ -1,6 +1,8 @@
-import type { Node } from '@aeternity/aepp-sdk'
+import { DEFAULT_WAIT_TIMEOUT } from '../constants.js'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
+import { waitInterval, withDeadline } from '../utils/wait.js'
 
 export type WaitForTransactionParameters = {
   hash: string
@@ -8,6 +10,7 @@ export type WaitForTransactionParameters = {
   blocks?: number | undefined
   interval?: number | undefined
   timeout?: number | undefined
+  signal?: AbortSignal | undefined
 }
 
 export type WaitForTransactionReturnType = {
@@ -19,16 +22,28 @@ export type WaitForTransactionReturnType = {
 
 export type WaitForTransactionErrorType = BaseErrorType | ErrorType
 
-function pause(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 export async function waitForTransaction(
   config: Config,
   parameters: WaitForTransactionParameters,
 ): Promise<WaitForTransactionReturnType> {
+  const timeout = parameters.timeout ?? DEFAULT_WAIT_TIMEOUT
+  const error = new Error(
+    `Waiting for transaction ${parameters.hash} timed out after ${timeout}ms`,
+  )
+  return withDeadline(timeout, parameters.signal, error, (signal) =>
+    pollForInclusion(config, parameters, signal),
+  )
+}
+
+async function pollForInclusion(
+  config: Config,
+  parameters: WaitForTransactionParameters,
+  signal: AbortSignal,
+): Promise<WaitForTransactionReturnType> {
   const { hash, blocks = 5, interval = 1000, timeout } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   // An explicit `timeout` is the caller's own bound, so the *default* `blocks`
   // must not tighten it: `blocks` bounds the wait when the caller asked for it,
@@ -48,7 +63,7 @@ export async function waitForTransaction(
       )
     }
 
-    const tx = await node.getTransactionByHash(hash)
+    const tx = await node.getTransactionByHash(hash, signal)
     if (tx.blockHeight !== -1) {
       return {
         hash: tx.hash,
@@ -63,7 +78,7 @@ export async function waitForTransaction(
     if (!bounded) {
       bounded = true
       if (boundByBlocks) {
-        height = (await node.getCurrentKeyBlockHeight()).height
+        height = (await node.getCurrentKeyBlockHeight(signal)).height
         maxHeight = height + blocks
       }
       // A transaction's `ttl` is an absolute key block height — the sdk adds
@@ -80,7 +95,7 @@ export async function waitForTransaction(
     }
 
     if (maxHeight != null) {
-      height ??= (await node.getCurrentKeyBlockHeight()).height
+      height ??= (await node.getCurrentKeyBlockHeight(signal)).height
       if (height >= maxHeight) {
         throw new Error(
           maxHeightIsTtl
@@ -90,6 +105,6 @@ export async function waitForTransaction(
       }
     }
 
-    await pause(interval)
+    await waitInterval(interval, signal)
   }
 }

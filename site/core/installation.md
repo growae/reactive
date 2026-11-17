@@ -25,7 +25,7 @@ yarn add @growae/reactive
 
 ## Peer Dependencies
 
-`@growae/reactive` depends on the Aeternity SDK under the hood. It is bundled with the package — you do not need to install `@aeternity/aepp-sdk` separately.
+`@growae/reactive` includes its Rust WASM asset. [Supported operations](./rust-protocol)
 
 ## Framework Packages
 

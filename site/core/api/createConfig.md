@@ -13,11 +13,11 @@ import { createConfig } from '@growae/reactive'
 ```typescript
 import { createConfig } from '@growae/reactive'
 import { mainnet, testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [mainnet, testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 ```
 

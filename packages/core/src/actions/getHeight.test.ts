@@ -6,8 +6,8 @@ const { mockNode } = vi.hoisted(() => ({
   },
 }))
 
-vi.mock('@aeternity/aepp-sdk', () => ({
-  Node: vi.fn().mockImplementation(() => mockNode),
+vi.mock('../node.js', () => ({
+  NodeClient: vi.fn().mockImplementation(() => mockNode),
 }))
 
 import { createConfig } from '../createConfig.js'

@@ -1,65 +1,24 @@
 'use client'
-
-import type { Compute } from '@growae/reactive'
-import {
-  type DeployContractErrorType,
-  type DeployContractParameters,
-  type DeployContractReturnType,
-  deployContract,
-} from '@growae/reactive'
+import { deployContract } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
-export type UseDeployContractParameters<context = unknown> = Compute<
-  ConfigParameter & {
-    mutation?: {
-      onSuccess?: (
-        data: DeployContractReturnType,
-        variables: DeployContractParameters,
-        context: context,
-      ) => void
-      onError?: (
-        error: DeployContractErrorType,
-        variables: DeployContractParameters,
-        context: context,
-      ) => void
-    }
-  }
->
-
-export type UseDeployContractReturnType<context = unknown> = Compute<
-  UseMutationReturnType<
-    DeployContractReturnType,
-    DeployContractErrorType,
-    DeployContractParameters,
-    context
-  > & {
-    deployContract: (variables: DeployContractParameters) => void
-    deployContractAsync: (
-      variables: DeployContractParameters,
-    ) => Promise<DeployContractReturnType>
-  }
->
-
-export function useDeployContract<context = unknown>(
-  parameters: UseDeployContractParameters<context> = {},
-): UseDeployContractReturnType<context> {
+export type UseDeployContractParameters = ConfigParameter
+export type UseDeployContractReturnType = ReturnType<typeof useDeployContract>
+export function useDeployContract(
+  parameters: UseDeployContractParameters = {},
+) {
   const config = useConfig(parameters)
-
-  const mutation = useMutation({
+  const result = useMutation({
+    retry: false,
     mutationKey: ['deployContract'],
-    mutationFn: (variables: DeployContractParameters) =>
-      deployContract(config, variables),
-    ...parameters.mutation,
-  } as any)
-
-  type Return = UseDeployContractReturnType<context>
+    mutationFn: (input: Parameters<typeof deployContract>[1]) =>
+      deployContract(config, input),
+  })
   return {
-    ...(mutation as unknown as Return),
-    deployContract: mutation.mutate as unknown as Return['deployContract'],
-    deployContractAsync:
-      mutation.mutateAsync as unknown as Return['deployContractAsync'],
+    ...result,
+    deployContract: result.mutate,
+    deployContractAsync: result.mutateAsync,
   }
 }

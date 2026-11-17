@@ -1,47 +1,18 @@
-import { describe, expect, it, vi } from 'vitest'
-
-vi.mock('@aeternity/aepp-sdk', () => ({
-  verifyMessageSignature: vi.fn().mockReturnValue(true),
-}))
-
+import { expect, it } from 'vitest'
+import { createConfig } from '../createConfig.js'
+import { loadProtocol } from '../exports/protocol.js'
+import { testnet } from '../types/network.js'
 import { verifyMessage } from './verifyMessage.js'
 
-describe('verifyMessage', () => {
-  it('should be a function', () => {
-    expect(typeof verifyMessage).toBe('function')
-  })
-
-  it('should require config and parameters', () => {
-    expect(verifyMessage.length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('should return a boolean result', () => {
-    const mockConfig = { state: { networkId: 'ae_uat' } }
-    const result = verifyMessage(mockConfig as any, {
-      message: 'hello',
-      signature: 'abcdef',
-      address: 'ak_test',
-    })
-    expect(typeof result).toBe('boolean')
-  })
-
-  it('should accept hex string signature', () => {
-    const mockConfig = { state: { networkId: 'ae_uat' } }
-    const result = verifyMessage(mockConfig as any, {
-      message: 'hello',
-      signature: 'deadbeef',
-      address: 'ak_test',
-    })
-    expect(result).toBe(true)
-  })
-
-  it('should accept Uint8Array signature', () => {
-    const mockConfig = { state: { networkId: 'ae_uat' } }
-    const result = verifyMessage(mockConfig as any, {
-      message: 'hello',
-      signature: new Uint8Array([1, 2, 3]),
-      address: 'ak_test',
-    })
-    expect(result).toBe(true)
-  })
+it('verifies raw signature bytes and returns false for malformed hexadecimal input', async () => {
+  const config = createConfig({ networks: [testnet] })
+  const { keys, encoding } = await loadProtocol()
+  const [key, address] = keys.fromSeed(new Uint8Array(32).fill(1))
+  const signature = encoding.decode(keys.signMessage(key, 'hello'))
+  await expect(
+    verifyMessage(config, { address, signature, message: 'hello' }),
+  ).resolves.toBe(true)
+  await expect(
+    verifyMessage(config, { address, signature: 'xz', message: 'hello' }),
+  ).resolves.toBe(false)
 })

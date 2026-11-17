@@ -7,6 +7,10 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   resolve: {
     alias: {
+      '@growae/reactive/protocol': resolve(
+        __dirname,
+        'packages/core/src/exports/protocol.ts',
+      ),
       '@growae/reactive/query': resolve(
         __dirname,
         'packages/core/src/exports/query.ts',
@@ -30,6 +34,11 @@ export default defineConfig({
     },
   },
   test: {
+    include: [
+      'packages/**/*.test.ts',
+      'bindings/**/*.test.ts',
+      'test/integration/**/*.test.ts',
+    ],
     globals: true,
     environment: 'node',
     coverage: {

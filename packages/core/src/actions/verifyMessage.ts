@@ -1,6 +1,6 @@
-import { verifyMessageSignature } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { loadProtocol } from '../exports/protocol.js'
 
 export type VerifyMessageParameters = {
   message: string
@@ -12,14 +12,21 @@ export type VerifyMessageReturnType = boolean
 
 export type VerifyMessageErrorType = BaseErrorType | ErrorType
 
-export function verifyMessage(
+export async function verifyMessage(
   _config: Config,
   parameters: VerifyMessageParameters,
-): VerifyMessageReturnType {
+): Promise<VerifyMessageReturnType> {
   const { message, signature, address } = parameters
 
-  const signatureBytes =
-    typeof signature === 'string' ? Buffer.from(signature, 'hex') : signature
-
-  return verifyMessageSignature(message, signatureBytes, address as any)
+  if (typeof signature === 'string' && !/^[0-9a-f]{128}$/i.test(signature))
+    return false
+  const bytes =
+    typeof signature === 'string'
+      ? Uint8Array.from(signature.match(/../g)!, (pair) =>
+          Number.parseInt(pair, 16),
+        )
+      : signature
+  if (bytes.length !== 64) return false
+  const { keys, encoding } = await loadProtocol()
+  return keys.verifyMessage(message, encoding.encode(bytes, 'sg'), address)
 }

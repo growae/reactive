@@ -37,7 +37,7 @@ type SpendReturnType = {
 | `payload` | `string` | — | Payload data attached to the transaction. Omitted from the transaction when absent. |
 | `networkId` | `string` | active | Target network. |
 | `options.fee` | `bigint` | auto | Transaction fee in aettos. Auto-calculated if omitted. |
-| `options.ttl` | `number` | `300` | Transaction TTL in blocks relative to current height. Set to `0` for no expiration. |
+| `options.ttl` | `number` | current height + 300 | Absolute expiry height. Use `0` for no expiry. |
 | `options.nonce` | `number` | auto | Account nonce. Read from the node if omitted. |
 
 `fee`, `ttl` and `nonce` live under `options`; there is no top-level form of
@@ -106,3 +106,5 @@ Everything else surfaces unwrapped: the node's error from
 transaction, and the connector's from signing. An account without enough AE to
 cover `amount` plus the fee is refused by the node when the transaction is
 posted, and arrives as the node's own error carrying its reason.
+
+The default expiry is 300 key blocks after the node’s current height. An explicit `options.ttl` is an absolute height. Passing zero disables expiry. Amounts and fees are in aettos.

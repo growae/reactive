@@ -1,65 +1,13 @@
 # useSignTypedData
 
-Hook for signing typed/structured data with the connected account.
-
-## Import
-
-```typescript
-import { useSignTypedData } from '@growae/reactive-react'
-```
-
-## Usage
+Sign AE typed data using the selected wallet and the Rust FATE domain encoding.
 
 ```tsx
 import { useSignTypedData } from '@growae/reactive-react'
 
-function SignTyped() {
-  const { mutate: sign, data } = useSignTypedData()
-
-  return (
-    <button
-      onClick={() =>
-        sign({
-          domain: { name: 'MyApp', version: '1' },
-          data: { action: 'transfer', amount: 100n },
-        })
-      }
-    >
-      Sign Typed Data
-    </button>
-  )
-}
+// Inside a React component
+const { signTypedDataAsync } = useSignTypedData()
+const sign = () => signTypedDataAsync({ data, aci, domain: { name: 'My app', version: 1 } })
 ```
 
-## Return Type
-
-See [TanStack Query mutation docs](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation) for full return type.
-
-### data
-
-```typescript
-type SignTypedDataReturnType = {
-  signature: string
-  address: string
-}
-```
-
-## Parameters
-
-### domain
-
-- **Type:** `Record<string, unknown>`
-- **Required**
-
-The signing domain (app name, version, etc.).
-
-### data
-
-- **Type:** `Record<string, unknown>`
-- **Required**
-
-The structured data to sign.
-
-### mutation
-
-See [TanStack Query mutation docs](https://tanstack.com/query/v5/docs/framework/react/reference/useMutation) for mutation options.
+`data` is a FATE-encoded `cb_` value and `aci` is its JSON type. The network is pinned to the connected wallet. The memory connector supports this operation. Check `useCapabilities` for other wallets. Returns an `sg_` signature.

@@ -1,6 +1,6 @@
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
-import type { NamePointer } from './updateName.js'
+export type NamePointer = { key: string; id: string }
 
 export type GetNameEntryParameters = {
   name: string

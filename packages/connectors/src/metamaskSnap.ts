@@ -174,11 +174,17 @@ export function metamaskSnap(parameters: MetaMaskSnapParameters = {}) {
         'signMessage',
         {
           derivationPath: [`${accountIndex}'`, "0'", "0'"],
-          message: Buffer.from(message).toString('base64'),
+          message: btoa(
+            Array.from(new TextEncoder().encode(message), (byte) =>
+              String.fromCharCode(byte),
+            ).join(''),
+          ),
         },
         'signature',
       )
-      return Buffer.from(signature, 'base64').toString('hex')
+      return Array.from(atob(signature), (byte) =>
+        byte.charCodeAt(0).toString(16).padStart(2, '0'),
+      ).join('')
     },
 
     onAccountsChanged(accounts) {

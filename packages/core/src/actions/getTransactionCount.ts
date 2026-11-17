@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
 
 export type GetTransactionCountParameters = {
   address: string
@@ -16,7 +16,9 @@ export async function getTransactionCount(
   parameters: GetTransactionCountParameters,
 ): Promise<GetTransactionCountReturnType> {
   const { address } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   const { nextNonce } = await node.getAccountNextNonce(address)
   return nextNonce

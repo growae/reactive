@@ -165,9 +165,9 @@ describe('sender account pinning', () => {
    * which is exactly what `ledger` and `metamaskSnap` did.
    */
   describe('message signatures', () => {
-    /** The signature bytes a `MemoryAccount` produces over a raw message. */
+    /** The signature bytes a `MemoryAccount` produces over an AE-framed message. */
     async function messageSignatureOf(account: MemoryAccount, message: string) {
-      const signature = await account.sign(new TextEncoder().encode(message))
+      const signature = await account.signMessage(message)
       return Buffer.from(signature).toString('hex')
     }
 

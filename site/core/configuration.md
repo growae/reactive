@@ -7,11 +7,11 @@ The `createConfig` function is the entry point for all Reactive applications. It
 ```typescript
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 ```
 
@@ -24,7 +24,7 @@ import { mainnet, testnet } from '@growae/reactive/networks'
 
 const config = createConfig({
   networks: [mainnet, testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 ```
 
@@ -32,16 +32,15 @@ See [Networks](/core/networks) for custom network configuration.
 
 ## Connectors
 
-Connectors handle wallet communication. Reactive provides connectors for the Superhero Wallet and other Aeternity wallets:
+Connectors handle wallet communication. Reactive provides connectors for the MetaMask Snap and other Aeternity wallets:
 
 ```typescript
-import { superhero, iframe } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 
 const config = createConfig({
   networks: [testnet],
   connectors: [
-    superhero(),
-    iframe(),
+    metamaskSnap(),
   ],
 })
 ```
@@ -57,7 +56,7 @@ import { createConfig, createStorage } from '@growae/reactive'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
   storage: createStorage({ storage: sessionStorage }),
 })
 ```
@@ -71,7 +70,7 @@ When using server-side rendering (Next.js, Nuxt, SolidStart), enable SSR mode to
 ```typescript
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
   ssr: true,
 })
 ```

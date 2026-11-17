@@ -1,22 +1,14 @@
 'use client'
 
-import { createConfig, mainnet, memory, testnet } from '@growae/reactive'
+import { createConfig, mainnet, testnet } from '@growae/reactive'
+import { metamaskSnap } from '@growae/reactive-connectors'
 import { ReactiveProvider } from '@growae/reactive-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode, useState } from 'react'
 
 const config = createConfig({
   networks: [testnet, mainnet],
-  connectors: [
-    memory({
-      accounts: [
-        { secretKey: 'sk_2m9oLEdkrZup7jmtK6rCWVLmGdn8Bmqxd3enGZfYjLxrCpJmPf' },
-        { secretKey: 'sk_ZxLc2E9eb2wLucHXtumzQPR1FmesiaragSNurALyrMA3Fz6aC' },
-        { secretKey: 'sk_yLicaWqRyigTBAUddCcYtGbHAHZSMyt6guF2KSPMrd2LYY2h2' },
-      ],
-      name: 'Memory Wallet',
-    }),
-  ],
+  connectors: [metamaskSnap()],
 })
 
 export function Providers({ children }: { children: ReactNode }) {

@@ -33,12 +33,12 @@ import { VueQueryPlugin } from '@tanstack/vue-query'
 import { ReactivePlugin } from '@growae/reactive-vue'
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 import App from './App.vue'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 
 const app = createApp(App)
@@ -66,29 +66,19 @@ const { data: balance } = useBalance({ address: 'ak_2dA...' })
     >
       {{ connector.name }}
     </button>
-    <p v-if="balance">Balance: {{ balance.ae }} AE</p>
+    <p v-if="balance">Balance: {{ balance }} aettos</p>
   </div>
 </template>
 ```
 
-## Default TTL
+## Transaction encoding
 
-All transaction composables (`useSpend`, `useSendTransaction`, `useCallContract`) default to a **TTL of 300 blocks** (~15 hours). Override per-call:
-
-```typescript
-const { mutate: send } = useSpend()
-
-send({
-  recipient: 'ak_...',
-  amount: '1.0',
-  ttl: 0, // no expiration
-})
-```
+See the [Rust protocol guide](/core/rust-protocol) for signing, wire field types and the list of supported operations.
 
 ## Next Steps
 
 - [Installation](/vue/installation) — detailed install guide
 - [ReactivePlugin](/vue/api/ReactivePlugin) — plugin setup
-- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
+- [Connectors](/core/guides/connectors) — all available wallet connectors (MetaMask Snap, Ledger, MetaMask Snap, and more)
 - [useConnect](/vue/api/composables/useConnect) — wallet connection
 - [useBalance](/vue/api/composables/useBalance) — balance queries

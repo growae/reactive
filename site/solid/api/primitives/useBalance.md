@@ -15,13 +15,13 @@ import { useBalance } from '@growae/reactive-solid'
 import { Show } from 'solid-js'
 
 function Balance() {
-  const balance = useBalance({
+  const balance = useBalance(() => ({
     address: 'ak_2dATGVvfU1oBShDDsaqfh1sF4bCkx2FKbiCaL2t4zZpMMpMfgE',
-  })
+  }))
 
   return (
     <Show when={!balance.isLoading} fallback={<div>Loading...</div>}>
-      <div>{balance.data?.ae} AE</div>
+      <div>{balance.data} aettos</div>
     </Show>
   )
 }

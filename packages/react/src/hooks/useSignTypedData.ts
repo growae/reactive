@@ -1,65 +1,22 @@
 'use client'
-
-import type { Compute } from '@growae/reactive'
-import {
-  type SignTypedDataErrorType,
-  type SignTypedDataParameters,
-  type SignTypedDataReturnType,
-  signTypedData,
-} from '@growae/reactive'
+import { signTypedData } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
-export type UseSignTypedDataParameters<context = unknown> = Compute<
-  ConfigParameter & {
-    mutation?: {
-      onSuccess?: (
-        data: SignTypedDataReturnType,
-        variables: SignTypedDataParameters,
-        context: context,
-      ) => void
-      onError?: (
-        error: SignTypedDataErrorType,
-        variables: SignTypedDataParameters,
-        context: context,
-      ) => void
-    }
-  }
->
-
-export type UseSignTypedDataReturnType<context = unknown> = Compute<
-  UseMutationReturnType<
-    SignTypedDataReturnType,
-    SignTypedDataErrorType,
-    SignTypedDataParameters,
-    context
-  > & {
-    signTypedData: (variables: SignTypedDataParameters) => void
-    signTypedDataAsync: (
-      variables: SignTypedDataParameters,
-    ) => Promise<SignTypedDataReturnType>
-  }
->
-
-export function useSignTypedData<context = unknown>(
-  parameters: UseSignTypedDataParameters<context> = {},
-): UseSignTypedDataReturnType<context> {
+export type UseSignTypedDataParameters = ConfigParameter
+export type UseSignTypedDataReturnType = ReturnType<typeof useSignTypedData>
+export function useSignTypedData(parameters: UseSignTypedDataParameters = {}) {
   const config = useConfig(parameters)
-
-  const mutation = useMutation({
+  const result = useMutation({
+    retry: false,
     mutationKey: ['signTypedData'],
-    mutationFn: (variables: SignTypedDataParameters) =>
-      signTypedData(config, variables),
-    ...parameters.mutation,
-  } as any)
-
-  type Return = UseSignTypedDataReturnType<context>
+    mutationFn: (input: Parameters<typeof signTypedData>[1]) =>
+      signTypedData(config, input),
+  })
   return {
-    ...(mutation as unknown as Return),
-    signTypedData: mutation.mutate as unknown as Return['signTypedData'],
-    signTypedDataAsync:
-      mutation.mutateAsync as unknown as Return['signTypedDataAsync'],
+    ...result,
+    signTypedData: result.mutate,
+    signTypedDataAsync: result.mutateAsync,
   }
 }

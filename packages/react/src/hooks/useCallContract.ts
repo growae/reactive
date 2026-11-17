@@ -1,65 +1,22 @@
 'use client'
-
-import type { Compute } from '@growae/reactive'
-import {
-  type CallContractErrorType,
-  type CallContractParameters,
-  type CallContractReturnType,
-  callContract,
-} from '@growae/reactive'
+import { callContract } from '@growae/reactive'
 import { useMutation } from '@tanstack/react-query'
 import type { ConfigParameter } from '../types/properties.js'
-import type { UseMutationReturnType } from '../utils/query.js'
 import { useConfig } from './useConfig.js'
 
-export type UseCallContractParameters<context = unknown> = Compute<
-  ConfigParameter & {
-    mutation?: {
-      onSuccess?: (
-        data: CallContractReturnType,
-        variables: CallContractParameters,
-        context: context,
-      ) => void
-      onError?: (
-        error: CallContractErrorType,
-        variables: CallContractParameters,
-        context: context,
-      ) => void
-    }
-  }
->
-
-export type UseCallContractReturnType<context = unknown> = Compute<
-  UseMutationReturnType<
-    CallContractReturnType,
-    CallContractErrorType,
-    CallContractParameters,
-    context
-  > & {
-    callContract: (variables: CallContractParameters) => void
-    callContractAsync: (
-      variables: CallContractParameters,
-    ) => Promise<CallContractReturnType>
-  }
->
-
-export function useCallContract<context = unknown>(
-  parameters: UseCallContractParameters<context> = {},
-): UseCallContractReturnType<context> {
+export type UseCallContractParameters = ConfigParameter
+export type UseCallContractReturnType = ReturnType<typeof useCallContract>
+export function useCallContract(parameters: UseCallContractParameters = {}) {
   const config = useConfig(parameters)
-
-  const mutation = useMutation({
+  const result = useMutation({
+    retry: false,
     mutationKey: ['callContract'],
-    mutationFn: (variables: CallContractParameters) =>
-      callContract(config, variables),
-    ...parameters.mutation,
-  } as any)
-
-  type Return = UseCallContractReturnType<context>
+    mutationFn: (input: Parameters<typeof callContract>[1]) =>
+      callContract(config, input),
+  })
   return {
-    ...(mutation as unknown as Return),
-    callContract: mutation.mutate as unknown as Return['callContract'],
-    callContractAsync:
-      mutation.mutateAsync as unknown as Return['callContractAsync'],
+    ...result,
+    callContract: result.mutate,
+    callContractAsync: result.mutateAsync,
   }
 }

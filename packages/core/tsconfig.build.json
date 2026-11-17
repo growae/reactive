@@ -17,6 +17,6 @@
       "@growae/reactive/*": ["./src/exports/*.ts"]
     }
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/exports/*.ts"],
   "exclude": ["src/**/*.test.ts", "src/**/*.test-d.ts"]
 }

@@ -27,6 +27,9 @@ importers:
 
   .:
     devDependencies:
+      '@aeternity/aepp-sdk':
+        specifier: 14.1.1
+        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@biomejs/biome':
         specifier: ^2.5.11
         version: 2.5.11
@@ -82,24 +85,15 @@ importers:
 
   packages/connectors:
     dependencies:
-      '@aeternity/aepp-sdk':
-        specifier: '>=14.0.0 <15.0.0'
-        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../core
-      '@ledgerhq/hw-transport':
-        specifier: '>=6.0.0 <7.0.0'
-        version: 6.34.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
 
   packages/core:
     dependencies:
-      '@aeternity/aepp-sdk':
-        specifier: ^14.0.0
-        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive-connectors':
         specifier: workspace:*
         version: link:../connectors
@@ -109,10 +103,16 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      json-bigint:
+        specifier: ^1.0.0
+        version: 1.0.0
       zustand:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
     devDependencies:
+      '@types/json-bigint':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@tanstack/query-core':
         specifier: ^5.102.8
         version: 5.102.8
@@ -207,9 +207,6 @@ importers:
 
   playgrounds/next:
     dependencies:
-      '@aeternity/aepp-sdk':
-        specifier: ^14.0.0
-        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core
@@ -244,9 +241,6 @@ importers:
 
   playgrounds/vite-react:
     dependencies:
-      '@aeternity/aepp-sdk':
-        specifier: ^14.0.0
-        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core
@@ -284,9 +278,6 @@ importers:
 
   playgrounds/vite-solid:
     dependencies:
-      '@aeternity/aepp-sdk':
-        specifier: ^14.0.0
-        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core
@@ -315,9 +306,6 @@ importers:
 
   playgrounds/vite-vue:
     dependencies:
-      '@aeternity/aepp-sdk':
-        specifier: ^14.0.0
-        version: 14.1.1(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@growae/reactive':
         specifier: workspace:*
         version: link:../../packages/core

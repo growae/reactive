@@ -16,7 +16,7 @@ import { testnet } from '@growae/reactive/networks'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
   storage: createStorage({ storage: sessionStorage }),
 })
 ```

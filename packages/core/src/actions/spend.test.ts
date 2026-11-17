@@ -3,17 +3,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const { mockNode } = vi.hoisted(() => ({
   mockNode: {
     getAccountByPubkey: vi.fn(),
+    getCurrentKeyBlockHeight: vi.fn().mockResolvedValue({ height: 1000 }),
     postTransaction: vi.fn(),
   },
 }))
 
-vi.mock('@aeternity/aepp-sdk', () => ({
-  Node: vi.fn().mockImplementation(() => mockNode),
-  buildTx: vi.fn().mockReturnValue('tx_encoded_spend'),
-  Tag: { SpendTx: 12 },
+vi.mock('../node.js', () => ({
+  NodeClient: vi.fn().mockImplementation(() => mockNode),
 }))
 
-import { buildTx } from '@aeternity/aepp-sdk'
+import { type Encoded, Tag, unpackTx } from '@aeternity/aepp-sdk'
 import { mock } from '../connectors/mock.js'
 import { createConfig } from '../createConfig.js'
 import { testnet } from '../types/network.js'
@@ -22,11 +21,20 @@ import { spend } from './spend.js'
 import { switchActiveAccount } from './switchActiveAccount.js'
 
 const TEST_ACCOUNTS = [
-  'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
+  'ak_SeLqn3UAUoRymWmwW7axrzJK7JfNaBR2cHCryA6cFsgFkHEF',
 ] as const
 
+const RECIPIENT = 'ak_2mwRmUeYmfuW93ti9HMSUJzCk1EYcQEfikVSzgo6k2VghsWhgU'
+function unpackPostedSpend() {
+  const signed: string = mockNode.postTransaction.mock.lastCall![0].tx
+  return unpackTx(
+    signed.slice('signed_'.length) as Encoded.Transaction,
+    Tag.SpendTx,
+  ) as unknown as { nonce: number; senderId: string }
+}
+
 const MULTI_ACCOUNTS = [
-  'ak_2swhLkgBPeeADxVTABy7tt6d2HgBQFnGJELkBUMY4FUa8RVLM',
+  'ak_SeLqn3UAUoRymWmwW7axrzJK7JfNaBR2cHCryA6cFsgFkHEF',
   'ak_2K7ngGLmhQza45Dtw8352T8kTDrHBEWf9KFqc5pNtJ6G2DQ7uS',
 ] as const
 
@@ -56,7 +64,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     const result = await spend(config, {
-      recipient: 'ak_recipientAddress',
+      recipient: RECIPIENT,
       amount: 1000000000000000000n,
     })
 
@@ -77,7 +85,7 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipient: 'ak_recipient',
+      recipient: RECIPIENT,
       amount: 100n,
     })
 
@@ -90,12 +98,12 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipient: 'ak_recipient',
+      recipient: RECIPIENT,
       amount: 100n,
     })
 
     expect(mockNode.postTransaction).toHaveBeenCalledWith({
-      tx: 'signed_tx_encoded_spend',
+      tx: expect.stringMatching(/^signed_tx_/),
     })
   })
 
@@ -105,12 +113,12 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipient: 'ak_recipient',
+      recipient: RECIPIENT,
       amount: 100n,
       options: { nonce: 42 },
     })
 
-    expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 42 }))
+    expect(unpackPostedSpend().nonce).toBe(42)
   })
 
   /**
@@ -135,11 +143,9 @@ describe('spend', () => {
       'signTransaction',
     )
 
-    await spend(config, { recipient: 'ak_recipient', amount: 100n })
+    await spend(config, { recipient: RECIPIENT, amount: 100n })
 
-    expect(buildTx).toHaveBeenCalledWith(
-      expect.objectContaining({ senderId: MULTI_ACCOUNTS[1] }),
-    )
+    expect(unpackPostedSpend().senderId).toBe(MULTI_ACCOUNTS[1])
     expect(signTransaction).toHaveBeenCalledWith(
       expect.objectContaining({ onAccount: MULTI_ACCOUNTS[1] }),
     )
@@ -156,10 +162,10 @@ describe('spend', () => {
     await connect(config, { connector })
 
     await spend(config, {
-      recipient: 'ak_recipient',
+      recipient: RECIPIENT,
       amount: 100n,
     })
 
-    expect(buildTx).toHaveBeenCalledWith(expect.objectContaining({ nonce: 11 }))
+    expect(unpackPostedSpend().nonce).toBe(11)
   })
 })

@@ -1,0 +1,5 @@
+{
+  "source": "contract HookProbe =\n  entrypoint init() = ()\n  entrypoint echo(x : int) = x\n  entrypoint map_size(m : map(string,int)) = Map.size(m)\n  entrypoint fail() : int = abort(\"probe\")\n",
+  "compiler": "https://v8.compiler.aepps.com/compile",
+  "bytecode": "cb_+KBGA6DjQay1tro1LgsQ140tAuantLuSQNuCFS2L6EhjLf8EWsC4c7g//kTWRB8ANwA3ABoOgj8BAz/+WViNQAA3AAf7AxVwcm9iZf6HfyGZADcBZ3cHBzEEAAD+99/wTAA3AQcHAQEAri8EEUTWRB8RaW5pdBFZWI1AEWZhaWwRh38hmSFtYXBfc2l6ZRH33/BMEWVjaG+CLwCFOC4wLjAALibOLw=="
+}

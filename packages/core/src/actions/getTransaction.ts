@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
 
 export type GetTransactionParameters = {
   hash: string
@@ -22,7 +22,9 @@ export async function getTransaction(
   parameters: GetTransactionParameters,
 ): Promise<GetTransactionReturnType> {
   const { hash } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   const result = await node.getTransactionByHash(hash)
 

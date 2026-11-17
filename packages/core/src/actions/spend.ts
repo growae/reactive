@@ -1,7 +1,7 @@
-import { buildTx, Tag } from '@aeternity/aepp-sdk'
 import { DEFAULT_TTL } from '../constants.js'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import { loadProtocol } from '../exports/protocol.js'
 
 export type SpendParameters = {
   recipient: string
@@ -47,18 +47,29 @@ export async function spend(
   const accountInfo = await node.getAccountByPubkey(senderId)
   const nonce = txOptions.nonce ?? accountInfo.nonce + 1
 
-  const spendTx = buildTx({
-    tag: Tag.SpendTx,
-    senderId,
-    recipientId: recipient,
-    amount: BigInt(amount),
-    // The SDK rejects `''` as an encoded bytearray but defaults the field to an
-    // empty payload when it is absent, so omit it rather than coercing.
-    ...(payload ? { payload } : {}),
-    fee: txOptions.fee ? BigInt(txOptions.fee) : undefined,
-    ttl: txOptions.ttl ?? DEFAULT_TTL,
-    nonce,
-  })
+  // An explicit TTL is an absolute height (zero disables expiry).
+  const ttl =
+    txOptions.ttl ??
+    (await node.getCurrentKeyBlockHeight()).height + DEFAULT_TTL
+  const { tx, aens } = await loadProtocol()
+  const recipientId = aens.isName(recipient)
+    ? aens.produceNameId(recipient)
+    : recipient
+  const fields: Parameters<typeof tx.build>[2] = [
+    { key: 'senderId', value: { tag: 'encoded', val: senderId } },
+    { key: 'recipientId', value: { tag: 'encoded', val: recipientId } },
+    { key: 'amount', value: { tag: 'uint', val: BigInt(amount).toString() } },
+    { key: 'ttl', value: { tag: 'uint', val: String(ttl) } },
+    { key: 'nonce', value: { tag: 'uint', val: String(nonce) } },
+  ]
+  if (payload)
+    fields.push({ key: 'payload', value: { tag: 'encoded', val: payload } })
+  const minimum = BigInt(tx.minimumFee('SpendTx', undefined, fields))
+  const fee = txOptions.fee || minimum
+  if (fee < minimum)
+    throw new RangeError(`Spend fee must be at least ${minimum} aettos`)
+  fields.push({ key: 'fee', value: { tag: 'uint', val: fee.toString() } })
+  const spendTx = tx.build('SpendTx', undefined, fields)
 
   const connector = connection.connector
   if (!connector.signTransaction) {

@@ -1,6 +1,6 @@
-import type { Node } from '@aeternity/aepp-sdk'
 import type { Config } from '../createConfig.js'
 import type { BaseErrorType, ErrorType } from '../errors/base.js'
+import type { NodeClient } from '../node.js'
 
 export type WaitForTransactionConfirmParameters = {
   hash: string
@@ -22,7 +22,9 @@ export async function waitForTransactionConfirm(
   parameters: WaitForTransactionConfirmParameters,
 ): Promise<WaitForTransactionConfirmReturnType> {
   const { hash, confirm = 3, interval = 1000 } = parameters
-  const node: Node = config.getNodeClient({ networkId: parameters.networkId })
+  const node: NodeClient = config.getNodeClient({
+    networkId: parameters.networkId,
+  })
 
   const { blockHeight } = await node.getTransactionByHash(hash)
   if (blockHeight === -1) {

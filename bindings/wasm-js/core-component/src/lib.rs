@@ -1,7 +1,8 @@
 mod bindings;
+mod fate;
 
 use bindings::exports::growae::core_harness::{aens, encoding, fee, hash, keys, tx};
-use bindings::growae::core_harness::types::{FieldValue, Pointer, TxField};
+use bindings::growae::core_harness::types::{FieldValue, ListItem, Pointer, TxField};
 
 use ae_core::protocol::{AbiVersion, ConsensusProtocolVersion};
 use ae_core::tx::{Tag, Value};
@@ -94,11 +95,17 @@ fn value_to_field_value(name: &str, value: &Value) -> Result<FieldValue, String>
             let encoded = ae_core::tx::build_tx(inner).map_err(|e| e.to_string())?;
             Ok(FieldValue::Encoded(encoded))
         }
-        Value::List(_) => Err(format!(
-            "field `{name}` is a repeated value (an address list or raw byte list) — \
-             not exposed to WASM in this pass; ChannelCreateTx's delegate ids and \
-             SignedTx's signatures are out of scope (see wit/world.wit)"
-        )),
+        Value::List(items) => items
+            .iter()
+            .map(|item| match item {
+                Value::Encoded(s) => Ok(ListItem::Encoded(s.clone())),
+                Value::Bytes(bytes) => Ok(ListItem::Bytes(bytes.clone())),
+                _ => Err(format!(
+                    "unexpected list item in transaction field `{name}`"
+                )),
+            })
+            .collect::<Result<Vec<_>, _>>()
+            .map(FieldValue::Items),
     }
 }
 
@@ -112,6 +119,15 @@ fn field_value_to_value(fv: FieldValue) -> Result<Value, String> {
             vm_version,
             abi_version,
         }),
+        FieldValue::Items(items) => Ok(Value::List(
+            items
+                .into_iter()
+                .map(|item| match item {
+                    ListItem::Encoded(s) => Value::Encoded(s),
+                    ListItem::Bytes(bytes) => Value::Bytes(bytes),
+                })
+                .collect(),
+        )),
         FieldValue::Pointers(pointers) => Ok(Value::Pointers(
             pointers
                 .into_iter()
@@ -179,7 +195,12 @@ impl keys::Guest for Component {
     ) -> Result<String, String> {
         let secret_key =
             ae_core::keys::SecretKey::from_encoded(&secret).map_err(|e| e.to_string())?;
-        let tx_bytes = ae_core::encoding::decode(&encoded_tx).map_err(|e| e.to_string())?;
+        let (kind, tx_bytes) =
+            ae_core::encoding::decode_any(&encoded_tx).map_err(|e| e.to_string())?;
+        if kind != ae_core::encoding::Encoding::Transaction {
+            return Err("a transaction must have the tx_ prefix".into());
+        }
+        ae_core::tx::unpack_tx_rlp(&tx_bytes).map_err(|e| e.to_string())?;
         let position = if inner {
             ae_core::keys::TxPosition::Inner
         } else {
@@ -207,19 +228,38 @@ impl keys::Guest for Component {
     }
 }
 
+fn transaction_params(
+    tag: String,
+    version: Option<u32>,
+    fields: Vec<TxField>,
+) -> Result<ae_core::tx::TxParams, String> {
+    let tag_enum = tag_from_name(&tag).ok_or_else(|| format!("unknown transaction tag: {tag}"))?;
+    let mut params = ae_core::tx::TxParams::new(tag_enum);
+    if let Some(version) = version {
+        params = params.with_version(version);
+    }
+    for field in fields {
+        let value = field_value_to_value(field.value)?;
+        params.set(&field.key, value);
+    }
+    Ok(params)
+}
+
 impl tx::Guest for Component {
     fn build(tag: String, version: Option<u32>, fields: Vec<TxField>) -> Result<String, String> {
-        let tag_enum =
-            tag_from_name(&tag).ok_or_else(|| format!("unknown transaction tag: {tag}"))?;
-        let mut params = ae_core::tx::TxParams::new(tag_enum);
-        if let Some(version) = version {
-            params = params.with_version(version);
-        }
-        for field in fields {
-            let value = field_value_to_value(field.value)?;
-            params.set(&field.key, value);
-        }
+        let params = transaction_params(tag, version, fields)?;
         ae_core::tx::build_tx(&params).map_err(|e| e.to_string())
+    }
+
+    fn minimum_fee(
+        tag: String,
+        version: Option<u32>,
+        fields: Vec<TxField>,
+    ) -> Result<String, String> {
+        let params = transaction_params(tag, version, fields)?;
+        ae_core::fee::minimum_transaction_fee(ConsensusProtocolVersion::default(), &params)
+            .map(|fee| fee.to_string())
+            .map_err(|err| err.to_string())
     }
 
     fn unpack(encoded_tx: String) -> Result<(String, u32, Vec<TxField>), String> {

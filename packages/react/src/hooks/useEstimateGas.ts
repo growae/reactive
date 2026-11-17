@@ -1,48 +1,17 @@
 'use client'
+import { estimateGas } from '@growae/reactive'
+import { type QueryParameters, useActionQuery } from './actionQuery.js'
 
-import type { Compute } from '@growae/reactive'
-import {
-  type EstimateGasErrorType,
-  type EstimateGasParameters,
-  type EstimateGasReturnType,
-  estimateGas,
-} from '@growae/reactive'
-import type { ConfigParameter } from '../types/properties.js'
-import { type UseQueryReturnType, useQuery } from '../utils/query.js'
-import { useConfig } from './useConfig.js'
-import { useNetworkId } from './useNetworkId.js'
-
-export type UseEstimateGasParameters = Compute<
-  EstimateGasParameters & ConfigParameter & { enabled?: boolean }
->
-
-export type UseEstimateGasReturnType = UseQueryReturnType<
-  EstimateGasReturnType,
-  EstimateGasErrorType
->
-
-export function useEstimateGas(
-  parameters: UseEstimateGasParameters = {} as UseEstimateGasParameters,
-): UseEstimateGasReturnType {
-  const config = useConfig(parameters)
-  const networkId = useNetworkId({ config })
-
-  return useQuery({
-    queryKey: [
-      'estimateGas',
-      {
-        tx: parameters.tx,
-        accountAddress: parameters.accountAddress,
-        networkId: parameters.networkId ?? networkId,
-      },
-    ],
-    queryFn: () =>
-      estimateGas(config, {
-        ...parameters,
-        networkId: parameters.networkId ?? networkId,
-      }),
-    enabled:
-      Boolean(parameters.tx && parameters.accountAddress) &&
-      (parameters.enabled ?? true),
-  }) as UseEstimateGasReturnType
+export type UseEstimateGasParameters = NonNullable<
+  Parameters<typeof estimateGas>[1]
+> &
+  QueryParameters
+export type UseEstimateGasReturnType = ReturnType<typeof useEstimateGas>
+export function useEstimateGas(parameters: UseEstimateGasParameters) {
+  return useActionQuery(
+    'estimateGas',
+    estimateGas,
+    parameters,
+    Boolean(parameters.tx),
+  )
 }

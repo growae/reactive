@@ -126,4 +126,4 @@ import type { GetMicroBlockErrorType } from '@growae/reactive'
 type level. What the action raises:
 
 - `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
-- The `@aeternity/aepp-sdk` node error, unwrapped, from either of the two node calls the action makes. A `hash` the node does not know arrives this way, as its own 404
+- A `NodeRequestError`, from either of the two node calls the action makes. A `hash` the node does not know arrives this way, as its own 404

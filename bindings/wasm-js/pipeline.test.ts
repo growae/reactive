@@ -1,24 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import corpus from '../../crates/ae-core/tests/vectors/transactions.json'
 
-// Exercises a jco-transpiled output — the committed one by default, or
-// WASM_GENERATED_DIR when the CI gate points this at the committed
-// core-harness.core.wasm specifically, to prove it is still functionally
-// current without requiring it to byte-match a fresh build (rustc's LTO
-// ordering for the ae-core path-dependency is not reproducible across
-// checkout directories even with --remap-path-prefix on every path that
-// shows up as a string — see .github/workflows/wasm-bindings.yml). CI has no
-// Rust toolchain otherwise (see .github/workflows/ci.yml). Regenerate
-// `generated/` via `pnpm build` here whenever wit/ or core-component/ change,
-// and commit the result.
-//
-// This is this directory's own pipeline smoke test, and its only consumer.
-// It is not the differential parity suite — that lives in crates/ae-parity,
-// which links ae-core and ae-fate directly as Rust crates and never crosses a
-// WASM boundary. All this proves is that the wasm32-unknown-unknown + jco
-// round trip holds for the real ae-core surface, the same way the
-// placeholder's `ping` proved it for an empty one.
-const generatedDir = process.env.WASM_GENERATED_DIR ?? './generated'
+// CI repeats this suite against the last committed binary after testing a fresh build.
+const generatedDir =
+  process.env.WASM_GENERATED_DIR ?? '../../packages/core/protocol-generated'
 const mod = await import(`${generatedDir}/core-harness.js`)
+await mod.$init
 const { encoding, hash, keys, tx, aens, fee } = mod
 
 const NETWORK_ID = 'ae_uat'
@@ -50,6 +37,17 @@ describe('keys', () => {
     expect(secretA).toBe(secretB)
     expect(addressA).toBe(addressB)
     expect(keys.addressFromSecret(secretA)).toBe(addressA)
+  })
+
+  it('refuses non-transaction input before signing', () => {
+    const [secret, address] = keys.fromSeed(SEED)
+    expect(() =>
+      keys.signTransaction(secret, address, NETWORK_ID, false),
+    ).toThrow(/tx_/)
+    const invalidTx = encoding.encode(new Uint8Array([1, 2]), 'tx')
+    expect(() =>
+      keys.signTransaction(secret, invalidTx, NETWORK_ID, false),
+    ).toThrow()
   })
 
   it('signs and verifies a message', () => {
@@ -153,8 +151,54 @@ describe('tx + aens + fee, end to end', () => {
   })
 })
 
-describe('scoped out on purpose', () => {
-  it('rejects a Channel tag that needs an address list', () => {
-    expect(() => tx.build('ChannelCreateTx', undefined, [])).toThrow()
+describe('shared transaction corpus', () => {
+  // The fixture is also consumed by Rust, Python, and Dart. Its large integer
+  // fields stay decimal strings throughout the JS boundary.
+  function fromFixture(field: { t: string; v: any }): any {
+    const { t, v } = field
+    switch (t) {
+      case 'enc':
+        return { tag: 'encoded', val: v }
+      case 'uint':
+      case 'text':
+      case 'pointers':
+        return { tag: t, val: v }
+      case 'bytes':
+        return { tag: 'bytes', val: Uint8Array.from(Buffer.from(v, 'hex')) }
+      case 'ctversion':
+        return { tag: 'ct-version', val: [v.vm, v.abi] }
+      case 'list':
+        return { tag: 'items', val: v.map(fromFixture) }
+      default:
+        throw new Error(`Unknown fixture field: ${t}`)
+    }
+  }
+
+  it.each(corpus.cases)('$name builds and round-trips', (vector) => {
+    const [tag, version, unpacked] = tx.unpack(vector.tx)
+    const fields = Object.entries(vector.params).map(([key, value]) => ({
+      key,
+      value: fromFixture(value),
+    }))
+    expect(tx.build(tag, vector.version ?? undefined, fields)).toBe(vector.tx)
+    expect(tx.build(tag, version, unpacked)).toBe(vector.tx)
   })
+})
+
+it('encodes FATE and signs typed data through the generated component', () => {
+  const one = mod.fate.encodeValue({ tag: 'integer', val: '1' })
+  expect([...one]).toEqual([2])
+  expect(mod.fate.decodeValue(one)).toEqual({ tag: 'integer', val: '1' })
+  const data = mod.encoding.encode(one, 'cb')
+  const [secret, address] = mod.keys.fromSeed(SEED)
+  const domain = { networkId: NETWORK_ID }
+  const signature = mod.typedData.sign(secret, data, '"int"', domain)
+  expect(mod.typedData.verify(address, signature, data, '"int"', domain)).toBe(
+    true,
+  )
+  expect(
+    mod.typedData.verify(address, signature, data, '"int"', {
+      networkId: 'ae_mainnet',
+    }),
+  ).toBe(false)
 })

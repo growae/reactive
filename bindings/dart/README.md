@@ -1,6 +1,6 @@
 # ae-core (Dart / Flutter)
 
-A native [`flutter_rust_bridge`](https://cjycode.com/flutter_rust_bridge/) 2.12.0
+A native [`flutter_rust_bridge`](https://cjycode.com/flutter_rust_bridge/) 2.13.0
 binding over `ae-core`'s protocol primitives: transaction serialisation,
 addresses and Ed25519 signing. Bytes in, bytes out — there is no node HTTP
 client here, no async and no retries. Those belong to a caller's own
@@ -9,7 +9,7 @@ ergonomics layer, in Dart's own idiom, not to this crate. Same scope as
 the reasoning behind what is, and is not, bound.
 
 Native, not WASM: `flutter_rust_bridge` binds the Rust core directly and
-never reads the WIT file the (now frozen, off-duty) browser binding was
+never reads the WIT file the JavaScript binding was
 generated from, so this package is independent of that pipeline. See
 `crates/README.md` for the shape of `ae-core` itself, and its "public surface
 is frozen" section before changing any signature this binding mirrors.

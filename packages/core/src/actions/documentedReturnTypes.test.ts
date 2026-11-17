@@ -200,19 +200,18 @@ describe('action API pages', () => {
   })
 
   it('reads pages and declarations that are actually there', () => {
-    expect(actionPages.length).toBeGreaterThan(15)
+    expect(actionPages.length).toBeGreaterThan(8)
     expect(declarations.size).toBeGreaterThan(15)
     // Worthless if the pages resolve to nothing: most must reach a real
     // `*ReturnType`, and the four readings this guard depends on must hold.
     const resolved = actionPages.filter((page) => returns(page.action))
-    expect(resolved.length).toBeGreaterThan(12)
+    expect(resolved.length).toBeGreaterThan(7)
     // An object type's fields are read.
-    expect(returns('callContract')?.paths).toContain('decodedResult')
-    expect(returns('callContract')?.objectLike).toBe(true)
+    expect(returns('spend')?.paths).toContain('rawTx')
+    expect(returns('spend')?.objectLike).toBe(true)
     // A union of object branches contributes every branch's fields.
     expect(returns('getActiveAccount')?.paths).toContain('isConnected')
-    // An alias resolves through to the type it names.
-    expect(returns('readContract')?.paths).toContain('decodedResult')
+    expect(returns('getTransaction')?.paths).toContain('blockHeight')
     // And a non-object return type is seen as one.
     expect(returns('getBalance')?.objectLike).toBe(false)
     expect(returns('waitForTransactionConfirm')?.objectLike).toBe(false)

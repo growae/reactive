@@ -1,15 +1,5 @@
 export {
-  type DetectedWallet,
-  type IframeParameters,
-  iframe,
-  type LedgerParameters,
-  ledger,
   type MetaMaskSnapParameters,
   metamaskSnap,
-  type SuperheroParameters,
-  superhero,
-  type WalletDetectResult,
-  type WebExtensionParameters,
-  walletDetect,
-  webExtension,
 } from '@growae/reactive-connectors'
+export { createConnector, memory, mock } from './index.js'

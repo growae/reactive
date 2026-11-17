@@ -14,32 +14,24 @@ Nothing here is published. The workspace is `publish = false` and stays that way
 binding will one day depend on it, and so will the Python and Dart ones. Naming
 it after one binding's brand would be backwards.
 
-## The public surface is frozen, and changing it costs two edits elsewhere
+## Changes to the public Rust surface affect language bindings
 
 **Read this before you change a signature in `ae-core` or `ae-fate`.**
 
-There is no single interface definition these crates are bound through. The two
-bindings on duty both bind the Rust surface directly, and each carries a
+There is no single interface definition these crates are bound through. The Python and Dart native bindings both bind the Rust surface directly, and each carries a
 **hand-maintained mirror** of every public type they use:
 
 | Target | Binding | On mirror duty | What one signature change costs |
 |---|---|---|---|
 | Python | PyO3, native | **yes** | a hand-written `#[pyclass]`/`#[pymethods]` mirror |
 | Dart / Flutter | `flutter_rust_bridge`, native | **yes** | a hand-written mirror plus regenerated Dart |
-| Browser JS | `jco`, WASM component | **no — frozen reference** | nothing |
+| Browser and Node JS | `jco`, WASM component | yes, for its exposed protocol surface | update WIT, component and generated artifacts |
 | Rust | it is a crate | n/a | nothing |
 
-So one changed signature is **two simultaneous binding edits, forever**. That is
+So one changed signature is **an update in every binding that mirrors that signature**. That is
 the tax the freeze exists to keep bounded — not a preference about churn.
 
-**`bindings/wasm-js` is on this list and off duty, deliberately.** The browser
-binding was cancelled: the first real WASM build measured 135,373 B gzip against
-a 60 KB ceiling, so the browser stays on `@aeternity/aepp-sdk` and the Rust core
-serves Python, Dart/Flutter and Rust. What remains is a frozen reference artifact
-— it keeps building and its tests keep running, but **a surface addition does not
-have to reach it**, and a WIT interface that has no mirror of some newer function
-is correct rather than stale. It is written down here so its absence from a
-change never reads as an oversight.
+**JavaScript now consumes the Rust core.** The 0.2 public toolkit packages the component for browsers and Node. The previous size-based decision applies to the archived 0.1 release. Check all mirrors affected by a Rust API change. [JS binding and compatibility gates](../bindings/wasm-js/README.md)
 
 ### The protocol
 
@@ -114,9 +106,7 @@ no retries, no ergonomics layer. Those belong to each language's binding, in its
 own idiom, because that layer is what makes a library pleasant and it does not
 survive a trip through an FFI boundary.
 
-`packages/core` continues to run on `@aeternity/aepp-sdk`. This crate is built
-*behind* it and replaces nothing until a differential suite proves byte-identical
-output across every transaction type in use.
+The SDK-free JS release calls Rust for wire operations. The reference SDK remains a development-only source of differential vectors. The public API was narrowed to the flows this stack supports. [Release roadmap](../ROADMAP.md)
 
 ## Layout — decided
 

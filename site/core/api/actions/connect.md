@@ -12,10 +12,10 @@ import { connect } from '@growae/reactive/actions'
 
 ```typescript
 import { connect } from '@growae/reactive/actions'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 
 const result = await connect(config, {
-  connector: superhero(),
+  connector: metamaskSnap(),
 })
 ```
 
@@ -48,7 +48,7 @@ The wallet's active network ID (e.g. `ae_mainnet`, `ae_uat`).
 - **Required**
 
 The connector to connect with. A `CreateConnectorFn` — what the bundled
-connector factories such as `superhero()` return — is set up against the config
+connector factories such as `metamaskSnap()` return — is set up against the config
 first; an already-set-up `Connector` is used as it is.
 
 ### networkId

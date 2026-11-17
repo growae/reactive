@@ -46,8 +46,8 @@ describe('error-handling guide', () => {
   })
 
   it('reads a guide that is actually there', () => {
-    expect(documented.size).toBeGreaterThan(20)
-    expect(exported.size).toBeGreaterThan(20)
+    expect(documented.size).toBeGreaterThan(10)
+    expect(exported.size).toBeGreaterThan(10)
   })
 })
 
@@ -134,6 +134,6 @@ describe('action API pages', () => {
   )
 
   it('reads pages that are actually there', () => {
-    expect(actionPages.length).toBeGreaterThan(15)
+    expect(actionPages.length).toBeGreaterThan(8)
   })
 })

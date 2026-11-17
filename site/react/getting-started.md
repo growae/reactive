@@ -29,13 +29,13 @@ pnpm add @growae/reactive-react @tanstack/react-query
 ```tsx
 import { createConfig } from '@growae/reactive'
 import { testnet } from '@growae/reactive/networks'
-import { superhero } from '@growae/reactive/connectors'
+import { metamaskSnap } from '@growae/reactive/connectors'
 import { ReactiveProvider } from '@growae/reactive-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const config = createConfig({
   networks: [testnet],
-  connectors: [superhero()],
+  connectors: [metamaskSnap()],
 })
 
 const queryClient = new QueryClient()
@@ -58,37 +58,30 @@ import { useConnect, useBalance } from '@growae/reactive-react'
 
 function Wallet() {
   const { connect, connectors } = useConnect()
-  const { data: balance } = useBalance({ address: 'ak_2dA...' })
+  const { data: balance } = useBalance()
+  const connector = connectors[0]
 
   return (
     <div>
-      <button onClick={() => connect({ connector: connectors[0] })}>
+      <button disabled={!connector} onClick={() => connector && connect({ connector })}>
         Connect
       </button>
-      {balance && <p>Balance: {balance.ae} AE</p>}
+      {balance && <p>Balance: {balance} aettos</p>}
     </div>
   )
 }
 ```
 
-## Default TTL
+## Transaction encoding
 
-All transaction hooks (`useSpend`, `useSendTransaction`, `useCallContract`, `useDeployContract`, and AENS hooks) default to a **TTL of 300 blocks** (~15 hours). Override per-call:
-
-```tsx
-const { mutate: send } = useSpend()
-
-send({
-  recipient: 'ak_...',
-  amount: '1.0',
-  ttl: 0, // no expiration
-})
-```
+See the [Rust protocol guide](/core/rust-protocol) for signing, wire field types and the list of supported operations.
 
 ## Next Steps
 
 - [Installation](/react/installation) — detailed install guide
 - [ReactiveProvider](/react/api/ReactiveProvider) — provider setup
-- [Connectors](/core/guides/connectors) — all available wallet connectors (Superhero, Ledger, MetaMask Snap, and more)
+- [Connectors](/core/guides/connectors) — configure a wallet or provide a custom connector
+- [Wagmi hook equivalents](/react/wagmi-hooks) — find the æternity hook for a Wagmi operation
+- [Contract hook factories](/react/contract-hook-factories) — define hooks for your own contract interface
 - [useConnect](/react/api/hooks/useConnect) — wallet connection
 - [useBalance](/react/api/hooks/useBalance) — balance queries

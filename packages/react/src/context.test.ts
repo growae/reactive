@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest'
 
-vi.mock('@aeternity/aepp-sdk', () => ({
-  Node: vi.fn().mockImplementation(() => ({})),
+vi.mock('../../core/src/node.js', () => ({
+  NodeClient: vi.fn().mockImplementation(() => ({})),
 }))
 
 import { createConfig, mock, testnet } from '@growae/reactive'

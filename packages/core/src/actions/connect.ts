@@ -64,7 +64,7 @@ export async function connect(
 
     return {
       accounts: data.accounts,
-      networkId: parameters.networkId ?? config.state.networkId,
+      networkId: data.networkId,
     }
   } catch (error) {
     config.setState((x) => ({

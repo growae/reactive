@@ -83,4 +83,4 @@ type level. `getNameEntry` returns the node's entry and wraps none of the node's
 failures in a package error class, so what it raises is:
 
 - `NetworkNotConfiguredError` — `networkId` was passed and is not in `createConfig({ networks })`
-- The `@aeternity/aepp-sdk` node error, unwrapped, when `getNameEntryByName` rejects. A name that is not registered arrives this way, as the node's own 404
+- A `NodeRequestError`, when `getNameEntryByName` rejects. A name that is not registered arrives this way, as the node's own 404
